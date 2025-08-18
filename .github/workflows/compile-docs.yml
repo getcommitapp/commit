@@ -11,8 +11,8 @@ permissions:
   contents: write
 
 jobs:
-  build-and-commit-pdfs:
-    name: Build and commit PDFs
+  build-and-commit-docs:
+    name: Build and commit docs outputs
     runs-on: ubuntu-latest
 
     steps:
@@ -21,13 +21,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build PDF with Makefile (cwd=docs)
+      - name: Build docs with Makefile
         working-directory: docs
         run: make -B DOCKER=1
 
-      - name: Commit PDF if changed
+      - name: Commit docs outputs if changed
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "chore(docs): update built docs outputs"
-          file_pattern: docs/*.pdf
+          file_pattern: docs/**
           branch: ${{ github.ref_name }}
