@@ -3,7 +3,7 @@ SHELL := /bin/bash
 # Use Dockerized pandoc when DOCKER=1, otherwise use system pandoc
 DOCKER ?= 0
 ifeq ($(DOCKER),1)
-PANDOC := docker run --rm -v $(shell pwd):/data pandoc/latex:latest
+PANDOC := docker run --rm -v $(shell pwd):/data pandoc/extra:latest
 else
 PANDOC := pandoc
 endif
