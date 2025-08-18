@@ -41,15 +41,11 @@ header-includes:
   - \fancyfoot[C]{\thepage}
   - \usepackage{setspace}
   - \onehalfspacing
+  - \usepackage{enumitem}
 toc: true
 ---
 
 \pagebreak
-
-<!-- ```{=latex} -->
-<!-- \tableofcontents -->
-<!-- \pagebreak -->
-<!-- ``` -->
 
 # Introduction
 
@@ -77,10 +73,9 @@ toc: true
 - Money flow: Real money via Stripe (payments and transfers).
 - Group challenges: Invite-only, private groups.
 - Out of scope (MVP): App Store/Play Store deployment, tablet support, advanced
-  analytics, notifications, appeals/dispute handling.
+  analytics, notifications (not planned), appeals/dispute handling.
 - Languages: English only at launch.
 - Accessibility & compliance: Out of scope for MVP.
-- **Definitions & Acronyms**:
 
 # Project Description
 
@@ -94,7 +89,6 @@ toc: true
   - Differentiators: Ease of use, pooled stakes for group challenges.
   - Constraints/guiding principles: Instant money transfers between parties with
     minimal fees.
-- **Non-Functional Requirements**:
 
 # System Overview
 
@@ -109,10 +103,9 @@ toc: true
     participants fail). Invitees accept the stake. Upon completion, successful
     participants receive the pooled stakes from members who failed; if all fail,
     funds are sent to the fallback destination.
-- Target platforms (iOS, Android, etc.)
 - Mobile: iOS and Android (phones only; no tablet support)
-- Permissions/capabilities: Background location (GPS), camera, push
-  notifications, device usage detection (for no-phone-use goals)
+- Permissions/capabilities: Background location (GPS), camera, device usage
+  detection (for no-phone-use goals)
 - Expo: SDK and EAS details TBD
 - Web: Single static marketing landing page (Astro + React)
 - Target audience
@@ -226,10 +219,6 @@ toc: true
 - Cancellation: if the creator cancels before the start, no stakes are captured
   (since capture happens only on failure at resolution).
 
-## Notifications
-
-Out of scope for MVP.
-
 ## Settings
 
 - Update display name
@@ -317,7 +306,7 @@ Out of scope for MVP.
 - Database: Postgres (Supabase)
 - Backend/services: Supabase (Auth, DB, storage, edge functions)
 - Payments: Stripe Connect Standard with TWINT enabled for Switzerland
-- Third-party libraries & APIs: Stripe SDK, Expo Location/Camera/Notifications
+- Third-party libraries & APIs: Stripe SDK, Expo Location/Camera
 - Hosting: Supabase (backend, DB, auth); Cloudflare Pages (Astro + React landing
   page)
 
@@ -340,8 +329,17 @@ Out of scope for MVP.
 
 # Deployment Environment
 
-- Target infrastructure (e.g., AWS, Azure, on-premise)
-- Environment setup: development and production only
+- Backend and data: Supabase project (Auth, Postgres, Storage, Edge Functions),
+  EU region (eu-central-1).
+- Web landing page: Cloudflare Pages (static hosting with global CDN).
+- Mobile app: Expo EAS builds with two channels: development and production. App
+  Store/Play Store distribution is out of scope for MVP; internal distribution
+  only (TestFlight/Android internal testing).
+- Environments: development and production only, with separate Supabase projects
+  and isolated resources.
+- Secrets/configuration: managed via Supabase project settings, Cloudflare Pages
+  environment variables, and EAS secrets. Stripe runs in Test mode for
+  development and Live mode for production.
 
 # CI/CD Pipeline
 
@@ -356,31 +354,6 @@ Out of scope for MVP.
 - Budget & time constraints: 70K CHF budget; 3-week MVP timeline
 - Regulatory compliance: out of scope for MVP
 
-# Glossary
-
-- Stake: the amount of money a user commits that may be captured if the goal is
-  not achieved.
-- Capture: charging the authorized stake when a goal is marked as failed.
-- Goal window: the scheduled time period during which the user must complete and
-  verify the goal.
-- Verification window: the allowed buffer around the scheduled time for
-  submitting verification (default ±10 minutes).
-- Geofence: a virtual radius around a location used to verify presence (default
-  50 m; max 500 m).
-- Dwell time: the minimum time a user must remain inside a geofence (default 5
-  minutes).
-- Destination: the recipient configured to receive funds when a goal fails
-  (person, charity, or platform donation).
-- Winner pool: the set of participants in a group challenge who achieved the
-  goal and split the captured stakes.
-- Group challenge: a private, invite-only challenge with a uniform stake and
-  shared rules created by a user.
-
-# Appendices
-
-- Mockups/Wireframes
-- API reference (if applicable)
-
 # Points to Refine Later
 
 - Minimum OS versions for iOS and Android
@@ -390,3 +363,30 @@ Out of scope for MVP.
 - Details on ensuring instant transfers with minimal fees via Stripe
 - Stripe fee responsibility (payer model)
 - Initial charity list for solo goal destinations
+
+```{=latex}
+\pagebreak
+\appendix
+```
+
+# Appendix
+
+## Glossary
+
+```{=latex}
+\begin{description}[style=nextline,labelwidth=4cm,leftmargin=5cm]
+\item[\textbf{Stake}] The amount of money a user commits that may be captured if the goal is not achieved.
+\item[\textbf{Capture}] Charging the authorized stake when a goal is marked as failed.
+\item[\textbf{Goal window}] The scheduled time period during which the user must complete and verify the goal.
+\item[\textbf{Verification window}] The allowed buffer around the scheduled time for submitting verification (default ±10 minutes).
+\item[\textbf{Geofence}] A virtual radius around a location used to verify presence (default 50 m; max 500 m).
+\item[\textbf{Dwell time}] The minimum time a user must remain inside a geofence (default 5 minutes).
+\item[\textbf{Destination}] The recipient configured to receive funds when a goal fails (person, charity, or platform donation).
+\item[\textbf{Winner pool}] The set of participants in a group challenge who achieved the goal and split the captured stakes.
+\item[\textbf{Group challenge}] A private, invite-only challenge with a uniform stake and shared rules created by a user.
+\end{description}
+```
+
+## Mockups
+
+TBD
