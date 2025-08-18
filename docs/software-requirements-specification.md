@@ -1,6 +1,57 @@
-# Software Requirements Specification
+---
+documentclass: article
+classoption: titlepage
+papersize: a4
+fontsize: 11pt
+geometry: margin=1in
+numbersections: true
+title: |
+  \begin{center}
+  \begin{minipage}{0.125\textwidth}
+    \centering
+    \includegraphics[height=50pt]{assets/commit-logo.png}
+  \end{minipage}
+  \hspace{0.5em}
+  \begin{minipage}{0.125\textwidth}
+    \centering
+    \includegraphics[height=40pt]{assets/heig-vd-logo.png}
+  \end{minipage}
 
-## Introduction
+  \vspace{1.5em}
+
+  {\LARGE \textbf{Software Requirements Specification}}
+  \end{center}
+subtitle: |
+  commit\linebreak
+  PDG - HEIG-VD
+author:
+  - Leonard Cseres
+  - Tristan Gerber
+  - Aladin Iseni
+  - David Schildböck
+date: \today
+subject: "PDG"
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhf{}
+  - \fancyhead[L]{Software Requirements Specification}
+  - \fancyhead[R]{commit}
+  - \fancyfoot[C]{\thepage}
+  - \usepackage{setspace}
+  - \onehalfspacing
+toc: true
+---
+
+\pagebreak
+
+<!-- ```{=latex} -->
+<!-- \tableofcontents -->
+<!-- \pagebreak -->
+<!-- ``` -->
+
+# Introduction
 
 - **Purpose**:
   - Primary users: Private adult individuals who want to take action in their
@@ -31,7 +82,7 @@
 - Accessibility & compliance: Out of scope for MVP.
 - **Definitions & Acronyms**:
 
-## Project Description
+# Project Description
 
 - **Objective**:
   - Product vision: Commit turns intentions into actions by combining simple
@@ -45,7 +96,7 @@
     minimal fees.
 - **Non-Functional Requirements**:
 
-## System Overview
+# System Overview
 
 - High-level description of the app
   - Solo flow: A user creates a goal, configures recurrence or due date, selects
@@ -67,20 +118,20 @@
 - Target audience
   - Adults 18+ seeking productivity, fitness improvements, and habit-building.
 
-## Functional Requirements
+# Functional Requirements
 
-### User Management
+## User Management
 
 - Users can register with email/social login
 - Users can manage profiles
 
-#### Authentication
+### Authentication
 
 - Sign-in methods: Google, Apple (no email/password at MVP)
 - Pre-stake verification: No email/phone verification required before staking
 - KYC/identity checks: Not required at MVP for payouts via Stripe
 
-#### Payments & Account Receivers (MVP decisions)
+### Payments & Account Receivers (MVP decisions)
 
 - Charging model: Stakes are authorized/held at creation but only captured and
   deducted if the goal is not achieved (on failure). If the goal is achieved, no
@@ -102,7 +153,7 @@
   Stripe. The team will use Stripe Connect patterns appropriate to this choice
   in implementation.
 
-### Core Features
+## Core Features
 
 - Goal lifecycle: create, edit, delete, view history
 - Group lifecycle: create private group, invite by link, join/leave, view
@@ -114,7 +165,7 @@
 - Activity/history: per-user list of past goals/challenges with outcomes
 - Settings: change display name and profile photo
 
-### Goal Creation
+## Goal Creation
 
 - Required fields: title/name, description, goal type
   (wake-up/location/time/duration/combined), start date, and due date or
@@ -133,7 +184,7 @@
   window results in automatic failure.
 - Grace/retries: none for MVP.
 
-### Verification & Goal Rules
+## Verification & Goal Rules
 
 - Verification methods supported in MVP: GPS (location), device time checks, and
   photo evidence.
@@ -157,7 +208,7 @@
 - Offline/technical failures: there is no automatic fallback; users may file an
   appeal if verification cannot be performed due to technical reasons.
 
-### Group Challenges
+## Group Challenges
 
 - Size limit: up to 100 participants per group challenge.
 - Stake uniformity: same stake amount for all participants.
@@ -175,24 +226,24 @@
 - Cancellation: if the creator cancels before the start, no stakes are captured
   (since capture happens only on failure at resolution).
 
-### Notifications
+## Notifications
 
 Out of scope for MVP.
 
-### Settings
+## Settings
 
 - Update display name
 - Update profile photo
 
-## Non-Functional Requirements
+# Non-Functional Requirements
 
-### Performance
+## Performance
 
 - App should load within 2 seconds
 - Support at least 10,000 concurrent users
-- Backend latency targets (p95 within CH/EU): reads ≤ 300 ms, writes ≤ 500 ms
+- Backend latency targets (p95 within CH/EU): <= 500 ms
 
-### Security
+## Security
 
 - Data encryption in transit and at rest
 - Secure authentication (OAuth2, JWT, etc.)
@@ -205,7 +256,7 @@ Out of scope for MVP.
 - Access control: goals are private by default; group members only see minimal
   status (success/failure) and not each other's raw verification artifacts.
 
-### Privacy
+## Privacy
 
 - Photos are stored for verification purposes only; access is restricted to the
   account owner and authorized reviewers.
@@ -213,40 +264,40 @@ Out of scope for MVP.
   performed for verification.
 - Compliance posture: out of scope for MVP.
 
-### Reliability & Operations notes
+## Reliability & Operations notes
 
 - Manual verification SLA: initial target is to perform manual photo
   verifications within 24–48 hours of submission. The team will adjust this SLA
   based on capacity.
 
-### Usability
+## Usability
 
 - Intuitive navigation
 - Consistent UI across platforms
 
-### Reliability & Availability
+## Reliability & Availability
 
 - 99.9% uptime
 - Graceful error handling
 
-### Compatibility
+## Compatibility
 
 - Support iOS 14+ and Android 10+
 - Responsive design for different screen sizes
 
-### Maintainability
+## Maintainability
 
-### Battery & Location Usage
+## Battery & Location Usage
 
 - Use region/geofence monitoring only; avoid continuous GPS tracking
 
-### Offline Behavior
+## Offline Behavior
 
 - Online-only MVP: goal creation and verification require connectivity
 - Modular codebase following Clean Architecture
 - Comprehensive documentation and unit tests
 
-## Preliminary Architecture Description
+# Preliminary Architecture Description
 
 - Presentation layer (UI/UX)
 - Application layer (state management, controllers)
@@ -254,13 +305,13 @@ Out of scope for MVP.
 - Data layer (APIs, local DB, repositories)
 - Infrastructure (networking, analytics, logging)
 
-## Mockups / Landing Page
+# Mockups / Landing Page
 
 - Figma designs
 - Paper sketches
 - Landing page prototype
 
-## Technical Choices
+# Technical Choices
 
 - Programming languages & frameworks: Expo + React Native (TypeScript)
 - Database: Postgres (Supabase)
@@ -270,13 +321,13 @@ Out of scope for MVP.
 - Hosting: Supabase (backend, DB, auth); Cloudflare Pages (Astro + React landing
   page)
 
-## Work Process
+# Work Process
 
 - Version control: GitHub with pull requests; trunk-based development
 - DevOps: continuous delivery to production when changes pass CI and review
 - Process: lightweight Kanban for MVP
 
-## Development Tools Setup
+# Development Tools Setup
 
 - Issue tracker: GitHub Issues
 - Code review: GitHub pull requests
@@ -287,12 +338,12 @@ Out of scope for MVP.
   flow with Detox)
 - Secrets/config: Supabase and Stripe keys via env files with secure storage
 
-## Deployment Environment
+# Deployment Environment
 
 - Target infrastructure (e.g., AWS, Azure, on-premise)
 - Environment setup: development and production only
 
-## CI/CD Pipeline
+# CI/CD Pipeline
 
 - CI on PRs: lint, typecheck, build, and tests
 - CD: auto-deploy to development on main merges; promote to production on tagged
@@ -300,12 +351,12 @@ Out of scope for MVP.
 - Monitoring & rollback: basic health checks; manual rollback by reverting
   deploy
 
-## Constraints & Assumptions
+# Constraints & Assumptions
 
 - Budget & time constraints: 70K CHF budget; 3-week MVP timeline
 - Regulatory compliance: out of scope for MVP
 
-## Glossary
+# Glossary
 
 - Stake: the amount of money a user commits that may be captured if the goal is
   not achieved.
@@ -325,12 +376,12 @@ Out of scope for MVP.
 - Group challenge: a private, invite-only challenge with a uniform stake and
   shared rules created by a user.
 
-## Appendices
+# Appendices
 
 - Mockups/Wireframes
 - API reference (if applicable)
 
-## Points to Refine Later
+# Points to Refine Later
 
 - Minimum OS versions for iOS and Android
 - Expo SDK version and EAS build configuration
