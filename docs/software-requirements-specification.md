@@ -22,7 +22,7 @@ title: |
   {\LARGE \textbf{Software Requirements Specification}}
   \end{center}
 subtitle: |
-  commit\linebreak
+  \textbf{commit.}\linebreak
   PDG - HEIG-VD
 author:
   - Leonard Cseres
@@ -37,7 +37,7 @@ header-includes:
   - \pagestyle{fancy}
   - \fancyhf{}
   - \fancyhead[L]{Software Requirements Specification}
-  - \fancyhead[R]{commit}
+  - \fancyhead[R]{commit.}
   - \fancyfoot[C]{\thepage}
   - \usepackage{setspace}
   - \onehalfspacing
