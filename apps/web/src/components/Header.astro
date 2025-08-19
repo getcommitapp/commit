@@ -1,36 +1,118 @@
 ---
-// Header component props can be added here if needed
+import { Icon } from "astro-icon/components";
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
-  <nav class="max-w-7xl mx-auto px-4">
-    <div class="flex justify-between items-center h-16">
-      <div class="flex items-center">
-        <a href="/" class="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
-          Commit
-        </a>
-      </div>
-      
-      <div class="hidden md:flex items-center space-x-8">
-        <a href="#features" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-          Features
-        </a>
-        <a href="#faq" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-          FAQ
-        </a>
-        <a href="#contact" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-          Contact
-        </a>
-      </div>
-      
-      <!-- Mobile menu button -->
-      <div class="md:hidden">
-        <button class="text-gray-700 hover:text-blue-600 transition-colors">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-      </div>
+<header class="sticky top-0 z-50 border-b bg-white/50 backdrop-blur-md">
+  <div class="mx-auto max-w-7xl px-4">
+    <div class="flex h-16 items-center justify-between">
+      <a href="#hero" class="flex items-center gap-2">
+        <img src="/images/commit-logo.png" alt="commit logo" class="h-8 w-8" />
+        <span class="font-semibold tracking-tight">commit.</span>
+      </a>
+
+      <nav class="hidden items-center gap-6 text-sm md:flex">
+        <a href="#problem" class="hover:opacity-80">Problem</a>
+        <a href="#solution" class="hover:opacity-80">Solution</a>
+        <a href="#features" class="hover:opacity-80">Features</a>
+        <a href="#faq" class="hover:opacity-80">FAQ</a>
+        <a
+          href="#cta"
+          class="bg-primary inline-flex items-center rounded-md px-3 py-1.5 font-medium text-slate-900 hover:opacity-90"
+          >Get started</a
+        >
+      </nav>
+
+      <!-- Hamburger Menu Button -->
+      <button
+        id="menu-toggle"
+        class="cursor-pointer p-2 transition-opacity duration-300 focus:outline-none md:hidden"
+        aria-label="Toggle menu"
+      >
+        <Icon name="mdi:menu" class="size-6 text-slate-900" />
+      </button>
     </div>
-  </nav>
+  </div>
+
+  <!-- Full Screen Overlay Menu -->
+  <div
+    id="overlay-menu"
+    class="overlay-menu invisible fixed inset-0 z-40 h-screen w-full bg-white/50 backdrop-blur-md transition-all duration-200 ease-out"
+  >
+    <!-- Close Button -->
+    <button
+      id="close-menu"
+      class="fixed top-4 right-4 z-50 cursor-pointer p-2 transition-opacity duration-300 focus:outline-none"
+      aria-label="Close menu"
+    >
+      <Icon name="mdi:close" class="size-6 text-slate-900" />
+    </button>
+
+    <div class="flex h-full items-center justify-center p-8">
+      <nav class="flex flex-col items-center gap-8 text-xl">
+        <a href="#problem" class="menu-link hover:opacity-80">Problem</a>
+        <a href="#solution" class="menu-link hover:opacity-80">Solution</a>
+        <a href="#features" class="menu-link hover:opacity-80">Features</a>
+        <a href="#faq" class="menu-link hover:opacity-80">FAQ</a>
+        <a
+          href="#cta"
+          class="bg-primary menu-link rounded-md px-6 py-3 font-medium text-slate-900 hover:opacity-90"
+          >Get started</a
+        >
+      </nav>
+    </div>
+  </div>
 </header>
+
+<style>
+  /* Fade out burger button when overlay is open */
+  #menu-toggle.menu-open {
+    opacity: 0;
+  }
+
+  /* Show overlay when open */
+  .overlay-menu.open {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const menuToggle = document.getElementById("menu-toggle");
+    const closeMenu = document.getElementById("close-menu");
+    const overlayMenu = document.getElementById("overlay-menu");
+    const menuLinks = document.querySelectorAll(".menu-link");
+
+    function openMenu() {
+      overlayMenu?.classList.add("open");
+      menuToggle?.classList.add("menu-open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeMenuFn() {
+      overlayMenu?.classList.remove("open");
+      menuToggle?.classList.remove("menu-open");
+      document.body.style.overflow = "";
+    }
+
+    if (menuToggle && overlayMenu && closeMenu) {
+      // Open menu when clicking hamburger
+      menuToggle.addEventListener("click", openMenu);
+
+      // Close menu when clicking close button
+      closeMenu.addEventListener("click", closeMenuFn);
+
+      // Close menu when clicking on links
+      menuLinks.forEach((link) => {
+        link.addEventListener("click", closeMenuFn);
+      });
+
+      // Close menu when pressing escape
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && overlayMenu.classList.contains("open")) {
+          closeMenuFn();
+        }
+      });
+    }
+  });
+</script>

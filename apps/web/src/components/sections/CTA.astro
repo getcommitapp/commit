@@ -1,36 +1,29 @@
 ---
-// CTA section component
+import { Icon } from "astro-icon/components";
+import Button from "../../components/ui/Button.astro";
+import Placeholder from "../../components/ui/Placeholder.astro";
 ---
 
-<section class="py-24 bg-gradient-to-br from-blue-600 to-purple-700 text-white text-center">
-  <div class="max-w-4xl mx-auto px-4">
-    <div>
-      <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Ready to Transform Your Development Workflow?</h2>
-      <p class="text-xl mb-12 opacity-90 leading-relaxed">
-        Join thousands of developers who have already improved their productivity with Commit.
-      </p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-        <a href="#signup" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-200 transform hover:-translate-y-1 inline-block text-center text-lg">
-          Start Free Trial
-        </a>
-        <a href="#demo" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-200 transform hover:-translate-y-1 inline-block text-center text-lg">
-          Schedule Demo
-        </a>
-      </div>
-      
-      <div class="flex flex-col sm:flex-row justify-center gap-8 flex-wrap">
-        <div class="flex items-center gap-2 text-lg opacity-90">
-          <span class="font-bold text-green-400">✓</span>
-          <span>14-day free trial</span>
+<section id="cta" class="scroll-mt-24 border-t bg-white">
+  <div class="mx-auto max-w-7xl px-4 py-20">
+    <div
+      class="from-primary/40 rounded-2xl border bg-gradient-to-br to-transparent p-8 md:p-12"
+    >
+      <div class="grid items-center gap-8 md:grid-cols-2">
+        <div>
+          <h2 class="text-3xl font-bold tracking-tight">Ready to commit?</h2>
+          <p class="mt-3 text-slate-700">
+            Get started now and turn intentions into actions.
+          </p>
+          <div class="mt-6">
+            <Button href="#features" variant="primary" size="lg">
+              <Icon name="mdi:rocket-launch-outline" class="h-5 w-5" />
+              <span class="ml-1">Get started now</span>
+            </Button>
+          </div>
         </div>
-        <div class="flex items-center gap-2 text-lg opacity-90">
-          <span class="font-bold text-green-400">✓</span>
-          <span>No credit card required</span>
-        </div>
-        <div class="flex items-center gap-2 text-lg opacity-90">
-          <span class="font-bold text-green-400">✓</span>
-          <span>Cancel anytime</span>
+        <div>
+          <Placeholder label="Screenshot placeholder" />
         </div>
       </div>
     </div>

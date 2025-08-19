@@ -1,62 +1,95 @@
 ---
-// Features section component
+import { Icon } from "astro-icon/components";
 ---
 
-<section class="py-24 bg-gray-50">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Key Features</h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-        Discover the powerful features that make Commit the ultimate development companion.
-      </p>
-    </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div class="bg-white p-10 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 text-center">
-        <div class="text-5xl mb-6">🔍</div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">Smart Code Review</h3>
-        <p class="text-gray-600 leading-relaxed">
-          AI-powered code analysis that catches issues before they reach production.
+<section id="features" class="scroll-mt-24 border-t bg-white">
+  <div class="mx-auto max-w-7xl px-4 py-20">
+    <h2 class="text-3xl font-bold tracking-tight">Features</h2>
+    <p class="mt-3 max-w-2xl text-slate-600">
+      Designed for clarity and follow-through. Simple to start, powerful when
+      you need it.
+    </p>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-3">
+      <div class="rounded-xl border p-6">
+        <div
+          class="bg-primary flex h-10 w-10 items-center justify-center rounded"
+        >
+          <Icon name="mdi:cash-lock" class="h-6 w-6 text-slate-900" />
+        </div>
+        <h3 class="mt-4 font-semibold">Stake to commit</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          Set a CHF 1–1000 stake that is only captured if you miss your goal.
         </p>
       </div>
-      
-      <div class="bg-white p-10 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 text-center">
-        <div class="text-5xl mb-6">🤝</div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">Team Collaboration</h3>
-        <p class="text-gray-600 leading-relaxed">
-          Real-time collaboration tools that keep your team in sync and productive.
+      <div class="rounded-xl border p-6">
+        <div
+          class="bg-primary flex h-10 w-10 items-center justify-center rounded"
+        >
+          <Icon
+            name="mdi:map-marker-check-outline"
+            class="h-6 w-6 text-slate-900"
+          />
+        </div>
+        <h3 class="mt-4 font-semibold">Verify with GPS/time/photo</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          Flexible verification fits your goal type and schedule.
         </p>
       </div>
-      
-      <div class="bg-white p-10 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 text-center">
-        <div class="text-5xl mb-6">⚡</div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">Automated Workflows</h3>
-        <p class="text-gray-600 leading-relaxed">
-          Streamline your development process with intelligent automation.
+      <div class="rounded-xl border p-6">
+        <div
+          class="bg-primary flex h-10 w-10 items-center justify-center rounded"
+        >
+          <Icon
+            name="mdi:account-group-outline"
+            class="h-6 w-6 text-slate-900"
+          />
+        </div>
+        <h3 class="mt-4 font-semibold">Group challenges</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          Invite-only groups with pooled stakes for winners.
         </p>
       </div>
-      
-      <div class="bg-white p-10 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 text-center">
-        <div class="text-5xl mb-6">📊</div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">Analytics Dashboard</h3>
-        <p class="text-gray-600 leading-relaxed">
-          Comprehensive insights into your team's performance and project metrics.
+      <div class="rounded-xl border p-6">
+        <div
+          class="bg-primary flex h-10 w-10 items-center justify-center rounded"
+        >
+          <Icon
+            name="mdi:lightning-bolt-outline"
+            class="h-6 w-6 text-slate-900"
+          />
+        </div>
+        <h3 class="mt-4 font-semibold">Instant payouts</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          Stripe-powered transfers to recipients and winners.
         </p>
       </div>
-      
-      <div class="bg-white p-10 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 text-center">
-        <div class="text-5xl mb-6">🔒</div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">Enterprise Security</h3>
-        <p class="text-gray-600 leading-relaxed">
-          Bank-level security with advanced encryption and compliance features.
+      <div class="rounded-xl border p-6">
+        <div
+          class="bg-primary flex h-10 w-10 items-center justify-center rounded"
+        >
+          <Icon
+            name="mdi:shield-check-outline"
+            class="h-6 w-6 text-slate-900"
+          />
+        </div>
+        <h3 class="mt-4 font-semibold">Privacy-first</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          On-device checks where possible; photos limited to verification.
         </p>
       </div>
-      
-      <div class="bg-white p-10 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 text-center">
-        <div class="text-5xl mb-6">🌐</div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">Global CDN</h3>
-        <p class="text-gray-600 leading-relaxed">
-          Lightning-fast performance with our global content delivery network.
+      <div class="rounded-xl border p-6">
+        <div
+          class="bg-primary flex h-10 w-10 items-center justify-center rounded"
+        >
+          <Icon
+            name="mdi:check-circle-outline"
+            class="h-6 w-6 text-slate-900"
+          />
+        </div>
+        <h3 class="mt-4 font-semibold">Simple by design</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          Clean UI focused on the actions that move you forward.
         </p>
       </div>
     </div>

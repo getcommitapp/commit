@@ -5,6 +5,8 @@ import cloudflare from "@astrojs/cloudflare";
 
 import tailwindcss from "@tailwindcss/vite";
 
+import icon from "astro-icon";
+
 // https://astro.build/config
 export default defineConfig({
   output: "static",
@@ -16,4 +18,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+
+  integrations: [icon()],
 });

@@ -1,143 +1,40 @@
 ---
-// FAQ section component
+import { Icon } from "astro-icon/components";
+import Accordion from "../../components/ui/Accordion.astro";
 ---
 
-<section class="py-24 bg-white">
-  <div class="max-w-4xl mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-      <p class="text-xl text-gray-600 leading-relaxed">
-        Find answers to the most common questions about Commit.
-      </p>
-    </div>
-    
-    <div class="space-y-4">
-      <div class="border border-gray-200 rounded-lg overflow-hidden">
-        <div class="bg-gray-50 p-6 cursor-pointer hover:bg-gray-100 transition-colors flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-gray-900">What is Commit?</h3>
-          <span class="text-2xl font-bold text-gray-500 transition-transform">+</span>
-        </div>
-        <div class="p-0 max-h-0 overflow-hidden transition-all duration-300">
-          <div class="p-6">
-            <p class="text-gray-600 leading-relaxed">
-              Commit is a comprehensive development platform that brings together code review, 
-              collaboration, and project management tools in one unified interface.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="border border-gray-200 rounded-lg overflow-hidden">
-        <div class="bg-gray-50 p-6 cursor-pointer hover:bg-gray-100 transition-colors flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-gray-900">How much does Commit cost?</h3>
-          <span class="text-2xl font-bold text-gray-500 transition-transform">+</span>
-        </div>
-        <div class="p-0 max-h-0 overflow-hidden transition-all duration-300">
-          <div class="p-6">
-            <p class="text-gray-600 leading-relaxed">
-              We offer flexible pricing plans starting from $10/month per user. 
-              Enterprise plans are available for larger teams with custom pricing.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="border border-gray-200 rounded-lg overflow-hidden">
-        <div class="bg-gray-50 p-6 cursor-pointer hover:bg-gray-100 transition-colors flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-gray-900">Can I integrate with my existing tools?</h3>
-          <span class="text-2xl font-bold text-gray-500 transition-transform">+</span>
-        </div>
-        <div class="p-0 max-h-0 overflow-hidden transition-all duration-300">
-          <div class="p-6">
-            <p class="text-gray-600 leading-relaxed">
-              Yes! Commit integrates with popular tools like GitHub, GitLab, Slack, 
-              and many others. Check our documentation for the full list of integrations.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="border border-gray-200 rounded-lg overflow-hidden">
-        <div class="bg-gray-50 p-6 cursor-pointer hover:bg-gray-100 transition-colors flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-gray-900">Is my data secure?</h3>
-          <span class="text-2xl font-bold text-gray-500 transition-transform">+</span>
-        </div>
-        <div class="p-0 max-h-0 overflow-hidden transition-all duration-300">
-          <div class="p-6">
-            <p class="text-gray-600 leading-relaxed">
-              Absolutely. We use enterprise-grade encryption and follow industry 
-              best practices for data security and privacy compliance.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="border border-gray-200 rounded-lg overflow-hidden">
-        <div class="bg-gray-50 p-6 cursor-pointer hover:bg-gray-100 transition-colors flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-gray-900">Do you offer a free trial?</h3>
-          <span class="text-2xl font-bold text-gray-500 transition-transform">+</span>
-        </div>
-        <div class="p-0 max-h-0 overflow-hidden transition-all duration-300">
-          <div class="p-6">
-            <p class="text-gray-600 leading-relaxed">
-              Yes, we offer a 14-day free trial with full access to all features. 
-              No credit card required to get started.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="border border-gray-200 rounded-lg overflow-hidden">
-        <div class="bg-gray-50 p-6 cursor-pointer hover:bg-gray-100 transition-colors flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-gray-900">What kind of support do you provide?</h3>
-          <span class="text-2xl font-bold text-gray-500 transition-transform">+</span>
-        </div>
-        <div class="p-0 max-h-0 overflow-hidden transition-all duration-300">
-          <div class="p-6">
-            <p class="text-gray-600 leading-relaxed">
-              We provide 24/7 customer support via email and chat. Enterprise customers 
-              also get dedicated account management and priority support.
-            </p>
-          </div>
-        </div>
-      </div>
+<section id="faq" class="scroll-mt-24 border-t bg-white">
+  <div class="mx-auto max-w-7xl px-4 py-20">
+    <h2 class="text-3xl font-bold tracking-tight">FAQ</h2>
+    <div class="mt-8">
+      <Accordion
+        items={[
+          {
+            title: "How do stakes work?",
+            icon: "mdi:cash-multiple",
+            content:
+              "You authorize a stake when creating a goal. Money is only captured if you fail to verify within the rules.",
+          },
+          {
+            title: "Which verification methods are supported?",
+            icon: "mdi:check-decagram-outline",
+            content:
+              "GPS, time checks, and in-app photos. Some goals can combine them for stronger proof.",
+          },
+          {
+            title: "Is this available on iOS and Android?",
+            icon: "mdi:cellphone",
+            content:
+              "Yes. The mobile app is built with Expo and works on phones at launch.",
+          },
+          {
+            title: "How are payouts handled?",
+            icon: "mdi:bank-transfer",
+            content:
+              "Winners receive funds via Stripe. If everyone fails in a group, funds go to the configured destination.",
+          },
+        ]}
+      />
     </div>
   </div>
 </section>
-
-<script>
-  // FAQ toggle functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const faqItems = document.querySelectorAll('.border.border-gray-200.rounded-lg');
-    
-    faqItems.forEach(item => {
-      const question = item.querySelector('.bg-gray-50');
-      const answer = item.querySelector('.p-0.max-h-0');
-      const toggle = item.querySelector('.text-2xl');
-      
-      if (question && answer && toggle) {
-        question.addEventListener('click', () => {
-          const isActive = answer.classList.contains('max-h-0');
-          
-          // Close all other items
-          faqItems.forEach(otherItem => {
-            const otherAnswer = otherItem.querySelector('.p-0.max-h-0');
-            const otherToggle = otherItem.querySelector('.text-2xl');
-            if (otherAnswer && otherToggle) {
-              otherAnswer.classList.remove('p-6', 'max-h-96');
-              otherAnswer.classList.add('p-0', 'max-h-0');
-              (otherToggle as HTMLElement).style.transform = 'rotate(0deg)';
-            }
-          });
-          
-          // Toggle current item
-          if (isActive) {
-            answer.classList.remove('p-0', 'max-h-0');
-            answer.classList.add('p-6', 'max-h-96');
-            (toggle as HTMLElement).style.transform = 'rotate(45deg)';
-          }
-        });
-      }
-    });
-  });
-</script>
