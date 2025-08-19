@@ -67,7 +67,7 @@ toc: true
 - Platforms: iOS and Android via Expo; web landing page (marketing/information
   only).
 - Geography at launch: Switzerland.
-- User types: Standard users and admin.
+- User types: Standard users, reviewer and admin.
 - MVP goal types: Wake-up time, location-based, time-based, duration-based, and
   combinations of location/time/duration.
 - Money flow: Real money via Stripe (payments and transfers).
@@ -110,6 +110,17 @@ toc: true
   - Adults 18+ seeking productivity, fitness improvements, and habit-building.
 
 # Functional Requirements
+
+## Reviewer and Admin Roles
+
+- **Reviewer:**
+  - Has all the capabilities of a standard user.
+  - Can access and review user-submitted pictures for goal verification.
+  - Can approve or reject verification evidence as part of the manual review process.
+
+- **Admin:**
+  - Role exists in the system but currently has no special functions defined for MVP.
+  - Future admin capabilities will be specified as the project evolves.
 
 ## User Management
 
@@ -221,6 +232,12 @@ toc: true
 
 - Update display name
 
+## Optional Functions (Future Enhancements)
+
+- **Community Challenges:** Public or open group challenges where any user can join and compete, with shared stakes and leaderboards.
+- **AI Image Check:** Automated verification of user-submitted photos using AI to reduce manual reviewer workload and improve scalability.
+- **Additional Payment Methods:** Support for more payment options beyond TWINT, such as PayPal or credit cards.
+
 # Non-Functional Requirements
 
 ## Performance
@@ -285,11 +302,10 @@ toc: true
 
 # Preliminary Architecture Description
 
-- Presentation layer (UI/UX)
-- Application layer (state management, controllers)
-- Domain layer (business logic, use cases)
-- Data layer (APIs, local DB, repositories)
-- Infrastructure (networking, analytics, logging)
+- Presentation layer: React native
+- Application layer: React native + Supabase 
+- Data layer: Supabase + PostgreSQL
+- Infrastructure: Supabase hosting
 
 # Mockups / Landing Page
 
@@ -309,9 +325,27 @@ toc: true
 
 # Work Process
 
-- Version control: GitHub with pull requests; trunk-based development
-- DevOps: continuous delivery to production when changes pass CI and review
-- Process: lightweight Kanban for MVP
+## Agile Methodology: SCRUM
+
+- **Team roles:** Roles (Product Owner, Scrum Master, Developers) are rotating among team members throughout the project.
+- **Sprint length:** Each sprint lasts 3 days, reflecting the short 3-week project timeline.
+- **Ceremonies:** The team holds a daily standup and a sprint review at the end of each sprint. Other SCRUM ceremonies (planning, retrospective) are adapted or combined as needed.
+- **Backlog management:** All tasks and user stories are tracked as GitHub Issues, organized and prioritized in a GitHub Project Kanban board.
+- **Definition of Done:** A task is considered done when the code is merged, all tests pass, and the feature works as intended.
+- **Sprint goal:** Each sprint has a defined goal or deliverable to be implemented.
+- **Estimation:** Tasks are estimated in terms of expected time to complete.
+- **Review and acceptance:** The team collectively reviews and accepts completed work at the end of each sprint.
+- **Adaptations:** Roles may be combined and ceremonies adapted based on project advancement and team needs, in line with the university context.
+- **Process**: lightweight Kanban for MVP
+
+## Git Flow
+
+- The `main` branch contains production code.
+- Every upgrade is discussed via an issue and a branch is created with the issue.
+- All changes are integrated via pull requests with code review and CI checks
+
+## Devops
+- Continuous delivery to production when changes pass CI and review
 
 # Development Tools Setup
 
