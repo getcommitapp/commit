@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import Accordion from "../../components/ui/Accordion.astro";
 ---
 
@@ -11,25 +10,21 @@ import Accordion from "../../components/ui/Accordion.astro";
         items={[
           {
             title: "How do stakes work?",
-            icon: "mdi:cash-multiple",
             content:
               "You authorize a stake when creating a goal. Money is only captured if you fail to verify within the rules.",
           },
           {
             title: "Which verification methods are supported?",
-            icon: "mdi:check-decagram-outline",
             content:
               "GPS, time checks, and in-app photos. Some goals can combine them for stronger proof.",
           },
           {
             title: "Is this available on iOS and Android?",
-            icon: "mdi:cellphone",
             content:
               "Yes. The mobile app is built with Expo and works on phones at launch.",
           },
           {
             title: "How are payouts handled?",
-            icon: "mdi:bank-transfer",
             content:
               "Winners receive funds via Stripe. If everyone fails in a group, funds go to the configured destination.",
           },
