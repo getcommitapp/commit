@@ -1,0 +1,49 @@
+1. Open app
+2.1. If first opening
+2.1.1. Sign in
+2.1.2. Show onboarding tutorial
+2.2. Not first opening  skip
+3. Show homepage
+
+
+Pages
+- Sign In
+Ask the user to sign in using a Google account or an Apple ID.
+- Onboarding Tutorial (potentially popup)
+Contains a brief introduction to the app's features and functionality.
+- Home
+Contains the user's main dashboard and activity feed, including recent activity, progress tracking, and goal completion status.
+- Goals
+Contains the list of user's goals, including progress tracking and completion status. A button to create a new goal is also available, leading to the goal creation page.
+    - Goal Details
+    Contains detailed information about a specific goal, including its description, progress, and any associated tasks or milestones.
+    - Goal Creation
+    Contains a form for users to create a new goal, including fields for the goal's title, description, and target completion date.
+        - If no Payment method is registered : Payment Method Registration
+        Contains a form for users to add and manage their payment methods.
+        - Popup : Are you sure ? If you do not complete the goal, {money_amount} CHF will be paid to {recipient}.
+- Groups
+Contains the list of user's groups, including progress tracking and completion status.
+    - Group Details
+    Contains detailed information about a specific group, including its name, members, and any associated goals or activities with their completion status. (and maybe other members' completion status)
+    New members can be invited by the group admin.
+    - Group Creation
+    Contains a form for users to create a new group, including fields for the group's name, description, and members.
+In order to join a group, it must either be created or the user must be invited by an existing member.
+If no groups exist, a message will be displayed to the user indicating how to join a group (get a link), alongside a button to create a new group.
+
+- Profile
+Contains the user's profile information, including name.
+
+- Settings
+Contains the user's app settings, including notification preferences, privacy settings, and account management options.
+
+
+Footer menu :
+1. Home tab
+2. Goals tab
+3. Groups tab
+4. 3 bars dropdown menu in top right corner
+4.1. Profile
+4.2. Settings
+4.3. Logout
