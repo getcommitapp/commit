@@ -55,7 +55,7 @@ toc: true
   - Core problem: Providing extra motivation to get things done by introducing a
     financial stake and social accountability.
   - Top objectives:
-    1. Increase goal adherence by letting users stake money against personal
+    1. Increase goal adherence by letting users stake money
     2. Enable social accountability via groups and shared challenges with pooled
        stakes.
     3. Provide automated financial consequences when goals are missed.
@@ -67,7 +67,7 @@ toc: true
 - Platforms: iOS and Android via Expo; web landing page (marketing/information
   only).
 - Geography at launch: Switzerland.
-- User types: Standard users only (no admin/moderator roles for MVP).
+- User types: Standard users and admin.
 - MVP goal types: Wake-up time, location-based, time-based, duration-based, and
   combinations of location/time/duration.
 - Money flow: Real money via Stripe (payments and transfers).
@@ -93,15 +93,13 @@ toc: true
 # System Overview
 
 - High-level description of the app
-  - Solo flow: A user creates a goal, configures recurrence or due date, selects
+  - Solo flow: A user creates a goal, due date or recurrence, selects
     a verification method (GPS/time/photo), sets a stake amount and a
     destination for funds. If the goal is completed and verified within the
     rules, no transfer occurs; if not, the staked amount is transferred to the
     configured destination.
   - Group flow: A user creates a private, invite-only group challenge with a
-    defined goal and stake amount (and a fallback destination if all
-    participants fail). Invitees accept the stake. Upon completion, successful
-    participants receive the pooled stakes from members who failed; if all fail,
+    defined goal, due date or recurrence, selects a verification method (GPS/time/photo) and stake amount (and a fallback destination if all participants fail). Invitees accept the stake. Upon completion, successful participants receive the pooled stakes from members who failed; if all fail,
     funds are sent to the fallback destination.
 - Mobile: iOS and Android (phones only; no tablet support)
 - Permissions/capabilities: Background location (GPS), camera, device usage
@@ -126,7 +124,7 @@ toc: true
 
 ### Payments & Account Receivers (MVP decisions)
 
-- Charging model: Stakes are authorized/held at creation but only captured and
+- Charging model: Stakes are defined at creation but only
   deducted if the goal is not achieved (on failure). If the goal is achieved, no
   funds are captured.
 - Stake range: CHF 1 (min) to CHF 1000 (max) per goal.
@@ -140,7 +138,7 @@ toc: true
     configured by the creator for the group goal.
 - Platform fees: No operational commission will be taken on stake transfers for
   the MVP; transfers to the developers' account are treated as donations. Stripe
-  processing fee payer is TBD.
+  processing fees are available [here](https://stripe.com/fr-ch/pricing/local-payment-methods).
 - Payout timing: instant payouts to winners are preferred; this requires
   connected payout accounts for recipients or platform-managed routing via
   Stripe. The team will use Stripe Connect patterns appropriate to this choice
@@ -222,14 +220,13 @@ toc: true
 ## Settings
 
 - Update display name
-- Update profile photo
 
 # Non-Functional Requirements
 
 ## Performance
 
-- App should load within 2 seconds
-- Support at least 10,000 concurrent users
+- App should load within 5 seconds
+- Support at least 1000 concurrent users
 - Backend latency targets (p95 within CH/EU): <= 500 ms
 
 ## Security
