@@ -1,0 +1,36 @@
+---
+// Header component props can be added here if needed
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
+  <nav class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center">
+        <a href="/" class="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
+          Commit
+        </a>
+      </div>
+      
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="#features" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+          Features
+        </a>
+        <a href="#faq" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+          FAQ
+        </a>
+        <a href="#contact" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+          Contact
+        </a>
+      </div>
+      
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button class="text-gray-700 hover:text-blue-600 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
