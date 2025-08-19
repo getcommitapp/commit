@@ -1,11 +1,11 @@
-name: Lint and test CICD
+name: Lint and Test
 
 on:
   push:
   pull_request:
 
 jobs:
-  test-everything:
+  lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --dev --frozen-lockfile --ignore-scripts
 
       - name: Run lint
         run: pnpm run lint
