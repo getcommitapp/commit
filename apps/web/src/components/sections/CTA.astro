@@ -1,7 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
 import Button from "../../components/ui/Button.astro";
-import Placeholder from "../../components/ui/Placeholder.astro";
 ---
 
 <section id="cta" class="scroll-mt-24 border-t bg-white">
@@ -9,21 +8,16 @@ import Placeholder from "../../components/ui/Placeholder.astro";
     <div
       class="from-primary/40 rounded-2xl border bg-gradient-to-br to-transparent p-8 md:p-12"
     >
-      <div class="grid items-center gap-8 md:grid-cols-2">
-        <div>
-          <h2 class="text-3xl font-bold tracking-tight">Ready to commit?</h2>
-          <p class="mt-3 text-slate-700">
-            Get started now and turn intentions into actions.
-          </p>
-          <div class="mt-6">
-            <Button href="#features" variant="primary" size="lg">
-              <Icon name="mdi:rocket-launch-outline" class="h-5 w-5" />
-              <span class="ml-1">Get started now</span>
-            </Button>
-          </div>
-        </div>
-        <div>
-          <Placeholder label="Screenshot placeholder" />
+      <div class="text-center">
+        <h2 class="text-3xl font-bold tracking-tight">Ready to commit?</h2>
+        <p class="mt-3 text-slate-700">
+          Get started now and turn intentions into actions.
+        </p>
+        <div class="mt-6">
+          <Button href="#features" variant="primary" size="lg">
+            <Icon name="mdi:rocket-launch-outline" class="h-5 w-5" />
+            <span class="ml-1">Get started now</span>
+          </Button>
         </div>
       </div>
     </div>
