@@ -101,11 +101,10 @@ toc: true
   - Group flow: A user creates a private, invite-only group challenge with a
     defined goal, due date or recurrence, selects a verification method (GPS/time/photo) and stake amount (and a fallback destination if all participants fail). Invitees accept the stake. Upon completion, successful participants receive the pooled stakes from members who failed; if all fail,
     funds are sent to the fallback destination.
-- Mobile: iOS and Android (phones only; no tablet support)
+- Mobile: iOS and Android (phones only; no tablet support. Expo + React Native)
 - Permissions/capabilities: Background location (GPS), camera, device usage
   detection (for no-phone-use goals)
-- Expo: SDK and EAS details TBD
-- Web: Single static marketing landing page (Astro + React)
+- Web: Single static marketing landing page (Astro)
 - Target audience
   - Adults 18+ seeking productivity, fitness improvements, and habit-building.
 
@@ -124,8 +123,8 @@ toc: true
 
 ## User Management
 
-- Users can register with email/social login
-- Users can manage profiles
+- Users can register
+- Users can manage their profile
 
 ### Authentication
 
@@ -142,7 +141,7 @@ toc: true
 - Currency: CHF only at launch.
 - Recipients:
   - Solo challenge: at creation the user selects a recipient among: (a) a named
-    person who is an existing app user, (b) a charity from a small predefined
+    person who is an existing app user, (b: if possible within MVP timeline) a charity from a small predefined
     list, or (c) the developers (platform donation account).
   - Group challenge: on resolution, winners split the stakes evenly among all
     winners. If no participants succeed, the pooled funds go to the destination
@@ -176,10 +175,9 @@ toc: true
 - Verification window: allowed; default ±10 minutes around the scheduled time
   (configurable per goal).
 - Location goals: geofence with default and maximum radius (meters) and a
-  must-stay duration — default radius 50 meters (maximum 500 meters) and minimum
-  dwell time 5 minutes.
+  must-stay duration.
 - Duration/focus goals: strictly continuous session; minimum and maximum
-  duration values: default minimum 15 minutes, maximum 240 minutes (4 hours).
+  duration values.
 - Photo verification: photo must be captured within the verification window;
   front or back camera allowed; selfie not required.
 - Failure definition: missing verification or verification outside the allowed
@@ -188,8 +186,7 @@ toc: true
 
 ## Verification & Goal Rules
 
-- Verification methods supported in MVP: GPS (location), device time checks, and
-  photo evidence.
+- Verification methods supported in MVP: GPS (location), device time checks, and photo evidence.
 - Photo verification: captured within the verification window; front/back camera
   allowed; initially verified manually by the project team before final
   settlement of funds. AI-assisted verification is planned for a future
@@ -240,24 +237,15 @@ toc: true
 
 # Non-Functional Requirements
 
-## Performance
-
-- App should load within 5 seconds
-- Support at least 1000 concurrent users
-- Backend latency targets (p95 within CH/EU): <= 500 ms
 
 ## Security
 
 - Data encryption in transit and at rest
 - Secure authentication (OAuth2, JWT, etc.)
-- Stored data: user profile, account, groups, goals, integrations. Avoid storing
-  unnecessary sensitive data.
 - Photo storage: stored as objects in Supabase Storage (S3-compatible).
   Retention policy: Out of scope for MVP.
 - Location data: not stored server-side; processed on-device for verification
   where possible.
-- Access control: goals are private by default; group members only see minimal
-  status (success/failure) and not each other's raw verification artifacts.
 
 ## Privacy
 
@@ -269,9 +257,7 @@ toc: true
 
 ## Reliability & Operations notes
 
-- Manual verification SLA: initial target is to perform manual photo
-  verifications within 24–48 hours of submission. The team will adjust this SLA
-  based on capacity.
+- Manual verification SLA: initial target is to perform manual photo. The team will adjust this SLA based on capacity.
 
 ## Usability
 
@@ -279,13 +265,10 @@ toc: true
 - Consistent UI across platforms
 
 ## Reliability & Availability
-
-- 99.9% uptime
 - Graceful error handling
 
 ## Compatibility
 
-- Support iOS 14+ and Android 10+
 - Responsive design for different screen sizes
 
 ## Maintainability
@@ -311,7 +294,6 @@ toc: true
 
 - Figma designs
 - Paper sketches
-- Landing page prototype
 
 # Technical Choices
 
@@ -353,23 +335,19 @@ toc: true
 - Code review: GitHub pull requests
 - Documentation: repository README and SRS in docs/
 - Code style: Prettier + ESLint with TypeScript rules
-- State/data libraries: TBD (e.g., Zustand, React Query)
-- Testing approach: TBD (at minimum unit tests for core logic; consider 1 e2e
-  flow with Detox)
+- Testing approach: jest
 - Secrets/config: Supabase and Stripe keys via env files with secure storage
 
 # Deployment Environment
 
-- Backend and data: Supabase project (Auth, Postgres, Storage, Edge Functions),
-  EU region (eu-central-1).
-- Web landing page: Cloudflare Pages (static hosting with global CDN).
+- Backend and data: Supabase project (Auth, Postgres, Storage, Edge Functions).
+- Web landing page: Cloudflare Workers (static hosting with global CDN).
 - Mobile app: Expo EAS builds with two channels: development and production. App
   Store/Play Store distribution is out of scope for MVP; internal distribution
   only (TestFlight/Android internal testing).
 - Environments: development and production only, with separate Supabase projects
   and isolated resources.
-- Secrets/configuration: managed via Supabase project settings, Cloudflare Pages
-  environment variables, and EAS secrets. Stripe runs in Test mode for
+- Secrets/configuration: managed via Supabase project settings, and EAS secrets. Stripe runs in Test mode for
   development and Live mode for production.
 
 # CI/CD Pipeline
@@ -384,16 +362,6 @@ toc: true
 
 - Budget & time constraints: 70K CHF budget; 3-week MVP timeline
 - Regulatory compliance: out of scope for MVP
-
-# Points to Refine Later
-
-- Minimum OS versions for iOS and Android
-- Expo SDK version and EAS build configuration
-- Implementation/permission model for device usage detection (no-phone-use
-  goals)
-- Details on ensuring instant transfers with minimal fees via Stripe
-- Stripe fee responsibility (payer model)
-- Initial charity list for solo goal destinations
 
 ```{=latex}
 \pagebreak
