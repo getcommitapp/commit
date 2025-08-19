@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "format": "pnpm --parallel format",
-    "lint": "pnpm --parallel lint"
+    "lint": "pnpm --parallel lint",
+    "test": "pnpm --filter '@commit/mobile' test"
   },
   "keywords": [],
   "author": "",
