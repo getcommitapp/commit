@@ -60,9 +60,8 @@ toc: true
        stakes.
     3. Provide automated financial consequences when goals are missed.
   - Success metrics:
-    - App Store/Play Store rating above 4.0 stars.
-    - Weekly active users (WAU) growth.
-    - Total amount of money staked/processed in the app.
+    - Successfully transfer money from one user to another
+    - Cross platform mobile application (IOS and Android)
 - **Scope**:
 - Platforms: iOS and Android via Expo; web landing page (marketing/information
   only).
@@ -84,8 +83,8 @@ toc: true
     goal tracking with real financial stakes and social accountability.
   - Primary use cases:
     1. Daily wake-up challenge at a set time
-    2. Location-based workout (arrive and stay at a gym/park)
-    3. Focused study session for a specified duration
+    2. Location-based activity (arrive and stay at a gym/park)
+    3. Focused session for a specified duration (no-phone-use)
   - Differentiators: Ease of use, pooled stakes for group challenges.
   - Constraints/guiding principles: Instant money transfers between parties with
     minimal fees.
@@ -93,14 +92,17 @@ toc: true
 # System Overview
 
 - High-level description of the app
-  - Solo flow: A user creates a goal, due date or recurrence, selects
-    a verification method (GPS/time/photo), sets a stake amount and a
+  - Solo flow: A user creates a goal, due date or recurrence, selects a
+    verification method (GPS/time/duration/photo), sets a stake amount and a
     destination for funds. If the goal is completed and verified within the
     rules, no transfer occurs; if not, the staked amount is transferred to the
     configured destination.
   - Group flow: A user creates a private, invite-only group challenge with a
-    defined goal, due date or recurrence, selects a verification method (GPS/time/photo) and stake amount (and a fallback destination if all participants fail). Invitees accept the stake. Upon completion, successful participants receive the pooled stakes from members who failed; if all fail,
-    funds are sent to the fallback destination.
+    defined goal, due date or recurrence, selects a verification method
+    (GPS/time/duration/photo) and stake amount (and a fallback destination if
+    all participants fail). Invitees accept the stake. Upon completion,
+    successful participants receive the pooled stakes from members who failed;
+    if all fail, funds are sent to the fallback destination.
 - Mobile: iOS and Android (phones only; no tablet support. Expo + React Native)
 - Permissions/capabilities: Background location (GPS), camera, device usage
   detection (for no-phone-use goals)
@@ -110,15 +112,20 @@ toc: true
 
 # Functional Requirements
 
-## Reviewer and Admin Roles
+## Roles
+
+- **User:**
+  - Standard user role
 
 - **Reviewer:**
   - Has all the capabilities of a standard user.
   - Can access and review user-submitted pictures for goal verification.
-  - Can approve or reject verification evidence as part of the manual review process.
+  - Can approve or reject verification evidence as part of the manual review
+    process.
 
 - **Admin:**
-  - Role exists in the system but currently has no special functions defined for MVP.
+  - Role exists in the system but currently has no special functions defined for
+    MVP.
   - Future admin capabilities will be specified as the project evolves.
 
 ## User Management
@@ -134,25 +141,26 @@ toc: true
 
 ### Payments & Account Receivers (MVP decisions)
 
-- Charging model: Stakes are defined at creation but only
-  deducted if the goal is not achieved (on failure). If the goal is achieved, no
-  funds are captured.
+- Charging model: Stakes are defined at creation but only deducted if the goal
+  is not achieved (on failure). If the goal is achieved, no funds are captured.
 - Stake range: CHF 1 (min) to CHF 1000 (max) per goal.
 - Currency: CHF only at launch.
 - Recipients:
   - Solo challenge: at creation the user selects a recipient among: (a) a named
-    person who is an existing app user, (b: if possible within MVP timeline) a charity from a small predefined
-    list, or (c) the developers (platform donation account).
+    person who is an existing app user, (b: if possible within MVP timeline) a
+    charity from a small predefined list, or (c) the developers (platform
+    donation account).
   - Group challenge: on resolution, winners split the stakes evenly among all
     winners. If no participants succeed, the pooled funds go to the destination
     configured by the creator for the group goal.
 - Platform fees: No operational commission will be taken on stake transfers for
   the MVP; transfers to the developers' account are treated as donations. Stripe
-  processing fees are available [here](https://stripe.com/fr-ch/pricing/local-payment-methods).
+  processing fees are available
+  [here](https://stripe.com/fr-ch/pricing/local-payment-methods).
 - Payout timing: instant payouts to winners are preferred; this requires
   connected payout accounts for recipients or platform-managed routing via
-  Stripe. The team will use Stripe Connect patterns appropriate to this choice
-  in implementation.
+  Stripe. Stripe Connect patterns will be used appropriately in the
+  implementation.
 
 ## Core Features
 
@@ -168,11 +176,9 @@ toc: true
 
 ## Goal Creation
 
-- Required fields: title/name, description, goal type
-  (wake-up/location/time/duration/combined), start date, and due date or
-  schedule/recurrence.
+- Required fields: name, goal type, start date, and due date or recurrence.
 - Recurrence: select days of the week with an end date.
-- Verification window: allowed; default ±10 minutes around the scheduled time
+- Verification window: allowed; $N$ minutes around the scheduled time
   (configurable per goal).
 - Location goals: geofence with default and maximum radius (meters) and a
   must-stay duration.
@@ -184,36 +190,13 @@ toc: true
   window results in automatic failure.
 - Grace/retries: none for MVP.
 
-## Verification & Goal Rules
-
-- Verification methods supported in MVP: GPS (location), device time checks, and photo evidence.
-- Photo verification: captured within the verification window; front/back camera
-  allowed; initially verified manually by the project team before final
-  settlement of funds. AI-assisted verification is planned for a future
-  iteration.
-- Combined verification: goals may require multiple verification methods (for
-  example, a hike may require both GPS route/arrival and a photo of the summit).
-- GPS rules: behavior depends on goal type. Default geofence radius 50 meters
-  (maximum 500 meters) and minimum dwell time 5 minutes; parameters are
-  configurable per goal.
-- No-phone-use goals: included in MVP but the precise detection mechanism is
-  TBD. Options include in-app foreground session monitoring, OS usage APIs, or
-  photographic proof workflows.
-- Time windows: default ±10 minutes around scheduled time; configurable per
-  goal.
-- Failure handling: automatic failure if verification is missing or outside the
-  allowed window.
-- Grace/retries: no additional grace period or retries for MVP.
-- Offline/technical failures: there is no automatic fallback; users may file an
-  appeal if verification cannot be performed due to technical reasons.
-
 ## Group Challenges
 
 - Size limit: up to 100 participants per group challenge.
 - Stake uniformity: same stake amount for all participants.
 - Join flow: invite via link with expiration; joiners must register/sign in and
   have a valid payment method on file.
-- Invite expiration: default 7 days.
+- Invite expiration: default 24 hours.
 - Schedule: group goals follow the creator’s schedule. The creator may set a
   time interval window to allow flexibility for participants to perform within
   their availability.
@@ -231,12 +214,16 @@ toc: true
 
 ## Optional Functions (Future Enhancements)
 
-- **Community Challenges:** Public or open group challenges where any user can join and compete, with shared stakes and leaderboards.
-- **AI Image Check:** Automated verification of user-submitted photos using AI to reduce manual reviewer workload and improve scalability.
-- **Additional Payment Methods:** Support for more payment options beyond TWINT, such as PayPal or credit cards.
+- **Community Challenges:** Public or open group challenges where any user can
+  join and compete, with shared stakes and leaderboards.
+- **AI Image Check:** Automated verification of user-submitted photos using AI
+  to reduce manual reviewer workload and improve scalability.
+- **Additional Payment Methods:** Support for more payment options beyond TWINT,
+  such as PayPal or credit cards.
+- **Charity Donations:** Users can choose a charity to donate to when selecting
+  the destination for a goal.
 
 # Non-Functional Requirements
-
 
 ## Security
 
@@ -257,7 +244,8 @@ toc: true
 
 ## Reliability & Operations notes
 
-- Manual verification SLA: initial target is to perform manual photo. The team will adjust this SLA based on capacity.
+- Manual verification SLA: initial target is to perform manual photo. The team
+  will adjust this SLA based on capacity.
 
 ## Usability
 
@@ -265,35 +253,28 @@ toc: true
 - Consistent UI across platforms
 
 ## Reliability & Availability
+
 - Graceful error handling
 
 ## Compatibility
 
-- Responsive design for different screen sizes
-
-## Maintainability
-
-## Battery & Location Usage
-
-- Use region/geofence monitoring only; avoid continuous GPS tracking
+- Responsive design for different iPhone/android screen sizes
 
 ## Offline Behavior
 
 - Online-only MVP: goal creation and verification require connectivity
-- Modular codebase following Clean Architecture
-- Comprehensive documentation and unit tests
 
 # Preliminary Architecture Description
 
 - Presentation layer: React native
-- Application layer: React native + Supabase 
+- Application layer: React native + Supabase
 - Data layer: Supabase + PostgreSQL
 - Infrastructure: Supabase hosting
 
 # Mockups / Landing Page
 
 - Figma designs
-- Paper sketches
+- Paper/whiteboard sketches
 
 # Technical Choices
 
@@ -302,38 +283,48 @@ toc: true
 - Backend/services: Supabase (Auth, DB, storage, edge functions)
 - Payments: Stripe Connect Standard with TWINT enabled for Switzerland
 - Third-party libraries & APIs: Stripe SDK, Expo Location/Camera
-- Hosting: Supabase (backend, DB, auth); Cloudflare Pages (Astro + React landing
-  page)
+- Hosting: Supabase (backend, DB, auth); Cloudflare Workers (Astro landing page)
 
 # Work Process
 
 ## Agile Methodology: SCRUM
 
-- **Team roles:** Roles (Product Owner, Scrum Master, Developers) are rotating among team members throughout the project.
-- **Sprint length:** Each sprint lasts 3 days, reflecting the short 3-week project timeline.
-- **Ceremonies:** The team holds a daily standup and a sprint review at the end of each sprint. Other SCRUM ceremonies (planning, retrospective) are adapted or combined as needed.
-- **Backlog management:** All tasks and user stories are tracked as GitHub Issues, organized and prioritized in a GitHub Project Kanban board.
-- **Definition of Done:** A task is considered done when the code is merged, all tests pass, and the feature works as intended.
-- **Sprint goal:** Each sprint has a defined goal or deliverable to be implemented.
+- **Team roles:** Roles (Product Owner, Scrum Master, Developers) are rotating
+  among team members throughout the project.
+- **Sprint length:** Each sprint lasts 3 days, reflecting the short 3-week
+  project timeline.
+- **Ceremonies:** The team holds a daily standup and a sprint review at the end
+  of each sprint. Other SCRUM ceremonies (planning, retrospective) are adapted
+  or combined as needed.
+- **Backlog management:** All tasks and user stories are tracked as GitHub
+  Issues, organized and prioritized in a GitHub Project Kanban board.
+- **Definition of Done:** A task is considered done when the code is merged, all
+  tests pass, and the feature works as intended.
+- **Sprint goal:** Each sprint has a defined goal or deliverable to be
+  implemented.
 - **Estimation:** Tasks are estimated in terms of expected time to complete.
-- **Review and acceptance:** The team collectively reviews and accepts completed work at the end of each sprint.
-- **Adaptations:** Roles may be combined and ceremonies adapted based on project advancement and team needs, in line with the university context.
+- **Review and acceptance:** The team collectively reviews and accepts completed
+  work at the end of each sprint.
+- **Adaptations:** Roles may be combined and ceremonies adapted based on project
+  advancement and team needs, in line with the university context.
 - **Process**: lightweight Kanban for MVP
 
 ## Git Flow
 
 - The `main` branch contains production code.
-- Every upgrade is discussed via an issue and a branch is created with the issue.
+- Every feature/fix/task is discussed via an issue and a branch is created with
+  the issue.
 - All changes are integrated via pull requests with code review and CI checks
 
 ## Devops
+
 - Continuous delivery to production when changes pass CI and review
 
 # Development Tools Setup
 
 - Issue tracker: GitHub Issues
 - Code review: GitHub pull requests
-- Documentation: repository README and SRS in docs/
+- Documentation: repository README and SRS in `docs/`
 - Code style: Prettier + ESLint with TypeScript rules
 - Testing approach: jest
 - Secrets/config: Supabase and Stripe keys via env files with secure storage
@@ -347,16 +338,13 @@ toc: true
   only (TestFlight/Android internal testing).
 - Environments: development and production only, with separate Supabase projects
   and isolated resources.
-- Secrets/configuration: managed via Supabase project settings, and EAS secrets. Stripe runs in Test mode for
-  development and Live mode for production.
+- Secrets/configuration: managed via Supabase project settings, and EAS secrets.
+  Stripe runs in Test mode for development and Live mode for production.
 
 # CI/CD Pipeline
 
-- CI on PRs: lint, typecheck, build, and tests
-- CD: auto-deploy to development on main merges; promote to production on tagged
-  releases
-- Monitoring & rollback: basic health checks; manual rollback by reverting
-  deploy
+- CI on PRs: lint and tests
+- CD on `main`: build Expo SDK and deploy static website
 
 # Constraints & Assumptions
 
@@ -377,15 +365,11 @@ toc: true
 \item[\textbf{Stake}] The amount of money a user commits that may be captured if the goal is not achieved.
 \item[\textbf{Capture}] Charging the authorized stake when a goal is marked as failed.
 \item[\textbf{Goal window}] The scheduled time period during which the user must complete and verify the goal.
-\item[\textbf{Verification window}] The allowed buffer around the scheduled time for submitting verification (default ±10 minutes).
-\item[\textbf{Geofence}] A virtual radius around a location used to verify presence (default 50 m; max 500 m).
-\item[\textbf{Dwell time}] The minimum time a user must remain inside a geofence (default 5 minutes).
+\item[\textbf{Verification window}] The allowed buffer around the scheduled time for submitting verification.
+\item[\textbf{Geofence}] A virtual radius around a location used to verify presence.
+\item[\textbf{Dwell time}] The minimum time a user must remain inside a geofence.
 \item[\textbf{Destination}] The recipient configured to receive funds when a goal fails (person, charity, or platform donation).
 \item[\textbf{Winner pool}] The set of participants in a group challenge who achieved the goal and split the captured stakes.
 \item[\textbf{Group challenge}] A private, invite-only challenge with a uniform stake and shared rules created by a user.
 \end{description}
 ```
-
-## Mockups
-
-TBD
