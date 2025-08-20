@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: pnpm -w install --frozen-lockfile --filter ./apps/web
 
+      - name: Lint web app
+        run: pnpm --filter './apps/web' lint
+
       - name: Deploy to Cloudflare Workers (Wrangler)
         working-directory: apps/web
         env:
