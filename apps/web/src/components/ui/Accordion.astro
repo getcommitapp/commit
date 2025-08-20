@@ -13,7 +13,7 @@ export interface Props {
 const { items } = Astro.props as Props;
 ---
 
-<div class="divide-y rounded-xl border">
+<div class="divide-y divide-gray-200 rounded-xl border border-gray-200">
   {
     items.map((item, idx) => (
       <div class="accordion-item">
