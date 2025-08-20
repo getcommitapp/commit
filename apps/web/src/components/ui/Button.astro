@@ -33,12 +33,12 @@ const classes = `${base} ${sizes} ${variants}`;
 
 {
   href ? (
-  <a href={href} class={classes} {...rest}>
-    <slot />
-  </a>
-    ) : (
-  <button type={type} class={classes} {...rest}>
-    <slot />
-  </button>
-    )
-  }
+    <a href={href} class={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}

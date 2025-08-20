@@ -1,10 +1,11 @@
 ---
 import { Icon } from "astro-icon/components";
 ---
-<footer class="bg-white border-t border-gray-200 shadow-sm">
+
+<footer class="border-t border-gray-200 bg-white shadow-sm">
   <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
     <div class="flex flex-col items-center justify-between gap-8 md:flex-row">
-      <div class="flex items-center gap-3 order-1 md:order-none">
+      <div class="order-1 flex items-center gap-3 md:order-none">
         <img
           src="/images/commit-logo.png"
           alt="Commit logo"
@@ -13,17 +14,20 @@ import { Icon } from "astro-icon/components";
         <img
           src="/images/commit-logo-txt.png"
           alt="Commit."
-          class="h-4 -mt-px"
+          class="-mt-px h-4"
         />
       </div>
-      <div class="order-2 md:order-none text-center">
+      <div class="order-2 text-center md:order-none">
         <p class="text-sm text-gray-600">
           © {new Date().getFullYear()} Commit. All rights reserved.
         </p>
       </div>
       <div class="order-3 md:order-none">
         <p class="flex items-center gap-2 text-sm text-gray-600">
-          <Icon name="mdi:swiss-cross-box" class="h-6 w-6 text-red-600 bg-white" />
+          <Icon
+            name="mdi:swiss-cross-box"
+            class="h-6 w-6 bg-white text-red-600"
+          />
           Made in Switzerland
         </p>
       </div>
