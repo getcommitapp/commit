@@ -4,6 +4,7 @@
 @theme {
   --font-sans: "Inter Variable", sans-serif;
   --color-primary: #a1ffeb;
+  --color-border: #e5e5e5;
 }
 
 html {
