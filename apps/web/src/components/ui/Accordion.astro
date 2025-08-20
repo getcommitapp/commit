@@ -50,16 +50,14 @@ const { items } = Astro.props as Props;
   }
 </div>
 
-<script>
+<script is:inline>
   function setupAccordion() {
     const accordionItems = document.querySelectorAll(".accordion-item");
 
     accordionItems.forEach((item) => {
-      const button = item.querySelector(
-        ".accordion__button"
-      ) as HTMLButtonElement;
-      const content = item.querySelector(".accordion__content") as HTMLElement;
-      const chevron = item.querySelector(".accordion__chevron") as HTMLElement;
+      const button = item.querySelector(".accordion__button");
+      const content = item.querySelector(".accordion__content");
+      const chevron = item.querySelector(".accordion__chevron");
 
       if (!button || !content || !chevron) return;
 
@@ -82,7 +80,7 @@ const { items } = Astro.props as Props;
       });
 
       // Handle keyboard navigation
-      button.addEventListener("keydown", (e: KeyboardEvent) => {
+      button.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           button.click();
