@@ -4,7 +4,7 @@ import Button from "@/components/ui/Button.astro";
 import PlaceholderIphone from "@/components/ui/PlaceholderIphone.astro";
 ---
 
-<section id="hero" class="relative pt-16">
+<section id="hero" class="relative pt-16 bg-gradient-to-br from-white to-primary">
   <div
     class="mx-auto flex max-w-7xl flex-col justify-center px-4 py-16 md:py-24"
     style="min-height: calc(100vh - 4rem);"
@@ -26,7 +26,7 @@ import PlaceholderIphone from "@/components/ui/PlaceholderIphone.astro";
           Stake money, get social accountability, and finally follow through on
           your goals.
         </p>
-        <div class="mt-5 flex items-center gap-3 text-sm text-slate-600">
+        <div class="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-600">
           <div class="flex -space-x-2">
             <img
               src="/images/avatars/a1.jpg"
@@ -61,7 +61,7 @@ import PlaceholderIphone from "@/components/ui/PlaceholderIphone.astro";
         </div>
         <div class="mt-8 flex items-center gap-3">
           <Button href="#cta" variant="primary">Get started</Button>
-          <Button href="#features" variant="secondary">Learn more</Button>
+          <Button href="#problem" variant="secondary">Learn more</Button>
         </div>
         <div class="mt-6 flex items-center gap-4 text-sm text-slate-700">
           <span class="inline-flex items-center gap-1.5">
@@ -76,9 +76,5 @@ import PlaceholderIphone from "@/components/ui/PlaceholderIphone.astro";
         <PlaceholderIphone label="App mockup placeholder" />
       </div>
     </div>
-  </div>
-  <div
-    class="from-primary/30 pointer-events-none absolute inset-x-0 -z-10 h-64 bg-gradient-to-b to-transparent blur-3xl"
-  >
   </div>
 </section>

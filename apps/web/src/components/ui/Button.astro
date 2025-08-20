@@ -4,6 +4,7 @@ export interface Props {
   variant?: "primary" | "secondary";
   size?: "sm" | "md" | "lg";
   type?: "button" | "submit" | "reset";
+  [key: string]: any;
 }
 
 const {
@@ -11,6 +12,7 @@ const {
   variant = "primary",
   size = "md",
   type = "button",
+  ...rest
 } = Astro.props as Props;
 
 const base =
@@ -23,7 +25,7 @@ const sizes = {
 
 const variants = {
   primary: "bg-primary text-slate-900 hover:opacity-90 border border-primary",
-  secondary: "border border-border hover:bg-slate-50",
+  secondary: "bg-white border border-border hover:bg-slate-50",
 }[variant];
 
 const classes = `${base} ${sizes} ${variants}`;
@@ -31,12 +33,12 @@ const classes = `${base} ${sizes} ${variants}`;
 
 {
   href ? (
-    <a href={href} class={classes}>
-      <slot />
-    </a>
-  ) : (
-    <button type={type} class={classes}>
-      <slot />
-    </button>
-  )
-}
+  <a href={href} class={classes} {...rest}>
+    <slot />
+  </a>
+    ) : (
+  <button type={type} class={classes} {...rest}>
+    <slot />
+  </button>
+    )
+  }

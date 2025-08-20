@@ -2,31 +2,55 @@
 import Accordion from "@/components/ui/Accordion.astro";
 ---
 
-<section id="faq" class="border-border scroll-mt-24 border-t bg-white">
+<section id="faq" class="border-border scroll-mt-24 border-t bg-gradient-to-br from-primary/50 to-white">
   <div class="mx-auto max-w-7xl px-4 py-20">
-    <h2 class="text-3xl font-bold tracking-tight">Questions, answered</h2>
+    <h2 class="text-3xl font-bold tracking-tight">Questions - answered</h2>
     <div class="mt-8">
       <Accordion
         items={[
           {
-            title: "How do stakes work?",
+            title: "What does it mean to stake money on a goal?",
             content:
-              "You authorize a stake when creating a goal. Money is only captured if you fail to verify within the rules.",
+              "When you create a goal, you lock in a stake. If you finish and prove it, you keep your money. " +
+              "If you fail or can’t verify, the stake is charged — simple as that.",
           },
           {
-            title: "What proof do I need?",
+            title: "Do I ever win money?",
             content:
-              "Use GPS, time checks, or in‑app photos. You can combine methods for stronger proof when it makes sense.",
+              "Yes — but only in group challenges or if you’re a designated recipient. In group mode, if you " +
+              "finish and others fail, you share the stakes they lost. If someone sets you as the destination " +
+              "for failed stakes, you also receive those funds.",
           },
           {
-            title: "Is this available on iOS and Android?",
+            title: "How do I prove I completed a goal?",
             content:
-              "Yes. The mobile app is built with Expo and works on phones at launch.",
+              "Proof depends on the goal. Options include GPS tracking, in-app photos, or time/duration logs. " +
+              "You can also combine methods for stronger verification.",
           },
           {
-            title: "How are payouts handled?",
+            title: "What happens if I can’t verify but still did it?",
             content:
-              "Winners receive funds via Stripe. If everyone fails in a group, funds go to the configured destination.",
+              "Without proof, it counts as a fail. Stakes only work if verification is strict — so always make" +
+              " sure to log evidence.",
+          },
+          {
+            title: "Who verifies my proof?",
+            content:
+              "Proof is first checked automatically when possible (like GPS data or timestamps). If needed, " +
+              "trained reviewers step in to validate submissions. Reviewers are vetted and approved by us to " +
+              "ensure fairness.",
+          },
+          {
+            title: "How are payments handled?",
+            content:
+              "All payments are processed securely via Stripe in CHF (Swiss francs). Your stake is only charged " +
+              "if you fail to complete or verify your goal. Captured funds go to the configured destination " +
+              "(like charity, a pool, or a designated recipient).",
+          },
+          {
+            title: "Does this work on iOS and Android?",
+            content:
+              "Yes — the app is built with Expo and works on both platforms at launch.",
           },
         ]}
       />
