@@ -1,0 +1,33 @@
+name: Compile Docs
+
+on:
+  push:
+    paths:
+      - ".github/workflows/compile-docs.yml"
+      - "docs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-commit-docs:
+    name: Build and commit docs outputs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Build docs with Makefile
+        working-directory: docs
+        run: make -B DOCKER=1
+
+      - name: Commit docs outputs if changed
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "chore(docs): update built docs outputs"
+          file_pattern: docs/**
+          branch: ${{ github.ref_name }}
