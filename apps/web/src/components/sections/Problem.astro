@@ -1,5 +1,5 @@
 ---
-import Placeholder from "@/components/ui/Placeholder.astro";
+import { Icon } from "astro-icon/components";
 ---
 
 <section id="problem" class="border-border scroll-mt-24 border-t bg-white">
@@ -13,13 +13,289 @@ import Placeholder from "@/components/ui/Placeholder.astro";
           intentions.
         </p>
         <ul class="mt-6 space-y-2 text-slate-700">
-          <li>• No social pressure or support</li>
-          <li>• No consequences for missing goals</li>
-          <li>• Hard to keep consistent habits</li>
+          <li class="flex items-center gap-2">
+            <Icon
+              name="mdi:close-circle-outline"
+              class="h-4 w-4 text-rose-600"
+              aria-hidden="true"
+            />
+            <span>No social pressure or support</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <Icon
+              name="mdi:close-circle-outline"
+              class="h-4 w-4 text-rose-600"
+              aria-hidden="true"
+            />
+            <span>No consequences for missing goals</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <Icon
+              name="mdi:close-circle-outline"
+              class="h-4 w-4 text-rose-600"
+              aria-hidden="true"
+            />
+            <span>Hard to keep consistent habits</span>
+          </li>
         </ul>
       </div>
       <div>
-        <Placeholder class="aspect-video" label="Illustration placeholder" />
+        <div class="relative">
+          <div
+            class="absolute inset-0 -z-10 bg-gradient-to-b from-rose-200/40 to-transparent blur-2xl"
+          >
+          </div>
+
+          <div class="border-border rounded-xl border bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium text-slate-900">This month</p>
+              <div class="flex items-center gap-3 text-xs text-slate-600">
+                <span class="inline-flex items-center gap-1"
+                  ><Icon
+                    name="mdi:check-circle-outline"
+                    class="h-3.5 w-3.5 text-emerald-600"
+                  /> Done</span
+                >
+                <span class="inline-flex items-center gap-1"
+                  ><Icon
+                    name="mdi:close-circle-outline"
+                    class="h-3.5 w-3.5 text-rose-600"
+                  /> Missed</span
+                >
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-7 gap-2">
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600 opacity-30"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-rose-200 bg-rose-50/80"
+              >
+                <Icon
+                  name="mdi:close-circle-outline"
+                  class="h-5 w-5 text-rose-600"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
