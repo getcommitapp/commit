@@ -1,43 +1,94 @@
-# Astro Starter Kit: Minimal
+# commit. — Web (Astro + Cloudflare Workers)
 
-```sh
-pnpm create astro@latest -- --template minimal
+Single-page marketing/landing site. Built with Astro and deployed to Cloudflare Workers.
+
+## Table of contents
+
+<!-- mtoc-start -->
+
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Getting started](#getting-started)
+- [Scripts](#scripts)
+- [Lint & tests](#lint--tests)
+- [Project structure](#project-structure)
+
+<!-- mtoc-end -->
+
+## Overview
+
+Astro 5 app targeting the Cloudflare Workers runtime via `@astrojs/cloudflare`. Ideal for a fast, static-first landing page with edge deployment.
+
+> "Fast by default." Keep pages lean; ship only what the landing needs.
+
+## Prerequisites
+
+- Node.js 22+ and pnpm
+- Cloudflare account and `wrangler` CLI (installed via devDeps)
+
+> [!TIP]
+> Prefer installing dependencies from the workspace root to share the lockfile.
+
+## Getting started
+
+From the workspace root:
+
+```bash
+pnpm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Then start the web app:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+cd apps/web
+pnpm dev
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+> [!NOTE]
+> For a production-like preview, use `pnpm preview` which builds and runs `wrangler dev` locally.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Scripts
 
-Any static assets, like images, can be placed in the `public/` directory.
+Available scripts in this package:
 
-## 🧞 Commands
+```bash
+# Local development
+pnpm dev
 
-All commands are run from the root of the project, from a terminal:
+# Build for production
+pnpm build
 
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+# Production-like preview (build + wrangler dev)
+pnpm preview
 
-## 👀 Want to learn more?
+# Deploy to Cloudflare Workers (build + wrangler deploy)
+pnpm deploy
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+# Utilities
+pnpm lint
+pnpm format
+pnpm cf-typegen
+```
+
+## Lint & tests
+
+This package uses ESLint and Prettier:
+
+```bash
+pnpm lint
+pnpm format
+```
+
+## Project structure
+
+    apps/web/
+    ├─ public/
+    ├─ src/
+    │  └─ pages/
+    │     └─ index.astro        # landing page
+    ├─ astro.config.mjs
+    ├─ wrangler.jsonc
+    ├─ worker-configuration.d.ts
+    ├─ eslint.config.mjs
+    ├─ tsconfig.json
+    └─ package.json
