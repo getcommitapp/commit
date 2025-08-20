@@ -5,15 +5,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "commit",
-  "main": "./dist/_worker.js/index.js",
   "compatibility_date": "2025-08-19",
-  "compatibility_flags": ["nodejs_compat"],
   "assets": {
-    "binding": "ASSETS",
     "directory": "./dist",
-  },
-  "observability": {
-    "enabled": true,
   },
   /**
    * Smart Placement
