@@ -18,8 +18,8 @@ Contains the list of user's goals, including progress tracking and completion st
     - Goal Details
     Contains detailed information about a specific goal, including its description, progress, and any associated tasks or milestones.
     - Goal Creation
-    Contains a form for users to create a new goal, including fields for the goal's title, description, and target completion date.
-        - If no Payment method is registered : Payment Method Registration
+    Contains a form for users to create a new goal, including fields for the goal's title, description, target completion date and verification methods.
+        - If no payment method is registered : Payment Method Registration
         Contains a form for users to add and manage their payment methods.
         - Popup : Are you sure ? If you do not complete the goal, {money_amount} CHF will be paid to {recipient}.
 - Groups
@@ -31,6 +31,8 @@ Contains the list of user's groups, including progress tracking and completion s
     Contains a form for users to create a new group, including fields for the group's name, description, and members.
 In order to join a group, it must either be created or the user must be invited by an existing member.
 If no groups exist, a message will be displayed to the user indicating how to join a group (get a link), alongside a button to create a new group.
+    - When joining a group with a link or by creating it, if no payment method is registered : Payment Method Registration
+    Contains a form for users to add and manage their payment methods.
 
 - Profile
 Contains the user's profile information, including name.
@@ -38,6 +40,8 @@ Contains the user's profile information, including name.
 - Settings
 Contains the user's app settings, including notification preferences, privacy settings, and account management options.
 
+- Review (Only for reviewer type users)
+Contains a flow of pictures waiting for review. There is an image and a description, and a button to approve or reject the picture.
 
 Footer menu :
 1. Home tab
