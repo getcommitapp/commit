@@ -1,43 +1,43 @@
-# Astro Starter Kit: Minimal
+# commit. — Web (Astro + Cloudflare Workers)
 
-```sh
-pnpm create astro@latest -- --template minimal
-```
+Single-page marketing/landing site. Built with Astro and deployed to Cloudflare Workers.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Stack
 
-## 🚀 Project Structure
+- Astro 5
+- Adapter: @astrojs/cloudflare (Workers runtime)
+- Tooling: ESLint, Prettier, Wrangler
 
-Inside of your Astro project, you'll see the following folders and files:
+---
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Getting started
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+1) Install deps (from repo root recommended):
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+    pnpm install
 
-Any static assets, like images, can be placed in the `public/` directory.
+2) Start server :
 
-## 🧞 Commands
+    astro build 
 
-All commands are run from the root of the project, from a terminal:
+    pnpm dev # start the dev server
 
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+    wrangler dev # start the production server
 
-## 👀 Want to learn more?
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+---
+
+## Project structure
+
+    apps/web/
+    ├─ public/
+    ├─ src/
+    │  └─ pages/
+    │     └─ index.astro        # landing page
+    ├─ astro.config.mjs
+    ├─ wrangler.jsonc
+    ├─ worker-configuration.d.ts
+    ├─ eslint.config.mjs
+    ├─ tsconfig.json
+    └─ package.json
+
