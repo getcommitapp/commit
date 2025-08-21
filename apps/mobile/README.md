@@ -1,31 +1,34 @@
-# Mobile Application
+# commit. - Mobile Application
 
-Expo + React Native app for the `commit.` project.
+Built with `Expo` + `React Native` and deployed as a `GitHub` release (tagged in the main repo).
 
-## Table of contents
-
-<!-- mtoc-start -->
-
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Getting started](#getting-started)
-- [Scripts](#scripts)
-- [Lint & tests](#lint--tests)
-- [Project structure](#project-structure)
-- [MVP features](#mvp-features)
-
-<!-- mtoc-end -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#getting-started">Getting started</a></li>
+    <li><a href="#scripts">Scripts</a></li>
+    <li><a href="#lint--tests">Lint & tests</a></li>
+    <li><a href="#project-structure">Project structure</a></li>
+    <li><a href="#mvp-features">MVP features</a></li>
+  </ol>
+</details>
 
 ## Overview
 
-This app uses `expo-router` for navigation, TypeScript for types, and Jest for tests.
+This app uses `expo-router` for navigation, `TypeScript` for types, and `Jest` for tests.
 
 > "Build, preview, iterate." Start locally with Expo and iterate quickly on device or simulator.
 
 ## Prerequisites
 
-- Node.js 22+ and [pnpm](https://pnpm.io/installation)
-- [Expo Go](https://expo.dev/client) on a phone, or an iOS/Android simulator
+- `Node.js 22+` and [`pnpm`](https://pnpm.io/installation)
+- [`Expo Go`](https://expo.dev/client) on a phone, or an iOS/Android simulator
+- A `Supabase account` for access to tools such as Auth, Database, Edge Functions and Storage.
+- An `OAuth` setup with `Google and Apple` is required for the sign-in process.
+> [!NOTE]
+> See the [Expo documentation](https://docs.expo.dev/guides/using-supabase/) for more details on integrating Supabase.
 
 > [!TIP]
 > Prefer installing dependencies from the workspace root to share the lockfile.
@@ -106,4 +109,4 @@ pnpm test
 - Money flow: authorize stake; capture on failure; distribute to winners or fallback
 - Reviewer screen: approve/reject photo evidence
 
-Full specification: see [software-requirements-specification.md](../../docs/software-requirements-specification.md)
+Full specification: see [software-requirements-specification.md](../../docs/software-requirements-specification.md).
