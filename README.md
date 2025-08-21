@@ -22,8 +22,14 @@
     <li>
         <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#running-on-local-machine">Running on local machine</a></li>
+        <li><a href="#how-to-download-the-mobile-app">How to download the mobile app</a></li>
+        <li>
+            <a href="#for-developers">For Developers</a>
+          <ul>
+            <li><a href="#prerequisites">Prerequisites</a></li>
+            <li><a href="#running-on-local-machine">Running on local machine</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#cicd-pipeline">CI/CD Pipeline</a></li>
@@ -147,7 +153,18 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 
 ## Getting started
 
-### Prerequisites
+### How to download the mobile app
+
+1. On your phone, open the [GitHub Releases page](https://github.com/getcommitapp/commit/releases).
+2. Tap the latest release (the one at the top, marked `Latest`).
+3. Under Assets, download the `.apk` file for your `Android` device.
+
+> [!WARNING]
+> Deployment to `Apple (iOS)` is not yet supported.
+
+### For Developers
+
+#### Prerequisites
 
 |Tool|Version|Component|
 |---|----|---|
@@ -166,7 +183,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 > [!TIP]
 > Prefer `pnpm` at the workspace root to install all dependencies at once.
 
-### Running on local machine
+#### Running on local machine
 
 ```bash
 # Install dependencies (run from project root)
