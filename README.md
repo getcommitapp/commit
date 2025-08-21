@@ -174,7 +174,7 @@ pnpm install
 ```
 
 > [!TIP]
-> See app-specific guides after installing: `apps/mobile/README.md`](./apps/mobile/README.md) and [`apps/web/README.md`](./apps/web/README.md).
+> See app-specific guides after installing: [`apps/mobile/README.md`](./apps/mobile/README.md) and [`apps/web/README.md`](./apps/web/README.md).
 
 ## CI/CD Pipeline
 
