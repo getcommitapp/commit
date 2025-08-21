@@ -2,6 +2,9 @@ import React, { useCallback } from "react";
 import { Image, Pressable, SafeAreaView, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import {
   Text,
@@ -71,19 +74,14 @@ export default function SignupScreen() {
               borderColor: border,
             })}
           >
-            <Image
-              source={{
-                uri: "https://static-00.iconduck.com/assets.00/google-icon-2048x2048-2ur3h1ka.png",
-              }}
-              style={{ width: 20, height: 20 }}
-            />
+            <FontAwesome name="google" size={22} color="#00000" />
             <Text style={[textVariants.headline]}>Continue with Google</Text>
           </Pressable>
 
           <Pressable
             onPress={onContinue}
             style={({ pressed }) => ({
-              backgroundColor: background,
+              backgroundColor: "#000000",
               borderRadius: radii.md,
               paddingVertical: spacing.lg,
               paddingHorizontal: spacing.xl,
@@ -93,16 +91,13 @@ export default function SignupScreen() {
               justifyContent: "center",
               gap: spacing.md,
               borderWidth: 1,
-              borderColor: border,
+              borderColor: "#000000",
             })}
           >
-            <Image
-              source={{
-                uri: "https://static-00.iconduck.com/assets.00/apple-icon-512x512-8mqh6h9x.png",
-              }}
-              style={{ width: 20, height: 20 }}
-            />
-            <Text style={[textVariants.headline]}>Continue with Apple</Text>
+            <FontAwesome name="apple" size={22} color="#FFFFFF" />
+            <Text style={[textVariants.headline, { color: "#FFFFFF" }]}>
+              Continue with Apple
+            </Text>
           </Pressable>
 
           <Text style={{ textAlign: "center", fontSize: 12, opacity: 0.7 }}>
