@@ -35,6 +35,12 @@ jobs:
       - name: Install dependencies
         run: pnpm -w install --frozen-lockfile --filter ./apps/mobile
 
+      - name: Lint mobile app
+        run: pnpm --filter './apps/mobile' lint
+
+      - name: Test mobile app
+        run: pnpm --filter './apps/mobile' test
+
       - name: Prepare SDK tarball from Expo app
         id: pack
         working-directory: apps/mobile
