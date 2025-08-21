@@ -13,8 +13,6 @@ import {
 
 export default function SignupScreen() {
   const router = useRouter();
-  const text = useThemeColor({}, "text");
-  const primary = useThemeColor({}, "primary");
   const background = useThemeColor({}, "background");
   const border = useThemeColor({}, "border");
 

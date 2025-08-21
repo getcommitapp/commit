@@ -17,7 +17,7 @@ export default function IndexGate() {
         }
         const value = await AsyncStorage.getItem("hasSeenOnboarding");
         setHasSeenOnboarding(value === "true");
-      } catch (e) {
+      } catch (_) {
         setHasSeenOnboarding(false);
       } finally {
         setReady(true);
