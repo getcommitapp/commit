@@ -1,10 +1,7 @@
-import React, { useCallback } from "react";
-import { Image, Pressable, SafeAreaView, View } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { Image, Pressable, SafeAreaView, View, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 import {
   Text,
@@ -13,16 +10,30 @@ import {
   radii,
   textVariants,
 } from "@/components/Themed";
+import { signInWithGoogleOAuth, signInWithApple } from "@/lib/auth";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { supabase } from "@/lib/supabase";
 
 export default function SignupScreen() {
   const router = useRouter();
   const background = useThemeColor({}, "background");
   const border = useThemeColor({}, "border");
 
-  const onContinue = useCallback(async () => {
+  const navigateToApp = useCallback(async () => {
     await AsyncStorage.setItem("hasSeenOnboarding", "true");
     router.replace("/(tabs)");
   }, [router]);
+
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        navigateToApp();
+      }
+    });
+    return () => {
+      data.subscription.unsubscribe();
+    };
+  }, [navigateToApp]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: background }}>
@@ -59,7 +70,11 @@ export default function SignupScreen() {
 
         <View style={{ gap: spacing.md, marginBottom: spacing.xxl }}>
           <Pressable
-            onPress={onContinue}
+            onPress={async () => {
+              try {
+                await signInWithGoogleOAuth();
+              } catch (_) {}
+            }}
             style={({ pressed }) => ({
               backgroundColor: background,
               borderRadius: radii.md,
@@ -78,31 +93,33 @@ export default function SignupScreen() {
             <Text style={[textVariants.headline]}>Continue with Google</Text>
           </Pressable>
 
-          <Pressable
-            onPress={onContinue}
-            style={({ pressed }) => ({
-              backgroundColor: "#000000",
-              borderRadius: radii.md,
-              paddingVertical: spacing.lg,
-              paddingHorizontal: spacing.xl,
-              opacity: pressed ? 0.9 : 1,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: spacing.md,
-              borderWidth: 1,
-              borderColor: "#000000",
-            })}
-          >
-            <FontAwesome name="apple" size={22} color="#FFFFFF" />
-            <Text style={[textVariants.headline, { color: "#FFFFFF" }]}>
-              Continue with Apple
-            </Text>
-          </Pressable>
-
-          <Text style={{ textAlign: "center", fontSize: 12, opacity: 0.7 }}>
-            This is a mock screen; authentication not yet implemented.
-          </Text>
+          {Platform.OS === "ios" && (
+            <Pressable
+              onPress={async () => {
+                try {
+                  await signInWithApple();
+                } catch (_) {}
+              }}
+              style={({ pressed }) => ({
+                backgroundColor: "#000000",
+                borderRadius: radii.md,
+                paddingVertical: spacing.lg,
+                paddingHorizontal: spacing.xl,
+                opacity: pressed ? 0.9 : 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: spacing.md,
+                borderWidth: 1,
+                borderColor: "#000000",
+              })}
+            >
+              <FontAwesome name="apple" size={22} color="#FFFFFF" />
+              <Text style={[textVariants.headline, { color: "#FFFFFF" }]}>
+                Continue with Apple
+              </Text>
+            </Pressable>
+          )}
         </View>
       </View>
     </SafeAreaView>
