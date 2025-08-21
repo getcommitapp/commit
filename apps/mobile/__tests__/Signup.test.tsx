@@ -15,9 +15,24 @@ jest.mock("expo-router", () => ({
   useRouter: () => ({ replace: mockReplace }),
 }));
 
+// Mock supabase to control auth state changes in test
+const mockOnAuthStateChange = jest.fn();
+jest.mock("@/lib/supabase", () => ({
+  supabase: {
+    auth: {
+      onAuthStateChange: (...args: any[]) => mockOnAuthStateChange(...args),
+    },
+  },
+}));
+
 describe("Signup flow", () => {
   it("sets hasSeenOnboarding and navigates to /(tabs) on continue", async () => {
     let root: renderer.ReactTestRenderer;
+    let capturedHandler: (event: string, session: any) => void = () => {};
+    mockOnAuthStateChange.mockImplementation((handler: any) => {
+      capturedHandler = handler;
+      return { data: { subscription: { unsubscribe: jest.fn() } } } as any;
+    });
     await act(async () => {
       root = renderer.create(<Signup />);
     });
@@ -25,6 +40,11 @@ describe("Signup flow", () => {
     const pressables = root!.root.findAll((n) => n.props?.onPress);
     await act(async () => {
       pressables[0].props.onPress();
+    });
+
+    // Simulate user becoming signed in, which should trigger navigateToApp
+    await act(async () => {
+      capturedHandler("SIGNED_IN", {} as any);
     });
 
     expect(AsyncStorage.setItem).toHaveBeenCalledWith(
