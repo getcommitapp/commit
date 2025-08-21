@@ -1,0 +1,100 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Item {
+  title: string;
+  content: string;
+  icon?: string;
+}
+export interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props as Props;
+---
+
+<div
+  class="divide-y divide-gray-400 rounded-xl border border-gray-400 bg-white"
+>
+  {
+    items.map((item, idx) => (
+      <div class="accordion-item">
+        <button
+          class="accordion__button flex w-full cursor-pointer items-center justify-between gap-3 p-4 text-left"
+          type="button"
+          aria-expanded="false"
+          data-item-index={idx}
+        >
+          <span class="inline-flex items-center gap-2 font-medium">
+            {item.icon && (
+              <Icon name={item.icon} class="h-5 w-5 text-slate-900" />
+            )}
+            {item.title}
+          </span>
+          <svg
+            class="accordion__chevron size-5 shrink-0 transition-transform duration-300"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <div class="accordion__content max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+          <div class="px-4 pb-4 text-sm text-slate-600">{item.content}</div>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<script is:inline>
+  function setupAccordion() {
+    const accordionItems = document.querySelectorAll(".accordion-item");
+
+    accordionItems.forEach((item) => {
+      const button = item.querySelector(".accordion__button");
+      const content = item.querySelector(".accordion__content");
+      const chevron = item.querySelector(".accordion__chevron");
+
+      if (!button || !content || !chevron) return;
+
+      button.addEventListener("click", () => {
+        const isExpanded = button.getAttribute("aria-expanded") === "true";
+
+        // Toggle aria-expanded
+        button.setAttribute("aria-expanded", String(!isExpanded));
+
+        // Animate content
+        if (isExpanded) {
+          // Closing
+          content.style.maxHeight = "0px";
+          chevron.style.transform = "rotate(0deg)";
+        } else {
+          // Opening
+          content.style.maxHeight = `${content.scrollHeight}px`;
+          chevron.style.transform = "rotate(180deg)";
+        }
+      });
+
+      // Handle keyboard navigation
+      button.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          button.click();
+        }
+      });
+    });
+  }
+
+  // Run setup when DOM is loaded
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupAccordion);
+  } else {
+    setupAccordion();
+  }
+</script>

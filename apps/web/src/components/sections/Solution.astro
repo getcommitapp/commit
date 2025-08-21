@@ -1,0 +1,163 @@
+---
+import Button from "@/components/ui/Button.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<section id="solution" class="border-border scroll-mt-24 border-t bg-white">
+  <div class="mx-auto max-w-7xl px-4 py-20">
+    <div class="grid gap-10 md:grid-cols-2 md:items-center">
+      <div class="order-1 md:order-2">
+        <h2 class="text-3xl font-bold tracking-tight">Make commitment count</h2>
+        <p class="mt-4 text-slate-600">
+          Put skin in the game and add social pressure. Stake money on goals,
+          verify progress with clear rules, and let winners in groups split the
+          pot.
+        </p>
+        <div class="mt-6 flex items-center gap-3">
+          <Button href="#cta" variant="primary">Start now</Button>
+          <Button href="#features" variant="secondary">How it works</Button>
+        </div>
+      </div>
+      <div class="order-2 md:order-1">
+        <div class="relative">
+          <div
+            class="absolute inset-0 -z-10 bg-gradient-to-b from-emerald-200/40 to-transparent blur-2xl"
+          >
+          </div>
+
+          <div class="border-border rounded-xl border bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium text-slate-900">This week</p>
+              <div class="flex items-center gap-3 text-xs text-slate-600">
+                <span class="inline-flex items-center gap-1"
+                  ><Icon
+                    name="mdi:check-circle-outline"
+                    class="h-3.5 w-3.5 text-emerald-600"
+                  /> Verified</span
+                >
+                <span class="inline-flex items-center gap-1"
+                  ><span class="block h-2 w-2 rounded-full bg-slate-300"></span>
+                  Scheduled</span
+                >
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-7 gap-2">
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-emerald-200 bg-emerald-50/80"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-emerald-200 bg-emerald-50/80"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-slate-200 bg-slate-50"
+              >
+                <span class="block h-2 w-2 rounded-full bg-slate-300"></span>
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-emerald-200 bg-emerald-50/80"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-emerald-200 bg-emerald-50/80"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-emerald-200 bg-emerald-50/80"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600"
+                />
+              </div>
+              <div
+                class="flex aspect-square items-center justify-center rounded-md border border-emerald-200 bg-emerald-50/80"
+              >
+                <Icon
+                  name="mdi:check-circle-outline"
+                  class="h-5 w-5 text-emerald-600"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="border-border rounded-xl border bg-white p-5 shadow-sm">
+              <div
+                class="bg-primary flex size-8 items-center justify-center rounded"
+              >
+                <Icon name="mdi:fire" class="h-5 w-5 text-slate-900" />
+              </div>
+              <p class="mt-3 font-medium text-slate-900">Streak</p>
+              <p class="mt-1 text-sm text-slate-600">
+                5 days in a row verified.
+              </p>
+            </div>
+            <div class="border-border rounded-xl border bg-white p-5 shadow-sm">
+              <div
+                class="bg-primary flex size-8 items-center justify-center rounded"
+              >
+                <Icon
+                  name="mdi:shield-check-outline"
+                  class="h-5 w-5 text-slate-900"
+                />
+              </div>
+              <p class="mt-3 font-medium text-slate-900">Stake protected</p>
+              <p class="mt-1 text-sm text-slate-600">
+                Captured only on failure—meet your goal, keep your money.
+              </p>
+            </div>
+            <div
+              class="border-border rounded-xl border bg-white p-5 shadow-sm sm:col-span-2"
+            >
+              <div class="flex items-start gap-3">
+                <div
+                  class="bg-primary flex size-8 items-center justify-center rounded"
+                >
+                  <Icon
+                    name="mdi:account-group-outline"
+                    class="h-5 w-5 text-slate-900"
+                  />
+                </div>
+                <div>
+                  <p class="font-medium text-slate-900">Group winners</p>
+                  <p class="mt-1 text-sm text-slate-600">
+                    In challenges, verified winners split the pot instantly.
+                  </p>
+                  <div class="mt-3 grid grid-cols-5 gap-1">
+                    <span class="h-1.5 rounded bg-emerald-600"></span>
+                    <span class="h-1.5 rounded bg-emerald-500"></span>
+                    <span class="h-1.5 rounded bg-emerald-400"></span>
+                    <span class="h-1.5 rounded bg-slate-200"></span>
+                    <span class="h-1.5 rounded bg-slate-200"></span>
+                  </div>
+                  <p class="mt-2 text-xs text-slate-500">
+                    Winners vs participants
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
