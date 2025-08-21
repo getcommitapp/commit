@@ -1,30 +1,29 @@
-# commit. — Web (Astro + Cloudflare Workers)
+# commit. — Web
 
-Single-page marketing/landing site. Built with Astro and deployed to Cloudflare Workers.
+Single-page marketing/landing site. Built with `Astro` and deployed to `Cloudflare Workers`.
 
-## Table of contents
-
-<!-- mtoc-start -->
-
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Getting started](#getting-started)
-- [Scripts](#scripts)
-- [Lint & tests](#lint--tests)
-- [Project structure](#project-structure)
-
-<!-- mtoc-end -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#getting-started">Getting started</a></li>
+    <li><a href="#scripts">Scripts</a></li>
+    <li><a href="#lint--tests">Lint & tests</a></li>
+    <li><a href="#project-structure">Project structure</a></li>
+  </ol>
+</details>
 
 ## Overview
 
-Astro 5 app targeting the Cloudflare Workers runtime via `@astrojs/cloudflare`. Ideal for a fast, static-first landing page with edge deployment.
+Astro 5 is targeting the Cloudflare Workers runtime via `@astrojs/cloudflare`. Ideal for a fast, static-first landing page with edge deployment.
 
 > "Fast by default." Keep pages lean; ship only what the landing needs.
 
 ## Prerequisites
 
-- Node.js 22+ and pnpm
-- Cloudflare account and `wrangler` CLI (installed via devDeps)
+- `Node.js 22+` and `pnpm`
+- `Cloudflare account` and `wrangler CLI` (installed via DevDeps)
 
 > [!TIP]
 > Prefer installing dependencies from the workspace root to share the lockfile.
@@ -72,7 +71,7 @@ pnpm cf-typegen
 
 ## Lint & tests
 
-This package uses ESLint and Prettier:
+This package uses `ESLint` and `Prettier`:
 
 ```bash
 pnpm lint
@@ -92,3 +91,9 @@ pnpm format
     ├─ eslint.config.mjs
     ├─ tsconfig.json
     └─ package.json
+
+## Contributing
+
+If you clone this repository, you'll need to update environment variables in the web deployment pipeline for your own Cloudflare Workers setup.
+
+Refer to the [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) for GitHub Actions integration details.
