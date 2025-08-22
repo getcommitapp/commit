@@ -38,21 +38,33 @@ import homeMockup from "../../assets/images/commit-home-mockup.png";
               src="/images/avatars/a1.jpg"
               alt="avatar 1"
               class="h-8 w-8 rounded-full object-cover ring-2 ring-white"
+              loading="lazy"
+              fetchpriority="low"
+              decoding="async"
             />
             <img
               src="/images/avatars/a2.jpg"
               alt="avatar 2"
               class="h-8 w-8 rounded-full object-cover ring-2 ring-white"
+              loading="lazy"
+              fetchpriority="low"
+              decoding="async"
             />
             <img
               src="/images/avatars/a3.jpg"
               alt="avatar 3"
               class="h-8 w-8 rounded-full object-cover ring-2 ring-white"
+              loading="lazy"
+              fetchpriority="low"
+              decoding="async"
             />
             <img
               src="/images/avatars/a4.jpg"
               alt="avatar 4"
               class="h-8 w-8 rounded-full object-cover ring-2 ring-white"
+              loading="lazy"
+              fetchpriority="low"
+              decoding="async"
             />
           </div>
           <span>Trusted by early users</span>
@@ -83,6 +95,10 @@ import homeMockup from "../../assets/images/commit-home-mockup.png";
         alt="mockup home page"
         class="mx-auto w-1/2 max-sm:w-3/4"
         layout="constrained"
+        loading="eager"
+        fetchpriority="high"
+        decoding="sync"
+        sizes="(min-width: 768px) 50vw, 75vw"
       />
     </div>
   </div>
