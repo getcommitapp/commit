@@ -1,5 +1,10 @@
 ---
 import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import imgLeonard from "../../assets/images/team/leonard.png";
+import imgTristan from "../../assets/images/team/tristan.png";
+import imgAladin from "../../assets/images/team/aladin.png";
+import imgDavid from "../../assets/images/team/david.png";
 ---
 
 <section id="team" class="border-border scroll-mt-24 border-t bg-white">
@@ -8,7 +13,7 @@ import { Icon } from "astro-icon/components";
     <p class="mx-auto mt-3 max-w-2xl text-slate-600">
       As <img
         src="https://img.shields.io/badge/HEIG--VD-informational?style=for-the-badge&&color=red"
-        alt="HEIG‑VD badge"
+        alt="HEIG-VD badge"
         class="inline-block align-middle"
       />
       students wearing multiple hats, we built commit in 3 weeks.
@@ -19,8 +24,8 @@ import { Icon } from "astro-icon/components";
       <div
         class="border-border w-[18rem] overflow-hidden rounded-xl border bg-white shadow-sm"
       >
-        <img
-          src="/images/team/leonard.png"
+        <Image
+          src={imgLeonard}
           alt="Leonard Cseres"
           class="aspect-[4/5] w-full bg-slate-100 object-cover object-top sm:aspect-[3/4]"
         />
@@ -59,8 +64,8 @@ import { Icon } from "astro-icon/components";
       <div
         class="border-border w-[18rem] overflow-hidden rounded-xl border bg-white shadow-sm"
       >
-        <img
-          src="/images/team/tristan.png"
+        <Image
+          src={imgTristan}
           alt="Tristan Gerber"
           class="aspect-[4/5] w-full bg-slate-100 object-cover object-top sm:aspect-[3/4]"
         />
@@ -99,8 +104,8 @@ import { Icon } from "astro-icon/components";
       <div
         class="border-border w-[18rem] overflow-hidden rounded-xl border bg-white shadow-sm"
       >
-        <img
-          src="/images/team/aladin.png"
+        <Image
+          src={imgAladin}
           alt="Aladin Iseni"
           class="aspect-[4/5] w-full bg-slate-100 object-cover object-top sm:aspect-[3/4]"
         />
@@ -139,8 +144,8 @@ import { Icon } from "astro-icon/components";
       <div
         class="border-border w-[18rem] overflow-hidden rounded-xl border bg-white shadow-sm"
       >
-        <img
-          src="/images/team/david.png"
+        <Image
+          src={imgDavid}
           alt="David Schildböck"
           class="aspect-[4/5] w-full bg-slate-100 object-cover object-top sm:aspect-[3/4]"
         />

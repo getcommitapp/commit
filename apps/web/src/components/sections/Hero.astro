@@ -1,6 +1,8 @@
 ---
 import { Icon } from "astro-icon/components";
 import Button from "@/components/ui/Button.astro";
+import { Image } from "astro:assets";
+import homeMockup from "../../assets/images/commit-home-mockup.png";
 ---
 
 <section
@@ -76,10 +78,11 @@ import Button from "@/components/ui/Button.astro";
           </span>
         </div>
       </div>
-      <img
-        src="/images/commit-home-mockup.png"
+      <Image
+        src={homeMockup}
         alt="mockup home page"
         class="mx-auto w-1/2 max-sm:w-3/4"
+        layout="constrained"
       />
     </div>
   </div>
