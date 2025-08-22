@@ -21,6 +21,24 @@ jobs:
         with:
           ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git for signing
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global commit.gpgsign true
+          git config --global gpg.program gpg
+          # Generate a GPG key for the bot
+          gpg --batch --gen-key <<EOF
+          %echo Generating a GPG key for GitHub Actions bot
+          Key-Type: RSA
+          Key-Length: 4096
+          Name-Real: github-actions[bot]
+          Name-Email: 41898282+github-actions[bot]@users.noreply.github.com
+          Expire-Date: 0
+          %commit
+          EOF
 
       - name: Build docs with Makefile
         working-directory: docs
@@ -32,3 +50,4 @@ jobs:
           commit_message: "chore(docs): update built docs outputs"
           file_pattern: docs/**
           branch: ${{ github.head_ref || github.ref_name }}
+          commit_options: "--gpg-sign"
