@@ -25,11 +25,40 @@ import { Icon } from "astro-icon/components";
         </a>
       </div>
 
-      <nav class="hidden items-center gap-6 text-sm md:flex">
-        <a href="#problem" class="hover:opacity-80">Problem</a>
-        <a href="#solution" class="hover:opacity-80">Solution</a>
-        <a href="#features" class="hover:opacity-80">Features</a>
-        <a href="#faq" class="hover:opacity-80">FAQ</a>
+      <nav class="hidden items-center gap-4 text-sm md:flex">
+        <a
+          href="#problem"
+          class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 hover:opacity-80 focus:bg-slate-100 focus:opacity-80"
+          >Problem</a
+        >
+        <a
+          href="#solution"
+          class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 hover:opacity-80 focus:bg-slate-100 focus:opacity-80"
+          >Solution</a
+        >
+        <a
+          href="#features"
+          class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 hover:opacity-80 focus:bg-slate-100 focus:opacity-80"
+          >Features</a
+        >
+        <a
+          href="#team"
+          class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 hover:opacity-80 focus:bg-slate-100 focus:opacity-80"
+          >Team</a
+        >
+        <a
+          href="#faq"
+          class="inline-flex items-center gap-1 rounded-md px-2 py-1 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 hover:opacity-80 focus:bg-slate-100 focus:opacity-80"
+          >FAQ</a
+        >
+        <a
+          href="https://github.com/getcommitapp/commit"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-slate-700 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 hover:opacity-80 focus:bg-slate-100 focus:opacity-80"
+        >
+          <Icon name="mdi:github" class="h-6 w-6" aria-hidden="true" />
+        </a>
         <a
           href="#cta"
           class="bg-primary inline-flex items-center rounded-md px-3 py-1.5 font-medium text-slate-900 hover:opacity-90"
@@ -51,7 +80,7 @@ import { Icon } from "astro-icon/components";
   <!-- Full Screen Overlay Menu -->
   <div
     id="overlay-menu"
-    class="overlay-menu invisible fixed inset-0 z-40 h-screen w-full bg-white/50 backdrop-blur-md transition-all duration-200 ease-out"
+    class="overlay-menu invisible fixed inset-0 z-40 h-screen w-full bg-white/75 backdrop-blur-md transition-all duration-200 ease-out"
   >
     <!-- Close Button -->
     <button
@@ -68,7 +97,16 @@ import { Icon } from "astro-icon/components";
         <a href="#problem" class="menu-link hover:opacity-80">Problem</a>
         <a href="#solution" class="menu-link hover:opacity-80">Solution</a>
         <a href="#features" class="menu-link hover:opacity-80">Features</a>
+        <a href="#team" class="menu-link hover:opacity-80">Team</a>
         <a href="#faq" class="menu-link hover:opacity-80">FAQ</a>
+        <a
+          href="https://github.com/your-repo-or-profile"
+          target="_blank"
+          rel="noopener"
+          class="menu-link inline-flex items-center gap-1 hover:opacity-80"
+        >
+          <Icon name="mdi:github" class="h-8 w-8" aria-hidden="true" />
+        </a>
         <a
           href="#cta"
           class="bg-primary menu-link rounded-md px-6 py-3 font-medium text-slate-900 hover:opacity-90"
