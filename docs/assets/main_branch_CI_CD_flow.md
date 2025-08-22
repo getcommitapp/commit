@@ -25,9 +25,9 @@ participant GHR as GitHub Releases
         GHA-->>Dev: APK ready for download
     end
 
-    alt Web App Changes (apps/web/**)
+    alt Website Changes (apps/web/**)
         Main->>GHA: Trigger "Deploy Web"
-        Note over GHA: Build web application
+        Note over GHA: Build website
         GHA->>CF: Deploy to Cloudflare Workers
         CF-->>Dev: Website updated
     end
@@ -45,3 +45,4 @@ participant GHR as GitHub Releases
     Note over GHA: Build + Release mode
     GHA->>GHR: Create GitHub Release
     GHR-->>Dev: APK v* released publicly
+
