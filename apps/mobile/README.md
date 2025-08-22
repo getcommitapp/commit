@@ -25,13 +25,19 @@ This app uses `expo-router` for navigation, `TypeScript` for types, and `Jest` f
 
 - `Node.js 22+` and [`pnpm`](https://pnpm.io/installation)
 - [`Expo Go`](https://expo.dev/client) on a phone, or an iOS/Android simulator
-- A `Supabase account` for access to tools such as Auth, Database, Edge Functions and Storage.
-- An `OAuth` setup with `Google and Apple` is required for the sign-in process.
+
+### Supabase
+
+You will need a Supabase account. Either ask to join the current oganization or create a new project.
+
+If you create a new project, you will need to update the public variables in `lib/supabase.ts` and enable `Google and Apple` OAuth providers.
+
+For the `Apple OAuth`, set the `Client ID` to `host.exp.Exponent`
+
+For the `Google OAuth`, create a new Google OAuth client of type web, and set the `Client ID` and `Client Secret`.
+
 > [!NOTE]
 > See the [Expo documentation](https://docs.expo.dev/guides/using-supabase/) for more details on integrating Supabase.
-
-> [!TIP]
-> Prefer installing dependencies from the workspace root to share the lockfile.
 
 ## Getting started
 
