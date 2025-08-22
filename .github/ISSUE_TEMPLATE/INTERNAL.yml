@@ -1,0 +1,53 @@
+name: "Internal Issue"
+description: Template for internal team members
+title: ""
+labels: ["internal"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: "Project"
+      description: Which area does this internal task concern?
+      multiple: false
+      options:
+        - Mobile app
+        - Website
+        - Docs
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: "Summary"
+      description: Briefly describe the issue or task.
+      placeholder: One or two sentences
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Details / Context"
+      description: Extra context, links, screenshots if useful.
+      placeholder: Links, background, notes
+    validations:
+      required: false
+  - type: textarea
+    id: tasks
+    attributes:
+      label: "Tasks"
+      description: List actionable steps to complete.
+      value: |
+        - [ ] Step 1
+        - [ ] Step 2
+        - [ ] Step 3
+      render: bash
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance Criteria"
+      description: What must be true for this to be done?
+      placeholder: Clear, testable outcomes
+    validations:
+      required: true
