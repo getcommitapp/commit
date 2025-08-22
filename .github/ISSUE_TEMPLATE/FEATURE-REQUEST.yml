@@ -1,18 +1,7 @@
 name: "Feature Request"
 description: Create a new issue for a new feature request
-title: "[REQUEST] - <title>"
-labels: [
-  "question"
-]
+labels: ["question"]
 body:
-  - type: input
-    id: start_date
-    attributes:
-      label: "Start Date"
-      description: Start of development
-      placeholder: "month/day/year"
-    validations:
-      required: false
   - type: textarea
     id: reference_issues
     attributes:
