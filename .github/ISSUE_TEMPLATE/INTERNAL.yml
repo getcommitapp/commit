@@ -3,18 +3,6 @@ description: Template for internal team members
 title: ""
 labels: ["internal"]
 body:
-  - type: dropdown
-    id: project
-    attributes:
-      label: "Project"
-      description: Which area does this internal task concern?
-      multiple: false
-      options:
-        - Mobile app
-        - Website
-        - Docs
-    validations:
-      required: true
   - type: textarea
     id: summary
     attributes:

@@ -3,18 +3,6 @@ description: Create a new ticket for a bug.
 title: ""
 labels: ["bug"]
 body:
-  - type: dropdown
-    id: project
-    attributes:
-      label: "Project"
-      description: Which part of the repo is affected?
-      multiple: false
-      options:
-        - Mobile app
-        - Website
-        - Docs
-    validations:
-      required: true
   - type: textarea
     id: description
     attributes:

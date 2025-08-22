@@ -3,26 +3,6 @@ description: Create a new issue for a new feature request
 title: ""
 labels: ["question"]
 body:
-  - type: dropdown
-    id: project
-    attributes:
-      label: "Project"
-      description: Which part of the repo does this feature target?
-      multiple: false
-      options:
-        - Mobile app
-        - Website
-        - Docs
-    validations:
-      required: true
-  - type: input
-    id: start_date
-    attributes:
-      label: "Start Date"
-      description: Start of development
-      placeholder: "month/day/year"
-    validations:
-      required: false
   - type: textarea
     id: reference_issues
     attributes:
