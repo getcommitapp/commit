@@ -23,8 +23,8 @@ integration.
 
 ![Database MCD](assets/db_mcd.png)
 
-Entity-relationship diagram showing the database schema with Profile, Group, 
-Goal, and Verification entities and their relationships for a goal-tracking 
+Entity-relationship diagram showing the database schema with Profile, Group,
+Goal, and Verification entities and their relationships for a goal-tracking
 application.
 
 ---
@@ -33,7 +33,7 @@ application.
 
 ![Branch-Based CI/CD Flow](assets/branch_based_CI_CD_flow.png)
 
-Complete CI/CD workflow diagram showing how feature branches, pull requests, 
+Complete CI/CD workflow diagram showing how feature branches, pull requests,
 and main branch interactions trigger different automated processes.
 
 ---
