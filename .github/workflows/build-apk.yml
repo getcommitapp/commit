@@ -1,0 +1,109 @@
+name: Build APK
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/mobile/**"
+    tags:
+      - "apk-v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  build-apk:
+    name: Build and publish Expo APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm -w install --frozen-lockfile --filter ./apps/mobile
+
+      - name: Lint mobile app
+        run: pnpm --filter './apps/mobile' lint
+      - name: Test mobile app
+        run: pnpm --filter './apps/mobile' test
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Setup Android
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-default
+
+      - name: Cache Expo
+        uses: actions/cache@v3
+        with:
+          path: apps/mobile/.expo
+          key: ${{ runner.os }}-expo-${{ hashFiles('**/app.json') }}
+          restore-keys: |
+            ${{ runner.os }}-expo-
+            ${{ runner.os }}-expo-default
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android APK
+        id: build
+        working-directory: apps/mobile
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
+          SAFE_NAME=${NAME//@/}
+          SAFE_NAME=${SAFE_NAME//\//-}
+          APK_NAME=${SAFE_NAME}-${VERSION}.apk
+          npx eas-cli build --platform android \
+            --profile production \
+            --local --non-interactive \
+            --output "../${APK_NAME}"
+          echo "apk=apps/${APK_NAME}" >> $GITHUB_OUTPUT
+          echo "apk_name=${APK_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: expo-apk
+          path: ${{ steps.build.outputs.apk }}
+
+      - name: Publish GitHub Release (on tags only)
+        if: startsWith(github.ref, 'refs/tags/apk-v')
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          prerelease: false
+          draft: false
+          artifacts: ${{ steps.build.outputs.apk }}
+          artifactErrorsFailBuild: true
