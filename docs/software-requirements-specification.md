@@ -344,7 +344,7 @@ toc: true
 # CI/CD Pipeline
 
 - CI on PRs: lint and tests
-- CD on `main`: build Expo SDK and deploy static website
+- CD on `main`: build Expo APK and deploy static website
 
 # Constraints & Assumptions
 
