@@ -45,4 +45,3 @@ participant GHR as GitHub Releases
     Note over GHA: Build + Release mode
     GHA->>GHR: Create GitHub Release
     GHR-->>Dev: APK v* released publicly
-
