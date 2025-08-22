@@ -1,0 +1,39 @@
+name: "Internal Issue"
+description: Template for internal team members
+labels: ["internal"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: "Summary"
+      description: Briefly describe the issue or task.
+      placeholder: One or two sentences
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Details / Context"
+      description: Extra context, links, screenshots if useful.
+      placeholder: Links, background, notes
+    validations:
+      required: false
+  - type: textarea
+    id: tasks
+    attributes:
+      label: "Tasks (optional)"
+      description: List actionable steps to complete.
+      placeholder: |
+        - [ ] First step
+        - [ ] Second step
+        - [ ] Third step
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance Criteria"
+      description: What must be true for this to be done?
+      placeholder: Clear, testable outcomes
+    validations:
+      required: true
