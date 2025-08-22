@@ -1,6 +1,5 @@
 name: "Internal Issue"
 description: Template for internal team members
-title: ""
 labels: ["internal"]
 body:
   - type: textarea
