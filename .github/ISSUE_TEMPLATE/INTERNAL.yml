@@ -21,13 +21,12 @@ body:
   - type: textarea
     id: tasks
     attributes:
-      label: "Tasks"
+      label: "Tasks (optional)"
       description: List actionable steps to complete.
-      value: |
-        - [ ] Step 1
-        - [ ] Step 2
-        - [ ] Step 3
-      render: bash
+      placeholder: |
+        - [ ] First step
+        - [ ] Second step
+        - [ ] Third step
     validations:
       required: false
   - type: textarea
