@@ -1,7 +1,7 @@
 name: Compile Docs
 
 on:
-  push:
+  pull_request:
     paths:
       - ".github/workflows/compile-docs.yml"
       - "docs/**"
@@ -19,6 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
 
       - name: Build docs with Makefile
@@ -30,4 +31,4 @@ jobs:
         with:
           commit_message: "chore(docs): update built docs outputs"
           file_pattern: docs/**
-          branch: ${{ github.ref_name }}
+          branch: ${{ github.head_ref || github.ref_name }}
