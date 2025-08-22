@@ -114,7 +114,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 > `Supabase` is used for `Auth`, `Database`, `Storage` and `Edge Functions`.
 
 > [!WARNING]
-> Only `TWINT` is is supported for payments.
+> Only `TWINT` is supported for payments.
 
 ### Web
 
