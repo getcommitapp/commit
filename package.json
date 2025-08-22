@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "format": "pnpm --parallel format",
-    "lint": "pnpm --parallel lint",
-    "test": "pnpm --filter '@commit/mobile' test"
+    "format": "prettier --write . && pnpm --parallel run format",
+    "lint": "prettier --check . && pnpm --parallel run lint",
+    "test": "pnpm --filter '@commit/mobile' run test"
   },
   "keywords": [],
   "author": "",
-  "packageManager": "pnpm@10.13.1"
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
 }
