@@ -1,16 +1,25 @@
 ---
 import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import commitLogo from "../assets/images/commit-logo.png";
+import commitLogoTxt from "../assets/images/commit-logo-txt.png";
 ---
 
 <footer class="border-t border-gray-200 bg-white shadow-sm">
   <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
     <div class="flex flex-col items-center justify-between gap-8 md:flex-row">
       <div class="order-1 flex items-center gap-3 md:order-none">
-        <img src="/images/commit-logo.png" alt="Commit logo" class="h-8 w-8" />
-        <img
-          src="/images/commit-logo-txt.png"
+        <Image
+          src={commitLogo}
+          alt="Commit logo"
+          class="size-8"
+          layout="fixed"
+        />
+        <Image
+          src={commitLogoTxt}
           alt="Commit."
-          class="-mt-px h-4"
+          class="-mt-px h-4 w-auto"
+          layout="fixed"
         />
       </div>
       <div class="order-2 text-center md:order-none">

@@ -1,5 +1,8 @@
 ---
 import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import commitLogo from "../assets/images/commit-logo.png";
+import commitLogoTxt from "../assets/images/commit-logo-txt.png";
 ---
 
 <header
@@ -10,17 +13,14 @@ import { Icon } from "astro-icon/components";
       <div class="flex items-center justify-center gap-2">
         <a
           href="#hero"
+          aria-label="Home"
           class="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
-          <img
-            src="/images/commit-logo.png"
-            alt="commit logo"
-            class="h-8 w-8"
-          />
-          <img
-            src="/images/commit-logo-txt.png"
+          <Image src={commitLogo} alt="commit logo" class="size-8" />
+          <Image
+            src={commitLogoTxt}
             alt="commit logo txt"
-            class="-mt-px h-4"
+            class="-mt-px h-4 w-auto"
           />
         </a>
       </div>
@@ -54,9 +54,11 @@ import { Icon } from "astro-icon/components";
         <a
           href="https://github.com/getcommitapp/commit"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
+          aria-label="Open Commit GitHub repository"
           class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-slate-700 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 hover:opacity-80 focus:bg-slate-100 focus:opacity-80"
         >
+          <span class="sr-only">GitHub</span>
           <Icon name="mdi:github" class="h-6 w-6" aria-hidden="true" />
         </a>
         <a
@@ -100,11 +102,13 @@ import { Icon } from "astro-icon/components";
         <a href="#team" class="menu-link hover:opacity-80">Team</a>
         <a href="#faq" class="menu-link hover:opacity-80">FAQ</a>
         <a
-          href="https://github.com/your-repo-or-profile"
+          href="https://github.com/getcommitapp/commit"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
+          aria-label="Open Commit GitHub repository"
           class="menu-link inline-flex items-center gap-1 hover:opacity-80"
         >
+          <span class="sr-only">GitHub</span>
           <Icon name="mdi:github" class="h-8 w-8" aria-hidden="true" />
         </a>
         <a
