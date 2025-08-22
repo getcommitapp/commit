@@ -71,6 +71,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 ## Tech stack
 
 ### Mobile App
+
 <div align="center">
   <img src="https://img.shields.io/badge/Framework-informational?style=for-the-badge&color=gray">
   <img src="https://img.shields.io/badge/Expo-informational?style=for-the-badge&logo=expo&logoColor=black&color=A1FFEB">
@@ -166,16 +167,16 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 
 #### Prerequisites
 
-|Tool|Version|Component|
-|---|----|---|
-|Git|-|All|
-|Node.js|22+|All|
-|pnpm|10+|All|
-|Cloudflare account|-|Web|
-|Expo Go (install on mobile)|-|Mobile App|
-|Supabase account|-|Mobile App|
-|OAuth Google|-|Mobile App|
-|OAuth Apple|-|Mobile App|
+| Tool                        | Version | Component  |
+| --------------------------- | ------- | ---------- |
+| Git                         | -       | All        |
+| Node.js                     | 22+     | All        |
+| pnpm                        | 10+     | All        |
+| Cloudflare account          | -       | Web        |
+| Expo Go (install on mobile) | -       | Mobile App |
+| Supabase account            | -       | Mobile App |
+| OAuth Google                | -       | Mobile App |
+| OAuth Apple                 | -       | Mobile App |
 
 > [!NOTE]
 > You can install `pnpm` through `npm`: `npm install -g pnpm@latest` or through your OS package manager.
@@ -195,23 +196,23 @@ pnpm install
 
 ## CI/CD Pipeline
 
-|Pipeline|CI|CD|Description|
-|---|----|---|---|
-|Lint and tests|Y|N|PRs must pass `ESLint` and `Jest` before review.|
-|Build SDK|Y (build)|Y (tag release)|Build the SDK and create a tag release in this repo|
-|Compile Docs|Y|N|Compile the `PDF` for the `Software Requirements Specification`|
-|Deploy web|N|Y|Deploy the landing page to `CloudFlare`|
+| Pipeline       | CI        | CD              | Description                                                     |
+| -------------- | --------- | --------------- | --------------------------------------------------------------- |
+| Lint and tests | Y         | N               | PRs must pass `ESLint` and `Jest` before review.                |
+| Build APK      | Y (build) | Y (tag release) | Build the APK and create a tag release in this repo             |
+| Compile Docs   | Y         | N               | Compile the `PDF` for the `Software Requirements Specification` |
+| Deploy web     | N         | Y               | Deploy the landing page to `CloudFlare`                         |
 
 > [!NOTE]
 > To catch issues early (Lint and tests), use the following commands:
 >
->```bash
-># Lint everything
->pnpm lint
+> ```bash
+> # Lint everything
+> pnpm lint
 >
-># Run mobile tests
->pnpm test
->```
+> # Run mobile tests
+> pnpm test
+> ```
 
 ## Documentation
 
@@ -220,19 +221,21 @@ Comprehensive project documentation is available in the `docs/` folder.
 ### Software requirements specification
 
 Complete project requirements and specifications document.
+
 - PDF Format: [software-requirements-specification.pdf](./docs/software-requirements-specification.pdf)
 - Markdown Format: [software-requirements-specification.md](./docs/software-requirements-specification.md)
 
 ### System Architecture
 
 Technical architecture documentation including system design and workflows.
+
 - Document: [architecture.md](./docs/architecture.md)
 - Includes:
-   - System Architecture diagram
-   - Database Schema (MCD)
-   - Branch-Based CI/CD Flow
-   - Main Branch CI/CD Flow
- 
+  - System Architecture diagram
+  - Database Schema (MCD)
+  - Branch-Based CI/CD Flow
+  - Main Branch CI/CD Flow
+
 ### Additional Resources
 
 - User flow (screens): [docs/flow.txt](./docs/flow.txt)
@@ -248,10 +251,10 @@ Contributions are what make the open source community such an amazing place to l
 5. Create a new branch referencing the issue (`git checkout -b feature/AmazingFeature-#123`)
 6. Make your changes (add or edit code)
 7. Format your changes (`pnpm format`)
-10. Commit your Changes, see [conventional naming](https://www.conventionalcommits.org/en/v1.0.0/) (`git commit -m "feat: add some AmazingFeature"`)
-11. Push the branch to your fork (`git push origin feature/AmazingFeature`)
-12. Open a Pull Request from your fork to the main repository
-13. Wait for a reviewer to assess your changes
+8. Commit your Changes, see [conventional naming](https://www.conventionalcommits.org/en/v1.0.0/) (`git commit -m "feat: add some AmazingFeature"`)
+9. Push the branch to your fork (`git push origin feature/AmazingFeature`)
+10. Open a Pull Request from your fork to the main repository
+11. Wait for a reviewer to assess your changes
 
 ## License
 

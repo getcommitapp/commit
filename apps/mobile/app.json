@@ -34,6 +34,13 @@
     "plugins": ["expo-router", "expo-apple-authentication"],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a3dac6e9-1931-4680-bafd-d3050bb42072"
+      }
+    },
+    "owner": "getcommitapp"
   }
 }
