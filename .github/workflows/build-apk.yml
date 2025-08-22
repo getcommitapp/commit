@@ -8,9 +8,11 @@ on:
     tags:
       - "apk-v*"
   workflow_dispatch:
+
 permissions:
   contents: write
   issues: write
+
 jobs:
   build-apk:
     name: Build and publish Expo APK
