@@ -50,10 +50,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
             ${{ runner.os }}-gradle-default
+      - name: Debug - List directory structure
+        run: |
+          echo "Root directory contents:"
+          ls -la
+          echo "Apps directory contents:"
+          ls -la apps/ || echo "No apps directory"
+          echo "Mobile app directory contents:"
+          ls -la apps/mobile/ || echo "No apps/mobile directory"
       - name: Cache EAS build
         uses: actions/cache@v3
         with:
-          path: ~/.eas-cli
+          path: ~/.eas
           key: ${{ runner.os }}-eas-${{ hashFiles('**/eas.json') }}
           restore-keys: |
             ${{ runner.os }}-eas-
