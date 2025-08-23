@@ -1,0 +1,76 @@
+@startuml ui-flow
+title commit. - Mobile UI Flow
+
+skinparam dpi 180
+skinparam ArrowColor #555555
+skinparam ArrowThickness 1
+skinparam defaultTextAlignment center
+skinparam shadowing false
+
+start
+
+:Open app;
+if (First opening?) then (yes)
+  :Sign In\n(Google / Apple);
+  :Onboarding 1 -> 2 -> 3 -> 4;
+else (no)
+endif
+
+
+partition "Tabs" {
+  if (Select tab?) then (Home)
+    :Home;
+    :View Dashboard / Activity Feed;
+  elseif (Goals)
+    :Goals;
+    if (Action?) then (View)
+      :Select goal;
+      :Show Goal Details (modal);
+    elseif (Create)
+      :+ Create button;
+      :Create new goal;
+      -> :Goal Creation;
+      :Goal Form\nEnter title, description,\n due date, verification methods;
+      if (Payment method registered?) then (yes)
+        :Confirm stake popup\n"If you do not complete the goal, {amount} CHF\nwill be paid to {recipient}";
+      else (no)
+        :Payment Method;
+      endif
+    endif
+  elseif (Groups)
+    :Groups;
+    if (Action?) then (View)
+      :Select group;
+      :Show Group Details (modal);
+    elseif (Create)
+      :+ Create button;
+      :Create new group;
+      -> :Group Creation;
+      :Group Form\nName, description, members;
+      if (Payment method registered?) then (yes)
+      else (no)
+        :Payment Method;
+      endif
+    endif
+  elseif (Reviewer)
+    :Reviewer;
+    :Review Queue;
+    :Approve / Reject photo;
+  elseif (Profile)
+    :Profile;
+    if (Edit what?) then (Name)
+      :Edit Display Name;
+    elseif (Username)
+      :Edit Username;
+    elseif (Payment)
+      :Edit Payment Method;
+    endif
+  endif
+}
+
+note right
+  To join a group: invite link required
+end note
+
+stop
+@enduml

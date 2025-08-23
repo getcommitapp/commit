@@ -3,9 +3,10 @@
 ## Table of Contents
 
 1. [System Architecture](#system-architecture)
-2. [Database Schema (MCD)](#database-schema-mcd)
-3. [Branch-Based CI/CD Flow](#branch-based-cicd-flow)
-4. [Main Branch CI/CD Flow](#main-branch-cicd-flow)
+2. [Mobile UI Flow](#mobile-ui-flow)
+3. [Database Schema (MCD)](#database-schema-mcd)
+4. [Branch-Based CI/CD Flow](#branch-based-cicd-flow)
+5. [Main Branch CI/CD Flow](#main-branch-cicd-flow)
 
 ---
 
@@ -16,6 +17,14 @@
 High-level architecture diagram generated from `docs/architecture.puml` showing
 the Expo React Native mobile app, Astro web landing (Cloudflare), Supabase
 (Auth, Postgres, Storage, Edge Functions), and Stripe Connect integration.
+
+---
+
+## Mobile UI Flow
+
+![Mobile UI Flow](ui-flow.png)
+
+Mobile app UI flow generated from `docs/ui-flow.puml`.
 
 ---
 
