@@ -19,13 +19,11 @@ integration.
 
 ---
 
-## Database Schema (MCD)
+## Database Schema
 
-![Database MCD](assets/db_mcd.png)
+![Database Schema](db-schema.png)
 
-Entity-relationship diagram showing the database schema with Profile, Group,
-Goal, and Verification entities and their relationships for a goal-tracking
-application.
+Entity-relationship diagram generated from `docs/db-schema.puml`.
 
 ---
 
