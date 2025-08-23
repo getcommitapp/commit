@@ -31,6 +31,7 @@ const Colors = {
     danger: palette.danger,
     success: palette.success,
     warning: palette.warning,
+    link: palette.primary,
   },
   dark: {
     // simple dark scheme; adjust if you implement true dark theme tokens
@@ -49,6 +50,7 @@ const Colors = {
     danger: palette.danger,
     success: palette.success,
     warning: palette.warning,
+    link: "#ffffff",
   },
 } as const;
 
