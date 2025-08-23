@@ -10,7 +10,7 @@ export default function ProfileStackLayout() {
         headerStyle: { backgroundColor: "transparent" },
       }}
     >
-      <Stack.Screen name="index" options={{ title: "Profile" }} />
+      <Stack.Screen name="index" options={{ title: "My Profile" }} />
     </Stack>
   );
 }
