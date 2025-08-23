@@ -56,7 +56,7 @@ export default function Button({
           borderRadius: radii.md,
           paddingVertical: spacing.md,
           paddingHorizontal: spacing.lg,
-          opacity: pressed ? 0.9 : 1,
+          opacity: disabled ? 0.5 : pressed ? 0.9 : 1,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",

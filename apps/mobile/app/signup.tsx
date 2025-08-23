@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from "react";
-import { Image, SafeAreaView, View, Platform } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { Image, SafeAreaView, View, Platform, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 
@@ -16,10 +16,32 @@ import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 import GoogleIcon from "@/assets/icons/google.svg";
 
+function getReadableAuthError(error: unknown): string {
+  const message =
+    typeof error === "string"
+      ? error
+      : ((error as { message?: string })?.message ?? "");
+
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes("cancell") || normalized.includes("cancelled")) {
+    return "You canceled the sign-in.";
+  }
+  if (normalized.includes("network") || normalized.includes("timeout")) {
+    return "Network issue. Check your connection and try again.";
+  }
+  if (normalized.includes("popup") || normalized.includes("browser")) {
+    return "We couldn't open the sign-in flow. Please try again.";
+  }
+
+  return message || "Something went wrong. Please try again.";
+}
+
 export default function SignupScreen() {
   const router = useRouter();
   const background = useThemeColor({}, "background");
-  const border = useThemeColor({}, "border");
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isAppleLoading, setIsAppleLoading] = useState(false);
 
   const navigateAfterSignIn = useCallback(async () => {
     const hasSeen = await AsyncStorage.getItem("hasSeenOnboarding");
@@ -81,10 +103,17 @@ export default function SignupScreen() {
             textStyle={{ color: "#000000" }}
             leftIcon={<GoogleIcon width={22} height={22} />}
             title="Sign in with Google"
+            disabled={isGoogleLoading || isAppleLoading}
             onPress={async () => {
+              if (isGoogleLoading) return;
+              setIsGoogleLoading(true);
               try {
                 await signInWithGoogleOAuth();
-              } catch (_) {}
+              } catch (error) {
+                Alert.alert("Couldn't sign in", getReadableAuthError(error));
+              } finally {
+                setIsGoogleLoading(false);
+              }
             }}
           />
 
@@ -93,10 +122,17 @@ export default function SignupScreen() {
               style={{ backgroundColor: "#000000" }}
               leftIcon={<FontAwesome name="apple" size={22} color="#FFFFFF" />}
               title="Sign in with Apple"
+              disabled={isAppleLoading || isGoogleLoading}
               onPress={async () => {
+                if (isAppleLoading) return;
+                setIsAppleLoading(true);
                 try {
                   await signInWithApple();
-                } catch (_) {}
+                } catch (error) {
+                  Alert.alert("Couldn't sign in", getReadableAuthError(error));
+                } finally {
+                  setIsAppleLoading(false);
+                }
               }}
             />
           )}
