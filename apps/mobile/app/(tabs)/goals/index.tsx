@@ -9,13 +9,13 @@ import {
   textVariants,
 } from "@/components/Themed";
 
-export default function TabTwoScreen() {
+export default function GoalsScreen() {
   const borderColor = useThemeColor({}, "border");
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
+      <Text style={styles.title}>Goals</Text>
       <View style={[styles.separator, { backgroundColor: borderColor }]} />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
+      <EditScreenInfo path="app/(tabs)/goals.tsx" />
     </View>
   );
 }

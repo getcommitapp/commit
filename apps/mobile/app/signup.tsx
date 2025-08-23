@@ -11,10 +11,10 @@ import {
   textVariants,
 } from "@/components/Themed";
 import { signInWithGoogleOAuth, signInWithApple } from "@/lib/auth";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 import GoogleIcon from "@/assets/icons/google.svg";
+import AppleIcon from "@/assets/icons/person-circle.svg";
 
 function getReadableAuthError(error: unknown): string {
   const message =
@@ -46,7 +46,7 @@ export default function SignupScreen() {
   const navigateAfterSignIn = useCallback(async () => {
     const hasSeen = await AsyncStorage.getItem("hasSeenOnboarding");
     if (hasSeen === "true") {
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/home");
     } else {
       router.replace("/onboarding/1");
     }
@@ -120,7 +120,7 @@ export default function SignupScreen() {
           {Platform.OS === "ios" && (
             <Button
               style={{ backgroundColor: "#000000" }}
-              leftIcon={<FontAwesome name="apple" size={22} color="#FFFFFF" />}
+              leftIcon={<AppleIcon width={22} height={22} color="#FFFFFF" />}
               title="Sign in with Apple"
               disabled={isAppleLoading || isGoogleLoading}
               onPress={async () => {

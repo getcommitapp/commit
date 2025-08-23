@@ -7,7 +7,7 @@ export default function OnboardingStep4() {
   const router = useRouter();
   const finish = async () => {
     await AsyncStorage.setItem("hasSeenOnboarding", "true");
-    router.replace("/(tabs)");
+    router.replace("/(tabs)/home");
   };
   return (
     <OnboardingPage

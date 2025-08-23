@@ -9,13 +9,13 @@ import {
   textVariants,
 } from "@/components/Themed";
 
-export default function TabOneScreen() {
+export default function ProfileScreen() {
   const borderColor = useThemeColor({}, "border");
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
+      <Text style={styles.title}>Profile</Text>
       <View style={[styles.separator, { backgroundColor: borderColor }]} />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+      <EditScreenInfo path="app/(tabs)/profile.tsx" />
     </View>
   );
 }

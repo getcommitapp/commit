@@ -6,9 +6,9 @@ export const config = {
   // Can be disabled via `enabled: false`. This entire feature is dev-only.
   devDefaultPage: __DEV__
     ? {
-        enabled: false,
+        enabled: true,
         // Example: "/signup", "/(tabs)", "/auth/callback"
-        route: "/onboarding/1",
+        route: "/(tabs)/home",
       }
     : {
         enabled: false,

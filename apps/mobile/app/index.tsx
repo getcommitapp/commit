@@ -45,5 +45,5 @@ export default function IndexGate() {
     return <Redirect href="/signup" />;
   }
 
-  return <Redirect href="/(tabs)" />;
+  return <Redirect href="/(tabs)/home" />;
 }
