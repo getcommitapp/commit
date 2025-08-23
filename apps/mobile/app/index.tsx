@@ -28,6 +28,19 @@ export default function IndexGate() {
 
   if (!ready || hasSeenOnboarding === null) return null;
 
+  // In development, allow overriding the start route for faster iteration
+  if (
+    __DEV__ &&
+    config.devDefaultPage?.enabled &&
+    config.devDefaultPage?.route
+  ) {
+    return (
+      <Redirect
+        href={{ pathname: config.devDefaultPage.route as unknown as any }}
+      />
+    );
+  }
+
   if (!hasSeenOnboarding) {
     return <Redirect href="/signup" />;
   }

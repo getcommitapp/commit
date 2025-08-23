@@ -1,7 +1,8 @@
 // Design token palette (derived from design variables)
 const palette = {
   primary: "#000000",
-  secondary: "#9e9e9e",
+  secondary: "#ffffff",
+  mutedForeground: "#9e9e9e",
   muted: "#d9d9d9",
   background: "#f4f4f4",
   card: "#ffffff",
@@ -22,6 +23,7 @@ const Colors = {
     // extended tokens
     primary: palette.primary,
     secondary: palette.secondary,
+    mutedForeground: palette.mutedForeground,
     muted: palette.muted,
     card: palette.card,
     border: palette.border,
@@ -38,7 +40,8 @@ const Colors = {
     tabIconSelected: palette.primary,
     // extended tokens
     primary: "#ffffff",
-    secondary: palette.secondary,
+    secondary: "#000000",
+    mutedForeground: palette.mutedForeground,
     muted: "#666666",
     card: "#000000",
     border: "#333333",

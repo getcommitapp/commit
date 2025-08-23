@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { Image, Pressable, SafeAreaView, View, Platform } from "react-native";
+import { Image, SafeAreaView, View, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 
@@ -13,6 +13,8 @@ import {
 import { signInWithGoogleOAuth, signInWithApple } from "@/lib/auth";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { supabase } from "@/lib/supabase";
+import Button from "@/components/ui/Button";
+import GoogleIcon from "@/assets/icons/google.svg";
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -43,7 +45,8 @@ export default function SignupScreen() {
           flex: 1,
           paddingHorizontal: spacing.xl,
           paddingTop: spacing.xl,
-          justifyContent: "space-between",
+          gap: spacing.xxl,
+          justifyContent: "center",
         }}
       >
         <View style={{ alignItems: "center", marginTop: spacing.xl }}>
@@ -57,7 +60,7 @@ export default function SignupScreen() {
             }}
           />
           <Text style={[textVariants.title1, { textAlign: "center" }]}>
-            Welcome to Commit
+            Hi there! 👋
           </Text>
           <Text
             style={[
@@ -69,57 +72,40 @@ export default function SignupScreen() {
         </View>
 
         <View style={{ gap: spacing.md, marginBottom: spacing.xxl }}>
-          <Pressable
+          <Button
+            style={{ backgroundColor: "#ffffff" }}
+            textStyle={{ color: "#000000" }}
+            leftIcon={<GoogleIcon width={22} height={22} />}
+            title="Sign in with Google"
             onPress={async () => {
               try {
                 await signInWithGoogleOAuth();
               } catch (_) {}
             }}
-            style={({ pressed }) => ({
-              backgroundColor: background,
-              borderRadius: radii.md,
-              paddingVertical: spacing.lg,
-              paddingHorizontal: spacing.xl,
-              opacity: pressed ? 0.9 : 1,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: spacing.md,
-              borderWidth: 1,
-              borderColor: border,
-            })}
-          >
-            <FontAwesome name="google" size={22} color="#00000" />
-            <Text style={[textVariants.headline]}>Continue with Google</Text>
-          </Pressable>
+          />
 
           {Platform.OS === "ios" && (
-            <Pressable
+            <Button
+              style={{ backgroundColor: "#000000" }}
+              leftIcon={<FontAwesome name="apple" size={22} color="#FFFFFF" />}
+              title="Sign in with Apple"
               onPress={async () => {
                 try {
                   await signInWithApple();
                 } catch (_) {}
               }}
-              style={({ pressed }) => ({
-                backgroundColor: "#000000",
-                borderRadius: radii.md,
-                paddingVertical: spacing.lg,
-                paddingHorizontal: spacing.xl,
-                opacity: pressed ? 0.9 : 1,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: spacing.md,
-                borderWidth: 1,
-                borderColor: "#000000",
-              })}
-            >
-              <FontAwesome name="apple" size={22} color="#FFFFFF" />
-              <Text style={[textVariants.headline, { color: "#FFFFFF" }]}>
-                Continue with Apple
-              </Text>
-            </Pressable>
+            />
           )}
+
+          <Text
+            style={{
+              textAlign: "center",
+              marginTop: spacing.sm,
+              color: useThemeColor({}, "mutedForeground"),
+            }}
+          >
+            By signing in, you agree to our Terms of Service and Privacy Policy
+          </Text>
         </View>
       </View>
     </SafeAreaView>
