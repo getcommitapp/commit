@@ -1,23 +1,21 @@
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
-import { View } from "@/components/Themed";
+import { spacing } from "@/components/Themed";
 
 export default function GoalsScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: spacing.headerContentInset,
+          paddingTop: spacing.md,
+        }}
+        contentInsetAdjustmentBehavior="automatic"
+      >
         <EditScreenInfo path="app/(tabs)/goals.tsx" />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
