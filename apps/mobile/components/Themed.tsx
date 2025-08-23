@@ -58,6 +58,8 @@ export const spacing = {
   lg: 16,
   xl: 24,
   xxl: 32,
+  // iOS large title leading inset is ~20pt; keep 16 elsewhere for platform parity
+  headerContentInset: Platform.select({ ios: 20, default: 16 }),
 } as const;
 
 export const radii = {

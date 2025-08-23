@@ -2,22 +2,16 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
-import {
-  Text,
-  View,
-  useThemeColor,
-  spacing,
-  textVariants,
-} from "@/components/Themed";
+import { Text, View, spacing, textVariants } from "@/components/Themed";
 
 export default function HomeScreen() {
-  const borderColor = useThemeColor({}, "border");
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Text style={styles.title}>Welcome back</Text>
-        <View style={[styles.separator, { backgroundColor: borderColor }]} />
-        <EditScreenInfo path="app/(tabs)/index.tsx" />
+        <View style={styles.centerArea}>
+          <EditScreenInfo path="app/(tabs)/index.tsx" />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -28,15 +22,16 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "stretch",
     justifyContent: "flex-start",
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: spacing.headerContentInset,
     paddingTop: spacing.xl,
   },
   title: {
     ...textVariants.largeTitle,
+    marginBottom: spacing.xxl,
   },
-  separator: {
-    marginVertical: spacing.xl,
-    height: 1,
-    width: "100%",
+  centerArea: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

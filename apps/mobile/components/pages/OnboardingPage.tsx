@@ -8,8 +8,8 @@ import {
   spacing,
   textVariants,
   typography,
+  getLineHeight,
 } from "@/components/Themed";
-import { getLineHeight } from "@/components/Themed";
 import Button from "@/components/ui/Button";
 
 type Props = {
