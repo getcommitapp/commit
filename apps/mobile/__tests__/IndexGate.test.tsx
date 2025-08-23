@@ -47,7 +47,7 @@ describe("IndexGate onboarding redirect", () => {
     expect(redirect.props.href).toBe("/signup");
   });
 
-  it('redirects to /(tabs) when hasSeenOnboarding is "true"', async () => {
+  it('redirects to /(tabs)/home when hasSeenOnboarding is "true"', async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce("true");
 
     let root: renderer.ReactTestRenderer;
@@ -57,6 +57,6 @@ describe("IndexGate onboarding redirect", () => {
     });
 
     const redirect = root!.root.findByType(Redirect);
-    expect(redirect.props.href).toBe("/(tabs)");
+    expect(redirect.props.href).toBe("/(tabs)/home");
   });
 });
