@@ -1,5 +1,5 @@
 import React from "react";
-import renderer, { act } from "react-test-renderer";
+import { render, screen, waitFor } from "@testing-library/react-native";
 import { Redirect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import IndexGate from "@/app/index";
@@ -11,52 +11,43 @@ jest.mock("@react-native-async-storage/async-storage", () => ({
 }));
 
 jest.mock("../config", () => ({
-  config: { resetOnboardingOnReload: false },
+  config: { devResetOnboardingOnReload: false },
 }));
 
 jest.mock("expo-router", () => ({
   Redirect: (props: any) => null,
 }));
 
-const flush = () => new Promise((resolve) => setImmediate(resolve));
+// Use waitFor to await async state updates instead of manual flushing
 
 describe("IndexGate onboarding redirect", () => {
   it("redirects to /signup when hasSeenOnboarding is null", async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(null);
 
-    let root: renderer.ReactTestRenderer;
-    await act(async () => {
-      root = renderer.create(<IndexGate />);
-      await flush();
+    render(<IndexGate />);
+    await waitFor(() => {
+      const redirect = screen.UNSAFE_getByType(Redirect as any);
+      expect(redirect.props.href).toBe("/signup");
     });
-
-    const redirect = root!.root.findByType(Redirect);
-    expect(redirect.props.href).toBe("/signup");
   });
 
   it('redirects to /signup when hasSeenOnboarding is "false"', async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce("false");
 
-    let root: renderer.ReactTestRenderer;
-    await act(async () => {
-      root = renderer.create(<IndexGate />);
-      await flush();
+    render(<IndexGate />);
+    await waitFor(() => {
+      const redirect = screen.UNSAFE_getByType(Redirect as any);
+      expect(redirect.props.href).toBe("/signup");
     });
-
-    const redirect = root!.root.findByType(Redirect);
-    expect(redirect.props.href).toBe("/signup");
   });
 
-  it('redirects to /(tabs) when hasSeenOnboarding is "true"', async () => {
+  it('redirects to /(tabs)/home when hasSeenOnboarding is "true"', async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce("true");
 
-    let root: renderer.ReactTestRenderer;
-    await act(async () => {
-      root = renderer.create(<IndexGate />);
-      await flush();
+    render(<IndexGate />);
+    await waitFor(() => {
+      const redirect = screen.UNSAFE_getByType(Redirect as any);
+      expect(redirect.props.href).toBe("/(tabs)/home");
     });
-
-    const redirect = root!.root.findByType(Redirect);
-    expect(redirect.props.href).toBe("/(tabs)");
   });
 });
