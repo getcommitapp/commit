@@ -8,7 +8,7 @@ export const config = {
     ? {
         enabled: false,
         // Example: "/signup", "/(tabs)", "/auth/callback"
-        route: "/(tabs)",
+        route: "/onboarding/1",
       }
     : {
         enabled: false,

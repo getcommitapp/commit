@@ -21,21 +21,25 @@ export default function SignupScreen() {
   const background = useThemeColor({}, "background");
   const border = useThemeColor({}, "border");
 
-  const navigateToApp = useCallback(async () => {
-    await AsyncStorage.setItem("hasSeenOnboarding", "true");
-    router.replace("/(tabs)");
+  const navigateAfterSignIn = useCallback(async () => {
+    const hasSeen = await AsyncStorage.getItem("hasSeenOnboarding");
+    if (hasSeen === "true") {
+      router.replace("/(tabs)");
+    } else {
+      router.replace("/onboarding/1");
+    }
   }, [router]);
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
-        navigateToApp();
+        navigateAfterSignIn();
       }
     });
     return () => {
       data.subscription.unsubscribe();
     };
-  }, [navigateToApp]);
+  }, [navigateAfterSignIn]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: background }}>
@@ -51,7 +55,7 @@ export default function SignupScreen() {
       >
         <View style={{ alignItems: "center", marginTop: spacing.xl }}>
           <Image
-            source={require("../assets/images/icon.png")}
+            source={require("@/assets/images/icon.png")}
             style={{
               width: 96,
               height: 96,

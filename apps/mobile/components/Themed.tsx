@@ -80,6 +80,10 @@ export const typography = {
   lineHeightRelaxed: 1.5,
 } as const;
 
+export function getLineHeight(fontSize: number, ratio: number): number {
+  return Math.round(fontSize * ratio);
+}
+
 // iOS-style dynamic type sizes (approximate on Android)
 export const textVariants = {
   largeTitle: {

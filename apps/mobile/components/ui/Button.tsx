@@ -8,7 +8,7 @@ import {
   textVariants,
 } from "@/components/Themed";
 
-type ButtonVariant = "primary" | "secondary";
+type ButtonVariant = "primary" | "secondary" | "accent";
 
 type Props = {
   title: string;
@@ -31,8 +31,20 @@ export default function Button({
 }: Props) {
   const primary = useThemeColor({}, "primary");
   const secondary = useThemeColor({}, "secondary");
+  const accent = useThemeColor({}, "accent");
 
   const isSecondary = variant === "secondary";
+  const isAccent = variant === "accent";
+
+  let backgroundColor = primary;
+  let textColor = secondary;
+  if (isSecondary) {
+    backgroundColor = secondary;
+    textColor = primary;
+  } else if (isAccent) {
+    backgroundColor = accent;
+    textColor = primary;
+  }
 
   return (
     <Pressable
@@ -40,7 +52,7 @@ export default function Button({
       disabled={disabled}
       style={({ pressed }) => [
         {
-          backgroundColor: isSecondary ? secondary : primary,
+          backgroundColor,
           borderRadius: radii.md,
           paddingVertical: spacing.md,
           paddingHorizontal: spacing.lg,
@@ -57,7 +69,7 @@ export default function Button({
       <Text
         style={[
           textVariants.subheadlineEmphasized,
-          { color: isSecondary ? primary : secondary },
+          { color: textColor },
           textStyle,
         ]}
       >
