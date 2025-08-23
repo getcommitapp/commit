@@ -8,6 +8,7 @@ Built with `Expo` + `React Native` and deployed as a `GitHub` release (tagged in
     <li><a href="#overview">Overview</a></li>
     <li><a href="#prerequisites">Prerequisites</a></li>
     <li><a href="#getting-started">Getting started</a></li>
+    <li><a href="#environment-variables">Environment variables</a></li>
     <li><a href="#scripts">Scripts</a></li>
     <li><a href="#lint--tests">Lint & tests</a></li>
     <li><a href="#project-structure">Project structure</a></li>
@@ -55,7 +56,24 @@ pnpm start --tunnel
 ```
 
 > [!NOTE]
-> `--tunnel` helps devices connect over different networks; you can omit it on simulators.
+> `--tunnel` helps devices connect over different networks; you can omit it on simulators or local networks.
+
+> [!TIP]
+> `--clear` clears the cache and reloads the app. Sometimes useful to reset the app state.
+
+## Environment variables
+
+Create a local env file from the example template:
+
+```bash
+cd apps/mobile
+cp .env.local.example .env.local
+```
+
+Available variables:
+
+- `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (dev-only, optional): If defined, onboarding is reset on each reload in development. Outside development, this is always ignored (feature is disabled).
+- `EXPO_PUBLIC_DEV_DEFAULT_PAGE` (dev-only, optional): If defined, the app will redirect to this route on launch during development. Examples: `/signup`, `/onboarding/1`, `/(tabs)/home`.
 
 ## Scripts
 

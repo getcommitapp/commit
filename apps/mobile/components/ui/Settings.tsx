@@ -1,0 +1,178 @@
+import React from "react";
+import { Pressable, View as RNView } from "react-native";
+import { useRouter, type Href } from "expo-router";
+import {
+  Text,
+  View,
+  spacing,
+  radii,
+  textVariants,
+  useThemeColor,
+} from "@/components/Themed";
+import ChevronRight from "@/assets/icons/chevron-right.svg";
+
+type SettingsGroupProps = {
+  title?: string;
+  children: React.ReactNode;
+  footer?: string;
+  style?: any;
+};
+
+export function SettingsGroup({
+  title,
+  children,
+  footer,
+  style,
+}: SettingsGroupProps) {
+  const card = useThemeColor({}, "card");
+  const muted = useThemeColor({}, "mutedForeground");
+
+  return (
+    <RNView style={style}>
+      {title ? (
+        <Text
+          style={{
+            ...textVariants.footnote,
+            textTransform: "uppercase",
+            color: muted,
+            marginBottom: spacing.sm,
+            marginLeft: spacing.xs,
+          }}
+        >
+          {title}
+        </Text>
+      ) : null}
+      <View
+        style={{
+          backgroundColor: card,
+          borderRadius: radii.md,
+          overflow: "hidden",
+        }}
+      >
+        {children}
+      </View>
+      {footer ? (
+        <Text
+          style={{
+            color: muted,
+            marginTop: spacing.xs,
+            marginLeft: spacing.xs,
+          }}
+        >
+          {footer}
+        </Text>
+      ) : null}
+      <RNView style={{ height: spacing.xl }} />
+    </RNView>
+  );
+}
+
+type SettingsRowProps = {
+  label: string;
+  value?: string | React.ReactNode;
+  onPress?: () => void;
+  last?: boolean;
+  testID?: string;
+  navigateTo?: Href;
+};
+
+export function SettingsRow({
+  label,
+  value,
+  onPress,
+  last,
+  testID,
+  navigateTo,
+}: SettingsRowProps) {
+  const border = useThemeColor({}, "border");
+  const mutedForeground = useThemeColor({}, "mutedForeground");
+  const muted = useThemeColor({}, "muted");
+  const text = useThemeColor({}, "text");
+  const router = useRouter();
+
+  const handlePress = () => {
+    if (navigateTo) {
+      router.push(navigateTo);
+      return;
+    }
+    if (onPress) {
+      onPress();
+    }
+  };
+
+  const RowContent = (
+    <>
+      <RNView
+        style={{
+          paddingVertical: spacing.md,
+          paddingHorizontal: spacing.xl,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: spacing.lg,
+        }}
+      >
+        <Text style={{ ...textVariants.body, color: text }}>{label}</Text>
+        <RNView
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: spacing.sm,
+          }}
+        >
+          {value !== undefined && value !== null ? (
+            typeof value === "string" ? (
+              <Text style={{ ...textVariants.body, color: mutedForeground }}>
+                {value}
+              </Text>
+            ) : (
+              value
+            )
+          ) : null}
+          {navigateTo ? (
+            <ChevronRight
+              width={16}
+              height={16}
+              color={muted}
+              style={{
+                marginEnd: -spacing.xs,
+              }}
+            />
+          ) : null}
+        </RNView>
+      </RNView>
+      {!last ? (
+        <RNView
+          style={{
+            height: 0.5,
+            backgroundColor: border,
+            marginLeft: spacing.xl,
+          }}
+        />
+      ) : null}
+    </>
+  );
+
+  if (onPress || navigateTo) {
+    return (
+      <Pressable
+        onPress={handlePress}
+        accessibilityRole="button"
+        testID={testID}
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? border : "transparent",
+          },
+        ]}
+      >
+        {RowContent}
+      </Pressable>
+    );
+  }
+  return RowContent;
+}
+
+type SettingsSpacerProps = { size?: keyof typeof spacing };
+export function SettingsSpacer({ size = "xl" }: SettingsSpacerProps) {
+  return <RNView style={{ height: spacing[size] }} />;
+}

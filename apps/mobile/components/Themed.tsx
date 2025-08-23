@@ -58,6 +58,8 @@ export const spacing = {
   lg: 16,
   xl: 24,
   xxl: 32,
+  // iOS large title leading inset is ~20pt; keep 16 elsewhere for platform parity
+  headerContentInset: Platform.select({ ios: 20, default: 16 }),
 } as const;
 
 export const radii = {
@@ -79,6 +81,10 @@ export const typography = {
   lineHeightNormal: 1.3,
   lineHeightRelaxed: 1.5,
 } as const;
+
+export function getLineHeight(fontSize: number, ratio: number): number {
+  return Math.round(fontSize * ratio);
+}
 
 // iOS-style dynamic type sizes (approximate on Android)
 export const textVariants = {
@@ -112,9 +118,19 @@ export const textVariants = {
     fontWeight: "400" as const,
     lineHeight: Platform.select({ ios: 22, default: 22 }),
   },
+  bodyEmphasized: {
+    fontSize: Platform.select({ ios: 17, default: 16 }),
+    fontWeight: "600" as const,
+    lineHeight: Platform.select({ ios: 22, default: 22 }),
+  },
   callout: {
     fontSize: Platform.select({ ios: 16, default: 16 }),
     fontWeight: "400" as const,
+    lineHeight: Platform.select({ ios: 21, default: 20 }),
+  },
+  calloutEmphasized: {
+    fontSize: Platform.select({ ios: 16, default: 16 }),
+    fontWeight: "600" as const,
     lineHeight: Platform.select({ ios: 21, default: 20 }),
   },
   subheadline: {
@@ -122,9 +138,19 @@ export const textVariants = {
     fontWeight: "400" as const,
     lineHeight: Platform.select({ ios: 20, default: 19 }),
   },
+  subheadlineEmphasized: {
+    fontSize: Platform.select({ ios: 15, default: 15 }),
+    fontWeight: "600" as const,
+    lineHeight: Platform.select({ ios: 20, default: 19 }),
+  },
   footnote: {
     fontSize: Platform.select({ ios: 13, default: 13 }),
     fontWeight: "400" as const,
+    lineHeight: Platform.select({ ios: 18, default: 17 }),
+  },
+  footnoteEmphasized: {
+    fontSize: Platform.select({ ios: 13, default: 13 }),
+    fontWeight: "600" as const,
     lineHeight: Platform.select({ ios: 18, default: 17 }),
   },
   caption1: {
@@ -132,9 +158,19 @@ export const textVariants = {
     fontWeight: "400" as const,
     lineHeight: Platform.select({ ios: 16, default: 16 }),
   },
+  caption1Emphasized: {
+    fontSize: Platform.select({ ios: 12, default: 12 }),
+    fontWeight: "600" as const,
+    lineHeight: Platform.select({ ios: 16, default: 16 }),
+  },
   caption2: {
     fontSize: Platform.select({ ios: 11, default: 11 }),
     fontWeight: "400" as const,
+    lineHeight: Platform.select({ ios: 13, default: 14 }),
+  },
+  caption2Emphasized: {
+    fontSize: Platform.select({ ios: 11, default: 11 }),
+    fontWeight: "600" as const,
     lineHeight: Platform.select({ ios: 13, default: 14 }),
   },
 } as const;
