@@ -1,6 +1,11 @@
 import React from "react";
-import renderer, { act } from "react-test-renderer";
-import { Alert, Platform } from "react-native";
+import {
+  render,
+  screen,
+  userEvent,
+  waitFor,
+} from "@testing-library/react-native";
+import { Platform } from "react-native";
 import Signup from "@/app/signup";
 
 jest.mock("@/lib/auth", () => ({
@@ -34,85 +39,68 @@ jest.mock("@/lib/supabase", () => ({
 
 describe("Signup flow", () => {
   it("navigates to onboarding when not seen", async () => {
-    let root: renderer.ReactTestRenderer;
     let capturedHandler: (event: string, session: any) => void = () => {};
     mockOnAuthStateChange.mockImplementation((handler: any) => {
       capturedHandler = handler;
       return { data: { subscription: { unsubscribe: jest.fn() } } } as any;
     });
-    await act(async () => {
-      root = renderer.create(<Signup />);
-    });
 
-    const pressables = root!.root.findAll((n) => n.props?.onPress);
-    await act(async () => {
-      pressables[0].props.onPress();
-    });
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(null);
+
+    const user = userEvent.setup();
+    const { unmount } = render(<Signup />);
+
+    await user.press(screen.getByText("Sign in with Google"));
 
     // Simulate user becoming signed in, which should trigger navigate
-    await act(async () => {
-      capturedHandler("SIGNED_IN", {} as any);
-    });
+    capturedHandler("SIGNED_IN", {} as any);
 
-    expect(mockReplace).toHaveBeenCalledWith("/onboarding/1");
+    await waitFor(() =>
+      expect(mockReplace).toHaveBeenCalledWith("/onboarding/1")
+    );
+    unmount();
   });
 
   it('navigates to /(tabs)/home when hasSeenOnboarding is "true"', async () => {
-    let root: renderer.ReactTestRenderer;
     let capturedHandler: (event: string, session: any) => void = () => {};
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce("true");
     mockOnAuthStateChange.mockImplementation((handler: any) => {
       capturedHandler = handler;
       return { data: { subscription: { unsubscribe: jest.fn() } } } as any;
     });
-    await act(async () => {
-      root = renderer.create(<Signup />);
-    });
 
-    await act(async () => {
-      capturedHandler("SIGNED_IN", {} as any);
-    });
+    const { unmount } = render(<Signup />);
 
-    expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home");
+    capturedHandler("SIGNED_IN", {} as any);
+
+    await waitFor(() =>
+      expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home")
+    );
+    unmount();
   });
 
   it("unsubscribes auth listener on unmount", async () => {
-    let root: renderer.ReactTestRenderer;
     const unsubscribe = jest.fn();
     mockOnAuthStateChange.mockImplementation((_handler: any) => {
       return { data: { subscription: { unsubscribe } } } as any;
     });
-    await act(async () => {
-      root = renderer.create(<Signup />);
-    });
-    await act(async () => {
-      root.unmount();
-    });
+    const { unmount } = render(<Signup />);
+    unmount();
     expect(unsubscribe).toHaveBeenCalled();
   });
 
   it("renders Apple button only on iOS", async () => {
     const originalOS = Platform.OS as any;
     (Platform as any).OS = "android";
-    let androidTree!: renderer.ReactTestRenderer;
-    await act(async () => {
-      androidTree = renderer.create(<Signup />);
-    });
-    const findLabel = (r: renderer.ReactTestRenderer) =>
-      r.root.findAll(
-        (n) =>
-          typeof n.props?.children === "string" &&
-          n.props.children === "Sign in with Apple"
-      );
-    expect(findLabel(androidTree).length).toBe(0);
+    const firstRender = render(<Signup />);
+    expect(screen.queryByText("Sign in with Apple")).toBeNull();
 
     (Platform as any).OS = "ios";
-    let iosTree!: renderer.ReactTestRenderer;
-    await act(async () => {
-      iosTree = renderer.create(<Signup />);
-    });
-    expect(findLabel(iosTree).length).toBeGreaterThan(0);
+    await firstRender.unmountAsync();
+    const secondRender = render(<Signup />);
+    expect(screen.getByText("Sign in with Apple")).toBeTruthy();
 
     (Platform as any).OS = originalOS;
+    secondRender.unmount();
   });
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import renderer, { act } from "react-test-renderer";
+import { render, screen } from "@testing-library/react-native";
 
 import TabLayout from "@/app/(tabs)/_layout";
 
@@ -22,32 +22,26 @@ jest.mock("expo-router", () => {
 });
 
 describe("Tabs layout", () => {
-  it("defines 4 tabs with correct names and titles and sets initial route", async () => {
-    let root: renderer.ReactTestRenderer;
-    await act(async () => {
-      root = renderer.create(<TabLayout />);
-    });
+  it("defines 4 tabs with correct names and titles and sets initial route", () => {
+    render(<TabLayout />);
 
-    const tabs = root!.root.findByType("mock-tabs" as any);
+    const tabs = screen.UNSAFE_getByType("mock-tabs" as any);
     expect(tabs.props.initialRouteName).toBe("home");
-    // Header should be hidden on all screens via screenOptions
     expect(tabs.props.screenOptions.headerShown).toBe(false);
 
-    const screens = root!.root.findAllByType("mock-tab-screen" as any);
+    const screens = screen.UNSAFE_getAllByType("mock-tab-screen" as any);
     const byName: Record<string, any> = Object.fromEntries(
-      screens.map((s) => [s.props.name, s])
+      screens.map((s: any) => [s.props.name, s])
     );
 
     expect(Object.keys(byName)).toEqual(["home", "goals", "groups", "profile"]);
-
     expect(byName.home.props.options.title).toBe("Home");
     expect(byName.goals.props.options.title).toBe("Goals");
     expect(byName.groups.props.options.title).toBe("Groups");
     expect(byName.profile.props.options.title).toBe("Profile");
 
-    // Ensure each tab defines a tabBarIcon function
-    Object.values(byName).forEach((screen: any) => {
-      expect(typeof screen.props.options.tabBarIcon).toBe("function");
+    Object.values(byName).forEach((screenItem: any) => {
+      expect(typeof screenItem.props.options.tabBarIcon).toBe("function");
     });
   });
 });
