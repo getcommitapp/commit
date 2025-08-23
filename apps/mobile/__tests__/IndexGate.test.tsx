@@ -11,7 +11,7 @@ jest.mock("@react-native-async-storage/async-storage", () => ({
 }));
 
 jest.mock("../config", () => ({
-  config: { resetOnboardingOnReload: false },
+  config: { devResetOnboardingOnReload: false },
 }));
 
 jest.mock("expo-router", () => ({

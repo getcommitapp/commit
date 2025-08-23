@@ -12,7 +12,7 @@ export default function IndexGate() {
   useEffect(() => {
     const check = async () => {
       try {
-        if (config.resetOnboardingOnReload) {
+        if (config.devResetOnboardingOnReload) {
           await AsyncStorage.removeItem("hasSeenOnboarding");
         }
         const value = await AsyncStorage.getItem("hasSeenOnboarding");
@@ -29,15 +29,9 @@ export default function IndexGate() {
   if (!ready || hasSeenOnboarding === null) return null;
 
   // In development, allow overriding the start route for faster iteration
-  if (
-    __DEV__ &&
-    config.devDefaultPage?.enabled &&
-    config.devDefaultPage?.route
-  ) {
+  if (config.devDefaultPage) {
     return (
-      <Redirect
-        href={{ pathname: config.devDefaultPage.route as unknown as any }}
-      />
+      <Redirect href={{ pathname: config.devDefaultPage as unknown as any }} />
     );
   }
 
