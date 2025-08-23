@@ -1,0 +1,105 @@
+@startuml architecture
+title commit. - High-Level Architecture
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam defaultTextAlignment center
+skinparam wrapWidth 200
+skinparam dpi 180
+skinparam ArrowColor #555555
+skinparam ArrowThickness 1
+skinparam monochrome false
+
+legend left
+  commit. MVP Architecture
+  - Mobile: Expo React Native (iOS/Android)
+  - Web: Astro static site on Cloudflare Workers
+  - Backend: Supabase (Auth, Postgres, Storage, Edge Functions)
+  - Payments: Stripe Connect (incl. TWINT for CH)
+endlegend
+
+rectangle "Users" as Users {
+  actor "Mobile User\n(iOS / Android)" as MobileUser
+  actor "Reviewer" as Reviewer
+  actor "Admin" as Admin
+}
+
+package "Mobile App\nExpo React Native" as Mobile {
+  [App Shell\n(Router, Tabs, Screens)] as AppShell
+  [Auth SDK\n(Supabase Auth)] as MobileAuth
+  [API Client\n(Supabase JS)] as MobileApi
+  [Storage Client\n(Uploads/Downloads)] as MobileStorage
+  [Stripe SDK\n(Payment methods, intents)] as MobileStripe
+}
+
+package "Web Landing\nAstro (Static)" as Web {
+  [Static Pages]
+  [Contact/Links]
+}
+
+node "Cloudflare Workers\n(Global CDN)" as CF
+Web -down-> CF : deploy static site
+
+package "Supabase" as Supabase {
+  node "Auth" as Auth
+  database "Postgres" as DB
+  node "Storage\n(Images)" as Storage
+  node "Edge Functions" as Edge
+}
+
+cloud "Stripe Connect" as Stripe
+
+MobileUser --> AppShell
+Reviewer --> AppShell : reviewer flows
+Admin --> AppShell : future admin
+
+AppShell --> MobileAuth
+AppShell --> MobileApi
+AppShell --> MobileStorage
+AppShell --> MobileStripe
+
+MobileAuth --> Auth : OAuth (Google/Apple)
+MobileApi --> DB : CRUD (Goals, Groups, Stakes)
+MobileStorage --> Storage : photo uploads
+MobileApi --> Edge : business logic / verification
+
+MobileStripe --> Stripe : setup/capture payments
+Edge --> Stripe : webhooks / transfers
+Stripe --> Edge : events (webhooks)
+
+Edge --> DB : read/write
+Edge --> Storage : signed URLs
+Auth --> DB : user profiles
+
+Reviewer --> AppShell : photo review
+AppShell --> MobileApi : fetch pending reviews
+
+Admin -[#gray,dashed]-> AppShell : no special functions (MVP)
+
+queue "Logs/Monitoring" as Observability
+Edge -[#gray,dashed]-> Observability
+
+note right of DB
+  Entities:
+  - Users, Profiles
+  - Goals, GoalVerifications
+  - Groups, GroupMembers
+  - Stakes, Payments
+  - Invitations
+end note
+
+note bottom of Edge
+  Implements:
+  - Goal resolution & payouts
+  - Group distribution logic
+  - Stripe webhook handlers
+  - Signed URL issuance
+end note
+
+note bottom of MobileStripe
+  - Create/setup payment method
+  - Authorize stake on goal creation
+  - Capture on failure
+end note
+
+@enduml
