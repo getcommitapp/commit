@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View, spacing, textVariants } from "@/components/Themed";
+import { Text, spacing, textVariants } from "@/components/Themed";
 
 export default function HomeScreen() {
   return (
