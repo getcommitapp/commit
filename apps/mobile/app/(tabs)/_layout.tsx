@@ -1,61 +1,69 @@
 import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Tabs } from "expo-router";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import { useThemeColor, spacing } from "@/components/Themed";
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import { spacing } from "@/components/Themed";
+import HomeIcon from "@/assets/icons/home.svg";
+import TargetIcon from "@/assets/icons/target.svg";
+import PeopleCircleIcon from "@/assets/icons/people-circle.svg";
+import PersonCircleIcon from "@/assets/icons/person-circle.svg";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const textColor = useThemeColor({}, "text");
 
   return (
     <Tabs
+      initialRouteName="home"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tabIconSelected,
+        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].card,
+          borderTopColor: Colors[colorScheme ?? "light"].border,
+          borderTopWidth: 1,
+        },
+        sceneStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].background,
+        },
         tabBarItemStyle: { paddingVertical: spacing.xs },
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: false,
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
-          title: "Tab One",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={textColor}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          title: "Home",
+          tabBarIcon: ({ color }) => (
+            <HomeIcon width={26} height={26} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="goals"
         options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: "Goals",
+          tabBarIcon: ({ color }) => (
+            <TargetIcon width={28} height={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="groups"
+        options={{
+          title: "Groups",
+          tabBarIcon: ({ color }) => (
+            <PeopleCircleIcon width={28} height={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => (
+            <PersonCircleIcon width={28} height={28} color={color} />
+          ),
         }}
       />
     </Tabs>

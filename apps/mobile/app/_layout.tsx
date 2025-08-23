@@ -8,10 +8,13 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import { StatusBar } from "expo-status-bar";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { AppState } from "react-native";
 import { supabase } from "@/lib/supabase";
+import Colors from "@/constants/Colors";
+import { View } from "@/components/Themed";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -23,7 +26,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
@@ -59,13 +62,36 @@ function RootLayoutNav() {
     return () => sub.remove();
   }, []);
 
+  const isDark = colorScheme === "dark";
+  const baseTheme = isDark ? DarkTheme : DefaultTheme;
+  const tokens = isDark ? Colors.dark : Colors.light;
+
+  const navigationTheme = {
+    ...baseTheme,
+    colors: {
+      ...baseTheme.colors,
+      background: tokens.background,
+      card: tokens.card,
+      border: tokens.border,
+      text: tokens.text,
+      primary: tokens.primary,
+    },
+  } as const;
+
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="signup" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
+    <ThemeProvider value={navigationTheme}>
+      <View
+        lightColor={Colors.light.background}
+        darkColor={Colors.dark.background}
+        style={{ flex: 1 }}
+      >
+        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+        <Stack>
+          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="signup" options={{ headerShown: false }} />
+        </Stack>
+      </View>
     </ThemeProvider>
   );
 }
