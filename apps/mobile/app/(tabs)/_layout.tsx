@@ -17,6 +17,14 @@ export default function TabLayout() {
       initialRouteName="home"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tabIconSelected,
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].card,
+          borderTopColor: Colors[colorScheme ?? "light"].border,
+          borderTopWidth: 1,
+        },
+        sceneStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].background,
+        },
         tabBarItemStyle: { paddingVertical: spacing.xs },
         headerShown: false,
       }}

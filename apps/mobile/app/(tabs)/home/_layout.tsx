@@ -4,13 +4,10 @@ export default function HomeStackLayout() {
   return (
     <Stack
       screenOptions={{
-        headerLargeTitle: true,
-        headerTransparent: true,
-        headerShadowVisible: false,
-        headerStyle: { backgroundColor: "transparent" },
+        headerShown: false,
       }}
     >
-      <Stack.Screen name="index" options={{ title: "Welcome back" }} />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }

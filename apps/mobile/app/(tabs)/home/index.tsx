@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
 import {
@@ -12,26 +13,30 @@ import {
 export default function HomeScreen() {
   const borderColor = useThemeColor({}, "border");
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <View style={[styles.separator, { backgroundColor: borderColor }]} />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Welcome back</Text>
+        <View style={[styles.separator, { backgroundColor: borderColor }]} />
+        <EditScreenInfo path="app/(tabs)/index.tsx" />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "stretch",
+    justifyContent: "flex-start",
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
   },
   title: {
-    ...textVariants.title1,
+    ...textVariants.largeTitle,
   },
   separator: {
     marginVertical: spacing.xl,
     height: 1,
-    width: "80%",
+    width: "100%",
   },
 });

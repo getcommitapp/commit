@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
 import {
@@ -12,11 +13,13 @@ import {
 export default function ProfileScreen() {
   const borderColor = useThemeColor({}, "border");
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-      <View style={[styles.separator, { backgroundColor: borderColor }]} />
-      <EditScreenInfo path="app/(tabs)/profile.tsx" />
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Profile</Text>
+        <View style={[styles.separator, { backgroundColor: borderColor }]} />
+        <EditScreenInfo path="app/(tabs)/profile.tsx" />
+      </View>
+    </SafeAreaView>
   );
 }
 
