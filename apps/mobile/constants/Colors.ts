@@ -18,7 +18,7 @@ const Colors = {
     // core
     text: palette.primary,
     background: palette.background,
-    tabIconDefault: palette.muted,
+    tabIconDefault: palette.mutedForeground,
     tabIconSelected: palette.primary,
     // extended tokens
     primary: palette.primary,
@@ -33,8 +33,8 @@ const Colors = {
     warning: palette.warning,
     link: palette.primary,
   },
+  // TODO: Implement dark theme tokens
   dark: {
-    // simple dark scheme; adjust if you implement true dark theme tokens
     text: "#fff",
     background: "#000",
     tabIconDefault: "#666666",

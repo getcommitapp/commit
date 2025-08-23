@@ -17,6 +17,7 @@ export default function TabLayout() {
       initialRouteName="home"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tabIconSelected,
+        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
         tabBarStyle: {
           backgroundColor: Colors[colorScheme ?? "light"].card,
           borderTopColor: Colors[colorScheme ?? "light"].border,
