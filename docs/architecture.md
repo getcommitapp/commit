@@ -11,11 +11,11 @@
 
 ## System Architecture
 
-![System Architecture](assets/architecture.png)
+![System Architecture](architecture.png)
 
-System architecture showing a React Native SDK connecting to Supabase backend
-with PostgreSQL database, Edge Functions, Storage, and Stripe payment
-integration.
+High-level architecture diagram generated from `docs/architecture.puml` showing
+the Expo React Native mobile app, Astro web landing (Cloudflare), Supabase
+(Auth, Postgres, Storage, Edge Functions), and Stripe Connect integration.
 
 ---
 

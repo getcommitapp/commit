@@ -17,26 +17,31 @@ OUT := software-requirements-specification.pdf
 # All files in assets directory (if present) are dependencies
 ASSETS := $(shell if [ -d assets ]; then find assets -type f; fi)
 
-# PlantUML diagram generation (SVG only)
-PUML_SRC := db-schema.puml
-PUML_SVG := db-schema.svg
-PUML_PNG := db-schema.png
+# PlantUML diagram generation (PNG only)
+PUML_SRC := db-schema.puml architecture.puml
+DB_SCHEMA_PNG := db-schema.png
+ARCH_PNG := architecture.png
 
-.PHONY: all clean db
+.PHONY: all clean srs db arch
 
-all: $(OUT)
+all: srs db arch
+
+srs: $(OUT)
 
 $(OUT): $(SRC) $(ASSETS) Makefile
 	$(PANDOC) --pdf-engine=xelatex $(SRC) -o $(OUT)
 
-db: $(PUML_SVG) $(PUML_PNG)
+db: $(DB_SCHEMA_PNG)
 
-$(PUML_SVG): $(PUML_SRC) Makefile
-	$(PLANTUML) -tsvg $(PUML_SRC) -o .
+arch: $(ARCH_PNG)
 
-$(PUML_PNG): $(PUML_SRC) Makefile
-	PLANTUML_LIMIT_SIZE=8192 $(PLANTUML) -tpng $(PUML_SRC) -o .
+
+$(DB_SCHEMA_PNG): db-schema.puml Makefile
+	PLANTUML_LIMIT_SIZE=8192 $(PLANTUML) -tpng db-schema.puml -o .
+
+$(ARCH_PNG): architecture.puml Makefile
+	PLANTUML_LIMIT_SIZE=8192 $(PLANTUML) -tpng architecture.puml -o .
 
 clean:
-	rm -f $(OUT) $(PUML_SVG) $(PUML_PNG)
+	rm -f $(OUT) $(DB_SCHEMA_PNG) $(ARCH_PNG)
 
