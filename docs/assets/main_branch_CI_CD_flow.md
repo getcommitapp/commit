@@ -20,8 +20,8 @@ participant GHR as GitHub Releases
 
     alt Mobile App Changes (apps/mobile/**)
         Main->>GHA: Trigger "Build APK"
-        Note over GHA: Build APK
-        GHA->>GHA: Upload APK artifact
+        Note over GHA: Build APK on main
+        GHA->>GHA: Upload APK artifact (commit-android-{version}.apk)
         GHA-->>Dev: APK ready for download
     end
 
@@ -39,9 +39,8 @@ participant GHR as GitHub Releases
         Main-->>Dev: Docs updated
     end
 
-    Note over Dev: For APK releases
-    Dev->>Main: Create apk-v* tag
-    Main->>GHA: Trigger "Build APK" (tag mode)
-    Note over GHA: Build + Release mode
-    GHA->>GHR: Create GitHub Release
-    GHR-->>Dev: APK v* released publicly
+    Note over Dev: For APK releases (manual)
+    Dev->>GHA: Run "Release Mobile" (workflow_dispatch)
+    Note over GHA: Validate versions, tag mobile-v{version}, build, create Release
+    GHA->>GHR: Publish GitHub Release with commit-android-{version}.apk
+    GHR-->>Dev: APK released publicly

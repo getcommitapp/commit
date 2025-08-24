@@ -108,6 +108,26 @@ pnpm test
 > [!IMPORTANT]
 > Ensure a clean lint state and passing tests before opening a PR.
 
+## Release (Android)
+
+Manual, version-aligned release flow:
+
+1. Bump version in `apps/mobile` (updates both `app.json` and `package.json`):
+   ```bash
+   # from apps/mobile/
+   VERSION=x.y.z pnpm run release:bump
+   ```
+2. Commit and merge the bump to `main`.
+3. In GitHub Actions, run the workflow "Release Mobile" (workflow_dispatch).
+   - It validates versions, creates tag `mobile-v{version}`, builds, and publishes a GitHub Release.
+4. Download artifact from the GitHub Release:
+   - `commit-android-{version}.apk`
+
+Notes:
+
+- Regular `Build APK` workflow runs on `main` commits for CI verification and artifact previews.
+- The release job is `release-android` in `.github/workflows/release-mobile.yml`.
+
 ## Project structure
 
     apps/mobile/

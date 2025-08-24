@@ -25,4 +25,4 @@ commit id: "Initial"
     merge feature-docs
     commit id: "Docs merged"
 
-    commit id: "Tag: apk-v1.2.0" tag: "apk-v1.2.0"
+    commit id: "Release: mobile-v0.3.0" tag: "mobile-v0.3.0"
