@@ -199,10 +199,10 @@ pnpm install
 | Pipeline       | CI        | CD  | Description                                                                           |
 | -------------- | --------- | --- | ------------------------------------------------------------------------------------- |
 | Lint and tests | Y         | N   | PRs must pass `ESLint` and `Jest` before review.                                      |
-| Build APK      | Y (build) | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
+| Build Mobile   | Y (build) | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
 | Compile Docs   | Y         | N   | Compile the `PDF` for the `Software Requirements Specification`                       |
 | Deploy web     | N         | Y   | Deploy the landing page to `CloudFlare`                                               |
-| Release mobile | N         | Y   | Manual: validate versions, tag `mobile-v{version}`, build APK, publish GitHub Release |
+| Release mobile | N         | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
 
 > [!NOTE]
 > To catch issues early (Lint and tests), use the following commands:

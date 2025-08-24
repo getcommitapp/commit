@@ -35,7 +35,7 @@ end
 
 == Post-merge Path-based Actions ==
 alt Mobile changes included
-  Main ->> GHA: Trigger "Build APK" (push on main, apps/mobile/**)
+  Main ->> GHA: Trigger "Build Mobile" (push on main, apps/mobile/**)
 end
 
 alt Web changes included
@@ -50,6 +50,7 @@ end
 == Release Tagging (example) ==
 Dev ->> Repo: Create tag mobile-v{version}
 Repo ->> Rel: Tag recorded
+GHA ->> Rel: Attach APK from latest successful Build Mobile artifact
 
 @enduml
 

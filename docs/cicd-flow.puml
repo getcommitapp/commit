@@ -29,7 +29,7 @@ end
 note over Main: Path filters decide downstream jobs
 
 alt Mobile App changes (apps/mobile/**)
-  Main ->> GHA: Trigger "Build APK" (on: push to main)
+  Main ->> GHA: Trigger "Build Mobile" (on: push to main)
   note over GHA
     - Install mobile deps
     - Lint + Test mobile
@@ -69,10 +69,8 @@ Dev ->> GHA: Run "Release Mobile" (workflow_dispatch)
 note over GHA
   - Validate apps/mobile versions (package.json == app.json)
   - Create/push tag mobile-v{version}
-  - Setup JDK/Android/Expo
-  - Build local EAS APK
-  - Upload artifact
-  - Create/Update GitHub Release with APK
+  - Download latest successful APK artifact (from "Build Mobile" on main)
+  - Create/Update GitHub Release and attach APK
 end note
 GHA ->> GHR: Publish Release mobile-v{version}
 GHR -->> Dev: APK released publicly
