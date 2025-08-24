@@ -1,6 +1,7 @@
 .astro
 .wrangler
 .expo
+expo-env.d.ts
 node_modules
 pnpm-lock.yaml
 **/assets/**

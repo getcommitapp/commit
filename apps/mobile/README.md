@@ -63,17 +63,47 @@ pnpm start --tunnel
 
 ## Environment variables
 
-Create a local env file from the example template:
+The app uses several environment files for different purposes:
+
+### Public Environment Files (Committed to Repository)
+
+1. **`.env.development`** - Development Supabase configuration (public)
+   ```bash
+   EXPO_PUBLIC_SUPABASE_URL=https://your-dev-supabase-url.supabase.co
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-dev-supabase-anon-key
+   ```
+
+2. **`.env.production`** - Production Supabase configuration (public)
+   ```bash
+   EXPO_PUBLIC_SUPABASE_URL=https://your-prod-supabase-url.supabase.co
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-prod-supabase-anon-key
+   ```
+
+> [!NOTE]
+> These files contain public environment variables (prefixed with `EXPO_PUBLIC_`) and are safely committed to the repository. They do not contain sensitive secrets.
+
+### Local Development Override
+
+Create a local env file from the example template for development overrides:
 
 ```bash
 cd apps/mobile
 cp .env.local.example .env.local
 ```
 
-Available variables:
+Available local variables (all optional, dev-only):
 
-- `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (dev-only, optional): If defined, onboarding is reset on each reload in development. Outside development, this is always ignored (feature is disabled).
-- `EXPO_PUBLIC_DEV_DEFAULT_PAGE` (dev-only, optional): If defined, the app will redirect to this route on launch during development. Examples: `/signup`, `/onboarding/1`, `/(tabs)/home`.
+- `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (optional): If defined, onboarding is reset on each reload in development. Outside development, this is always ignored (feature is disabled).
+- `EXPO_PUBLIC_DEV_DEFAULT_PAGE` (optional): If defined, the app will redirect to this route on launch during development. Examples: `/signup`, `/onboarding/1`, `/(tabs)/home`.
+
+### Environment Variable Usage
+
+- **Supabase Configuration**: The app automatically uses the appropriate Supabase URL and anonymous key based on the environment (development vs production)
+- **Development Features**: Local overrides in `.env.local` allow for development-specific behavior like auto-navigation and onboarding resets
+- **Security**: Only `.env.local` contains sensitive data and is gitignored. The public environment files (`.env.development`, `.env.production`) are safely committed as they only contain public variables.
+
+> [!NOTE]
+> The `.env.local.example` file serves as a template for local development overrides and contains no sensitive data.
 
 ## Scripts
 
