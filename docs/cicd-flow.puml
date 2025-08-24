@@ -1,0 +1,82 @@
+@startuml cicd-flow
+title commit. - CI/CD Flow (Commit Monorepo)
+
+actor Dev as "Developer"
+participant FB as "Feature Branch"
+participant PR as "Pull Request"
+participant GHA as "GitHub Actions"
+participant Main as "Main Branch"
+participant CF as "Cloudflare Workers"
+participant GHR as "GitHub Releases"
+
+== Pull Request Validation ==
+Dev ->> FB: Push changes
+Dev ->> PR: Open PR
+PR ->> GHA: Trigger "Lint and Test" (on: pull_request)
+note over GHA
+  - pnpm setup, install
+  - Run repo-wide lint and tests
+end note
+GHA -->> PR: Checks status
+
+alt Checks passed
+  PR ->> Main: Merge approved
+else Checks failed
+  GHA -->> Dev: Fix issues and update PR
+end
+
+== Main Branch Path-based Actions ==
+note over Main: Path filters decide downstream jobs
+
+alt Mobile App changes (apps/mobile/**)
+  Main ->> GHA: Trigger "Build APK" (on: push to main)
+  note over GHA
+    - Install mobile deps
+    - Lint + Test mobile
+    - Setup JDK/Android/Expo
+    - Build local EAS APK
+    - Upload artifact commit-android-{version}.apk
+  end note
+  GHA -->> Dev: APK artifact available
+end
+
+alt Web changes (apps/web/**)
+  Main ->> GHA: Trigger "Deploy Web" (on: push to main)
+  note over GHA
+    - Install web deps
+    - Lint web
+    - Deploy via Wrangler
+  end note
+  GHA ->> CF: Deploy site
+  CF -->> Dev: Website updated
+end
+
+== Docs Workflow ==
+alt Docs changes in PR (docs/**)
+  PR ->> GHA: Trigger "Compile Docs" (on: pull_request)
+  note over GHA
+    - Run Makefile (PlantUML + Pandoc)
+    - Auto-commit generated docs to PR branch
+  end note
+  GHA -->> PR: Built docs committed
+else Manual docs build
+  Dev ->> GHA: Run "Compile Docs" (workflow_dispatch)
+  GHA -->> Dev: Built docs artifacts/commit
+end
+
+== Mobile Release (Manual) ==
+Dev ->> GHA: Run "Release Mobile" (workflow_dispatch)
+note over GHA
+  - Validate apps/mobile versions (package.json == app.json)
+  - Create/push tag mobile-v{version}
+  - Setup JDK/Android/Expo
+  - Build local EAS APK
+  - Upload artifact
+  - Create/Update GitHub Release with APK
+end note
+GHA ->> GHR: Publish Release mobile-v{version}
+GHR -->> Dev: APK released publicly
+
+@enduml
+
+

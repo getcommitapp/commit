@@ -18,14 +18,15 @@ OUT := software-requirements-specification.pdf
 ASSETS := $(shell if [ -d assets ]; then find assets -type f; fi)
 
 # PlantUML diagram generation (PNG only)
-PUML_SRC := db-schema.puml architecture.puml ui-flow.puml
+PUML_SRC := db-schema.puml architecture.puml ui-flow.puml cicd-flow.puml
 DB_SCHEMA_PNG := db-schema.png
 ARCH_PNG := architecture.png
 UI_FLOW_PNG := ui-flow.png
+CICD_FLOW_PNG := cicd-flow.png
 
-.PHONY: all clean srs db arch ui
+.PHONY: all clean srs db arch ui cicd
 
-all: srs db arch ui
+all: srs db arch ui cicd
 
 srs: $(OUT)
 
@@ -48,6 +49,11 @@ $(ARCH_PNG): architecture.puml Makefile
 $(UI_FLOW_PNG): ui-flow.puml Makefile
 	PLANTUML_LIMIT_SIZE=8192 $(PLANTUML) -tpng ui-flow.puml -o .
 
+cicd: $(CICD_FLOW_PNG)
+
+$(CICD_FLOW_PNG): cicd-flow.puml Makefile
+	PLANTUML_LIMIT_SIZE=8192 $(PLANTUML) -tpng cicd-flow.puml -o .
+
 clean:
-	rm -f $(OUT) $(DB_SCHEMA_PNG) $(ARCH_PNG) $(UI_FLOW_PNG)
+	rm -f $(OUT) $(DB_SCHEMA_PNG) $(ARCH_PNG) $(UI_FLOW_PNG) $(CICD_FLOW_PNG)
 
