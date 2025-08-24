@@ -8,7 +8,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest",
-    "format": "prettier --write .",
+    "format": "prettier --write . --ignore-path ../../.prettierignore",
     "lint": "expo lint",
     "release:bump": "node -e \"const f=require('fs'),v=process.env.VERSION;if(!v){console.error('Usage: VERSION=x.y.z pnpm release:bump');process.exit(1);}['package.json','app.json'].forEach(p=>{const j=JSON.parse(f.readFileSync(p,'utf8'));p==='app.json'?j.expo.version=v:j.version=v;f.writeFileSync(p,JSON.stringify(j,null,2)+'\\n')});console.log('Bumped to',v);\""
   },
