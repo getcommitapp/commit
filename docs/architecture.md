@@ -38,10 +38,9 @@ Entity-relationship diagram generated from `docs/db-schema.puml`.
 
 ## Branch-Based CI/CD Flow
 
-![Branch-Based CI/CD Flow](assets/branch_based_CI_CD_flow.png)
+![Branch-Based CI/CD Flow](branch-flow.png)
 
-Complete CI/CD workflow diagram showing how feature branches, pull requests,
-and main branch interactions trigger different automated processes.
+Branch-based CI/CD sequence diagram generated from `docs/branch-flow.puml`, showing how feature branches, pull requests, validation checks, merges, path-based jobs, and example release tags work together.
 
 ---
 
