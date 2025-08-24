@@ -24,7 +24,7 @@ jobs:
 
       - name: Build docs with Makefile
         working-directory: docs
-        run: make -B DOCKER=1
+        run: make -B -j$(nproc) DOCKER=1
 
       - name: Commit docs outputs if changed
         uses: stefanzweifel/git-auto-commit-action@v6
