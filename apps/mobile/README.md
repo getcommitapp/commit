@@ -125,7 +125,7 @@ Manual, version-aligned release flow:
 
 Notes:
 
-- Regular `Build APK` workflow runs on `main` commits for CI verification and artifact previews.
+- Regular `Build Mobile` workflow runs on `main` commits for CI verification and artifact previews.
 - The release job is `release-android` in `.github/workflows/release-mobile.yml`.
 
 ## Project structure

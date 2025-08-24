@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Mobile
 on:
   push:
     branches:
@@ -12,8 +12,8 @@ permissions:
   issues: write
 
 jobs:
-  build-apk:
-    name: Build and publish Expo APK
+  build-android:
+    name: Build Android APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,8 +32,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm -w install --frozen-lockfile --filter ./apps/mobile
-
-      # Tag verification removed: this workflow runs on main or manual dispatch only
 
       - name: Lint mobile app
         run: pnpm --filter './apps/mobile' lint
@@ -86,13 +84,13 @@ jobs:
             --profile production \
             --local --non-interactive \
             --output "../${APK_NAME}"
-          echo "apk=apps/${APK_NAME}" >> $GITHUB_OUTPUT
-          echo "apk_name=${APK_NAME}" >> $GITHUB_OUTPUT
+          echo "artifact_path=apps/${APK_NAME}" >> $GITHUB_OUTPUT
+          echo "artifact_name=${APK_NAME}" >> $GITHUB_OUTPUT
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: expo-apk
-          path: ${{ steps.build.outputs.apk }}
+          name: mobile-artifacts
+          path: ${{ steps.build.outputs.artifact_path }}
 
       # Release publishing handled by Release Mobile workflow
