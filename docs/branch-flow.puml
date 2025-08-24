@@ -1,0 +1,56 @@
+@startuml branch-flow
+title commit. - Branch-Based Flow (Issues → Branches → PRs → Main)
+
+actor Dev as "Developer"
+participant Repo as "Repository"
+participant Iss as "Issue"
+participant GHA as "GitHub Actions"
+participant PR as "Pull Request"
+participant Main as "Main Branch"
+participant Rel as "Release Tag"
+
+== Plan Work with Issues ==
+Dev ->> Iss: Create issue #123 (mobile)
+Dev ->> Iss: Create issue #124 (web)
+Dev ->> Iss: Create issue #125 (docs)
+
+== Create Branches from Issues ==
+Iss ->> Repo: Create branch feature/123-mobile
+Dev ->> Repo: Push commits (mobile)
+Iss ->> Repo: Create branch feature/124-web
+Dev ->> Repo: Push commits (web)
+Iss ->> Repo: Create branch feature/125-docs
+Dev ->> Repo: Push commits (docs)
+
+== PR Validation ==
+Repo ->> PR: Open PRs from feature branches
+PR ->> GHA: Trigger "Lint and Test" (on: pull_request)
+GHA -->> PR: Report checks status
+
+alt Checks passed
+  PR ->> Main: Merge PRs
+else Checks failed
+  GHA -->> Dev: Fix and push updates
+end
+
+== Post-merge Path-based Actions ==
+alt Mobile changes included
+  Main ->> GHA: Trigger "Build APK" (push on main, apps/mobile/**)
+end
+
+alt Web changes included
+  Main ->> GHA: Trigger "Deploy Web" (push on main, apps/web/**)
+  GHA ->> "Cloudflare": Deploy via Wrangler
+end
+
+alt Docs changes included
+  PR ->> GHA: Trigger "Compile Docs" (pull_request, docs/**)
+end
+
+== Release Tagging (example) ==
+Dev ->> Repo: Create tag mobile-v{version}
+Repo ->> Rel: Tag recorded
+
+@enduml
+
+

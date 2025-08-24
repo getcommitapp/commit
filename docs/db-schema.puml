@@ -1,4 +1,5 @@
 @startuml db-schema
+title commit. - Database Schema
 ' Database schema draft for commit. (MVP)
 ' Derived from SRS and current mobile code (Supabase auth only)
 
