@@ -78,7 +78,11 @@ function Section({
           <Pressable
             key={item.id}
             onPress={() => {
-              if (item.id === "custom") router.push("/(tabs)/goals/create-step2");
+              if (item.id === "custom") {
+                router.push({ pathname: "/(tabs)/goals/create-step2", params: { kind: "custom" } });
+              } else {
+                router.push({ pathname: "/(tabs)/goals/configure", params: { template: item.id } });
+              }
             }}
             style={({ pressed }) => [
               styles.row,

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Pressable, ScrollView, StyleSheet } from "react-native";
 import { Text, spacing, radii, useThemeColor, textVariants } from "@/components/Themed";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 type Verification = { id: string; title: string; description: string };
 
@@ -19,6 +20,11 @@ export default function CreateGoalStep2Screen() {
   const mutedForeground = useThemeColor({}, "mutedForeground");
   const accent = useThemeColor({}, "accent");
   const insets = useSafeAreaInsets();
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const toggle = (id: string) => {
+    setSelected(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -36,10 +42,12 @@ export default function CreateGoalStep2Screen() {
         <Text style={[textVariants.title3, { marginBottom: spacing.xl }]}>Custom Goal</Text>
         <Text style={[textVariants.caption1Emphasized, { color: mutedForeground, marginBottom: spacing.sm }]}>VERIFICATION METHODS</Text>
         <View>
-          {VERIFICATIONS.map((v, idx) => (
+          {VERIFICATIONS.map((v, idx) => {
+            const isSelected = selected.includes(v.id);
+            return (
             <Pressable
               key={v.id}
-              onPress={() => {}}
+              onPress={() => toggle(v.id)}
               style={({ pressed }) => [
                 styles.row,
                 {
@@ -49,7 +57,7 @@ export default function CreateGoalStep2Screen() {
                   borderBottomLeftRadius: idx === VERIFICATIONS.length - 1 ? radii.md : 0,
                   borderBottomRightRadius: idx === VERIFICATIONS.length - 1 ? radii.md : 0,
                   borderWidth: 1,
-                  borderColor: border,
+                  borderColor: isSelected ? accent : border,
                   borderTopWidth: idx === 0 ? 1 : 0,
                   opacity: pressed ? 0.85 : 1,
                 },
@@ -67,9 +75,12 @@ export default function CreateGoalStep2Screen() {
                 >
                   {v.description}
                 </Text>
+                {isSelected && (
+                  <Text style={[textVariants.caption2Emphasized, { color: accent, marginTop: 2 }]}>Selected</Text>
+                )}
               </View>
             </Pressable>
-          ))}
+          );})}
         </View>
       </ScrollView>
       <View
@@ -86,13 +97,16 @@ export default function CreateGoalStep2Screen() {
         pointerEvents="box-none"
       >
         <Pressable
-          onPress={() => {}}
+          onPress={() => {
+            if (selected.length === 0) return;
+            router.push({ pathname: '/(tabs)/goals/configure', params: { methods: selected.join(',') } });
+          }}
           style={({ pressed }) => [
             styles.nextButton,
             { backgroundColor: accent, opacity: pressed ? 0.9 : 1 },
           ]}
         >
-          <Text style={textVariants.subheadlineEmphasized}>Next Step  ›</Text>
+          <Text style={textVariants.subheadlineEmphasized}>{selected.length ? 'Next Step  ›' : 'Select at least one'}</Text>
         </Pressable>
       </View>
     </SafeAreaView>

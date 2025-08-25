@@ -47,6 +47,13 @@ export default function GoalsStackLayout() {
           headerLargeTitle: false,
         }}
       />
+      <Stack.Screen
+        name="configure"
+        options={{
+          title: "Create Solo Goal",
+          headerLargeTitle: false,
+        }}
+      />
     </Stack>
   );
 }
