@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
-import { Pressable, Platform } from "react-native";
+import { Pressable } from "react-native";
+import { router } from "expo-router";
 import { Text, spacing } from "@/components/Themed";
 import { useThemeColor } from "@/components/Themed";
 
@@ -9,11 +10,10 @@ export default function GoalsStackLayout() {
   return (
     <Stack
       screenOptions={{
-        headerLargeTitle: Platform.OS === "ios",
-        headerTransparent: Platform.OS === "ios", // non-transparent on Android to avoid overlap
+        headerLargeTitle: true,
+        headerTransparent: true,
         headerShadowVisible: false,
         headerStyle: { backgroundColor },
-        contentStyle: { backgroundColor },
       }}
     >
       <Stack.Screen
@@ -25,12 +25,19 @@ export default function GoalsStackLayout() {
               accessibilityRole="button"
               accessibilityLabel="Add goal"
               hitSlop={8}
-              onPress={() => {}}
+              onPress={() => router.push("/(tabs)/goals/create")}
               style={{ paddingHorizontal: spacing.sm }}
             >
               <Text style={{ fontSize: 30, fontWeight: "400" }}>+</Text>
             </Pressable>
           ),
+        }}
+      />
+      <Stack.Screen
+        name="create"
+        options={{
+          title: "Create Solo Goal",
+          headerLargeTitle: false,
         }}
       />
     </Stack>
