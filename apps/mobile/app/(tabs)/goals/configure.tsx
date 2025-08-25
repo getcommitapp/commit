@@ -21,9 +21,9 @@ export default function ConfigureGoalScreen() {
   const blue = useThemeColor({}, 'blue');
 
   // Recurrence chips state
-  const weekDays = ['M','T','W','T2','F','S','S2'] as const; // differentiate duplicate letters internally
-  const dayLabels: Record<string,string> = { M:'M', T:'T', W:'W', T2:'T', F:'F', S:'S', S2:'S'};
-  const [selectedDays, setSelectedDays] = useState<string[]>(['T']);
+  const weekDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as const;
+  const dayLabels: Record<string,string> = { Mon:'M', Tue:'T', Wed:'W', Thu:'T', Fri:'F', Sat:'S', Sun:'S'};
+  const [selectedDays, setSelectedDays] = useState<string[]>(['Tue']);
   const toggleDay = (d: string) => setSelectedDays(prev => prev.includes(d) ? prev.filter(x=>x!==d) : [...prev, d]);
 
   // Determine which fields show (same logic as earlier but for layout grouping)
@@ -277,7 +277,7 @@ function InlineEditor({ editor, onClose, state }:{ editor:any; onClose:()=>void;
                 <Text style={{fontWeight:'600'}}>{month.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</Text>
                 <Pressable onPress={()=>setMonth(new Date(month.getFullYear(), month.getMonth()+1,1))}><Text>{'>'}</Text></Pressable>
               </View>
-              <View style={modalStyles.weekDaysRow}>{['S','M','T','W','T','F','S'].map(d=> <Text key={d} style={modalStyles.weekDay}>{d}</Text>)}</View>
+              <View style={modalStyles.weekDaysRow}>{['S','M','T','W','T','F','S'].map((d,i)=> <Text key={d+ '-' + i} style={modalStyles.weekDay}>{d}</Text>)}</View>
               <View style={modalStyles.daysGrid}>{cells.map((d,i)=> d? <Pressable key={i} style={modalStyles.dayCell} onPress={()=>selectDate(d)}><Text>{d.getDate()}</Text></Pressable>: <View key={i} style={modalStyles.dayCell}/> )}</View>
             </View>
           )}
