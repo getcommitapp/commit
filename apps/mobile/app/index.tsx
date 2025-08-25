@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Redirect } from "expo-router";
 import { config } from "../config";
+import { authClient } from "@/lib/auth-client";
 
 export default function IndexGate() {
   const [ready, setReady] = useState(false);
@@ -14,6 +15,11 @@ export default function IndexGate() {
       try {
         if (config.devResetOnboardingOnReload) {
           await AsyncStorage.removeItem("hasSeenOnboarding");
+          try {
+            await authClient.signOut();
+          } catch (_) {
+            // Ignore sign out errors in dev reset flow
+          }
         }
         const value = await AsyncStorage.getItem("hasSeenOnboarding");
         setHasSeenOnboarding(value === "true");

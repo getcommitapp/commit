@@ -4,6 +4,7 @@ import OnboardingPage from "@/components/pages/OnboardingPage";
 
 export default function OnboardingStep1() {
   const router = useRouter();
+
   return (
     <OnboardingPage
       image={require("@/assets/images/onboarding/onboarding-1.png")}

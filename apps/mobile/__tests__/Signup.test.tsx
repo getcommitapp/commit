@@ -8,11 +8,6 @@ import {
 import { Platform } from "react-native";
 import Signup from "@/app/signup";
 
-jest.mock("@/lib/auth", () => ({
-  signInWithGoogleOAuth: jest.fn(),
-  signInWithApple: jest.fn(),
-}));
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 jest.mock("@react-native-async-storage/async-storage", () => ({
@@ -27,33 +22,30 @@ jest.mock("expo-router", () => ({
   useRouter: () => ({ replace: mockReplace }),
 }));
 
-// Mock supabase to control auth state changes in test
-const mockOnAuthStateChange = jest.fn();
-jest.mock("@/lib/supabase", () => ({
-  supabase: {
-    auth: {
-      onAuthStateChange: (...args: any[]) => mockOnAuthStateChange(...args),
+// Mock Better Auth client sign-in
+jest.mock("@/lib/auth-client", () => ({
+  authClient: {
+    signIn: {
+      social: jest.fn().mockResolvedValue(undefined),
     },
   },
 }));
 
 describe("Signup flow", () => {
-  it("navigates to onboarding when not seen", async () => {
-    let capturedHandler: (event: string, session: any) => void = () => {};
-    mockOnAuthStateChange.mockImplementation((handler: any) => {
-      capturedHandler = handler;
-      return { data: { subscription: { unsubscribe: jest.fn() } } } as any;
-    });
+  beforeEach(() => {
+    mockReplace.mockClear();
+    (AsyncStorage.getItem as jest.Mock).mockReset();
+    const { authClient } = require("@/lib/auth-client");
+    (authClient.signIn.social as jest.Mock).mockClear();
+  });
 
+  it("navigates to onboarding when not seen", async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(null);
 
     const user = userEvent.setup();
     const { unmount } = render(<Signup />);
 
     await user.press(screen.getByText("Sign in with Google"));
-
-    // Simulate user becoming signed in, which should trigger navigate
-    capturedHandler("SIGNED_IN", {} as any);
 
     await waitFor(() =>
       expect(mockReplace).toHaveBeenCalledWith("/onboarding/1")
@@ -62,31 +54,16 @@ describe("Signup flow", () => {
   });
 
   it('navigates to /(tabs)/home when hasSeenOnboarding is "true"', async () => {
-    let capturedHandler: (event: string, session: any) => void = () => {};
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce("true");
-    mockOnAuthStateChange.mockImplementation((handler: any) => {
-      capturedHandler = handler;
-      return { data: { subscription: { unsubscribe: jest.fn() } } } as any;
-    });
-
+    const user = userEvent.setup();
     const { unmount } = render(<Signup />);
 
-    capturedHandler("SIGNED_IN", {} as any);
+    await user.press(screen.getByText("Sign in with Google"));
 
     await waitFor(() =>
       expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home")
     );
     unmount();
-  });
-
-  it("unsubscribes auth listener on unmount", async () => {
-    const unsubscribe = jest.fn();
-    mockOnAuthStateChange.mockImplementation((_handler: any) => {
-      return { data: { subscription: { unsubscribe } } } as any;
-    });
-    const { unmount } = render(<Signup />);
-    unmount();
-    expect(unsubscribe).toHaveBeenCalled();
   });
 
   it("renders Apple button only on iOS", async () => {
