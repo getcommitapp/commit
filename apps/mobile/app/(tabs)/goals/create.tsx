@@ -2,6 +2,8 @@ import React from "react";
 import { View, Pressable, ScrollView, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { Text, spacing, radii, useThemeColor, textVariants } from "@/components/Themed";
+import { useLocalSearchParams } from "expo-router";
+import { ROUTES } from "@/constants/routes";
 
 type Template = {
   id: string;
@@ -17,6 +19,7 @@ const TEMPLATES: Template[] = [
 ];
 
 export default function CreateGoalScreen() {
+  const { origin } = useLocalSearchParams<{ origin?: string }>();
   const card = useThemeColor({}, "card");
   const border = useThemeColor({}, "border");
   const mutedForeground = useThemeColor({}, "mutedForeground");
@@ -42,6 +45,7 @@ export default function CreateGoalScreen() {
         card={card}
         border={border}
         muted={mutedForeground}
+        origin={origin as string | undefined}
       />
       <Section
         title="GOAL TEMPLATES"
@@ -49,6 +53,7 @@ export default function CreateGoalScreen() {
         card={card}
         border={border}
         muted={mutedForeground}
+        origin={origin as string | undefined}
         style={{ marginTop: spacing.xl }}
       />
     </ScrollView>
@@ -62,6 +67,7 @@ function Section({
   border,
   muted,
   style,
+  origin,
 }: {
   title: string;
   items: Template[];
@@ -69,6 +75,7 @@ function Section({
   border: string;
   muted: string;
   style?: any;
+  origin?: string;
 }) {
   return (
     <View style={style}>
@@ -78,11 +85,18 @@ function Section({
           <Pressable
             key={item.id}
             onPress={() => {
-              if (item.id === "custom") {
-                router.push({ pathname: "/(tabs)/goals/create-step2", params: { kind: "custom" } });
-              } else {
-                router.push({ pathname: "/(tabs)/goals/configure", params: { template: item.id } });
-              }
+                const isHome = origin === 'home';
+                if (item.id === "custom") {
+                  router.push({
+                    pathname: (isHome ? ROUTES.HOME_GOAL_CREATE_STEP2 : ROUTES.GOALS_CREATE_STEP2) as any,
+                    params: { kind: "custom", origin: origin || undefined },
+                  });
+                } else {
+                  router.push({
+                    pathname: (isHome ? ROUTES.HOME_GOAL_CONFIGURE : ROUTES.GOALS_CONFIGURE) as any,
+                    params: { template: item.id, origin: origin || undefined },
+                  });
+                }
             }}
             style={({ pressed }) => [
               styles.row,

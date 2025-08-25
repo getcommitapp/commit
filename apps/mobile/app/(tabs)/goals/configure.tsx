@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { View, ScrollView, Pressable, StyleSheet, Modal, TextInput, FlatList } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
+import { ROUTES } from '@/constants/routes';
 import { Text, spacing, radii, useThemeColor, textVariants } from '@/components/Themed';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ConfigureGoalScreen() {
-  const { template, methods } = useLocalSearchParams<{ template?: string; methods?: string }>();
+  const { template, methods, origin } = useLocalSearchParams<{ template?: string; methods?: string; origin?: string }>();
   const verificationMethods = useMemo(() => (methods ? methods.split(',').filter(Boolean) : []), [methods]);
   const isTemplate = !!template;
   const templateId = template;
@@ -299,7 +300,13 @@ export default function ConfigureGoalScreen() {
           const invalidRange = endTs < startTs;
           return (
             <Pressable
-              onPress={() => { if(!invalidRange) router.back(); }}
+              onPress={() => { if(!invalidRange) {
+                if (origin === 'home') {
+                  router.replace(ROUTES.HOME_GOAL_CREATE.replace('/create','') as any || '/(tabs)/home');
+                } else {
+                  router.back();
+                }
+              } }}
               style={({ pressed }) => [{ backgroundColor: accent, borderRadius: radii.lg, alignItems: 'center', paddingVertical: spacing.lg, opacity: (pressed ? 0.9 : 1) * (invalidRange ? 0.5 : 1) }]}
             >
               <Text style={textVariants.subheadlineEmphasized}>{invalidRange ? 'Fix date range to continue' : 'Create Goal  ›'}</Text>

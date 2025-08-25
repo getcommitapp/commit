@@ -3,6 +3,7 @@ import React from "react";
 import { Pressable } from "react-native";
 import { router } from "expo-router";
 import { Text, spacing } from "@/components/Themed";
+import { ROUTES } from "@/constants/routes";
 import { useThemeColor } from "@/components/Themed";
 
 export default function GoalsStackLayout() {
@@ -25,7 +26,7 @@ export default function GoalsStackLayout() {
               accessibilityRole="button"
               accessibilityLabel="Add goal"
               hitSlop={8}
-              onPress={() => router.push("/(tabs)/goals/create")}
+              onPress={() => router.push(ROUTES.GOALS_CREATE as any)}
               style={{ paddingHorizontal: spacing.sm }}
             >
               <Text style={{ fontSize: 30, fontWeight: "400" }}>+</Text>

@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { View, Pressable, ScrollView, StyleSheet } from "react-native";
 import { Text, spacing, radii, useThemeColor, textVariants } from "@/components/Themed";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { ROUTES } from "@/constants/routes";
 
 type Verification = { id: string; title: string; description: string };
 
@@ -15,6 +16,7 @@ const VERIFICATIONS: Verification[] = [
 ];
 
 export default function CreateGoalStep2Screen() {
+  const { origin } = useLocalSearchParams<{ origin?: string }>();
   const card = useThemeColor({}, "card");
   const border = useThemeColor({}, "border");
   const mutedForeground = useThemeColor({}, "mutedForeground");
@@ -99,7 +101,11 @@ export default function CreateGoalStep2Screen() {
         <Pressable
           onPress={() => {
             if (selected.length === 0) return;
-            router.push({ pathname: '/(tabs)/goals/configure', params: { methods: selected.join(',') } });
+            const isHome = origin === 'home';
+            router.push({
+              pathname: (isHome ? ROUTES.HOME_GOAL_CONFIGURE : ROUTES.GOALS_CONFIGURE) as any,
+              params: { methods: selected.join(','), origin: origin || undefined },
+            });
           }}
           style={({ pressed }) => [
             styles.nextButton,
