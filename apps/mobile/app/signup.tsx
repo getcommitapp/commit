@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { Image, SafeAreaView, View, Platform, Alert } from "react-native";
+import { SafeAreaView, View, Platform, Alert } from "react-native";
+import { Image } from "expo-image";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 
@@ -76,6 +77,7 @@ export default function SignupScreen() {
               borderRadius: radii.lg,
               marginBottom: spacing.lg,
             }}
+            contentFit="cover"
           />
           <Text style={[textVariants.title1, { textAlign: "center" }]}>
             Hi there! 👋

@@ -10,9 +10,10 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
+import { Image as ExpoImage } from "expo-image";
+import { Image as RNImage, AppState } from "react-native";
 
 import { useColorScheme } from "@/components/useColorScheme";
-import { AppState } from "react-native";
 import Colors from "@/constants/Colors";
 import { View } from "@/components/Themed";
 import { config } from "@/config";
@@ -56,7 +57,25 @@ export default function RootLayout() {
           }
         }
         const value = await AsyncStorage.getItem("hasSeenOnboarding");
-        setHasSeenOnboarding(value === "true");
+        const hasSeenOnboarding = value === "true";
+        setHasSeenOnboarding(hasSeenOnboarding);
+
+        // Prefetch app assets (populate expo-image cache)
+        try {
+          const imageModules = [
+            require("@/assets/images/icon.png"),
+            require("@/assets/images/onboarding/onboarding-1.png"),
+            require("@/assets/images/onboarding/onboarding-2.png"),
+            require("@/assets/images/onboarding/onboarding-3.png"),
+            require("@/assets/images/onboarding/onboarding-4.png"),
+          ];
+          const uris = imageModules
+            .map((mod) => RNImage.resolveAssetSource(mod)?.uri)
+            .filter(Boolean) as string[];
+          await ExpoImage.prefetch(uris);
+        } catch (_) {
+          // Ignore asset prefetch errors; app can still proceed
+        }
       } catch (_) {
         setHasSeenOnboarding(false);
       } finally {
@@ -113,8 +132,10 @@ function RootLayoutNav({ initialRouteName }: RootLayoutNavProps) {
   useEffect(() => {
     if (config.devDefaultPage) {
       router.replace(config.devDefaultPage as unknown as any);
+    } else {
+      router.replace(("/" + initialRouteName) as unknown as any);
     }
-  }, [router]);
+  }, [initialRouteName, router]);
 
   return (
     <ThemeProvider value={navigationTheme}>
