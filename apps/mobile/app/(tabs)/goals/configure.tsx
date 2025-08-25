@@ -10,6 +10,7 @@ export default function ConfigureGoalScreen() {
   const isTemplate = !!template;
   const templateId = template;
   const isCustom = !isTemplate;
+  const isWakeTemplate = templateId === 'wake';
   const insets = useSafeAreaInsets();
 
   const card = useThemeColor({}, 'card');
@@ -19,22 +20,47 @@ export default function ConfigureGoalScreen() {
   const accent = useThemeColor({}, 'accent');
   const warning = useThemeColor({}, 'warning');
   const blue = useThemeColor({}, 'blue');
+  const danger = useThemeColor({}, 'danger');
 
-  // Recurrence chips state
-  const weekDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as const;
+  // Compute today's date and current rounded time (to next 15 min increment)
+  const now = useMemo(() => new Date(), []);
+  const todayDate = useMemo(() => new Date(now.getFullYear(), now.getMonth(), now.getDate()), [now]);
+  const roundedTime = useMemo(() => {
+    let h = now.getHours();
+    let mRaw = now.getMinutes();
+    let m = Math.ceil(mRaw / 15) * 15; // round up to next quarter hour
+    if (m === 60) { m = 0; h += 1; }
+    if (h === 24) { h = 23; m = 45; } // clamp edge case
+    return { h, m };
+  }, [now]);
+  const roundedEndTime = useMemo(() => { // simple +1h for end time (range templates)
+    let h = roundedTime.h + 1;
+    let m = roundedTime.m;
+    if (h > 23) { h = 23; if (m < 45) m = 45; }
+    return { h, m };
+  }, [roundedTime]);
+
+  // Recurrence chips state (stable constant list outside dependency chains)
+  const weekDaysRef = React.useRef(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as const);
+  const weekDays = weekDaysRef.current; // stable reference
   const dayLabels: Record<string,string> = { Mon:'M', Tue:'T', Wed:'W', Thu:'T', Fri:'F', Sat:'S', Sun:'S'};
   const [selectedDays, setSelectedDays] = useState<string[]>(['Tue']);
   const toggleDay = (d: string) => setSelectedDays(prev => prev.includes(d) ? prev.filter(x=>x!==d) : [...prev, d]);
 
+  // (moved below after date/time state declarations)
+
   // Determine which fields show (same logic as earlier but for layout grouping)
   const showName = isTemplate ? templateId !== 'nophone' : true;
-  const showStartDate = isTemplate || verificationMethods.some(m=>['time-range','duration','time'].includes(m));
-  const showEndDate = showStartDate;
+  // Always show start/end date for all challenges (custom + templates)
+  const showStartDate = true;
+  const showEndDate = true;
   const showRecurrence = isTemplate || verificationMethods.length>0;
-  const showStartTime = (templateId === 'nophone') || verificationMethods.includes('time-range') || verificationMethods.includes('time');
+  // Start / End time only for time-range (or nophone template which behaves like a range). Remove start time for single time goals.
+  const showStartTime = (templateId === 'nophone') || verificationMethods.includes('time-range');
   const showEndTime = (templateId === 'nophone') || verificationMethods.includes('time-range');
   const showDuration = verificationMethods.includes('duration');
-  const showTimeSingle = verificationMethods.includes('time');
+  // Single time shown either when verification includes 'time' or for wake-up template
+  const showTimeSingle = isWakeTemplate || verificationMethods.includes('time');
   const showLocation = verificationMethods.includes('location');
   const showPhoto = verificationMethods.includes('photo');
   const showStake = true;
@@ -42,16 +68,40 @@ export default function ConfigureGoalScreen() {
 
   // Form state (typed values)
   const [goalName, setGoalName] = useState('Go to the gym');
-  const [startDate, setStartDate] = useState<Date>(new Date(2025,3,1));
-  const [endDate, setEndDate] = useState<Date>(new Date(2025,3,1));
-  const [startTime, setStartTime] = useState<{h:number;m:number}>({h:8,m:15});
-  const [endTime, setEndTime] = useState<{h:number;m:number}>({h:20,m:30});
+  const [startDate, setStartDate] = useState<Date>(todayDate);
+  const [endDate, setEndDate] = useState<Date>(todayDate);
+  const [startTime, setStartTime] = useState<{h:number;m:number}>(roundedTime);
+  const [endTime, setEndTime] = useState<{h:number;m:number}>(roundedEndTime);
   const [duration, setDuration] = useState<{h:number;m:number}>({h:0,m:0});
-  const [timeSingle, setTimeSingle] = useState<{h:number;m:number}>({h:6,m:15});
+  const [timeSingle, setTimeSingle] = useState<{h:number;m:number}>(roundedTime);
   const [location, setLocation] = useState('Select Location');
   const [photoDesc, setPhotoDesc] = useState('Enter a description');
   const [stake, setStake] = useState('10');
   const [beneficiary, setBeneficiary] = useState('Devs');
+
+  // Compute allowed weekdays within current date interval (after dates declared)
+  const allowedWeekDays = useMemo(() => {
+    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+    if (end < start) return new Set(weekDays); // keep all so user can still see recurrence until range fixed
+    const diffDays = Math.round((end.getTime() - start.getTime()) / 86400000);
+    if (diffDays >= 6) return new Set(weekDays); // large enough window -> all days
+    const map: Record<number,string> = {0:'Sun',1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri',6:'Sat'};
+    const set = new Set<string>();
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)) {
+      set.add(map[d.getDay()]);
+    }
+    return set;
+  }, [startDate, endDate, weekDays]);
+
+  // Prune selected days that fall outside current interval
+  React.useEffect(() => {
+    setSelectedDays(prev => {
+      const filtered = prev.filter(d => allowedWeekDays.has(d));
+      if (filtered.length === prev.length) return prev; // no change -> avoid re-render loop
+      return filtered;
+    });
+  }, [allowedWeekDays]);
 
   type Editor =
     | { type: 'name' }
@@ -76,10 +126,14 @@ export default function ConfigureGoalScreen() {
   };
   const formatDuration = ({h,m}:{h:number;m:number}) => `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m`;
 
-  const Pill = ({ value, onPress }: { value: string; onPress?: ()=>void }) => (
+  const Pill = ({ value, onPress, invalid }: { value: string; onPress?: ()=>void; invalid?: boolean }) => (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.pill, { backgroundColor: mutedBg, opacity: pressed ? 0.85 : 1 }]}
+      style={({ pressed }) => [
+        styles.pill,
+        { backgroundColor: mutedBg, opacity: pressed ? 0.85 : 1 },
+        invalid && { borderWidth: 2, borderColor: danger },
+      ]}
     >
       <Text style={textVariants.subheadline}>{value}</Text>
     </Pressable>
@@ -96,6 +150,8 @@ export default function ConfigureGoalScreen() {
   return (
     <>
     <SafeAreaView style={{ flex: 1 }}>
+  {/** Validation computation (end >= start) */}
+  {/* validation helpers computed inline where needed */}
       <ScrollView
         style={{ flex: 1 }}
         contentInsetAdjustmentBehavior="automatic"
@@ -116,7 +172,11 @@ export default function ConfigureGoalScreen() {
           </View>
         )}
         {/* Dates */}
-        {(showStartDate || showEndDate) && (
+    {(showStartDate || showEndDate) && (() => {
+      const startTs = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), showStartTime ? startTime.h : 0, showStartTime ? startTime.m : 0).getTime();
+      const endTs = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), showEndTime ? endTime.h : (showStartTime ? 23 : 23), showEndTime ? endTime.m : (showStartTime ? 59 : 59)).getTime();
+      const invalidRange = endTs < startTs;
+      return (
           <TwoCol>
             {showStartDate && (
               <View style={styles.colItem}>
@@ -127,17 +187,16 @@ export default function ConfigureGoalScreen() {
             {showEndDate && (
               <View style={styles.colItem}>
                 <Label>END DATE</Label>
-                <Pill value={formatDate(endDate)} onPress={()=>setEditor({type:'endDate'})} />
+        <Pill value={formatDate(endDate)} onPress={()=>setEditor({type:'endDate'})} invalid={invalidRange} />
               </View>
             )}
-          </TwoCol>
-        )}
+      </TwoCol>); })()}
         {/* Recurrence */}
         {showRecurrence && (
           <View style={{ marginTop: spacing.xl }}>
             <Label>RECURRENCE</Label>
             <View style={styles.weekRow}>
-              {weekDays.map(d => {
+              {weekDays.filter(d => allowedWeekDays.has(d)).map(d => {
                 const active = selectedDays.includes(d);
                 return (
                   <Pressable
@@ -156,22 +215,25 @@ export default function ConfigureGoalScreen() {
           </View>
         )}
         {/* Time Fields */}
-        {(showStartTime || showEndTime) && (
+    {(showStartTime || showEndTime) && (() => {
+      const startTs = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), showStartTime ? startTime.h : 0, showStartTime ? startTime.m : 0).getTime();
+      const endTs = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), showEndTime ? endTime.h : (showStartTime ? 23 : 23), showEndTime ? endTime.m : (showStartTime ? 59 : 59)).getTime();
+      const invalidRange = endTs < startTs;
+      return (
           <TwoCol>
             {showStartTime && (
               <View style={styles.colItem}>
                 <Label>START TIME</Label>
-                <Pill value={formatTime(startTime)} onPress={()=>setEditor({type:'startTime'})} />
+    <Pill value={formatTime(startTime)} onPress={()=>setEditor({type:'startTime'})} />
               </View>
             )}
             {showEndTime && (
               <View style={styles.colItem}>
                 <Label>END TIME</Label>
-                <Pill value={formatTime(endTime)} onPress={()=>setEditor({type:'endTime'})} />
+        <Pill value={formatTime(endTime)} onPress={()=>setEditor({type:'endTime'})} invalid={invalidRange} />
               </View>
             )}
-          </TwoCol>
-        )}
+      </TwoCol>); })()}
         {(showDuration || showTimeSingle) && (
           <TwoCol>
             {showDuration && (
@@ -182,7 +244,7 @@ export default function ConfigureGoalScreen() {
             )}
             {showTimeSingle && (
               <View style={styles.colItem}>
-                <Label>TIME</Label>
+                <Label>{isWakeTemplate ? 'WAKE UP TIME' : 'TIME'}</Label>
                 <Pill value={formatTime(timeSingle)} onPress={()=>setEditor({type:'timeSingle'})} />
               </View>
             )}
@@ -221,14 +283,29 @@ export default function ConfigureGoalScreen() {
             <Text style={[textVariants.caption1Emphasized, { color: warning, marginTop: spacing.md, textAlign: 'center', paddingHorizontal: spacing.md }]}>The amount above will be sent to the chosen beneficiary should you fail to complete the goal.</Text>
           </View>
         )}
+        {/** Validation message placeholder (will compute after JSX modifications) */}
+        {/* Range Validation */}
+        {(() => {
+          const startTs = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), showStartTime ? startTime.h : 0, showStartTime ? startTime.m : 0).getTime();
+          const endTs = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), showEndTime ? endTime.h : (showStartTime ? 23 : 23), showEndTime ? endTime.m : (showStartTime ? 59 : 59)).getTime();
+          const invalidRange = endTs < startTs;
+          return invalidRange ? <Text style={{ color: danger, marginTop: spacing.md }}>End date/time must be after start date/time.</Text> : null;
+        })()}
       </ScrollView>
       <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: spacing.headerContentInset, paddingBottom: insets.bottom + spacing.lg, paddingTop: spacing.md }}>
-        <Pressable
-          onPress={() => router.back()}
-          style={({ pressed }) => [{ backgroundColor: accent, borderRadius: radii.lg, alignItems: 'center', paddingVertical: spacing.lg, opacity: pressed ? 0.9 : 1 }]}
-        >
-          <Text style={textVariants.subheadlineEmphasized}>Create Goal  ›</Text>
-        </Pressable>
+        {(() => {
+          const startTs = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), showStartTime ? startTime.h : 0, showStartTime ? startTime.m : 0).getTime();
+          const endTs = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), showEndTime ? endTime.h : (showStartTime ? 23 : 23), showEndTime ? endTime.m : (showStartTime ? 59 : 59)).getTime();
+          const invalidRange = endTs < startTs;
+          return (
+            <Pressable
+              onPress={() => { if(!invalidRange) router.back(); }}
+              style={({ pressed }) => [{ backgroundColor: accent, borderRadius: radii.lg, alignItems: 'center', paddingVertical: spacing.lg, opacity: (pressed ? 0.9 : 1) * (invalidRange ? 0.5 : 1) }]}
+            >
+              <Text style={textVariants.subheadlineEmphasized}>{invalidRange ? 'Fix date range to continue' : 'Create Goal  ›'}</Text>
+            </Pressable>
+          );
+        })()}
       </View>
   </SafeAreaView>
   {editor && (
