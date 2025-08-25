@@ -3,24 +3,10 @@ import { View, ScrollView, StyleSheet, Pressable, Platform } from "react-native"
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import {
-  Text,
-  spacing,
-  radii,
-  textVariants,
-  useThemeColor,
-} from "@/components/Themed";
+import { Text, spacing, radii, textVariants, useThemeColor } from "@/components/Themed";
+import GoalDetailContent, { Goal } from "@/components/goals/GoalDetailSheet";
 
-type GoalStatus = "active" | "expired" | "upcoming" | "finished";
-type Goal = {
-  id: string;
-  title: string;
-  amountCHF: number;
-  status: GoalStatus;
-  timeLeftHours?: number; // only for active goals
-  groupName?: string; // if part of a group
-  streak?: number; // flame icon count
-};
+// Goal type now imported from shared component
 
 const STATIC_GOALS: Goal[] = [
   {
@@ -314,94 +300,5 @@ const styles = StyleSheet.create({
   },
 });
 
-function GoalDetailContent({
-  goal,
-  colors,
-}: {
-  goal: Goal;
-  colors: Record<string, string>;
-}) {
-  const statusColor =
-    goal.status === "active"
-      ? (goal.timeLeftHours ?? 0) <= 2
-        ? colors.danger
-        : colors.warning
-      : goal.status === "expired"
-      ? colors.danger
-      : goal.status === "finished"
-      ? colors.success
-      : colors.mutedForeground;
-  const statusLabel =
-    goal.status === "active"
-      ? `${goal.timeLeftHours} hours left`
-      : goal.status;
-  const startDate = "20.08.2025";
-  const endDate = "20.09.2025";
-  return (
-    <ScrollView
-      style={{ flex: 1, paddingHorizontal: spacing.xl }}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: spacing.xxl, paddingTop: spacing.lg }}
-    >
-      <Text style={[textVariants.title2, { marginBottom: spacing.xl }]}>
-        {goal.title}
-      </Text>
-      <View style={styles.sheetTwoColWrap}>
-        <View style={styles.sheetField}>
-          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Financial Stake</Text>
-          <Text style={textVariants.bodyEmphasized}>CHF {goal.amountCHF}</Text>
-        </View>
-        <View style={styles.sheetField}>
-          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Verification Window</Text>
-          <Text style={textVariants.bodyEmphasized}>30 minutes</Text>
-        </View>
-        <View style={styles.sheetField}>
-          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Start Date</Text>
-          <Text style={textVariants.bodyEmphasized}>{startDate}</Text>
-        </View>
-        <View style={styles.sheetField}>
-          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>End Date</Text>
-          <Text style={textVariants.bodyEmphasized}>{endDate}</Text>
-        </View>
-        <View style={styles.sheetField}>
-          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>If failed, stake goes to:</Text>
-          <Text style={textVariants.bodyEmphasized}>App Developpers ❤️</Text>
-        </View>
-        <View style={styles.sheetField}>
-          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Status</Text>
-          <Text style={[textVariants.bodyEmphasized, { color: statusColor }]}>{statusLabel}</Text>
-        </View>
-      </View>
-      <View style={{ marginTop: spacing.xl }}>
-        <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Description</Text>
-        <Text style={[textVariants.bodyEmphasized, { marginTop: spacing.xs }]}>
-          Complete a 30-minute workout session every morning before 9 AM.
-        </Text>
-      </View>
-      <Pressable
-        style={({ pressed }) => [
-          styles.verifyButton,
-          {
-            backgroundColor: colors.accent,
-            opacity: pressed ? 0.85 : 1,
-          },
-        ]}
-        onPress={() => {}}
-      >
-        <Text style={[textVariants.subheadlineEmphasized]}>Verify Now  ›</Text>
-      </Pressable>
-      <Pressable
-        style={({ pressed }) => [
-          styles.deleteButton,
-          { opacity: pressed ? 0.6 : 1 },
-        ]}
-        onPress={() => {}}
-        accessibilityLabel="Delete goal"
-      >
-        <Text style={{ fontSize: 24, color: colors.danger }}>🗑️</Text>
-      </Pressable>
-    </ScrollView>
-  );
-}
 
 

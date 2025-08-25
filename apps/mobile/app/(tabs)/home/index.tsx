@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import { ScrollView, StyleSheet, View as RNView, Pressable } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Text, spacing, textVariants, useThemeColor, radii } from "@/components/Themed";
 import { ROUTES } from "@/constants/routes";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import GoalDetailContent, { Goal as FullGoal } from "@/components/goals/GoalDetailSheet";
 
 type Goal = {
   id: string;
@@ -71,6 +73,15 @@ export default function HomeScreen() {
   const card = useThemeColor({}, "card");
   const border = useThemeColor({}, "border");
 
+  const [selected, setSelected] = useState<Goal | null>(null);
+  const sheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ["60%", "85%"], []);
+
+  const openGoal = useCallback((g: Goal) => {
+    setSelected(g);
+    requestAnimationFrame(() => sheetRef.current?.expand());
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView
@@ -111,12 +122,17 @@ export default function HomeScreen() {
 
             <RNView style={{ borderRadius: radii.md, overflow: "hidden" }}>
               {mockGoals.map((g, idx) => (
-                <GoalCard
+                <Pressable
                   key={g.id}
-                  goal={g}
-                  isFirst={idx === 0}
-                  isLast={idx === mockGoals.length - 1}
-                />
+                  accessibilityRole="button"
+                  onPress={() => openGoal(g)}
+                >
+                  <GoalCard
+                    goal={g}
+                    isFirst={idx === 0}
+                    isLast={idx === mockGoals.length - 1}
+                  />
+                </Pressable>
               ))}
             </RNView>
         </RNView>
@@ -143,6 +159,26 @@ export default function HomeScreen() {
           </Pressable>
         </RNView>
       </ScrollView>
+      {selected && (
+        <BottomSheet
+          ref={sheetRef}
+          index={0}
+          enablePanDownToClose
+          snapPoints={snapPoints}
+          onChange={(i) => { if (i === -1) setSelected(null); }}
+        >
+          <BottomSheetView style={{ flex: 1 }}>
+            <GoalDetailContent goal={{
+              id: selected.id,
+              title: selected.title,
+              amountCHF: parseInt(selected.stake.replace(/[^0-9]/g, '')),
+              status: 'active',
+              timeLeftHours: parseInt(selected.timeLeft) || 2,
+              streak: selected.streak,
+            } as FullGoal} />
+          </BottomSheetView>
+        </BottomSheet>
+      )}
     </SafeAreaView>
   );
 }
