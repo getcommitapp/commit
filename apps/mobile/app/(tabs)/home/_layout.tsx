@@ -25,6 +25,14 @@ export default function HomeStackLayout() {
         name="group-create"
         options={{ title: "Create Group" }}
       />
+      <Stack.Screen
+        name="verify"
+        options={{ title: "Verify Goal" }}
+      />
+      <Stack.Screen
+        name="group-verify"
+        options={{ title: "Verify Goal" }}
+      />
     </Stack>
   );
 }

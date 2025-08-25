@@ -138,7 +138,7 @@ export default function GroupsScreen() {
           onChange={(i) => { if (i === -1) setSelected(null); }}
         >
           <BottomSheetView style={{ flex: 1 }}>
-            <GroupDetailContent group={{
+            <GroupDetailContent origin="groups" group={{
               id: selected.id,
               name: selected.name,
               amountCHF: selected.amountCHF,

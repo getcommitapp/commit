@@ -1,4 +1,5 @@
 import React from 'react';
+import { ROUTES } from '@/constants/routes';
 import { View, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { Text, spacing, textVariants, useThemeColor, radii } from '@/components/Themed';
 
@@ -12,7 +13,7 @@ export type Group = {
   streak?: number;
 };
 
-export function GroupDetailContent({ group }: { group: Group }) {
+export function GroupDetailContent({ group, origin }: { group: Group; origin?: 'home' | 'goals' | 'groups' }) {
   const muted = useThemeColor({}, 'mutedForeground');
   const accent = useThemeColor({}, 'accent');
   const danger = useThemeColor({}, 'danger');
@@ -63,6 +64,14 @@ export function GroupDetailContent({ group }: { group: Group }) {
             styles.primaryButton,
             { backgroundColor: accent, opacity: pressed ? 0.85 : 1 },
           ]}
+          onPress={() => {
+            const { router } = require('expo-router');
+            if (origin === 'home') {
+              router.push(ROUTES.HOME_GROUP_VERIFY as any);
+            } else {
+              router.push(ROUTES.GROUPS_VERIFY as any);
+            }
+          }}
         >
           <Text style={textVariants.subheadlineEmphasized}>Verify Now  ›</Text>
         </Pressable>

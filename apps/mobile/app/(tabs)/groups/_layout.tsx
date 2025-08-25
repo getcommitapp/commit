@@ -38,6 +38,14 @@ export default function GroupsStackLayout() {
           headerBackTitle: "Back",
         }}
       />
+      <Stack.Screen
+        name="verify"
+        options={{
+          title: "Verify Goal",
+          headerLargeTitle: false,
+          headerBackTitle: "Back",
+        }}
+      />
     </Stack>
   );
 }

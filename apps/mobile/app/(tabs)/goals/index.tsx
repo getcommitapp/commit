@@ -237,18 +237,7 @@ export default function GoalsScreen() {
           style={{ zIndex: 100 }}
         >
           <BottomSheetView style={{ flex: 1 }}>
-            <GoalDetailContent
-              goal={selectedGoal}
-              colors={{
-                card,
-                border,
-                mutedForeground,
-                danger,
-                success,
-                warning,
-                accent,
-              }}
-            />
+            <GoalDetailContent goal={selectedGoal} origin="goals" />
           </BottomSheetView>
         </BottomSheet>
       )}

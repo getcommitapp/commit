@@ -169,7 +169,7 @@ export default function HomeScreen() {
           onChange={(i) => { if (i === -1) setSelected(null); }}
         >
           <BottomSheetView style={{ flex: 1 }}>
-            <GoalDetailContent goal={{
+            <GoalDetailContent origin="home" goal={{
               id: selected.id,
               title: selected.title,
               amountCHF: parseInt(selected.stake.replace(/[^0-9]/g, '')),

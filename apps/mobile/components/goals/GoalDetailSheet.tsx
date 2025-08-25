@@ -13,7 +13,7 @@ export type Goal = {
   streak?: number;
 };
 
-export function GoalDetailContent({ goal }: { goal: Goal }) {
+export function GoalDetailContent({ goal, origin }: { goal: Goal; origin?: 'home' | 'goals' }) {
   const card = useThemeColor({}, 'card');
   const border = useThemeColor({}, 'border');
   const mutedForeground = useThemeColor({}, 'mutedForeground');
@@ -88,7 +88,17 @@ export function GoalDetailContent({ goal }: { goal: Goal }) {
             opacity: pressed ? 0.85 : 1,
           },
         ]}
-        onPress={() => {}}
+        onPress={() => {
+          // Dynamically navigate to verify screen in the same tab context
+          // We only need the path; sheet parent will supply routing helper if needed.
+          // Using window.location style navigation is not applicable; expo-router router imported lazily here to avoid circular.
+          const { router } = require('expo-router');
+          if (origin === 'home') {
+            router.push('/(tabs)/home/verify');
+          } else {
+            router.push('/(tabs)/goals/verify');
+          }
+        }}
       >
         <Text style={[textVariants.subheadlineEmphasized]}>Verify Now  ›</Text>
       </Pressable>

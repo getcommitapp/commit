@@ -55,6 +55,13 @@ export default function GoalsStackLayout() {
           headerLargeTitle: false,
         }}
       />
+      <Stack.Screen
+        name="verify"
+        options={{
+          title: "Verify Goal",
+          headerLargeTitle: false,
+        }}
+      />
     </Stack>
   );
 }
