@@ -67,6 +67,9 @@ cp .env.local.example .env.local
 
 Available variables:
 
+- `EXPO_PUBLIC_API_URL` (required): The API URL for the mobile app to connect to.
+  - Use `http://localhost:8787` for simulator/emulator development
+  - Use `https://commit-api-preview.leo-c50.workers.dev/` for Expo Go on physical devices
 - `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (dev-only, optional): If defined, onboarding is reset on each reload in development. Outside development, this is always ignored (feature is disabled).
 - `EXPO_PUBLIC_DEV_DEFAULT_PAGE` (dev-only, optional): If defined, the app will redirect to this route on launch during development. Examples: `/signup`, `/onboarding/1`, `/(tabs)/home`.
 
