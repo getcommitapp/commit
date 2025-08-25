@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import React from "react";
 import { Pressable } from "react-native";
 import { Text, spacing, useThemeColor } from "@/components/Themed";
@@ -22,12 +22,20 @@ export default function GroupsStackLayout() {
             <Pressable
               accessibilityRole="button"
               hitSlop={8}
-              onPress={() => {}}
+              onPress={() => router.push("/(tabs)/groups/create" as any)}
               style={{ paddingHorizontal: spacing.sm }}
             >
               <Text style={{ fontSize: 30, fontWeight: "400" }}>+</Text>
             </Pressable>
           ),
+        }}
+      />
+      <Stack.Screen
+        name="create"
+        options={{
+          title: "Create Group",
+          headerLargeTitle: false,
+          headerBackTitle: "Back",
         }}
       />
     </Stack>

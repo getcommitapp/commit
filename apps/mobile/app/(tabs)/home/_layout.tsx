@@ -21,6 +21,10 @@ export default function HomeStackLayout() {
         name="configure"
         options={{ title: "Create Solo Goal" }}
       />
+      <Stack.Screen
+        name="group-create"
+        options={{ title: "Create Group" }}
+      />
     </Stack>
   );
 }

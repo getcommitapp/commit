@@ -8,6 +8,8 @@ export const ROUTES = {
   HOME_GOAL_CREATE: "/(tabs)/home/create",
   HOME_GOAL_CREATE_STEP2: "/(tabs)/home/create-step2",
   HOME_GOAL_CONFIGURE: "/(tabs)/home/configure",
+  GROUPS_CREATE: "/(tabs)/groups/create",
+  HOME_GROUP_CREATE: "/(tabs)/home/group-create",
 };
 
 export type RouteKey = keyof typeof ROUTES;

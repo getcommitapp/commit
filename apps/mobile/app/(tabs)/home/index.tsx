@@ -154,6 +154,7 @@ export default function HomeScreen() {
               styles.secondaryAction,
               { opacity: pressed ? 0.9 : 1, backgroundColor: background, borderColor: border },
             ]}
+            onPress={() => router.push({ pathname: ROUTES.HOME_GROUP_CREATE as any, params: { origin: 'home' } })}
           >
             <Text style={[textVariants.subheadlineEmphasized]}>+  Create Group</Text>
           </Pressable>
