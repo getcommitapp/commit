@@ -1,5 +1,6 @@
 import React from "react";
-import { ImageSourcePropType, SafeAreaView, View, Image } from "react-native";
+import { ImageSourcePropType, SafeAreaView, View } from "react-native";
+import { Image } from "expo-image";
 import { Stack } from "expo-router";
 
 import {
@@ -53,7 +54,8 @@ export default function OnboardingPage({
         >
           <Image
             source={image}
-            style={{ width: 280, height: 280, resizeMode: "contain" }}
+            style={{ width: 280, height: 280 }}
+            contentFit="contain"
           />
           <Text style={[textVariants.title1, { textAlign: "center" }]}>
             {title}
