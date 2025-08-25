@@ -8,11 +8,6 @@ import {
 import { Platform } from "react-native";
 import Signup from "@/app/signup";
 
-jest.mock("@/lib/auth", () => ({
-  signInWithGoogleOAuth: jest.fn(),
-  signInWithApple: jest.fn(),
-}));
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 jest.mock("@react-native-async-storage/async-storage", () => ({
@@ -27,16 +22,11 @@ jest.mock("expo-router", () => ({
   useRouter: () => ({ replace: mockReplace }),
 }));
 
-// Mock Better Auth client session change
-const listeners: Array<() => void> = [];
+// Mock Better Auth client sign-in
 jest.mock("@/lib/auth-client", () => ({
   authClient: {
-    onChange: (cb: () => void) => {
-      listeners.push(cb);
-      return { unsubscribe: () => {} } as any;
-    },
-    session: {
-      get: jest.fn(),
+    signIn: {
+      social: jest.fn().mockResolvedValue(undefined),
     },
   },
 }));
@@ -45,6 +35,8 @@ describe("Signup flow", () => {
   beforeEach(() => {
     mockReplace.mockClear();
     (AsyncStorage.getItem as jest.Mock).mockReset();
+    const { authClient } = require("@/lib/auth-client");
+    (authClient.signIn.social as jest.Mock).mockClear();
   });
 
   it("navigates to onboarding when not seen", async () => {
@@ -54,11 +46,6 @@ describe("Signup flow", () => {
     const { unmount } = render(<Signup />);
 
     await user.press(screen.getByText("Sign in with Google"));
-
-    // Simulate Better Auth session becoming available
-    const { authClient } = require("@/lib/auth-client");
-    (authClient.session.get as jest.Mock).mockReturnValueOnce({ id: "s" });
-    listeners.forEach((fn) => fn());
 
     await waitFor(() =>
       expect(mockReplace).toHaveBeenCalledWith("/onboarding/1")
@@ -73,18 +60,11 @@ describe("Signup flow", () => {
 
     await user.press(screen.getByText("Sign in with Google"));
 
-    const { authClient } = require("@/lib/auth-client");
-    (authClient.session.get as jest.Mock).mockReturnValueOnce({ id: "s" });
-    listeners.forEach((fn) => fn());
-
     await waitFor(() =>
       expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home")
     );
     unmount();
   });
-
-  // The Better Auth client returns a simple unsubscribe; no need to assert
-  // unsubscription behavior explicitly here.
 
   it("renders Apple button only on iOS", async () => {
     const originalOS = Platform.OS as any;

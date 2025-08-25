@@ -1,12 +1,8 @@
 import React, { useState } from "react";
-import {
-  Alert,
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { Alert } from "react-native";
 import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/Button";
+import GoogleIcon from "@/assets/icons/google.svg";
 
 type Props = {
   onSignInSuccess?: () => void;
@@ -33,51 +29,14 @@ export function GoogleButton({ onSignInSuccess, onSignInError }: Props) {
   };
 
   return (
-    <TouchableOpacity
-      style={[styles.googleButton, loading && styles.buttonDisabled]}
+    <Button
+      title="Sign in with Google"
       onPress={signInWithGoogle}
       disabled={loading}
-      accessibilityRole="button"
-      accessibilityLabel="Sign in with Google"
-    >
-      {loading ? (
-        <ActivityIndicator color="white" size="small" />
-      ) : (
-        <>
-          <Text style={styles.googleIcon}>G</Text>
-          <Text style={styles.googleButtonText}>Continue with Google</Text>
-        </>
-      )}
-    </TouchableOpacity>
+      loading={loading}
+      leftIcon={<GoogleIcon width={22} height={22} />}
+      style={{ backgroundColor: "#ffffff" }}
+      textStyle={{ color: "#000000" }}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  googleButton: {
-    backgroundColor: "#4285F4",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    minWidth: 240,
-    height: 48,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  googleIcon: {
-    fontSize: 18,
-    marginRight: 8,
-    fontWeight: "bold",
-    color: "white",
-  },
-  googleButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
-
-export default GoogleButton;

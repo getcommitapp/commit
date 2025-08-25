@@ -1,5 +1,10 @@
 import React, { ReactNode } from "react";
-import { Pressable, TextStyle, ViewStyle } from "react-native";
+import {
+  ActivityIndicator,
+  TouchableOpacity,
+  TextStyle,
+  ViewStyle,
+} from "react-native";
 import {
   Text,
   useThemeColor,
@@ -18,9 +23,11 @@ type Props = {
   variant?: ButtonVariant;
   style?: ViewStyle | ViewStyle[];
   textStyle?: TextStyle | TextStyle[];
+  loading?: boolean;
+  rightIcon?: ReactNode;
 };
 
-export default function Button({
+export function Button({
   title,
   onPress,
   disabled,
@@ -28,6 +35,8 @@ export default function Button({
   variant = "primary",
   style,
   textStyle,
+  loading = false,
+  rightIcon,
 }: Props) {
   const primary = useThemeColor({}, "primary");
   const secondary = useThemeColor({}, "secondary");
@@ -47,16 +56,17 @@ export default function Button({
   }
 
   return (
-    <Pressable
+    <TouchableOpacity
       onPress={onPress}
-      disabled={disabled}
-      style={({ pressed }) => [
+      disabled={disabled || loading}
+      activeOpacity={0.9}
+      style={[
         {
           backgroundColor,
           borderRadius: radii.md,
           paddingVertical: spacing.md,
           paddingHorizontal: spacing.lg,
-          opacity: disabled ? 0.5 : pressed ? 0.9 : 1,
+          opacity: disabled || loading ? 0.5 : 1,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
@@ -66,15 +76,20 @@ export default function Button({
       ]}
     >
       {leftIcon}
-      <Text
-        style={[
-          textVariants.subheadlineEmphasized,
-          { color: textColor },
-          textStyle,
-        ]}
-      >
-        {title}
-      </Text>
-    </Pressable>
+      {loading ? (
+        <ActivityIndicator color={textColor} />
+      ) : (
+        <Text
+          style={[
+            textVariants.subheadlineEmphasized,
+            { color: textColor },
+            textStyle,
+          ]}
+        >
+          {title}
+        </Text>
+      )}
+      {rightIcon}
+    </TouchableOpacity>
   );
 }

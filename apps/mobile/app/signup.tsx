@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { Image, SafeAreaView, View, Platform, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
@@ -10,10 +10,8 @@ import {
   radii,
   textVariants,
 } from "@/components/Themed";
-import { signInWithGoogleOAuth, signInWithApple } from "@/lib/auth";
-import Button from "@/components/ui/Button";
-import GoogleIcon from "@/assets/icons/google.svg";
-import AppleIcon from "@/assets/icons/person-circle.svg";
+import { GoogleButton } from "@/components/auth/GoogleButton";
+import { AppleButton } from "@/components/auth/AppleButton.native";
 
 function getReadableAuthError(error: unknown): string {
   const message =
@@ -39,8 +37,6 @@ function getReadableAuthError(error: unknown): string {
 export default function SignupScreen() {
   const router = useRouter();
   const background = useThemeColor({}, "background");
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isAppleLoading, setIsAppleLoading] = useState(false);
 
   const navigateAfterSignIn = useCallback(async () => {
     const hasSeen = await AsyncStorage.getItem("hasSeenOnboarding");
@@ -50,6 +46,14 @@ export default function SignupScreen() {
       router.replace("/onboarding/1");
     }
   }, [router]);
+
+  const handleAuthSuccess = useCallback(() => {
+    navigateAfterSignIn();
+  }, [navigateAfterSignIn]);
+
+  const handleAuthError = useCallback((error: string) => {
+    Alert.alert("Couldn't sign in", getReadableAuthError(error));
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: background }}>
@@ -86,44 +90,15 @@ export default function SignupScreen() {
         </View>
 
         <View style={{ gap: spacing.md, marginBottom: spacing.xxl }}>
-          <Button
-            style={{ backgroundColor: "#ffffff" }}
-            textStyle={{ color: "#000000" }}
-            leftIcon={<GoogleIcon width={22} height={22} />}
-            title="Sign in with Google"
-            disabled={isGoogleLoading || isAppleLoading}
-            onPress={async () => {
-              if (isGoogleLoading) return;
-              setIsGoogleLoading(true);
-              try {
-                await signInWithGoogleOAuth();
-                await navigateAfterSignIn();
-              } catch (error) {
-                Alert.alert("Couldn't sign in", getReadableAuthError(error));
-              } finally {
-                setIsGoogleLoading(false);
-              }
-            }}
+          <GoogleButton
+            onSignInSuccess={handleAuthSuccess}
+            onSignInError={handleAuthError}
           />
 
           {Platform.OS === "ios" && (
-            <Button
-              style={{ backgroundColor: "#000000" }}
-              leftIcon={<AppleIcon width={22} height={22} color="#FFFFFF" />}
-              title="Sign in with Apple"
-              disabled={isAppleLoading || isGoogleLoading}
-              onPress={async () => {
-                if (isAppleLoading) return;
-                setIsAppleLoading(true);
-                try {
-                  await signInWithApple();
-                  await navigateAfterSignIn();
-                } catch (error) {
-                  Alert.alert("Couldn't sign in", getReadableAuthError(error));
-                } finally {
-                  setIsAppleLoading(false);
-                }
-              }}
+            <AppleButton
+              onSignInSuccess={handleAuthSuccess}
+              onSignInError={handleAuthError}
             />
           )}
 

@@ -10,7 +10,7 @@ import {
   typography,
   getLineHeight,
 } from "@/components/Themed";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   image: ImageSourcePropType;

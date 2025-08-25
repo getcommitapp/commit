@@ -27,11 +27,12 @@ export function createAuth(env: Env) {
       },
     }),
     plugins: [expo()],
-    trustedOrigins: ["commit://", "commit://*", "exp://*"],
+    trustedOrigins: ["commit://", "commit://*", "exp://", "exp://*"],
     socialProviders: {
       google: {
         clientId: AUTH_GOOGLE_CLIENT_ID ?? "",
         clientSecret: AUTH_GOOGLE_CLIENT_SECRET ?? "",
+        scope: ["openid", "email", "profile"],
       },
       apple: {
         clientId: AUTH_APPLE_CLIENT_ID ?? "",
