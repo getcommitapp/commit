@@ -1,5 +1,5 @@
 @startuml architecture
-title commit. - High-Level Architecture
+title commit. - High-Level Architecture (Cloudflare Backend)
 
 skinparam componentStyle rectangle
 skinparam shadowing false
@@ -14,7 +14,7 @@ legend left
   commit. MVP Architecture
   - Mobile: Expo React Native (iOS/Android)
   - Web: Astro static site on Cloudflare Workers
-  - Backend: Supabase (Auth, Postgres, Storage, Edge Functions)
+  - Backend: Cloudflare (D1, R2, Workers: Auth, Business Logic, Stripe Webhooks)
   - Payments: Stripe Connect (incl. TWINT for CH)
 endlegend
 
@@ -26,9 +26,9 @@ rectangle "Users" as Users {
 
 package "Mobile App\nExpo React Native" as Mobile {
   [App Shell\n(Router, Tabs, Screens)] as AppShell
-  [Auth SDK\n(Supabase Auth)] as MobileAuth
-  [API Client\n(Supabase JS)] as MobileApi
-  [Storage Client\n(Uploads/Downloads)] as MobileStorage
+  [Auth SDK\n(Custom / OAuth via Workers)] as MobileAuth
+  [API Client\n(Worker APIs)] as MobileApi
+  [Storage Client\n(R2 Uploads/Downloads)] as MobileStorage
   [Stripe SDK\n(Payment methods, intents)] as MobileStripe
 }
 
@@ -40,11 +40,14 @@ package "Web Landing\nAstro (Static)" as Web {
 node "Cloudflare Workers\n(Global CDN)" as CF
 Web -down-> CF : deploy static site
 
-package "Supabase" as Supabase {
-  node "Auth" as Auth
-  database "Postgres" as DB
-  node "Storage\n(Images)" as Storage
-  node "Edge Functions" as Edge
+package "Cloudflare Backend" as Cloudflare {
+  database "D1 Database" as DB
+  node "R2 Storage\n(Images)" as Storage
+  node "Workers" as Edge {
+    [Auth Logic] as Auth
+    [Business Logic] as BizLogic
+    [Stripe Webhooks] as StripeHooks
+  }
 }
 
 cloud "Stripe Connect" as Stripe
@@ -59,20 +62,18 @@ AppShell --> MobileStorage
 AppShell --> MobileStripe
 
 MobileAuth --> Auth : OAuth (Google/Apple)
-MobileApi --> DB : CRUD (Goals, Groups, Stakes)
-MobileStorage --> Storage : photo uploads
-MobileApi --> Edge : business logic / verification
+MobileStorage --> BizLogic : photo uploads
+MobileApi --> BizLogic : business logic / verification
 
-MobileStripe --> Stripe : setup/capture payments
-Edge --> Stripe : webhooks / transfers
-Stripe --> Edge : events (webhooks)
+MobileStripe -right-> Stripe : setup/capture payments
+Stripe -left-> StripeHooks : events (webhooks)
+StripeHooks -down-> Stripe : transfers
 
-Edge --> DB : read/write
-Edge --> Storage : signed URLs
+BizLogic --> DB : read/write
+BizLogic --> Storage : signed URLs
 Auth --> DB : user profiles
 
 Reviewer --> AppShell : photo review
-AppShell --> MobileApi : fetch pending reviews
 
 Admin -[#gray,dashed]-> AppShell : no special functions (MVP)
 
@@ -88,12 +89,17 @@ note right of DB
   - Invitations
 end note
 
-note bottom of Edge
+note bottom of BizLogic
   Implements:
   - Goal resolution & payouts
   - Group distribution logic
-  - Stripe webhook handlers
   - Signed URL issuance
+end note
+
+note bottom of StripeHooks
+  Implements:
+  - Stripe webhook handlers
+  - Payment capture / refund logic
 end note
 
 note bottom of MobileStripe

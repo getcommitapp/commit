@@ -92,12 +92,12 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 
 <div align="center">
   <img src="https://img.shields.io/badge/Backend-informational?style=for-the-badge&color=gray">
-  <img src="https://img.shields.io/badge/Supabase-informationa?style=for-the-badge&logo=supabase&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Cloudflare-informationa?style=for-the-badge&logo=cloudflare&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
   <img src="https://img.shields.io/badge/Database-informational?style=for-the-badge&color=gray">
-  <img src="https://img.shields.io/badge/PostgreSQL-informationa?style=for-the-badge&logo=postgresql&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/SQLite-informationa?style=for-the-badge&logo=sqlite&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
@@ -110,8 +110,12 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
   <img src="https://img.shields.io/badge/TWINT (CH)-informationa?style=for-the-badge&color=A1FFEB">
 </div>
 
-> [!NOTE]
-> `Supabase` is used for `Auth`, `Database`, `Storage` and `Edge Functions`.
+> [!NOTE]  
+> The backend is built on `Cloudflare`, using:
+>
+> - D1 (serverless relational database, powered by SQLite)
+> - R2 (object storage for images)
+> - Workers (edge functions for business logic, Stripe webhooks and authentication)
 
 > [!WARNING]
 > Only `TWINT` is supported for payments.
@@ -172,9 +176,8 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 | Git                         | -       | All        |
 | Node.js                     | 22+     | All        |
 | pnpm                        | 10+     | All        |
-| Cloudflare account          | -       | Web        |
+| Cloudflare account          | -       | All        |
 | Expo Go (install on mobile) | -       | Mobile App |
-| Supabase account            | -       | Mobile App |
 | OAuth Google                | -       | Mobile App |
 | OAuth Apple                 | -       | Mobile App |
 
@@ -196,13 +199,13 @@ pnpm install
 
 ## CI/CD Pipeline
 
-| Pipeline       | CI        | CD  | Description                                                                           |
-| -------------- | --------- | --- | ------------------------------------------------------------------------------------- |
-| Lint and tests | Y         | N   | PRs must pass `ESLint` and `Jest` before review.                                      |
-| Build Mobile   | Y (build) | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
-| Compile Docs   | Y         | N   | Compile the `PDF` for the `Software Requirements Specification`                       |
-| Deploy web     | N         | Y   | Deploy the landing page to `CloudFlare`                                               |
-| Release mobile | N         | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
+| Pipeline       | CI  | CD  | Description                                                                           |
+| -------------- | --- | --- | ------------------------------------------------------------------------------------- |
+| Lint and tests | Y   | N   | PRs must pass `ESLint` and `Jest` before review.                                      |
+| Build Mobile   | Y   | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
+| Compile Docs   | Y   | N   | Compile the `PDF` for the `Software Requirements Specification`                       |
+| Deploy web     | N   | Y   | Deploy the landing page to `CloudFlare`                                               |
+| Release mobile | N   | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
 
 > [!NOTE]
 > To catch issues early (Lint and tests), use the following commands:
@@ -236,10 +239,7 @@ Technical architecture documentation including system design and workflows.
   - Database Schema (MCD)
   - Branch-Based CI/CD Flow
   - Main Branch CI/CD Flow
-
-### Additional Resources
-
-- User flow (screens): [docs/flow.txt](./docs/flow.txt)
+  - Flow UI
 
 ## Contributing
 
