@@ -111,9 +111,10 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 </div>
 
 > [!NOTE]  
-> The backend is built on `Cloudflare`, using:  
-> - D1 (serverless relational database, powered by SQLite)  
-> - R2 (object storage for images)  
+> The backend is built on `Cloudflare`, using:
+>
+> - D1 (serverless relational database, powered by SQLite)
+> - R2 (object storage for images)
 > - Workers (edge functions for business logic, Stripe webhooks and authentication)
 
 > [!WARNING]
@@ -198,13 +199,13 @@ pnpm install
 
 ## CI/CD Pipeline
 
-| Pipeline       | CI        | CD  | Description                                                                           |
-| -------------- | --------- | --- | ------------------------------------------------------------------------------------- |
-| Lint and tests | Y         | N   | PRs must pass `ESLint` and `Jest` before review.                                      |
-| Build Mobile   | Y         | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
-| Compile Docs   | Y         | N   | Compile the `PDF` for the `Software Requirements Specification`                       |
-| Deploy web     | N         | Y   | Deploy the landing page to `CloudFlare`                                               |
-| Release mobile | N         | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
+| Pipeline       | CI  | CD  | Description                                                                           |
+| -------------- | --- | --- | ------------------------------------------------------------------------------------- |
+| Lint and tests | Y   | N   | PRs must pass `ESLint` and `Jest` before review.                                      |
+| Build Mobile   | Y   | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
+| Compile Docs   | Y   | N   | Compile the `PDF` for the `Software Requirements Specification`                       |
+| Deploy web     | N   | Y   | Deploy the landing page to `CloudFlare`                                               |
+| Release mobile | N   | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
 
 > [!NOTE]
 > To catch issues early (Lint and tests), use the following commands:
