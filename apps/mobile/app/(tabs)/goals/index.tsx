@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
-import { View, ScrollView, StyleSheet, Pressable } from "react-native";
+import React, { useMemo, useState, useCallback, useRef, useEffect } from "react";
+import { View, ScrollView, StyleSheet, Pressable, Platform } from "react-native";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -85,12 +86,19 @@ const STATIC_GOALS: Goal[] = [
 ];
 
 export default function GoalsScreen() {
+  // bottom sheet state
+  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+  const sheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ["55%", "85%"], []);
+
   const border = useThemeColor({}, "border");
   const card = useThemeColor({}, "card");
   const mutedForeground = useThemeColor({}, "mutedForeground");
   const danger = useThemeColor({}, "danger");
   const success = useThemeColor({}, "success");
   const warning = useThemeColor({}, "warning");
+  const background = useThemeColor({}, "background");
+  const accent = useThemeColor({}, "accent");
 
   const data = useMemo(() => STATIC_GOALS, []);
 
@@ -135,6 +143,16 @@ export default function GoalsScreen() {
     }
   };
 
+  const openSheet = useCallback((goal: Goal) => {
+    setSelectedGoal(goal);
+    // open to first snap point
+    requestAnimationFrame(() => sheetRef.current?.expand());
+  }, []);
+
+  const handleSheetChange = useCallback((index: number) => {
+    if (index === -1) setSelectedGoal(null);
+  }, []);
+
   const renderRow = (item: Goal, index: number) => {
     const showTopBorder = index !== 0;
     return (
@@ -150,6 +168,7 @@ export default function GoalsScreen() {
         ]}
         accessibilityRole="button"
         accessibilityLabel={item.title}
+        onPress={() => openSheet(item)}
       >
         <View style={styles.rowLeft}>
           <Text style={[textVariants.subheadlineEmphasized]}>{item.title}</Text>
@@ -219,6 +238,34 @@ export default function GoalsScreen() {
           {data.map(renderRow)}
         </View>
       </ScrollView>
+      {/* Bottom Sheet Overlay */}
+      {selectedGoal && (
+        <BottomSheet
+          ref={sheetRef}
+          index={0}
+          enablePanDownToClose
+          onChange={handleSheetChange}
+          snapPoints={snapPoints}
+          handleIndicatorStyle={{ backgroundColor: mutedForeground }}
+          backgroundStyle={{ backgroundColor: card }}
+          style={{ zIndex: 100 }}
+        >
+          <BottomSheetView style={{ flex: 1 }}>
+            <GoalDetailContent
+              goal={selectedGoal}
+              colors={{
+                card,
+                border,
+                mutedForeground,
+                danger,
+                success,
+                warning,
+                accent,
+              }}
+            />
+          </BottomSheetView>
+        </BottomSheet>
+      )}
     </SafeAreaView>
   );
 }
@@ -243,5 +290,118 @@ const styles = StyleSheet.create({
   },
   metaSeparator: { opacity: 0.6 },
   streakRow: { flexDirection: "row", alignItems: "center" },
+  sheetTwoColWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    columnGap: spacing.xl,
+    rowGap: spacing.lg,
+  },
+  sheetField: { width: "45%" },
+  sheetLabel: {
+    ...textVariants.subheadline,
+    fontWeight: "400",
+    marginBottom: spacing.xs / 2,
+  },
+  verifyButton: {
+    marginTop: spacing.xxl,
+    borderRadius: radii.lg,
+    alignItems: "center",
+    paddingVertical: spacing.lg,
+  },
+  deleteButton: {
+    alignSelf: "flex-end",
+    marginTop: spacing.xl,
+  },
 });
+
+function GoalDetailContent({
+  goal,
+  colors,
+}: {
+  goal: Goal;
+  colors: Record<string, string>;
+}) {
+  const statusColor =
+    goal.status === "active"
+      ? (goal.timeLeftHours ?? 0) <= 2
+        ? colors.danger
+        : colors.warning
+      : goal.status === "expired"
+      ? colors.danger
+      : goal.status === "finished"
+      ? colors.success
+      : colors.mutedForeground;
+  const statusLabel =
+    goal.status === "active"
+      ? `${goal.timeLeftHours} hours left`
+      : goal.status;
+  const startDate = "20.08.2025";
+  const endDate = "20.09.2025";
+  return (
+    <ScrollView
+      style={{ flex: 1, paddingHorizontal: spacing.xl }}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: spacing.xxl, paddingTop: spacing.lg }}
+    >
+      <Text style={[textVariants.title2, { marginBottom: spacing.xl }]}>
+        {goal.title}
+      </Text>
+      <View style={styles.sheetTwoColWrap}>
+        <View style={styles.sheetField}>
+          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Financial Stake</Text>
+          <Text style={textVariants.bodyEmphasized}>CHF {goal.amountCHF}</Text>
+        </View>
+        <View style={styles.sheetField}>
+          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Verification Window</Text>
+          <Text style={textVariants.bodyEmphasized}>30 minutes</Text>
+        </View>
+        <View style={styles.sheetField}>
+          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Start Date</Text>
+          <Text style={textVariants.bodyEmphasized}>{startDate}</Text>
+        </View>
+        <View style={styles.sheetField}>
+          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>End Date</Text>
+          <Text style={textVariants.bodyEmphasized}>{endDate}</Text>
+        </View>
+        <View style={styles.sheetField}>
+          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>If failed, stake goes to:</Text>
+          <Text style={textVariants.bodyEmphasized}>App Developpers ❤️</Text>
+        </View>
+        <View style={styles.sheetField}>
+          <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Status</Text>
+          <Text style={[textVariants.bodyEmphasized, { color: statusColor }]}>{statusLabel}</Text>
+        </View>
+      </View>
+      <View style={{ marginTop: spacing.xl }}>
+        <Text style={[styles.sheetLabel, { color: colors.mutedForeground }]}>Description</Text>
+        <Text style={[textVariants.bodyEmphasized, { marginTop: spacing.xs }]}>
+          Complete a 30-minute workout session every morning before 9 AM.
+        </Text>
+      </View>
+      <Pressable
+        style={({ pressed }) => [
+          styles.verifyButton,
+          {
+            backgroundColor: colors.accent,
+            opacity: pressed ? 0.85 : 1,
+          },
+        ]}
+        onPress={() => {}}
+      >
+        <Text style={[textVariants.subheadlineEmphasized]}>Verify Now  ›</Text>
+      </Pressable>
+      <Pressable
+        style={({ pressed }) => [
+          styles.deleteButton,
+          { opacity: pressed ? 0.6 : 1 },
+        ]}
+        onPress={() => {}}
+        accessibilityLabel="Delete goal"
+      >
+        <Text style={{ fontSize: 24, color: colors.danger }}>🗑️</Text>
+      </Pressable>
+    </ScrollView>
+  );
+}
+
 

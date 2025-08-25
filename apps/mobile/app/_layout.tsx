@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import {
   DarkTheme,
   DefaultTheme,
@@ -15,6 +16,7 @@ import { AppState } from "react-native";
 import { supabase } from "@/lib/supabase";
 import Colors from "@/constants/Colors";
 import { View } from "@/components/Themed";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -79,19 +81,21 @@ function RootLayoutNav() {
   } as const;
 
   return (
-    <ThemeProvider value={navigationTheme}>
-      <View
-        lightColor={Colors.light.background}
-        darkColor={Colors.dark.background}
-        style={{ flex: 1 }}
-      >
-        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        <Stack>
-          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="signup" options={{ headerShown: false }} />
-        </Stack>
-      </View>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={navigationTheme}>
+        <View
+          lightColor={Colors.light.background}
+          darkColor={Colors.dark.background}
+          style={{ flex: 1 }}
+        >
+          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+          <Stack>
+            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="signup" options={{ headerShown: false }} />
+          </Stack>
+        </View>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
