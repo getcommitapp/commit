@@ -1,45 +1,36 @@
-/signup
+### 🔑 Auth / Profile
 
-Profile
+- **POST** `/signup` – create account
+- **GET** `/profile` – fetch own profile
+- **PUT** `/profile/edit` – update profile
+- **POST** `/profile/stripe` – add Stripe/payment info
+- **POST** `/logout` – log out
 
-/profile
+---
 
-/profile/edit
+### 🎯 Goals
 
-/profile/stripe ? (add payments)
+- **GET** `/goals` – list all goals (owned/joined)
+- **POST** `/goals/create` – create a new goal
+- **GET** `/goals/<id>/details` – fetch details of a goal
+- **DELETE** `/goals/<id>/delete` – delete a goal
+- **POST** `/goals/<id>/verification` – verify completion of a goal
 
-/logout ?
+---
 
-Goals
+### 👥 Groups
 
-/goals
+- **GET** `/groups` – list all groups (joined)
+- **POST** `/groups/create` – create a new group
+- **GET** `/groups/<id>/details` – fetch group details
+- **POST** `/groups/<id>/goal` – add/set a goal for the group
+- **GET** `/groups/<id>/inviteLink` – get invite link
+- **POST** `/groups/<id>/verification` – verify group goal completion
+- **POST** `/groups/<id>/leave` – leave the group
 
-/goals/<id>/details
+---
 
-/goals/<id>/delete
+### 📝 Forms
 
-/goals/<id>/verification
-
-/goals/create
-
-Groups
-
-/groups
-
-/groups/create
-
-/groups/<id>/details
-
-/groups/<id>/goal
-
-/groups/<id>/inviteLink
-
-/groups/<id>/verification
-
-/groups/<id>/leave
-
-Forms
-
-/forms
-
-/forms/<id>
+- **GET** `/forms` – list all forms
+- **GET** `/forms/<id>` – fetch one form
