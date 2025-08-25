@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Pressable, ScrollView, StyleSheet } from "react-native";
+import { router } from "expo-router";
 import { Text, spacing, radii, useThemeColor, textVariants } from "@/components/Themed";
 
 type Template = {
@@ -76,7 +77,9 @@ function Section({
         {items.map((item, idx) => (
           <Pressable
             key={item.id}
-            onPress={() => {}}
+            onPress={() => {
+              if (item.id === "custom") router.push("/(tabs)/goals/create-step2");
+            }}
             style={({ pressed }) => [
               styles.row,
               {

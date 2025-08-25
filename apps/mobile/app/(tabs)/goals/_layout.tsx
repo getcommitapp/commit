@@ -40,6 +40,13 @@ export default function GoalsStackLayout() {
           headerLargeTitle: false,
         }}
       />
+      <Stack.Screen
+        name="create-step2"
+        options={{
+          title: "Create Solo Goal",
+          headerLargeTitle: false,
+        }}
+      />
     </Stack>
   );
 }
