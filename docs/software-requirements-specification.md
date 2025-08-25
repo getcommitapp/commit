@@ -229,10 +229,11 @@ toc: true
 
 - Data encryption in transit and at rest
 - Secure authentication (OAuth2, JWT, etc.)
-- Photo storage: stored as objects in Supabase Storage (S3-compatible).
+- Photo storage: stored as objects in Cloudflare R2.
   Retention policy: Out of scope for MVP.
 - Location data: not stored server-side; processed on-device for verification
   where possible.
+- JWT session tokens validated by Workers; Stripe keys & secrets managed via Cloudflare project settings.
 
 ## Privacy
 
@@ -267,9 +268,9 @@ toc: true
 # Preliminary Architecture Description
 
 - Presentation layer: React native
-- Application layer: React native + Supabase
-- Data layer: Supabase + PostgreSQL
-- Infrastructure: Supabase hosting
+- Application layer: Expo/React Native (frontend), Cloudflare Workers (backend)
+- Data layer: Cloudflare D1 (SQLite-based relational DB)
+- Infrastructure: Cloudflare hosting
 
 # Mockups / Landing Page
 
@@ -279,11 +280,11 @@ toc: true
 # Technical Choices
 
 - Programming languages & frameworks: Expo + React Native (TypeScript)
-- Database: Postgres (Supabase)
-- Backend/services: Supabase (Auth, DB, storage, edge functions)
+- Database: Cloudflare D1 (SQLite)
+- Backend/services: Cloudflare (D1, R2, Workers)
 - Payments: Stripe Connect Standard with TWINT enabled for Switzerland
 - Third-party libraries & APIs: Stripe SDK, Expo Location/Camera
-- Hosting: Supabase (backend, DB, auth); Cloudflare Workers (Astro landing page)
+- Hosting: Cloudflare (backend, db, workers); Cloudflare Workers (Astro landing page)
 
 # Work Process
 
@@ -327,24 +328,26 @@ toc: true
 - Documentation: repository README and SRS in `docs/`
 - Code style: Prettier + ESLint with TypeScript rules
 - Testing approach: jest
-- Secrets/config: Supabase and Stripe keys via env files with secure storage
+- Secrets/config: Cloudflare and Stripe keys via env files with secure storage
 
 # Deployment Environment
 
-- Backend and data: Supabase project (Auth, Postgres, Storage, Edge Functions).
-- Web landing page: Cloudflare Workers (static hosting with global CDN).
+- Mobile app backend/API: Cloudflare Workers (API + business logic + auth), D1 (relational DB), R2 (image storage).
+- Web landing page: Astro static site deployed on Cloudflare Workers (global CDN).
 - Mobile app: Expo EAS builds with two channels: development and production. App
   Store/Play Store distribution is out of scope for MVP; internal distribution
   only (TestFlight/Android internal testing).
-- Environments: development and production only, with separate Supabase projects
+- Environments: development and production only, with separate Cloudflare projects
   and isolated resources.
-- Secrets/configuration: managed via Supabase project settings, and EAS secrets.
+- Secrets/configuration: managed via Cloudflare project settings, and EAS secrets.
   Stripe runs in Test mode for development and Live mode for production.
 
 # CI/CD Pipeline
 
 - CI on PRs: lint and tests
-- CD on `main`: build Expo APK and deploy static website
+- CI on `main`: build Expo APK and compile docs
+- CD on `main`: deploy static website
+- CD `manually`: release mobile (from build APK)
 
 # Constraints & Assumptions
 
