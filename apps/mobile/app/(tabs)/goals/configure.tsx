@@ -247,6 +247,10 @@ function InlineEditor({ editor, onClose, state }:{ editor:any; onClose:()=>void;
   const isText = ['name','location','photo'].includes(editor.type);
   const isStake = editor.type==='stake';
   const isBeneficiary = editor.type==='beneficiary';
+  // theme colors for contrast highlights
+  const accent = useThemeColor({}, 'accent');
+  const card = useThemeColor({}, 'card');
+  const border = useThemeColor({}, 'border');
   const monthState = React.useState<Date>((editor.type==='endDate'? endDate : startDate));
   const [month,setMonth] = monthState;
   const daysInMonth = new Date(month.getFullYear(), month.getMonth()+1,0).getDate();
@@ -279,14 +283,76 @@ function InlineEditor({ editor, onClose, state }:{ editor:any; onClose:()=>void;
           )}
           {isTime && (
             <View style={{flex:1, flexDirection:'row'}}>
-              <FlatList data={timeItems} keyExtractor={i=>`h${i}`} style={{flex:1}} renderItem={({item})=> <Pressable style={modalStyles.listItem} onPress={()=>setTime(item,(editor.type==='endTime'?endTime:editor.type==='startTime'?startTime:timeSingle).m)}><Text>{item.toString().padStart(2,'0')}</Text></Pressable>} />
-              <FlatList data={minuteItems} keyExtractor={i=>`m${i}`} style={{flex:1}} renderItem={({item})=> <Pressable style={modalStyles.listItem} onPress={()=>setTime((editor.type==='endTime'?endTime:editor.type==='startTime'?startTime:timeSingle).h,item)}><Text>{item.toString().padStart(2,'0')}</Text></Pressable>} />
+              <FlatList
+                data={timeItems}
+                keyExtractor={i=>`h${i}`}
+                style={{flex:1}}
+                renderItem={({item})=> {
+                  const current = editor.type==='endTime'? endTime : editor.type==='startTime'? startTime : timeSingle;
+                  const selected = item === current.h;
+                  return (
+                    <Pressable
+                      style={[modalStyles.listItem, selected && { backgroundColor: accent, borderRadius: 8 }]}
+                      onPress={()=>setTime(item,current.m)}
+                    >
+                      <Text style={selected? { color:'#fff', fontWeight:'600' }: undefined}>{item.toString().padStart(2,'0')}</Text>
+                    </Pressable>
+                  );
+                }}
+              />
+              <FlatList
+                data={minuteItems}
+                keyExtractor={i=>`m${i}`}
+                style={{flex:1}}
+                renderItem={({item})=> {
+                  const current = editor.type==='endTime'? endTime : editor.type==='startTime'? startTime : timeSingle;
+                  const selected = item === current.m;
+                  return (
+                    <Pressable
+                      style={[modalStyles.listItem, selected && { backgroundColor: accent, borderRadius: 8 }]}
+                      onPress={()=>setTime(current.h,item)}
+                    >
+                      <Text style={selected? { color:'#fff', fontWeight:'600' }: undefined}>{item.toString().padStart(2,'0')}</Text>
+                    </Pressable>
+                  );
+                }}
+              />
             </View>
           )}
           {isDuration && (
             <View style={{flex:1, flexDirection:'row'}}>
-              <FlatList data={durHours} keyExtractor={i=>`dh${i}`} style={{flex:1}} renderItem={({item})=> <Pressable style={modalStyles.listItem} onPress={()=>setDuration({h:item,m:duration.m})}><Text>{item}h</Text></Pressable>} />
-              <FlatList data={durMinutes} keyExtractor={i=>`dm${i}`} style={{flex:1}} renderItem={({item})=> <Pressable style={modalStyles.listItem} onPress={()=>setDuration({h:duration.h,m:item})}><Text>{item}m</Text></Pressable>} />
+              <FlatList
+                data={durHours}
+                keyExtractor={i=>`dh${i}`}
+                style={{flex:1}}
+                renderItem={({item})=> {
+                  const selected = item === duration.h;
+                  return (
+                    <Pressable
+                      style={[modalStyles.listItem, selected && { backgroundColor: accent, borderRadius: 8 }]}
+                      onPress={()=>setDuration({h:item,m:duration.m})}
+                    >
+                      <Text style={selected? { color:'#fff', fontWeight:'600' }: undefined}>{item}h</Text>
+                    </Pressable>
+                  );
+                }}
+              />
+              <FlatList
+                data={durMinutes}
+                keyExtractor={i=>`dm${i}`}
+                style={{flex:1}}
+                renderItem={({item})=> {
+                  const selected = item === duration.m;
+                  return (
+                    <Pressable
+                      style={[modalStyles.listItem, selected && { backgroundColor: accent, borderRadius: 8 }]}
+                      onPress={()=>setDuration({h:duration.h,m:item})}
+                    >
+                      <Text style={selected? { color:'#fff', fontWeight:'600' }: undefined}>{item}m</Text>
+                    </Pressable>
+                  );
+                }}
+              />
             </View>
           )}
           {isText && (
