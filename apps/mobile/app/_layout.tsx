@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -22,6 +23,9 @@ export {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+// Complete OAuth browser sessions when the app is opened via deep link
+WebBrowser.maybeCompleteAuthSession();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -79,9 +83,9 @@ function RootLayoutNav() {
       >
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
         <Stack>
+          <Stack.Screen name="signup" options={{ headerShown: false }} />
           <Stack.Screen name="onboarding" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="signup" options={{ headerShown: false }} />
         </Stack>
       </View>
     </ThemeProvider>
