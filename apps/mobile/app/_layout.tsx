@@ -12,7 +12,6 @@ import { StatusBar } from "expo-status-bar";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { AppState } from "react-native";
-import { supabase } from "@/lib/supabase";
 import Colors from "@/constants/Colors";
 import { View } from "@/components/Themed";
 
@@ -51,14 +50,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    const handleChange = (state: string) => {
-      if (state === "active") {
-        supabase.auth.startAutoRefresh();
-      } else {
-        supabase.auth.stopAutoRefresh();
-      }
-    };
-    const sub = AppState.addEventListener("change", handleChange);
+    const sub = AppState.addEventListener("change", () => {});
     return () => sub.remove();
   }, []);
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Image, SafeAreaView, View, Platform, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
@@ -11,7 +11,6 @@ import {
   textVariants,
 } from "@/components/Themed";
 import { signInWithGoogleOAuth, signInWithApple } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
 import Button from "@/components/ui/Button";
 import GoogleIcon from "@/assets/icons/google.svg";
 import AppleIcon from "@/assets/icons/person-circle.svg";
@@ -24,7 +23,7 @@ function getReadableAuthError(error: unknown): string {
 
   const normalized = message.toLowerCase();
 
-  if (normalized.includes("cancell") || normalized.includes("cancelled")) {
+  if (normalized.includes("cancel") || normalized.includes("cancelled")) {
     return "You canceled the sign-in.";
   }
   if (normalized.includes("network") || normalized.includes("timeout")) {
@@ -51,17 +50,6 @@ export default function SignupScreen() {
       router.replace("/onboarding/1");
     }
   }, [router]);
-
-  useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        navigateAfterSignIn();
-      }
-    });
-    return () => {
-      data.subscription.unsubscribe();
-    };
-  }, [navigateAfterSignIn]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: background }}>
@@ -109,6 +97,7 @@ export default function SignupScreen() {
               setIsGoogleLoading(true);
               try {
                 await signInWithGoogleOAuth();
+                await navigateAfterSignIn();
               } catch (error) {
                 Alert.alert("Couldn't sign in", getReadableAuthError(error));
               } finally {
@@ -128,6 +117,7 @@ export default function SignupScreen() {
                 setIsAppleLoading(true);
                 try {
                   await signInWithApple();
+                  await navigateAfterSignIn();
                 } catch (error) {
                   Alert.alert("Couldn't sign in", getReadableAuthError(error));
                 } finally {

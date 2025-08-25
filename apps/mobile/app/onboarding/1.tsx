@@ -1,9 +1,11 @@
 import React from "react";
 import { useRouter } from "expo-router";
 import OnboardingPage from "@/components/pages/OnboardingPage";
+import { authClient } from "@/lib/auth-client";
 
 export default function OnboardingStep1() {
   const router = useRouter();
+
   return (
     <OnboardingPage
       image={require("@/assets/images/onboarding/onboarding-1.png")}

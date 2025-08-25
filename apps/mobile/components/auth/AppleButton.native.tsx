@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert, Platform } from "react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
-import { supabase } from "@/lib/supabase";
+import { authClient } from "@/lib/auth-client";
 
 type Props = {
   onSignInSuccess?: () => void;
@@ -27,11 +27,13 @@ export default function AppleButton({ onSignInSuccess, onSignInError }: Props) {
           });
           if (!credential.identityToken) throw new Error("No identityToken");
 
-          const { error } = await supabase.auth.signInWithIdToken({
+          await authClient.signIn.social({
             provider: "apple",
-            token: credential.identityToken,
+            idToken: {
+              token: credential.identityToken,
+            },
+            callbackURL: "/(tabs)/home",
           });
-          if (error) throw error;
           onSignInSuccess?.();
         } catch (e: any) {
           if (e?.code === "ERR_REQUEST_CANCELED") return;

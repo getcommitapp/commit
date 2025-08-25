@@ -27,18 +27,13 @@ This app uses `expo-router` for navigation, `TypeScript` for types, and `Jest` f
 - `Node.js 22+` and [`pnpm`](https://pnpm.io/installation)
 - [`Expo Go`](https://expo.dev/client) on a phone, or an iOS/Android simulator
 
-### Supabase
+### Authentication
 
-You will need a Supabase account. Either ask to join the current oganization or create a new project.
+The app uses Better Auth with a Hono backend (Cloudflare Workers).
 
-If you create a new project, you will need to update the public variables in `lib/supabase.ts` and enable `Google and Apple` OAuth providers.
-
-For the `Apple OAuth`, set the `Client ID` to `host.exp.Exponent`
-
-For the `Google OAuth`, create a new Google OAuth client of type web, and set the `Client ID` and `Client Secret`.
-
-> [!NOTE]
-> See the [Expo documentation](https://docs.expo.dev/guides/using-supabase/) for more details on integrating Supabase.
+- Server: see `apps/api` where the Better Auth handler is mounted under `/api/auth/*`.
+- Client: initialized in `apps/mobile/lib/auth-client.ts` with the Expo plugin and `expo-secure-store`.
+- Providers: configure Google and Apple as per Better Auth docs.
 
 ## Getting started
 
