@@ -47,9 +47,8 @@ alt Docs changes included
   PR ->> GHA: Trigger "Compile Docs" (pull_request, docs/**)
 end
 
-== Release Tagging (example) ==
-Dev ->> Repo: Create tag mobile-v{version}
-Repo ->> Rel: Tag recorded
+== Release Tagging ==
+Dev ->> GHA: Trigger "Release Mobile" (manually)
 GHA ->> Rel: Attach APK from latest successful Build Mobile artifact
 
 @enduml
