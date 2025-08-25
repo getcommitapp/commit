@@ -54,6 +54,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 - Software Requirements Specification (SRS): [PDF](./docs/software-requirements-specification.pdf) • [Markdown](./docs/software-requirements-specification.md)
 - Architecture overview: [docs/architecture.md](./docs/architecture.md)
 - Mockup Application: [Figma URL](https://www.figma.com/design/38qR8zRDGd07ihkDjtzPQ5/commit)
+- API Backend: [apps/api/README.md](./apps/api/README.md)
 - Mobile Application: [apps/mobile/README.md](./apps/mobile/README.md)
 - Web Landing Page: [apps/web/README.md](./apps/web/README.md)
 
@@ -62,6 +63,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 ```text
     .
     ├─ apps/
+    │  ├─ api/      # Hono + Cloudflare Workers (Backend API)
     │  ├─ mobile/   # Expo + React Native (iOS/Android)
     │  └─ web/      # Astro landing (Cloudflare Workers)
     ├─ docs/        # SRS, architecture, flow, assets
@@ -92,7 +94,8 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 
 <div align="center">
   <img src="https://img.shields.io/badge/Backend-informational?style=for-the-badge&color=gray">
-  <img src="https://img.shields.io/badge/Cloudflare-informationa?style=for-the-badge&logo=cloudflare&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Hono-informational?style=for-the-badge&logo=hono&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Cloudflare Workers-informational?style=for-the-badge&logo=cloudflare&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
@@ -115,7 +118,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 >
 > - D1 (serverless relational database, powered by SQLite)
 > - R2 (object storage for images)
-> - Workers (edge functions for business logic, Stripe webhooks and authentication)
+> - Workers (edge functions for business logic, authentication, and API endpoints)
 
 > [!WARNING]
 > Only `TWINT` is supported for payments.
@@ -195,7 +198,7 @@ pnpm install
 ```
 
 > [!TIP]
-> See app-specific guides after installing: [`apps/mobile/README.md`](./apps/mobile/README.md) and [`apps/web/README.md`](./apps/web/README.md).
+> See app-specific guides after installing: [`apps/api/README.md`](./apps/api/README.md), [`apps/mobile/README.md`](./apps/mobile/README.md), and [`apps/web/README.md`](./apps/web/README.md).
 
 ## CI/CD Pipeline
 

@@ -9,4 +9,7 @@ config.resolver.assetExts = config.resolver.assetExts.filter(
 );
 config.resolver.sourceExts = [...config.resolver.sourceExts, "svg"];
 
+// Required for Better Auth exports resolution
+config.resolver.unstable_enablePackageExports = true;
+
 module.exports = config;
