@@ -42,6 +42,11 @@ jest.mock("@/lib/auth-client", () => ({
 }));
 
 describe("Signup flow", () => {
+  beforeEach(() => {
+    mockReplace.mockClear();
+    (AsyncStorage.getItem as jest.Mock).mockReset();
+  });
+
   it("navigates to onboarding when not seen", async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce(null);
 
@@ -63,8 +68,10 @@ describe("Signup flow", () => {
 
   it('navigates to /(tabs)/home when hasSeenOnboarding is "true"', async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce("true");
-
+    const user = userEvent.setup();
     const { unmount } = render(<Signup />);
+
+    await user.press(screen.getByText("Sign in with Google"));
 
     const { authClient } = require("@/lib/auth-client");
     (authClient.session.get as jest.Mock).mockReturnValueOnce({ id: "s" });
