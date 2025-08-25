@@ -11,6 +11,7 @@ const palette = {
   danger: "#d83600",
   success: "#58ba2b",
   warning: "#b8af00",
+  blue: "#2e6aff",
 };
 
 const Colors = {
@@ -31,6 +32,7 @@ const Colors = {
     danger: palette.danger,
     success: palette.success,
     warning: palette.warning,
+  blue: palette.blue,
     link: palette.primary,
   },
   // TODO: Implement dark theme tokens
@@ -50,6 +52,7 @@ const Colors = {
     danger: palette.danger,
     success: palette.success,
     warning: palette.warning,
+  blue: palette.blue,
     link: "#ffffff",
   },
 } as const;
