@@ -106,15 +106,15 @@ export default function HomeScreen() {
       </View>
       <View style={{ gap: spacing.sm }}>
         <Button
-          title="Create Goal"
+          title="New Goal"
           size="lg"
-          onPress={() => router.push("/(tabs)/goals")}
+          onPress={() => router.push("/(tabs)/goals/create")}
         />
         <Button
-          title="Create Group"
+          title="New Group"
           variant="border"
           size="lg"
-          onPress={() => router.push("/(tabs)/groups")}
+          onPress={() => router.push("/(tabs)/groups/create")}
         />
       </View>
     </ScreenLayout>

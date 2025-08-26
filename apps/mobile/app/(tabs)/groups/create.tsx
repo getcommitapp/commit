@@ -63,6 +63,7 @@ export default function CreateGroupScreen() {
 
         <Button
           title="Create Group"
+          size="lg"
           onPress={handleCreate}
           disabled={!canCreate}
           style={{}}
