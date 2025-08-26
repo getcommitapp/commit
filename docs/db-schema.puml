@@ -1,8 +1,5 @@
 @startuml db-schema
 title commit. - Database Schema
-' Database schema draft for commit. (MVP)
-' Derived from SRS and current mobile code (Supabase auth only)
-
 !theme plain
 !pragma layout elk
 left to right direction
@@ -17,187 +14,161 @@ skinparam class {
   BorderColor Black
 }
 
-' Core auth/profile
-entity "profiles" as profiles {
-  + id: uuid [pk]  ' references auth.users.id
+' SQLite must
+entity "User" as user {
+  + id: text [pk]
   --
-  display_name: text
-  avatar_url: text
-  role: text  ' user | reviewer | admin
+  name: text
+  email: text [unique]
+  email_verified: boolean
+  image: text
   created_at: timestamptz
+  updated_at: timestamptz
+}
+
+' SQlite must
+entity "Session" as session {
+  + id: text [pk]
+  --
+  expires_at: timestamptz
+  token: text [unique]
+  created_at: timestamptz
+  updated_at: timestamptz
+  ip_address: text
+  user_agent: text
+  user_id: text [fk -> user.id]
+}
+
+' SQLite must
+entity "Account" as account {
+  + id: text [pk]
+  --
+  account_id: text
+  provider_id: text
+  user_id: text [fk -> user.id]
+  access_token: text
+  refresh_token: text
+  id_token: text
+  access_token_expires_at: timestamptz
+  refresh_token_expires_at: timestamptz
+  scope: text
+  password: text
+  created_at: timestamptz
+  updated_at: timestamptz
+}
+
+' SQLite must
+entity "Verification" as verification {
+  + id: text [pk]
+  --
+  identifier: text
+  value: text
+  expires_at: timestamptz
+  created_at: timestamptz
+  updated_at: timestamptz
 }
 
 ' Destinations
-entity "charities" as charities {
+entity "Charity" as charity {
   + id: uuid [pk]
   --
   name: text
   url: text
   created_at: timestamptz
+  updated_at: timestamptz
 }
 
-' Solo goals
-entity "goals" as goals {
+' Base goal
+entity "Goal" as goal {
   + id: uuid [pk]
   --
-  owner_id: uuid [fk -> profiles.id]
+  owner_id: text [fk -> user.id]
   name: text
   description: text
-  goal_type: text  ' preset key or custom
-  preset_id: uuid  ' fk -> verification_presets.id (nullable)
-  start_at: timestamptz
-  due_at: timestamptz
-  recurrence: jsonb  ' optional MVP encoding of days, end date
-  verification_window_min: int  ' default window; rules can override
-  stake_cents: int
-  currency: text  ' CHF
-  destination_type: text  ' user | charity | platform
-  destination_user_id: uuid  ' fk -> profiles.id (nullable)
-  destination_charity_id: uuid  ' fk -> charities.id (nullable)
-  status: text  ' scheduled | completed | failed | cancelled
-  created_at: timestamptz
-}
-
-' Evidence / manual review
-entity "goal_verifications" as goal_verifications {
-  + id: uuid [pk]
-  --
-  goal_id: uuid [fk -> goals.id]
-  user_id: uuid [fk -> profiles.id]
-  method: text  ' location | phone_movement | photo
-  verified_at: timestamptz
-  photo_url: text  ' nullable
-  latitude: numeric  ' nullable
-  longitude: numeric  ' nullable
-  radius_m: int  ' nullable (geofence)
-  duration_seconds: int  ' nullable (focus)
-  approval_status: text  ' pending | approved | rejected
-  approved_by: uuid  ' fk -> profiles.id (reviewer, nullable)
-}
-
-' Group challenges
-entity "groups" as groups {
-  + id: uuid [pk]
-  --
-  creator_id: uuid [fk -> profiles.id]
-  goal_id: uuid  ' fk -> goals.id (nullable) — group based on a goal
-  name: text
-  description: text
+  start_date: timestamptz
+  end_date: timestamptz
+  due_start_time: timestamptz
+  due_end_time: timestamptz
+  recurrence: jsonb
   stake_cents: int
   currency: text
-  destination_type: text  ' user | charity | platform
-  destination_user_id: uuid  ' fk -> profiles.id (nullable)
-  destination_charity_id: uuid  ' fk -> charities.id (nullable)
-  status: text  ' scheduled | resolved | cancelled
+  destination_type: text
+  destination_user_id: text [fk -> user.id] ' (nullable)
+  destination_charity_id: uuid [fk -> charities.id] ' (nullable)
   created_at: timestamptz
+  updated_at: timestamptz
 }
 
-' Verification presets (e.g., wake_up, no_phone)
-entity "verification_presets" as verification_presets {
-  + id: uuid [pk]
-  --
-  key: text  ' wake_up | no_phone
-  name: text
-  description: text
-  created_at: timestamptz
-}
-
-entity "verification_preset_rules" as verification_preset_rules {
-  + id: uuid [pk]
-  --
-  preset_id: uuid [fk -> verification_presets.id]
-  method: text  ' location | phone_movement | photo
-  params: jsonb  ' method-specific config (e.g., geofence, thresholds)
-}
-
-' Per-goal rule set (composable methods + constraints)
-entity "goal_verification_rules" as goal_verification_rules {
+' Evidence Method
+entity "Goal_verifications_method" as goal_verifications_method {
   + id: uuid [pk]
   --
   goal_id: uuid [fk -> goals.id]
-  method: text  ' location | phone_movement | photo
-  require_time_window: boolean
-  time_window_minutes: int  ' optional override of goal default
-  require_duration: boolean
-  min_duration_seconds: int  ' for continuous focus/no-phone
-  ' Location-specific fields (nullable unless method = location)
+  method: text
   latitude: numeric
   longitude: numeric
   radius_m: int
-  params: jsonb  ' additional method-specific parameters
+  duration_seconds: int
+  grace_time: timestamptz
+  created_at: timestamptz
+  updated_at: timestamptz
 }
 
-' Per-group rule set (same structure as goals)
+' Evidence Log
+entity "Goal_verifications_log" as goal_verifications_log {
+  + id: uuid [pk]
+  --
+  goal_id: uuid [fk -> goals.id]
+  user_id: uuid [fk -> user.id]
+  type: text
+  verified_at: timestamptz
+  approval_status: text
+  approved_by: uuid  ' fk -> user.id (nullable)
+  start_time: timestamptz
+  photo_description: text
+  photo_url: text
+  created_at: timestamptz
+  updated_at: timestamptz
+}
 
-entity "group_participants" as group_participants {
+' Group challenges
+entity "Group" as group {
+  + id: uuid [pk]
+  --
+  creator_id: text [fk -> user.id]
+  goal_id: uuid  ' fk -> goals.id (nullable)
+  name: text
+  description: text
+  code_invite: text
+  created_at: timestamptz
+  updated_at: timestamptz
+}
+
+entity "Group_participants" as group_participants {
   + group_id: uuid [fk -> groups.id]
-  + user_id: uuid [fk -> profiles.id]
+  + user_id: uuid [fk -> user.id]
   --
   joined_at: timestamptz
-  status: text  ' invited | joined | left
-}
-
-entity "group_results" as group_results {
-  + id: uuid [pk]
-  --
-  group_id: uuid [fk -> groups.id]
-  user_id: uuid [fk -> profiles.id]
-  outcome: text  ' success | failure
-  captured_cents: int  ' stake captured from this user (0 if success)
-}
-
-entity "group_invites" as group_invites {
-  + id: uuid [pk]
-  --
-  group_id: uuid [fk -> groups.id]
-  inviter_id: uuid [fk -> profiles.id]
-  invite_code: text
-  expires_at: timestamptz
-  accepted_by: uuid  ' fk -> profiles.id (nullable)
-  accepted_at: timestamptz  ' nullable
-}
-
-' Payments / captures (Stripe)
-entity "payments" as payments {
-  + id: uuid [pk]
-  --
-  user_id: uuid [fk -> profiles.id]
-  goal_id: uuid  ' fk -> goals.id (nullable)
-  group_id: uuid  ' fk -> groups.id (nullable)
-  amount_cents: int
-  currency: text
-  status: text  ' authorized | captured | voided | refunded
-  stripe_payment_intent_id: text
+  status: text
   created_at: timestamptz
-  captured_at: timestamptz  ' nullable
+  updated_at: timestamptz
 }
 
 ' Relationships
-profiles ||--o{ goals : owns
-profiles ||--o{ goal_verifications : submits
-profiles ||--o{ groups : creates
-profiles ||--o{ group_participants : participates
-profiles ||--o{ group_invites : invites
-profiles ||--o{ payments : pays
+user ||--o{ goal : owns
+user ||--o{ goal_verifications_log : submits
+user ||--o{ group : creates
+user ||--o{ group_participants : participates
+user ||--o{ session : has
+user ||--o{ account : linked
 
-charities ||--o{ goals : destination
-charities ||--o{ groups : destination
+charity ||--o{ goal : destination
 
-goals ||--o{ goal_verifications : has
-goals ||--o{ goal_verification_rules : rules
+goal ||--o{ goal_verifications_method : has
+goal ||--o{ goal_verifications_log : rules
+goal ||--o{ group : spawns
 
-groups ||--o{ group_participants : has
-groups ||--o{ group_results : results
-
-' Group derived from a specific goal
-goals ||--o{ groups : spawns
-
-verification_presets ||--o{ verification_preset_rules : defines
-verification_presets ||--o{ goals : used_by
-verification_presets ||--o{ groups : used_by
-
-' Payments associations (optional FKs)
-goals ||--o{ payments : settlement
-groups ||--o{ payments : settlement
+group ||--o{ group_participants : has
 
 @enduml
+
