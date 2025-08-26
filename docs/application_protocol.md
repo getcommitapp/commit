@@ -18,6 +18,7 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
 
 > [!NOTE]
 > All endpoints should respond with appropriate HTTP status codes:
+>
 > - `200 OK` - request succeeded
 > - `201 Created` - resource created
 > - `400 Bad Request` - invalid request
@@ -33,6 +34,7 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
 #### Create Account (Signup)
 
 Request:
+
 ```txt
 POST /signup
 Content-Type: application/json
@@ -44,6 +46,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```txt
 {
   "id": "<user_id>"
@@ -55,12 +58,14 @@ Response:
 #### Get Profile
 
 Request:
+
 ```txt
 GET /profile
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "id": "<user_id>",
@@ -76,6 +81,7 @@ Response:
 #### Update Profile
 
 Request:
+
 ```txt
 PUT /profile
 Authorization: Bearer <token>
@@ -89,6 +95,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```txt
 {
   "message": "Profile updated successfully."
@@ -100,6 +107,7 @@ Response:
 #### Add Stripe Info
 
 Request:
+
 ```txt
 POST /profile/stripe
 Authorization: Bearer <token>
@@ -111,6 +119,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```txt
 {
   "message": "Stripe account linked successfully."
@@ -122,12 +131,14 @@ Response:
 #### Delete Account
 
 Request:
+
 ```txt
 DELETE /profile
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "message": "Account deleted successfully."
@@ -139,12 +150,14 @@ Response:
 #### Logout
 
 Request:
+
 ```txt
 POST /logout
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "message": "Logged out successfully."
@@ -152,14 +165,18 @@ Response:
 ```
 
 ### Goals
+
 #### List Goals
+
 Request:
+
 ```txt
 GET /goals
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 [
   {
@@ -175,13 +192,16 @@ Response:
 ---
 
 #### Get Goal Details
+
 Request:
+
 ```txt
 GET /goals/<id>
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "id": "<goal_id>",
@@ -201,18 +221,22 @@ Response:
 ---
 
 #### Update Goal
+
 None
 
 ---
 
 #### Delete Goal
+
 Request:
+
 ```txt
 DELETE /goals/<id>
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "message": "Goal deleted successfully."
@@ -222,7 +246,9 @@ Response:
 ---
 
 #### Verify Goal Completion
+
 Request:
+
 ```txt
 POST /goals/<id>/verify
 Authorization: Bearer <token>
@@ -237,6 +263,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```txt
 {
   "message": "Data successfully sent to server."
@@ -246,14 +273,18 @@ Response:
 ---
 
 ### Groups
+
 #### List Groups
+
 Request:
+
 ```txt
 GET /groups
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 [
   {
@@ -269,13 +300,16 @@ Response:
 ---
 
 #### Get Group Details
+
 Request:
+
 ```txt
 GET /groups/<id>
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "id": "<group_id>",
@@ -293,7 +327,9 @@ Response:
 ---
 
 #### Create Group
+
 Request:
+
 ```txt
 POST /groups
 Authorization: Bearer <token>
@@ -306,6 +342,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```txt
 {
   "id": "<group_id>",
@@ -316,13 +353,16 @@ Response:
 ---
 
 #### Get Invite Link
+
 Request:
+
 ```txt
 GET /groups/<id>/invite
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "invite_link": "<invite_link>"
@@ -332,13 +372,16 @@ Response:
 ---
 
 #### Verify Invite Link
+
 Request:
+
 ```txt
 GET /groups/<id>/invite/verify
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "valid": true|false
@@ -348,13 +391,16 @@ Response:
 ---
 
 #### View Goal
+
 Request:
+
 ```txt
 GET /groups/<id>/goal
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "id": "<goal_id>",
@@ -374,7 +420,9 @@ Response:
 ---
 
 #### Verify Group Goal Completion
+
 Request:
+
 ```txt
 POST /goals/<id>/verify
 Authorization: Bearer <token>
@@ -389,6 +437,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```txt
 {
     "message": "Data successfully sent to server."
@@ -398,13 +447,16 @@ Response:
 ---
 
 #### Leave Group
+
 Request:
+
 ```txt
 POST /groups/<id>/leave
 Authorization: Bearer <token>
 ```
 
 Response:
+
 ```txt
 {
   "message": "Left group successfully."
@@ -418,6 +470,7 @@ Response:
 ### 1. Signup and Fetch Profile
 
 Request:
+
 ```txt
 POST /signup
 Content-Type: application/json
@@ -427,7 +480,9 @@ Content-Type: application/json
   "token": "ya29.a0AWY7..."
 }
 ```
+
 Response (201 Created):
+
 ```txt
 {
   "id": "user_12345"
@@ -437,12 +492,14 @@ Response (201 Created):
 ---
 
 Request:
+
 ```txt
 GET /profile
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
 Response (200 OK):
+
 ```txt
 {
   "id": "user_12345",
@@ -452,8 +509,11 @@ Response (200 OK):
   "stripe_status": "inactive"
 }
 ```
+
 ### 2. Create and Verify a Goal
+
 Request:
+
 ```txt
 POST /goals
 Authorization: Bearer eyJhbGciOiJIUzI1...
@@ -468,6 +528,7 @@ Content-Type: application/json
 ```
 
 Response (201 Created):
+
 ```txt
 {
   "id": "goal_789",
@@ -478,6 +539,7 @@ Response (201 Created):
 ---
 
 Request:
+
 ```txt
 POST /goals/goal_789/verify
 Authorization: Bearer eyJhbGciOiJIUzI1...
@@ -492,6 +554,7 @@ Content-Type: application/json
 ```
 
 Response (200 OK):
+
 ```txt
 {
   "message": "Data successfully sent to server."
@@ -499,7 +562,9 @@ Response (200 OK):
 ```
 
 ### 3. Create a Group and Set Goal
+
 Request:
+
 ```txt
 POST /groups
 Authorization: Bearer eyJhbGciOiJIUzI1...
@@ -512,21 +577,25 @@ Content-Type: application/json
 ```
 
 Response (201 Created):
+
 ```txt
 {
   "id": "group_456",
   "invite_link": "https://commit.app/invite/group_456"
 }
 ```
+
 ---
 
 Request:
+
 ```txt
 GET /groups/group_456/goal
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
 Response (200 OK):
+
 ```txt
 {
   "id": "goal_789",
@@ -542,14 +611,18 @@ Response (200 OK):
   "status": "ongoing"
 }
 ```
+
 ### 4. Leave a Group
+
 Request:
+
 ```txt
 POST /groups/group_456/leave
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
 Response (200 OK):
+
 ```txt
 {
   "message": "Left group successfully."
@@ -559,6 +632,7 @@ Response (200 OK):
 ### 5. Error Example – Goal Verification Failure (File Too Large)
 
 Request:
+
 ```txt
 POST /goals/goal_789/verify
 Authorization: Bearer eyJhbGciOiJIUzI1...
@@ -573,6 +647,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```txt
 {
   "error": "Payload too large",

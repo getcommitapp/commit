@@ -28,5 +28,5 @@
 - GET `/groups/<id>/invite/verify` – verify invite link
 - GET `/groups/<id>/goal` – see group goal
 - POST `/goals/<id>/verify` – verify group goal completion  
-  *(uses the same verify endpoint as individual goals)*
+  _(uses the same verify endpoint as individual goals)_
 - POST `/groups/<id>/leave` – leave the group
