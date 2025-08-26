@@ -1,5 +1,6 @@
 import React from "react";
-import { ImageSourcePropType, SafeAreaView, View } from "react-native";
+import { ImageSourcePropType, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
 

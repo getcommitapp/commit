@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { SafeAreaView, View, Platform, Alert } from "react-native";
+import { View, Platform, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";

@@ -12,6 +12,7 @@ import "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { Image as ExpoImage } from "expo-image";
 import { Image as RNImage, AppState } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import Colors from "@/constants/Colors";
@@ -138,19 +139,21 @@ function RootLayoutNav({ initialRouteName }: RootLayoutNavProps) {
   }, [initialRouteName, router]);
 
   return (
-    <ThemeProvider value={navigationTheme}>
-      <View
-        lightColor={Colors.light.background}
-        darkColor={Colors.dark.background}
-        style={{ flex: 1 }}
-      >
-        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        <Stack initialRouteName={initialRouteName}>
-          <Stack.Screen name="signup" options={{ headerShown: false }} />
-          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </View>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider value={navigationTheme}>
+        <View
+          lightColor={Colors.light.background}
+          darkColor={Colors.dark.background}
+          style={{ flex: 1 }}
+        >
+          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+          <Stack initialRouteName={initialRouteName}>
+            <Stack.Screen name="signup" options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+        </View>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
