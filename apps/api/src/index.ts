@@ -1,11 +1,29 @@
 import { fromHono } from "chanfana";
 import { Hono } from "hono";
-import { TaskCreate } from "./endpoints/taskCreate";
-import { TaskDelete } from "./endpoints/taskDelete";
-import { TaskFetch } from "./endpoints/taskFetch";
-import { TaskList } from "./endpoints/taskList";
 import { createAuth } from "./auth";
 import { cors } from "hono/cors";
+
+// Profile
+import { ProfileFetch } from "./endpoints/profileFetch";
+import { ProfileUpdate } from "./endpoints/profileUpdate";
+import { ProfileStripeCreate } from "./endpoints/profileStripeCreate";
+import { ProfileDelete } from "./endpoints/profileDelete";
+
+// Goals
+import { GoalsList } from "./endpoints/goalsList";
+import { GoalCreate } from "./endpoints/goalCreate";
+import { GoalFetch } from "./endpoints/goalFetch";
+import { GoalDelete } from "./endpoints/goalDelete";
+import { GoalVerify } from "./endpoints/goalVerify";
+
+// Groups
+import { GroupsList } from "./endpoints/groupsList";
+import { GroupCreate } from "./endpoints/groupCreate";
+import { GroupFetch } from "./endpoints/groupFetch";
+import { GroupInvite } from "./endpoints/groupInvite";
+import { GroupInviteVerify } from "./endpoints/groupInviteVerify";
+import { GroupGoal } from "./endpoints/groupGoal";
+import { GroupLeave } from "./endpoints/groupLeave";
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Env }>();
@@ -15,11 +33,29 @@ const openapi = fromHono(app, {
   docs_url: "/",
 });
 
-// Register OpenAPI endpoints
-openapi.get("/api/tasks", TaskList);
-openapi.post("/api/tasks", TaskCreate);
-openapi.get("/api/tasks/:taskSlug", TaskFetch);
-openapi.delete("/api/tasks/:taskSlug", TaskDelete);
+// -------------------- Register OpenAPI endpoints --------------------
+
+// Profile
+openapi.get("/profile", ProfileFetch);
+openapi.put("/profile", ProfileUpdate);
+openapi.post("/profile", ProfileStripeCreate);
+openapi.delete("/profile", ProfileDelete);
+
+// Goals
+openapi.get("/goals", GoalsList);
+openapi.post("/goals", GoalCreate);
+openapi.get("/goals/:id", GoalFetch);
+openapi.delete("/goals/:id", GoalDelete);
+openapi.post("/goals/:id/verify", GoalVerify);
+
+// Groups
+openapi.get("/groups", GroupsList);
+openapi.post("/groups", GroupCreate);
+openapi.get("/groups/:id", GroupFetch);
+openapi.get("/groups/:id/goal", GroupGoal);
+openapi.get("/groups/:id/invite", GroupInvite);
+openapi.get("/groups/:id/invite/verify", GroupInviteVerify);
+openapi.post("/groups/:id/leave", GroupLeave);
 
 // CORS for auth routes (adjust origin as needed)
 app.use(
