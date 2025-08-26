@@ -8,26 +8,26 @@ import { createAuth } from "./auth";
 import { cors } from "hono/cors";
 
 // Profile
-import { ProfileFetch } from "./endpoints/profile/profileFetch";
-import { ProfileUpdate } from "./endpoints/profile/profileUpdate";
-import { ProfileStripeCreate } from "./endpoints/profile/profileStripeCreate";
-import { ProfileDelete } from "./endpoints/profile/profileDelete";
+import { ProfileFetch } from "./endpoints/profileFetch";
+import { ProfileUpdate } from "./endpoints/profileUpdate";
+import { ProfileStripeCreate } from "./endpoints/profileStripeCreate";
+import { ProfileDelete } from "./endpoints/profileDelete";
 
 // Goals
-import { GoalsList } from "./endpoints/goals/goalsList";
-import { GoalCreate } from "./endpoints/goals/goalCreate";
-import { GoalFetch } from "./endpoints/goals/goalFetch";
-import { GoalDelete } from "./endpoints/goals/goalDelete";
-import { GoalVerify } from "./endpoints/goals/goalVerify";
+import { GoalsList } from "./endpoints/goalsList";
+import { GoalCreate } from "./endpoints/goalCreate";
+import { GoalFetch } from "./endpoints/goalFetch";
+import { GoalDelete } from "./endpoints/goalDelete";
+import { GoalVerify } from "./endpoints/goalVerify";
 
 // Groups
-import { GroupsList } from "./endpoints/groups/groupsList";
-import { GroupCreate } from "./endpoints/groups/groupCreate";
-import { GroupFetch } from "./endpoints/groups/groupFetch";
-import { GroupInvite } from "./endpoints/groups/groupInvite";
-import { GroupInviteVerify } from "./endpoints/groups/groupInviteVerify";
-import { GroupGoal } from "./endpoints/groups/groupGoal";
-import { GroupLeave } from "./endpoints/groups/groupLeave";
+import { GroupsList } from "./endpoints/groupsList";
+import { GroupCreate } from "./endpoints/groupCreate";
+import { GroupFetch } from "./endpoints/groupFetch";
+import { GroupInvite } from "./endpoints/groupInvite";
+import { GroupInviteVerify } from "./endpoints/groupInviteVerify";
+import { GroupGoal } from "./endpoints/groupGoal";
+import { GroupLeave } from "./endpoints/groupLeave";
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Env }>();
