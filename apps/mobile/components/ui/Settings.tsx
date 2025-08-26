@@ -15,6 +15,7 @@ type SettingsGroupProps = {
   children: React.ReactNode;
   footer?: string;
   style?: any;
+  backgroundStyle?: any;
 };
 
 export function SettingsGroup({
@@ -22,6 +23,7 @@ export function SettingsGroup({
   children,
   footer,
   style,
+  backgroundStyle,
 }: SettingsGroupProps) {
   const card = useThemeColor({}, "card");
   const muted = useThemeColor({}, "mutedForeground");
@@ -46,6 +48,7 @@ export function SettingsGroup({
           backgroundColor: card,
           borderRadius: radii.md,
           overflow: "hidden",
+          ...backgroundStyle,
         }}
       >
         {children}

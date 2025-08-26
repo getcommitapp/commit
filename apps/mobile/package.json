@@ -14,6 +14,9 @@
   },
   "jest": {
     "preset": "jest-expo",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ],
     "moduleNameMapper": {
       "\\.(svg)$": "<rootDir>/__mocks__/svgMock.js",
       "^react$": "<rootDir>/node_modules/react",

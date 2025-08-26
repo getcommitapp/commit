@@ -18,22 +18,31 @@ const mockGoals: Goal[] = [
   {
     id: "1",
     title: "Morning Workout",
+    description: "Complete a 30-minute morning workout routine.",
     stake: "CHF 50",
     timeLeft: "2h left",
+    startDate: "2025-01-01",
+    endDate: "2025-01-31",
     streak: 2,
   },
   {
     id: "2",
     title: "Run 2 km",
+    description: "Run at least 2 kilometers without stopping.",
     stake: "CHF 20",
     timeLeft: "6h left",
+    startDate: "2025-02-01",
+    endDate: "2025-02-28",
     streak: 10,
   },
   {
     id: "3",
     title: "Stay at school for 3 hours",
+    description: "Remain at school and study for at least 3 hours.",
     stake: "CHF 40",
     timeLeft: "2h left",
+    startDate: "2025-03-10",
+    endDate: "2025-04-10",
   },
 ];
 

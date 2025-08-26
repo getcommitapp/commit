@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 import { Text, View, Pressable } from "react-native";
 import Card from "@/components/ui/Card";
 import {
@@ -9,13 +9,16 @@ import {
 } from "@/components/Themed";
 import Flame from "@/assets/icons/flame.svg";
 import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
-import GoalDetailsSheet from "./GoalDetailsSheet";
+import { GoalDetailsSheet } from "./GoalDetailsSheet";
 
 export type Goal = {
   id: string;
   title: string;
+  description: string;
   stake: string; // e.g. CHF 50
   timeLeft: string; // e.g. 2h left
+  startDate: string; // e.g. 2025-01-01
+  endDate: string; // e.g. 2025-01-31
   streak?: number; // optional flame count
 };
 
@@ -34,7 +37,6 @@ export default function GoalCard({
   const danger = useThemeColor({}, "danger");
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["40%", "75%"], []);
   const { dismissAll } = useBottomSheetModal();
 
   const openDetails = useCallback(() => {
@@ -55,46 +57,43 @@ export default function GoalCard({
       </ThemedText>
 
       <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
-        <Text style={{ ...textVariants.footnote, color: mutedForeground }}>
+        <ThemedText style={{ ...textVariants.subheadline }}>
+          {goal.stake}
+        </ThemedText>
+        <Text
+          style={{
+            ...textVariants.subheadline,
+            color: mutedForeground,
+            marginHorizontal: 4,
+          }}
+        >
+          &middot;
+        </Text>
+        <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
           {goal.timeLeft}
         </Text>
-        {goal.streak && (
-          <>
-            <Text
-              style={{
-                ...textVariants.subheadline,
-                color: mutedForeground,
-                marginHorizontal: 4,
-                fontWeight: "bold",
-              }}
-            >
-              &middot;
-            </Text>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 2 }}
-            >
-              <Flame width={14} height={14} color={danger} />
-              <Text
-                style={{
-                  ...textVariants.footnoteEmphasized,
-                  color: mutedForeground,
-                }}
-                numberOfLines={1}
-              >
-                {goal.streak}
-              </Text>
-            </View>
-          </>
-        )}
       </View>
     </View>
   );
 
   const rightNode = (
     <View style={{ alignItems: "flex-end", gap: 2, marginLeft: spacing.lg }}>
-      <ThemedText style={{ ...textVariants.bodyEmphasized }}>
-        {goal.stake}
-      </ThemedText>
+      {goal.streak && (
+        <>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
+            <Flame width={16} height={16} color={danger} />
+            <Text
+              style={{
+                ...textVariants.subheadlineEmphasized,
+                color: mutedForeground,
+              }}
+              numberOfLines={1}
+            >
+              {goal.streak}
+            </Text>
+          </View>
+        </>
+      )}
     </View>
   );
 
@@ -112,12 +111,7 @@ export default function GoalCard({
         />
       </Pressable>
 
-      <GoalDetailsSheet
-        ref={bottomSheetRef}
-        goal={goal}
-        snapPoints={snapPoints}
-        enableDynamicSizing={false}
-      />
+      <GoalDetailsSheet ref={bottomSheetRef} goal={goal} />
     </>
   );
 }

@@ -12,28 +12,33 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import type { Goal } from "@/components/goals/GoalCard";
+import { SettingsGroup, SettingsRow } from "@/components/ui/Settings";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-type GoalDetailsSheetProps = {
+interface GoalDetailsSheetProps {
   goal: Goal;
   snapPoints?: string[];
   enableDynamicSizing?: boolean;
   onDelete?: (goal: Goal) => void;
   onDismiss?: () => void;
-};
+}
 
-const GoalDetailsSheet = forwardRef<BottomSheetModal, GoalDetailsSheetProps>(
+export const GoalDetailsSheet = forwardRef<
+  BottomSheetModal,
+  GoalDetailsSheetProps
+>(
   (
-    { goal, snapPoints, enableDynamicSizing = false, onDelete, onDismiss },
+    { goal, snapPoints, enableDynamicSizing = true, onDelete, onDismiss },
     ref
   ) => {
     const mutedForeground = useThemeColor({}, "mutedForeground");
     const danger = useThemeColor({}, "danger");
-    const cardBg = useThemeColor({}, "card");
+    const background = useThemeColor({}, "background");
     const border = useThemeColor({}, "border");
     const { dismiss } = useBottomSheetModal();
 
     const resolvedSnapPoints = useMemo(
-      () => snapPoints ?? ["40%", "75%"],
+      () => snapPoints ?? ["75%"],
       [snapPoints]
     );
 
@@ -43,6 +48,10 @@ const GoalDetailsSheet = forwardRef<BottomSheetModal, GoalDetailsSheetProps>(
         snapPoints={resolvedSnapPoints}
         enableDynamicSizing={enableDynamicSizing}
         onDismiss={onDismiss}
+        backgroundStyle={{
+          borderWidth: 1,
+          borderColor: border,
+        }}
       >
         <BottomSheetView
           style={{
@@ -51,83 +60,54 @@ const GoalDetailsSheet = forwardRef<BottomSheetModal, GoalDetailsSheetProps>(
             gap: spacing.lg,
           }}
         >
-          <View style={{ gap: spacing.sm }}>
-            <ThemedText style={{ ...textVariants.title3 }}>
-              {goal.title}
-            </ThemedText>
-            <Text
-              style={{ ...textVariants.subheadline, color: mutedForeground }}
-            >
-              Stay consistent and keep your streak alive. This is a mock
-              description explaining the goal in more detail.
-            </Text>
-          </View>
-
-          <View
-            style={{
-              backgroundColor: cardBg,
-              borderRadius: 12,
-              borderColor: border,
-              borderWidth: 1,
-              overflow: "hidden",
-            }}
-          >
-            {[
-              { label: "Stake", value: goal.stake },
-              { label: "Time Left", value: goal.timeLeft },
-              { label: "Frequency", value: "Daily" },
-              { label: "Category", value: "Fitness" },
-            ].map((row, index, arr) => (
-              <View
-                key={row.label}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingHorizontal: spacing.xl,
-                  paddingVertical: spacing.md,
-                  borderBottomWidth: index < arr.length - 1 ? 1 : 0,
-                  borderBottomColor: border,
-                }}
+          <SafeAreaView edges={["bottom"]}>
+            <View style={{ gap: spacing.sm, marginBottom: spacing.xl }}>
+              <ThemedText style={{ ...textVariants.title3 }}>
+                {goal.title}
+              </ThemedText>
+              <Text
+                style={{ ...textVariants.subheadline, color: mutedForeground }}
               >
-                <Text
-                  style={{
-                    ...textVariants.subheadline,
-                    color: mutedForeground,
-                  }}
-                >
-                  {row.label}
-                </Text>
-                <ThemedText style={{ ...textVariants.bodyEmphasized }}>
-                  {row.value}
-                </ThemedText>
-              </View>
-            ))}
-          </View>
+                {goal.description}
+              </Text>
+            </View>
 
-          <Pressable
-            onPress={() => {
-              if (onDelete) onDelete(goal);
-              // Close the modal after delete action
-              dismiss();
-            }}
-            accessibilityRole="button"
-            style={{
-              backgroundColor: danger,
-              paddingVertical: spacing.md,
-              borderRadius: 12,
-              alignItems: "center",
-            }}
-          >
-            <Text
+            <SettingsGroup
+              title="Details"
+              backgroundStyle={{ backgroundColor: background }}
+            >
+              <SettingsRow label="Stake" value={goal.stake} />
+              <SettingsRow label="Time Left" value={goal.timeLeft} />
+              <SettingsRow label="Start Date" value={goal.startDate} />
+              <SettingsRow label="End Date" value={goal.endDate} />
+              <SettingsRow label="Frequency" value="Daily" />
+              <SettingsRow label="Category" value="Fitness" last />
+            </SettingsGroup>
+
+            <Pressable
+              onPress={() => {
+                if (onDelete) onDelete(goal);
+                // Close the modal after delete action
+                dismiss();
+              }}
+              accessibilityRole="button"
               style={{
-                ...textVariants.bodyEmphasized,
-                color: "white",
+                backgroundColor: danger,
+                paddingVertical: spacing.md,
+                borderRadius: 12,
+                alignItems: "center",
               }}
             >
-              Delete Goal
-            </Text>
-          </Pressable>
+              <Text
+                style={{
+                  ...textVariants.bodyEmphasized,
+                  color: "white",
+                }}
+              >
+                Delete Goal
+              </Text>
+            </Pressable>
+          </SafeAreaView>
         </BottomSheetView>
       </BottomSheetModal>
     );
@@ -135,5 +115,3 @@ const GoalDetailsSheet = forwardRef<BottomSheetModal, GoalDetailsSheetProps>(
 );
 
 GoalDetailsSheet.displayName = "GoalDetailsSheet";
-
-export default GoalDetailsSheet;
