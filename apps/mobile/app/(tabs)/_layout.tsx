@@ -1,13 +1,14 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import { Platform, StyleSheet } from "react-native";
+import { BlurView } from "expo-blur";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { spacing } from "@/components/Themed";
 import HomeIcon from "@/assets/icons/home.svg";
 import TargetIcon from "@/assets/icons/target.svg";
-import PeopleCircleIcon from "@/assets/icons/people-circle.svg";
-import PersonCircleIcon from "@/assets/icons/person-circle.svg";
+import IonIcons from "@expo/vector-icons/Ionicons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -18,11 +19,37 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tabIconSelected,
         tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
-        tabBarStyle: {
-          backgroundColor: Colors[colorScheme ?? "light"].card,
-          borderTopColor: Colors[colorScheme ?? "light"].border,
-          borderTopWidth: 1,
-        },
+        tabBarStyle: Platform.select({
+          ios: {
+            position: "absolute",
+            backgroundColor: "transparent",
+            borderTopWidth: 0,
+          },
+          android: {
+            position: "absolute",
+            backgroundColor: "transparent",
+            borderTopWidth: 0,
+            elevation: 0,
+          },
+          default: {
+            backgroundColor: Colors[colorScheme ?? "light"].card,
+            borderTopColor: Colors[colorScheme ?? "light"].border,
+            borderTopWidth: 1,
+          },
+        }),
+        tabBarBackground: () => (
+          <BlurView
+            tint={(colorScheme ?? "light") as "light" | "dark"}
+            intensity={50}
+            // Enable experimental blur on Android per docs
+            experimentalBlurMethod={
+              Platform.OS === "android" ? "dimezisBlurView" : "none"
+            }
+            // Tweak to better match iOS perceived blur on Android
+            blurReductionFactor={Platform.OS === "android" ? 4 : undefined}
+            style={StyleSheet.absoluteFill}
+          />
+        ),
         sceneStyle: {
           backgroundColor: Colors[colorScheme ?? "light"].background,
         },
@@ -53,7 +80,7 @@ export default function TabLayout() {
         options={{
           title: "Groups",
           tabBarIcon: ({ color }) => (
-            <PeopleCircleIcon width={28} height={28} color={color} />
+            <IonIcons name="people-circle-outline" size={28} color={color} />
           ),
         }}
       />
@@ -62,7 +89,7 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
-            <PersonCircleIcon width={28} height={28} color={color} />
+            <IonIcons name="person-circle-outline" size={28} color={color} />
           ),
         }}
       />
