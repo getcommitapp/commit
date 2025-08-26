@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 
 import {
-  Text,
+  ThemedText,
   useThemeColor,
   spacing,
   radii,
@@ -80,16 +80,16 @@ export default function SignupScreen() {
             }}
             contentFit="cover"
           />
-          <Text style={[textVariants.title1, { textAlign: "center" }]}>
+          <ThemedText style={[textVariants.title1, { textAlign: "center" }]}>
             Hi there! 👋
-          </Text>
-          <Text
+          </ThemedText>
+          <ThemedText
             style={[
               { opacity: 0.8, textAlign: "center", marginTop: spacing.sm },
             ]}
           >
             Create your account to continue
-          </Text>
+          </ThemedText>
         </View>
 
         <View style={{ gap: spacing.md, marginBottom: spacing.xxl }}>
@@ -105,7 +105,7 @@ export default function SignupScreen() {
             />
           )}
 
-          <Text
+          <ThemedText
             style={{
               textAlign: "center",
               marginTop: spacing.sm,
@@ -113,7 +113,7 @@ export default function SignupScreen() {
             }}
           >
             By signing in, you agree to our Terms of Service and Privacy Policy
-          </Text>
+          </ThemedText>
         </View>
       </View>
     </SafeAreaView>

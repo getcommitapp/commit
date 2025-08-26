@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { SettingsGroup, SettingsRow } from "@/components/ui/Settings";
 import {
   spacing,
-  Text,
+  ThemedText,
   textVariants,
   useThemeColor,
 } from "@/components/Themed";
@@ -39,14 +39,14 @@ export default function ProfileScreen() {
                 }}
               >
                 <CheckCircle width={18} height={18} color={success} />
-                <Text
+                <ThemedText
                   style={{
                     ...textVariants.bodyEmphasized,
                     color: success,
                   }}
                 >
                   Active
-                </Text>
+                </ThemedText>
               </View>
             }
           />

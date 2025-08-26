@@ -7,6 +7,8 @@ import {
   onlineManager,
 } from "@tanstack/react-query";
 import * as Network from "expo-network";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 // React Query client with sane defaults for mobile
 const queryClient = new QueryClient({
@@ -46,6 +48,10 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView>
+        <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
 }

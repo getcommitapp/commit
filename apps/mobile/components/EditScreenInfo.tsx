@@ -1,40 +1,36 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { ExternalLink } from "./ExternalLink";
 import { MonoText } from "./StyledText";
-import { Text, View } from "./Themed";
-
-import Colors from "@/constants/Colors";
+import { ThemedText } from "./Themed";
 
 export default function EditScreenInfo({ path }: { path: string }) {
   return (
     <View>
       <View style={styles.getStartedContainer}>
-        <Text
+        <ThemedText
           style={styles.getStartedText}
           lightColor="rgba(0,0,0,0.8)"
           darkColor="rgba(255,255,255,0.8)"
         >
           Open up the code for this screen:
-        </Text>
+        </ThemedText>
 
         <View
           style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
-          darkColor="rgba(255,255,255,0.05)"
-          lightColor="rgba(0,0,0,0.05)"
         >
           <MonoText>{path}</MonoText>
         </View>
 
-        <Text
+        <ThemedText
           style={styles.getStartedText}
           lightColor="rgba(0,0,0,0.8)"
           darkColor="rgba(255,255,255,0.8)"
         >
           Change any of the text, save the file, and your app will automatically
           update.
-        </Text>
+        </ThemedText>
       </View>
 
       <View style={styles.helpContainer}>
@@ -42,13 +38,10 @@ export default function EditScreenInfo({ path }: { path: string }) {
           style={styles.helpLink}
           href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet"
         >
-          <Text
-            style={styles.helpLinkText}
-            lightColor={Colors.light.mutedForeground}
-          >
+          <ThemedText style={styles.helpLinkText}>
             Tap here if your app doesn&apos;t automatically update after making
             changes
-          </Text>
+          </ThemedText>
         </ExternalLink>
       </View>
     </View>

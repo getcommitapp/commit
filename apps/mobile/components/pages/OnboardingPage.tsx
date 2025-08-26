@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { Stack } from "expo-router";
 
 import {
-  Text,
+  ThemedText,
   useThemeColor,
   spacing,
   textVariants,
@@ -58,10 +58,10 @@ export default function OnboardingPage({
             style={{ width: 280, height: 280 }}
             contentFit="contain"
           />
-          <Text style={[textVariants.title1, { textAlign: "center" }]}>
+          <ThemedText style={[textVariants.title1, { textAlign: "center" }]}>
             {title}
-          </Text>
-          <Text
+          </ThemedText>
+          <ThemedText
             style={[
               textVariants.body,
               {
@@ -75,7 +75,7 @@ export default function OnboardingPage({
             ]}
           >
             {description}
-          </Text>
+          </ThemedText>
         </View>
 
         <Button title={buttonLabel} onPress={onPress} variant="accent" />

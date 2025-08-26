@@ -1,9 +1,8 @@
 import React from "react";
-import { Pressable, View as RNView } from "react-native";
+import { Pressable, View, Text } from "react-native";
 import { useRouter, type Href } from "expo-router";
 import {
-  Text,
-  View,
+  ThemedText,
   spacing,
   radii,
   textVariants,
@@ -28,7 +27,7 @@ export function SettingsGroup({
   const muted = useThemeColor({}, "mutedForeground");
 
   return (
-    <RNView style={style}>
+    <View style={style}>
       {title ? (
         <Text
           style={{
@@ -52,7 +51,7 @@ export function SettingsGroup({
         {children}
       </View>
       {footer ? (
-        <Text
+        <ThemedText
           style={{
             color: muted,
             marginTop: spacing.xs,
@@ -60,10 +59,10 @@ export function SettingsGroup({
           }}
         >
           {footer}
-        </Text>
+        </ThemedText>
       ) : null}
-      <RNView style={{ height: spacing.xl }} />
-    </RNView>
+      <View style={{ height: spacing.xl }} />
+    </View>
   );
 }
 
@@ -102,7 +101,7 @@ export function SettingsRow({
 
   const RowContent = (
     <>
-      <RNView
+      <View
         style={{
           paddingVertical: spacing.md,
           paddingHorizontal: spacing.xl,
@@ -113,7 +112,7 @@ export function SettingsRow({
         }}
       >
         <Text style={{ ...textVariants.body, color: text }}>{label}</Text>
-        <RNView
+        <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -139,10 +138,10 @@ export function SettingsRow({
               }}
             />
           ) : null}
-        </RNView>
-      </RNView>
+        </View>
+      </View>
       {!last ? (
-        <RNView
+        <View
           style={{
             height: 0.5,
             backgroundColor: border,
@@ -174,5 +173,5 @@ export function SettingsRow({
 
 type SettingsSpacerProps = { size?: keyof typeof spacing };
 export function SettingsSpacer({ size = "xl" }: SettingsSpacerProps) {
-  return <RNView style={{ height: spacing[size] }} />;
+  return <View style={{ height: spacing[size] }} />;
 }
