@@ -2,7 +2,6 @@ import React, { forwardRef, useMemo, ReactNode } from "react";
 import { Text, View, Pressable } from "react-native";
 import {
   BottomSheetModal,
-  BottomSheetView,
   BottomSheetScrollView,
   useBottomSheetModal,
 } from "@gorhom/bottom-sheet";

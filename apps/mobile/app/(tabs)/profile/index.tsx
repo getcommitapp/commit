@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import { SettingsGroup, SettingsRow } from "@/components/ui/Settings";
+import { Form, FormItem } from "@/components/ui/Form";
 import {
   spacing,
   ThemedText,
@@ -15,13 +15,13 @@ export default function ProfileScreen() {
 
   return (
     <ScreenLayout>
-      <SettingsGroup title="Account">
-        <SettingsRow label="Name" value="John Appleseed" />
-        <SettingsRow label="Username" value="@johnny" last />
-      </SettingsGroup>
+      <Form title="Account">
+        <FormItem label="Name" value="John Appleseed" />
+        <FormItem label="Username" value="@johnny" last />
+      </Form>
 
-      <SettingsGroup title="Payment">
-        <SettingsRow
+      <Form title="Payment">
+        <FormItem
           label="Status"
           value={
             <View
@@ -43,14 +43,14 @@ export default function ProfileScreen() {
             </View>
           }
         />
-        <SettingsRow
+        <FormItem
           label="Method"
           value="TWINT"
           navigateTo="/(tabs)/profile/method"
           last
           testID="row-payment-method"
         />
-      </SettingsGroup>
+      </Form>
     </ScreenLayout>
   );
 }

@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { textVariants, spacing, useThemeColor } from "@/components/Themed";
 import type { Group } from "@/components/groups/GroupCard";
-import { SettingsGroup, SettingsRow } from "@/components/ui/Settings";
+import { Form, FormItem } from "@/components/ui/Form";
 import { DetailsSheet } from "@/components/ui/DetailsSheet";
 import PeopleCircle from "@/assets/icons/people-circle.svg";
 
@@ -55,37 +55,30 @@ export const GroupDetailsSheet = forwardRef<
           group
         </Text>
       </View>
-      <SettingsGroup
+      <Form
         title="Group Details"
         backgroundStyle={{ backgroundColor: background }}
       >
-        <SettingsRow label="Total Stake" value={group.totalStake} />
-        <SettingsRow label="Members" value={group.memberCount.toString()} />
-        <SettingsRow label="Time Left" value={group.timeLeft} />
-        <SettingsRow label="Start Date" value={group.startDate} />
-        <SettingsRow label="End Date" value={group.endDate} />
-        <SettingsRow label="Invitation Code" value={group.invitationCode} />
-      </SettingsGroup>
+        <FormItem label="Total Stake" value={group.totalStake} />
+        <FormItem label="Members" value={group.memberCount.toString()} />
+        <FormItem label="Time Left" value={group.timeLeft} />
+        <FormItem label="Start Date" value={group.startDate} />
+        <FormItem label="End Date" value={group.endDate} />
+        <FormItem label="Invitation Code" value={group.invitationCode} />
+      </Form>
 
-      <SettingsGroup
-        title="Goal"
-        backgroundStyle={{ backgroundColor: background }}
-      >
-        <SettingsRow label="Title" value={group.goal.title} />
-        <SettingsRow label="Stake" value={group.goal.stake} />
-        <SettingsRow label="Time Left" value={group.goal.timeLeft} />
-        <SettingsRow label="Start Date" value={group.goal.startDate} />
-        <SettingsRow label="End Date" value={group.goal.endDate} />
+      <Form title="Goal" backgroundStyle={{ backgroundColor: background }}>
+        <FormItem label="Title" value={group.goal.title} />
+        <FormItem label="Stake" value={group.goal.stake} />
+        <FormItem label="Time Left" value={group.goal.timeLeft} />
+        <FormItem label="Start Date" value={group.goal.startDate} />
+        <FormItem label="End Date" value={group.goal.endDate} />
         {group.goal.streak !== undefined ? (
-          <SettingsRow
-            label="Streak"
-            value={group.goal.streak?.toString()}
-            last
-          />
+          <FormItem label="Streak" value={group.goal.streak?.toString()} last />
         ) : (
-          <SettingsRow label="Streak" value="—" last />
+          <FormItem label="Streak" value="—" last />
         )}
-      </SettingsGroup>
+      </Form>
     </DetailsSheet>
   );
 });
