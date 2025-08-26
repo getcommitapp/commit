@@ -1,13 +1,13 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 
-export class ProfileDelete extends OpenAPIRoute {
+export class UserDelete extends OpenAPIRoute {
   schema = {
-    tags: ["Profile"],
-    summary: "Delete a Profile",
+    tags: ["User"],
+    summary: "Delete a user",
     responses: {
       "200": {
-        description: "Returns if the profile was deleted successfully",
+        description: "Returns if the user was deleted successfully",
       },
     },
   };

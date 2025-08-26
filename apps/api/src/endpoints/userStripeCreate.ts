@@ -1,13 +1,13 @@
 import { OpenAPIRoute } from "chanfana";
-import type { AppContext } from "../types";
+import { type AppContext } from "../types";
 
-export class ProfileFetch extends OpenAPIRoute {
+export class UserStripeCreate extends OpenAPIRoute {
   schema = {
-    tags: ["Profile"],
-    summary: "Get a single Profile by id",
+    tags: ["User"],
+    summary: "Create a new Stripe connection",
     responses: {
       "200": {
-        description: "Returns a single profile if found",
+        description: "Returns the Stripe connection",
       },
     },
   };
