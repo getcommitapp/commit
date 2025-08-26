@@ -1,0 +1,13 @@
+{
+  "name": "@commit/types",
+  "version": "0.1.0",
+  "types": "src/index.ts",
+  "files": [
+    "src"
+  ],
+  "scripts": {},
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {},
+  "dependencies": {}
+}

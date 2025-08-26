@@ -1,24 +1,15 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
-import { StatusBar } from "expo-status-bar";
 import { Image as ExpoImage } from "expo-image";
-import { Image as RNImage, AppState } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Image as RNImage } from "react-native";
 
-import { useColorScheme } from "@/components/useColorScheme";
-import Colors from "@/constants/Colors";
-import { View } from "@/components/Themed";
 import { config } from "@/config";
 import { authClient } from "@/lib/auth-client";
+import { RootProviders } from "@/components/providers/RootProviders";
+import { RootLayoutNav } from "@/components/navigation/RootLayoutNav";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export {
@@ -97,63 +88,12 @@ export default function RootLayout() {
   }
 
   return (
-    <RootLayoutNav initialRouteName={hasSeenOnboarding ? "(tabs)" : "signup"} />
+    <RootProviders>
+      <RootLayoutNav
+        initialRouteName={hasSeenOnboarding ? "(tabs)" : "signup"}
+      />
+    </RootProviders>
   );
 }
 
-interface RootLayoutNavProps {
-  initialRouteName: string;
-}
-
-function RootLayoutNav({ initialRouteName }: RootLayoutNavProps) {
-  const colorScheme = useColorScheme();
-  const router = useRouter();
-
-  useEffect(() => {
-    const sub = AppState.addEventListener("change", () => {});
-    return () => sub.remove();
-  }, []);
-
-  const isDark = colorScheme === "dark";
-  const baseTheme = isDark ? DarkTheme : DefaultTheme;
-  const tokens = isDark ? Colors.dark : Colors.light;
-
-  const navigationTheme = {
-    ...baseTheme,
-    colors: {
-      ...baseTheme.colors,
-      background: tokens.background,
-      card: tokens.card,
-      border: tokens.border,
-      text: tokens.text,
-      primary: tokens.primary,
-    },
-  } as const;
-
-  useEffect(() => {
-    if (config.devDefaultPage) {
-      router.replace(config.devDefaultPage as unknown as any);
-    } else {
-      router.replace(("/" + initialRouteName) as unknown as any);
-    }
-  }, [initialRouteName, router]);
-
-  return (
-    <SafeAreaProvider>
-      <ThemeProvider value={navigationTheme}>
-        <View
-          lightColor={Colors.light.background}
-          darkColor={Colors.dark.background}
-          style={{ flex: 1 }}
-        >
-          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-          <Stack initialRouteName={initialRouteName}>
-            <Stack.Screen name="signup" options={{ headerShown: false }} />
-            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </View>
-      </ThemeProvider>
-    </SafeAreaProvider>
-  );
-}
+// All navigation UI and providers are extracted to components/
