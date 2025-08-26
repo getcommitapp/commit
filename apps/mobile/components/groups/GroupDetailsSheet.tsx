@@ -22,6 +22,11 @@ export const GroupDetailsSheet = forwardRef<
   const primary = useThemeColor({}, "primary");
   const background = useThemeColor({}, "background");
 
+  const handleLeaveGroup = () => {
+    // TODO: integrate with API to leave the group
+    console.log("Leaving group", group.id);
+  };
+
   return (
     <DetailsSheet
       ref={ref}
@@ -30,7 +35,26 @@ export const GroupDetailsSheet = forwardRef<
       snapPoints={snapPoints}
       enableDynamicSizing={enableDynamicSizing}
       onDismiss={onDismiss}
+      actionButton={{
+        label: "Leave group",
+        onPress: handleLeaveGroup,
+        variant: "danger",
+      }}
     >
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: spacing.sm,
+          marginBottom: spacing.xl,
+        }}
+      >
+        <PeopleCircle width={20} height={20} color={primary} />
+        <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
+          {group.memberCount} member{group.memberCount !== 1 ? "s" : ""} in this
+          group
+        </Text>
+      </View>
       <SettingsGroup
         title="Group Details"
         backgroundStyle={{ backgroundColor: background }}
@@ -40,21 +64,28 @@ export const GroupDetailsSheet = forwardRef<
         <SettingsRow label="Time Left" value={group.timeLeft} />
         <SettingsRow label="Start Date" value={group.startDate} />
         <SettingsRow label="End Date" value={group.endDate} />
+        <SettingsRow label="Invitation Code" value={group.invitationCode} />
       </SettingsGroup>
 
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: spacing.sm,
-        }}
+      <SettingsGroup
+        title="Goal"
+        backgroundStyle={{ backgroundColor: background }}
       >
-        <PeopleCircle width={20} height={20} color={primary} />
-        <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
-          {group.memberCount} member{group.memberCount !== 1 ? "s" : ""} in this
-          group
-        </Text>
-      </View>
+        <SettingsRow label="Title" value={group.goal.title} />
+        <SettingsRow label="Stake" value={group.goal.stake} />
+        <SettingsRow label="Time Left" value={group.goal.timeLeft} />
+        <SettingsRow label="Start Date" value={group.goal.startDate} />
+        <SettingsRow label="End Date" value={group.goal.endDate} />
+        {group.goal.streak !== undefined ? (
+          <SettingsRow
+            label="Streak"
+            value={group.goal.streak?.toString()}
+            last
+          />
+        ) : (
+          <SettingsRow label="Streak" value="—" last />
+        )}
+      </SettingsGroup>
     </DetailsSheet>
   );
 });

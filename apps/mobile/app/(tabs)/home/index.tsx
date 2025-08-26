@@ -1,8 +1,8 @@
-import { ScrollView, StyleSheet, Pressable, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Pressable, View } from "react-native";
 import CardList from "@/components/ui/CardList";
 import GoalCard, { Goal } from "@/components/goals/GoalCard";
 import { Button } from "@/components/ui/Button";
+import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 
 import {
   ThemedText,
@@ -51,82 +51,73 @@ export default function HomeScreen() {
   const mutedForeground = useThemeColor({}, "mutedForeground");
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: spacing.headerContentInset,
-          paddingTop: spacing.md,
-          gap: spacing.xl,
-        }}
-        contentInsetAdjustmentBehavior="automatic"
-      >
-        <View>
-          <ThemedText style={styles.title}>
-            Welcome back{" "}
-            <ThemedText style={{ fontSize: styles.title.fontSize }}>
-              👋
-            </ThemedText>
+    <ScreenLayout style={{ gap: spacing.xl }}>
+      <View>
+        <ThemedText style={styles.title}>
+          Welcome back{" "}
+          <ThemedText style={{ fontSize: styles.title.fontSize }}>
+            👋
           </ThemedText>
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-            }}
+        </ThemedText>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+          }}
+        >
+          <ThemedText style={[textVariants.title1, { fontWeight: "700" }]}>
+            CHF 250{" "}
+          </ThemedText>
+          <ThemedText
+            style={[
+              textVariants.title1,
+              { color: mutedForeground, fontWeight: "400" },
+            ]}
           >
-            <ThemedText style={[textVariants.title1, { fontWeight: "700" }]}>
-              CHF 250{" "}
-            </ThemedText>
-            <ThemedText
-              style={[
-                textVariants.title1,
-                { color: mutedForeground, fontWeight: "400" },
-              ]}
-            >
-              are at stake!
-            </ThemedText>
-          </View>
+            are at stake!
+          </ThemedText>
         </View>
+      </View>
 
-        <View style={{ gap: spacing.md }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <ThemedText style={textVariants.title3}>Active Goals</ThemedText>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => router.push("/(tabs)/goals")}
-            >
-              <ThemedText style={[textVariants.subheadlineEmphasized]}>
-                View All
-              </ThemedText>
-            </Pressable>
-          </View>
-
-          <CardList>
-            {mockGoals.map((g) => (
-              <GoalCard key={g.id} goal={g} />
-            ))}
-          </CardList>
-        </View>
-        <View style={{ gap: spacing.sm }}>
-          <Button
-            title="Create Goal"
-            size="lg"
+      <View style={{ gap: spacing.md }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <ThemedText style={textVariants.title3}>Active Goals</ThemedText>
+          <Pressable
+            accessibilityRole="button"
             onPress={() => router.push("/(tabs)/goals")}
-          />
-          <Button
-            title="Create Group"
-            variant="border"
-            size="lg"
-            onPress={() => router.push("/(tabs)/groups")}
-          />
+          >
+            <ThemedText style={[textVariants.subheadlineEmphasized]}>
+              View All
+            </ThemedText>
+          </Pressable>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <CardList>
+          {mockGoals.map((g) => (
+            <GoalCard key={g.id} goal={g} />
+          ))}
+        </CardList>
+      </View>
+      <View style={{ gap: spacing.sm }}>
+        <Button
+          title="Create Goal"
+          size="lg"
+          onPress={() => router.push("/(tabs)/goals")}
+        />
+        <Button
+          title="Create Group"
+          variant="border"
+          size="lg"
+          onPress={() => router.push("/(tabs)/groups")}
+        />
+      </View>
+    </ScreenLayout>
   );
 }
 

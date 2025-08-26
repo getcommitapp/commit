@@ -3,6 +3,7 @@ import { Text, View, Pressable } from "react-native";
 import {
   BottomSheetModal,
   BottomSheetView,
+  BottomSheetScrollView,
   useBottomSheetModal,
 } from "@gorhom/bottom-sheet";
 import {
@@ -11,7 +12,10 @@ import {
   spacing,
   useThemeColor,
 } from "@/components/Themed";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 interface DetailsSheetProps {
   title: string;
@@ -33,13 +37,14 @@ export const DetailsSheet = forwardRef<BottomSheetModal, DetailsSheetProps>(
       title,
       description,
       snapPoints,
-      enableDynamicSizing = true,
+      enableDynamicSizing = false,
       onDismiss,
       children,
       actionButton,
     },
     ref
   ) => {
+    const insets = useSafeAreaInsets();
     const mutedForeground = useThemeColor({}, "mutedForeground");
     const primary = useThemeColor({}, "primary");
     const danger = useThemeColor({}, "danger");
@@ -75,14 +80,15 @@ export const DetailsSheet = forwardRef<BottomSheetModal, DetailsSheetProps>(
         ref={ref}
         snapPoints={resolvedSnapPoints}
         enableDynamicSizing={enableDynamicSizing}
+        topInset={insets.top}
         onDismiss={onDismiss}
         backgroundStyle={{
           borderWidth: 1,
           borderColor: border,
         }}
       >
-        <BottomSheetView
-          style={{
+        <BottomSheetScrollView
+          contentContainerStyle={{
             paddingHorizontal: spacing.xl,
             paddingVertical: spacing.lg,
             gap: spacing.lg,
@@ -124,7 +130,7 @@ export const DetailsSheet = forwardRef<BottomSheetModal, DetailsSheetProps>(
               </Pressable>
             )}
           </SafeAreaView>
-        </BottomSheetView>
+        </BottomSheetScrollView>
       </BottomSheetModal>
     );
   }

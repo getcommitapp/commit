@@ -23,12 +23,12 @@ export default function TabLayout() {
           ios: {
             position: "absolute",
             backgroundColor: "transparent",
-            borderTopWidth: 0,
+            borderTopWidth: 1,
           },
           android: {
             position: "absolute",
             backgroundColor: "transparent",
-            borderTopWidth: 0,
+            borderTopWidth: 1,
             elevation: 0,
           },
           default: {

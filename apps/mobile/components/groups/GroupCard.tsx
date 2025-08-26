@@ -20,6 +20,16 @@ export type Group = {
   timeLeft: string; // e.g. 2h left
   startDate: string; // e.g. 2025-01-01
   endDate: string; // e.g. 2025-01-31
+  invitationCode: string; // e.g. ABCD-1234
+  goal: {
+    id: string;
+    title: string;
+    stake: string;
+    timeLeft: string;
+    startDate: string;
+    endDate: string;
+    streak?: number;
+  };
 };
 
 interface GroupCardProps {
