@@ -20,7 +20,7 @@
       "^react-native$": "<rootDir>/node_modules/react-native"
     },
     "transformIgnorePatterns": [
-      "node_modules/.pnpm/(?!(@react-native|react-native|expo-modules-core|expo|@expo|expo-router|expo-linking|expo-font|expo-asset|react-native-web|nanostores|better-auth|@better-auth))"
+      "node_modules/.pnpm/(?!(@react-native|react-native|expo-modules-core|expo|@expo|expo-router|expo-linking|expo-font|expo-asset|react-native-web|nanostores|better-auth|@better-auth|react-native-safe-area-context))"
     ]
   },
   "dependencies": {

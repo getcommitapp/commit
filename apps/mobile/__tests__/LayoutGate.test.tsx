@@ -57,6 +57,11 @@ jest.mock("expo-status-bar", () => ({
   StatusBar: () => null,
 }));
 
+// Safe area: ensure provider renders children in test env
+jest.mock("react-native-safe-area-context", () => ({
+  SafeAreaProvider: ({ children }: any) => children,
+}));
+
 // React Navigation (ESM) - provide minimal mocks to avoid ESM parsing in Jest
 jest.mock("@react-navigation/native", () => ({
   DarkTheme: { colors: {} },
