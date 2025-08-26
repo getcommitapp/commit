@@ -23,6 +23,7 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
 > - `400 Bad Request` - invalid request
 > - `401 Unauthorized` - authentication failed
 > - `404 Not Found` - resource does not exist
+> - `413 Payload Too Large` - data sent too large
 > - `500 Internal Server Error` - server error
 
 ## Section 3 - Messages / Requests
@@ -433,6 +434,8 @@ Response (201 Created):
 }
 ```
 
+---
+
 Request:
 ```txt
 GET /profile
@@ -471,6 +474,8 @@ Response (201 Created):
   "message": "Goal created successfully."
 }
 ```
+
+---
 
 Request:
 ```txt
@@ -513,6 +518,7 @@ Response (201 Created):
   "invite_link": "https://commit.app/invite/group_456"
 }
 ```
+---
 
 Request:
 ```txt
@@ -542,9 +548,35 @@ Request:
 POST /groups/group_456/leave
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
+
 Response (200 OK):
 ```txt
 {
   "message": "Left group successfully."
+}
+```
+
+### 5. Error Example – Goal Verification Failure (File Too Large)
+
+Request:
+```txt
+POST /goals/goal_789/verify
+Authorization: Bearer eyJhbGciOiJIUzI1...
+Content-Type: application/json
+
+[
+  {
+    "method": "photo",
+    "data": "<very_large_base64_string>"
+  }
+]
+```
+
+Response:
+```txt
+{
+  "error": "Payload too large",
+  "code": 413,
+  "message": "Verification data exceeds the 5MB limit."
 }
 ```
