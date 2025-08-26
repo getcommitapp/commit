@@ -35,21 +35,25 @@ export default function Card({
         gap: spacing.lg,
       }}
     >
-      {typeof left === "string" ? (
-        <ThemedText style={{ ...textVariants.body, color: text }}>
-          {left}
-        </ThemedText>
-      ) : (
-        left
-      )}
-      {right !== undefined && right !== null ? (
-        typeof right === "string" ? (
+      <View style={{ flex: 1, minWidth: 0 }}>
+        {typeof left === "string" ? (
           <ThemedText style={{ ...textVariants.body, color: text }}>
-            {right}
+            {left}
           </ThemedText>
         ) : (
-          right
-        )
+          left
+        )}
+      </View>
+      {right !== undefined && right !== null ? (
+        <View style={{ flexShrink: 0 }}>
+          {typeof right === "string" ? (
+            <ThemedText style={{ ...textVariants.body, color: text }}>
+              {right}
+            </ThemedText>
+          ) : (
+            right
+          )}
+        </View>
       ) : null}
     </View>
   );

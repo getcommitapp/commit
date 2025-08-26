@@ -6,9 +6,14 @@ import { spacing } from "@/components/Themed";
 interface Props {
   children: React.ReactNode;
   style?: ViewStyle;
+  keyboardShouldPersistTaps?: "always" | "handled" | "never";
 }
 
-export function ScreenLayout({ children, style }: Props) {
+export function ScreenLayout({
+  children,
+  style,
+  keyboardShouldPersistTaps = "handled",
+}: Props) {
   const tabBarHeight = Platform.select({ ios: 49, android: 56, default: 56 });
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
@@ -20,6 +25,7 @@ export function ScreenLayout({ children, style }: Props) {
           ...style,
         }}
         contentInsetAdjustmentBehavior="automatic"
+        keyboardShouldPersistTaps={keyboardShouldPersistTaps}
       >
         {children}
       </ScrollView>

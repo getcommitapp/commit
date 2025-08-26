@@ -9,6 +9,7 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import ChevronRight from "@/assets/icons/chevron-right.svg";
+import { SmallText } from "./SmallText";
 
 type FormProps = {
   title?: string;
@@ -26,23 +27,11 @@ export function Form({
   backgroundStyle,
 }: FormProps) {
   const card = useThemeColor({}, "card");
-  const muted = useThemeColor({}, "mutedForeground");
+  const mutedForeground = useThemeColor({}, "mutedForeground");
 
   return (
     <View style={style}>
-      {title ? (
-        <Text
-          style={{
-            ...textVariants.footnote,
-            textTransform: "uppercase",
-            color: muted,
-            marginBottom: spacing.sm,
-            marginLeft: spacing.xs,
-          }}
-        >
-          {title}
-        </Text>
-      ) : null}
+      {title ? <SmallText>{title}</SmallText> : null}
       <View
         style={{
           backgroundColor: card,
@@ -56,7 +45,7 @@ export function Form({
       {footer ? (
         <ThemedText
           style={{
-            color: muted,
+            color: mutedForeground,
             marginTop: spacing.xs,
             marginLeft: spacing.xs,
           }}

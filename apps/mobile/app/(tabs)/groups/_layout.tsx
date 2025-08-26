@@ -1,15 +1,10 @@
 import { Stack, useRouter } from "expo-router";
 import { Pressable } from "react-native";
 import IonIcons from "@expo/vector-icons/Ionicons";
-import {
-  ThemedText,
-  useThemeColor,
-  textVariants,
-  spacing,
-} from "@/components/Themed";
+import { useThemeColor } from "@/components/Themed";
+import { CancelButton } from "@/components/navigation/CancelButton";
 
 export default function GroupsStackLayout() {
-  const primaryColor = useThemeColor({}, "primary");
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const router = useRouter();
@@ -46,19 +41,7 @@ export default function GroupsStackLayout() {
           presentation: "modal",
           headerLargeTitle: false,
           headerBackVisible: false,
-          headerLeft: () => (
-            <Pressable
-              hitSlop={10}
-              onPress={() => router.back()}
-              style={{ paddingHorizontal: spacing.sm, paddingVertical: 6 }}
-            >
-              <ThemedText
-                style={[textVariants.bodyEmphasized, { color: primaryColor }]}
-              >
-                Cancel
-              </ThemedText>
-            </Pressable>
-          ),
+          headerLeft: () => <CancelButton onPress={() => router.back()} />,
         }}
       />
     </Stack>

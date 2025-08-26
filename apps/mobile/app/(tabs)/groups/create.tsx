@@ -6,7 +6,7 @@ import { Form, FormInput } from "@/components/ui/Form";
 import { spacing } from "@/components/Themed";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export function CreateGroupScreen() {
+export default function CreateGroupScreen() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const router = useRouter();
@@ -71,5 +71,3 @@ export function CreateGroupScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-export default CreateGroupScreen;
