@@ -8,26 +8,26 @@ import { createAuth } from "./auth";
 import { cors } from "hono/cors";
 
 // Profile
-import { ProfileFetch } from "./endpoints/profile/ProfileFetch";
-import { ProfileUpdate } from "./endpoints/profile/ProfileUpdate";
-import { ProfileStripe } from "./endpoints/profile/ProfileStripeCreate";
-import { ProfileDelete } from "./endpoints/profile/ProfileDelete";
+import { ProfileFetch } from "./endpoints/profile/profileFetch";
+import { ProfileUpdate } from "./endpoints/profile/profileUpdate";
+import { ProfileStripeCreate } from "./endpoints/profile/profileStripeCreate";
+import { ProfileDelete } from "./endpoints/profile/profileDelete";
 
 // Goals
-import { GoalsList } from "./endpoints/goals/GoalsList";
-import { GoalCreate } from "./endpoints/goals/GoalCreate";
-import { GoalFetch } from "./endpoints/goals/GoalFetch";
-import { GoalDelete } from "./endpoints/goals/GoalDelete";
-import { GoalVerify } from "./endpoints/goals/GoalVerify";
+import { GoalsList } from "./endpoints/goals/goalsList";
+import { GoalCreate } from "./endpoints/goals/goalCreate";
+import { GoalFetch } from "./endpoints/goals/goalFetch";
+import { GoalDelete } from "./endpoints/goals/goalDelete";
+import { GoalVerify } from "./endpoints/goals/goalVerify";
 
 // Groups
-import { GroupsList } from "./endpoints/groups/GroupsList";
-import { GroupCreate } from "./endpoints/groups/GroupCreate";
-import { GroupFetch } from "./endpoints/groups/GroupFetch";
-import { GroupInvite } from "./endpoints/groups/GroupInvite";
-import { GroupInviteVerify } from "./endpoints/groups/GroupInviteVerify";
-import { GroupGoal } from "./endpoints/groups/GroupGoal";
-import { GroupLeave } from "./endpoints/groups/GroupLeave";
+import { GroupsList } from "./endpoints/groups/groupsList";
+import { GroupCreate } from "./endpoints/groups/groupCreate";
+import { GroupFetch } from "./endpoints/groups/groupFetch";
+import { GroupInvite } from "./endpoints/groups/groupInvite";
+import { GroupInviteVerify } from "./endpoints/groups/groupInviteVerify";
+import { GroupGoal } from "./endpoints/groups/groupGoal";
+import { GroupLeave } from "./endpoints/groups/groupLeave";
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Env }>();
