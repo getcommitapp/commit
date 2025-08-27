@@ -7,6 +7,13 @@ import {
   primaryKey,
 } from "drizzle-orm/sqlite-core";
 
+const createCreatedAt = () =>
+  integer("created_at", { mode: "timestamp" }).default(
+    sql`(current_timestamp)`
+  );
+const createUpdatedAt = () =>
+  integer("updated_at", { mode: "timestamp" }).notNull();
+
 export const User = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -14,10 +21,8 @@ export const User = sqliteTable("user", {
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull(),
   image: text("image"),
 
-  createdAt: integer("createdAt", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
 });
 
 export const Session = sqliteTable("session", {
@@ -25,10 +30,8 @@ export const Session = sqliteTable("session", {
   expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
   token: text("token").notNull().unique(),
 
-  createdAt: integer("createdAt", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
   ipAddress: text("ipAddress"),
 
   userAgent: text("userAgent"),
@@ -54,10 +57,8 @@ export const Account = sqliteTable("account", {
   scope: text("scope"),
   password: text("password"),
 
-  createdAt: integer("createdAt", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
 });
 
 export const Verification = sqliteTable("verification", {
@@ -66,24 +67,18 @@ export const Verification = sqliteTable("verification", {
   value: text("value").notNull(),
   expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
 
-  createdAt: integer("createdAt", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
 });
 
 export const Charity = sqliteTable("charity", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   url: text("url"),
-
-  createdAt: integer("createdAt", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
 });
 
-// Base goal
 export const Goal = sqliteTable("goal", {
   id: text("id").primaryKey(),
 
@@ -94,26 +89,24 @@ export const Goal = sqliteTable("goal", {
   name: text("name").notNull(),
   description: text("description"),
 
-  startDate: integer("startDate", { mode: "timestamp" }),
+  startDate: integer("startDate", { mode: "timestamp" }).notNull(),
   endDate: integer("endDate", { mode: "timestamp" }),
-  dueStartTime: integer("dueStartTime", { mode: "timestamp" }),
+  dueStartTime: integer("dueStartTime", { mode: "timestamp" }).notNull(),
   dueEndTime: integer("dueEndTime", { mode: "timestamp" }),
 
   recurrence: text("recurrence"),
 
-  stakeCents: integer("stakeCents"),
-  currency: text("currency"),
+  stakeCents: integer("stakeCents").notNull(),
+  currency: text("currency").notNull(),
 
-  destinationType: text("destinationType"),
+  destinationType: text("destinationType").notNull(),
   destinationUserId: text("destinationUserId").references(() => User.id),
   destinationCharityId: text("destinationCharityId").references(
     () => Charity.id
   ),
 
-  createdAt: integer("createdAt", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
 });
 
 export const GoalVerificationsMethod = sqliteTable(
@@ -132,10 +125,8 @@ export const GoalVerificationsMethod = sqliteTable(
     durationSeconds: integer("durationSeconds"),
     graceTime: integer("graceTime", { mode: "timestamp" }),
 
-    createdAt: integer("createdAt", {
-      mode: "timestamp",
-    }).default(sql`(unixepoch())`),
-    updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+    createdAt: createCreatedAt(),
+    updatedAt: createUpdatedAt(),
   }
 );
 
@@ -151,17 +142,15 @@ export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
 
   type: text("type").notNull(),
   verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
-  approvalStatus: text("approvalStatus"),
+  approvalStatus: text("approvalStatus").notNull(),
   approvedBy: text("approvedBy").references(() => User.id),
 
   startTime: integer("startTime", { mode: "timestamp" }),
   photoDescription: text("photoDescription"),
   photoUrl: text("photoUrl"),
 
-  createdAt: integer("createdAt", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
 });
 
 export const Group = sqliteTable("group", {
@@ -177,10 +166,8 @@ export const Group = sqliteTable("group", {
   description: text("description"),
   inviteCode: text("inviteCode").notNull().unique(),
 
-  createdAt: integer("createdAt", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
 });
 
 export const GroupParticipants = sqliteTable(
@@ -196,12 +183,44 @@ export const GroupParticipants = sqliteTable(
     joinedAt: integer("joinedAt", { mode: "timestamp" }).notNull(),
     status: text("status"),
 
-    createdAt: integer("createdAt", {
-      mode: "timestamp",
-    }).default(sql`(unixepoch())`),
-    updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+    createdAt: createCreatedAt(),
+    updatedAt: createUpdatedAt(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.groupId, t.userId] }),
   })
 );
+
+export type UserSelect = typeof User.$inferSelect;
+export type UserInsert = typeof User.$inferInsert;
+
+export type SessionSelect = typeof Session.$inferSelect;
+export type SessionInsert = typeof Session.$inferInsert;
+
+export type AccountSelect = typeof Account.$inferSelect;
+export type AccountInsert = typeof Account.$inferInsert;
+
+export type VerificationSelect = typeof Verification.$inferSelect;
+export type VerificationInsert = typeof Verification.$inferInsert;
+
+export type CharitySelect = typeof Charity.$inferSelect;
+export type CharityInsert = typeof Charity.$inferInsert;
+
+export type GoalSelect = typeof Goal.$inferSelect;
+export type GoalInsert = typeof Goal.$inferInsert;
+
+export type GoalVerificationsMethodSelect =
+  typeof GoalVerificationsMethod.$inferSelect;
+export type GoalVerificationsMethodInsert =
+  typeof GoalVerificationsMethod.$inferInsert;
+
+export type GoalVerificationsLogSelect =
+  typeof GoalVerificationsLog.$inferSelect;
+export type GoalVerificationsLogInsert =
+  typeof GoalVerificationsLog.$inferInsert;
+
+export type GroupSelect = typeof Group.$inferSelect;
+export type GroupInsert = typeof Group.$inferInsert;
+
+export type GroupParticipantsSelect = typeof GroupParticipants.$inferSelect;
+export type GroupParticipantsInsert = typeof GroupParticipants.$inferInsert;
