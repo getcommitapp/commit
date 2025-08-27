@@ -24,36 +24,14 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
 > - `400 Bad Request` - invalid request
 > - `401 Unauthorized` - authentication failed
 > - `404 Not Found` - resource does not exist
-> - `413 Payload Too Large` - data sent too large
 > - `500 Internal Server Error` - server error
 
 ## Section 3 - Messages / Requests
 
-### Auth / Profile
+> [!NOTE]
+> Endpoint `/auth` has been created by Better-Auth/Hono
 
-#### Create Account (Signup)
-
-Request:
-
-```txt
-POST /signup
-Content-Type: application/json
-
-{
-  "method": "google|apple",
-  "token": "<oauth_token>"
-}
-```
-
-Response:
-
-```txt
-{
-  "id": "<user_id>"
-}
-```
-
----
+### Profile
 
 #### Get Profile
 
@@ -69,7 +47,6 @@ Response:
 ```txt
 {
   "id": "<user_id>",
-  "username": "<username>",
   "display_name": "<display_name>",
   "email": "<email>",
   "stripe_status": active|descative
@@ -88,11 +65,11 @@ Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "username": "<current_username>",
-  "display_name": "<new_display_name>",
-  "email": "<current_email>"
+  "name": "<new_name>",
 }
 ```
+> [!WARNING]
+> Only the `name` can be changed !
 
 Response:
 
@@ -145,25 +122,6 @@ Response:
 }
 ```
 
----
-
-#### Logout
-
-Request:
-
-```txt
-POST /logout
-Authorization: Bearer <token>
-```
-
-Response:
-
-```txt
-{
-  "message": "Logged out successfully."
-}
-```
-
 ### Goals
 
 #### List Goals
@@ -181,10 +139,18 @@ Response:
 [
   {
     "id": "<goal_id>",
-    "title": "<goal_title>",
-    "stake": "<goal_stake>",
-    "deadline_rrule": "<goal_deadline_rrule>",
-    "group_name": "<group_name>"
+    "name": "<goal_name>",
+    "description": "<goal_description>",
+    "stake_cents": <stake_cents>,
+    "currency": "<currency>",
+    "recurrence": "<recurrence_json>",
+    "start_date": "<start_date>",
+    "end_date": "<end_date>",
+    "due_start_time": "<due_start_time>",
+    "due_end_time": "<due_end_time>",
+    "destination_type": "dev|charity",
+    "destination_user_id": "<user_id|null>",
+    "destination_charity_id": "<charity_id|null>"
   }
 ]
 ```
@@ -205,24 +171,30 @@ Response:
 ```txt
 {
   "id": "<goal_id>",
-  "title": "<goal_title>",
-  "stake": "<goal_stake>",
-  "deadline_rrule": "<goal_deadline_rrule>",
-  "group_name": "<goal_group_name>",
-  "start_date": "<goal_start_date>",
-  "end_date": "<goal_end_date>",
-  "beneficiary": "<goal_beneficiary>",
+  "name": "<goal_name>",
   "description": "<goal_description>",
-  "verification_window": "<goal_verification_window>",
-  "status": "upcoming|ongoing|failed|waiting|completed"
+  "stake_cents": <stake_cents>,
+  "currency": "<currency>",
+  "recurrence": "<recurrence_json>",
+  "start_date": "<start_date>",
+  "end_date": "<end_date>",
+  "due_start_time": "<due_start_time>",
+  "due_end_time": "<due_end_time>",
+  "destination_type": "dev|charity",
+  "destination_user_id": "<user_id|null>",
+  "destination_charity_id": "<charity_id|null>",
+  "verification_methods": [
+    {
+      "method": "<method_type>",
+      "latitude": "<latitude|null>",
+      "longitude": "<longitude|null>",
+      "radius_m": "<radius|null>",
+      "duration_seconds": "<duration|null>",
+      "grace_time": "<grace_time|null>"
+    }
+  ]
 }
 ```
-
----
-
-#### Update Goal
-
-None
 
 ---
 
@@ -256,8 +228,10 @@ Content-Type: application/json
 
 [
   {
-    "method": "<verify_method>",
-    "data": "<verify_data>"
+    "type": "<verification_type>",
+    "photo_url": "<photo_url|null>",
+    "photo_description": "<description|null>",
+    "start_time": "<start_time|null>"
   }
 ]
 ```
@@ -266,7 +240,7 @@ Response:
 
 ```txt
 {
-  "message": "Data successfully sent to server."
+  "message": "Verification log submitted."
 }
 ```
 
@@ -290,9 +264,9 @@ Response:
   {
     "id": "<group_id>",
     "name": "<group_name>",
-    "stake": "<goal_stake>",
-    "deadline_rrule": "<goal_deadline_rrule>",
-    "status": "<goal_status>"
+    "description": "<group_description>",
+    "goal_id": "<goal_id|null>",
+    "code_invite": "<invite_code>"
   }
 ]
 ```
@@ -314,13 +288,17 @@ Response:
 {
   "id": "<group_id>",
   "name": "<group_name>",
-  "members": ["{<user1>, <display_name1>}", "{<user2>, <display_name2>}"],
-  "stake": "<goal_stake>",
-  "deadline_rrule": "<goal_deadline_rrule>",
-  "status": "<goal_status>",
-  "start_date": "<goal_start_date>",
-  "end_date": "<goal_end_date>",
-  "description": "<group_description>"
+  "description": "<group_description>",
+  "creator_id": "<user_id>",
+  "goal_id": "<goal_id|null>",
+  "code_invite": "<invite_code>",
+  "members": [
+    {
+      "user_id": "<user_id>",
+      "status": "<member_status>",
+      "joined_at": "<joined_at>"
+    }
+  ]
 }
 ```
 
@@ -346,7 +324,7 @@ Response:
 ```txt
 {
   "id": "<group_id>",
-  "invite_link": "<invite_link>"
+  "code_invite": "<invite_code>"
 }
 ```
 
@@ -365,7 +343,7 @@ Response:
 
 ```txt
 {
-  "invite_link": "<invite_link>"
+  "code_invite": "<invite_code>"
 }
 ```
 
@@ -376,7 +354,7 @@ Response:
 Request:
 
 ```txt
-GET /groups/<id>/invite/verify
+GET /groups/<id>/invite/verify?code=<invite_code>
 Authorization: Bearer <token>
 ```
 
@@ -404,16 +382,28 @@ Response:
 ```txt
 {
   "id": "<goal_id>",
-  "title": "<goal_title>",
-  "stake": "<goal_stake>",
-  "deadline_rrule": "<goal_deadline_rrule>",
-  "group_name": "<goal_group_name>",
-  "start_date": "<goal_start_date>",
-  "end_date": "<goal_end_date>",
-  "beneficiary": "<goal_beneficiary>",
+  "name": "<goal_name>",
   "description": "<goal_description>",
-  "verification_window": "<goal_verification_window>",
-  "status": "upcoming|ongoing|failed|waiting|completed"
+  "stake_cents": <stake_cents>,
+  "currency": "<currency>",
+  "recurrence": "<recurrence_json>",
+  "start_date": "<start_date>",
+  "end_date": "<end_date>",
+  "due_start_time": "<due_start_time>",
+  "due_end_time": "<due_end_time>",
+  "destination_type": "dev|charity",
+  "destination_user_id": "<user_id|null>",
+  "destination_charity_id": "<charity_id|null>",
+  "verification_methods": [
+    {
+      "method": "<method_type>",
+      "latitude": "<latitude|null>",
+      "longitude": "<longitude|null>",
+      "radius_m": "<radius|null>",
+      "duration_seconds": "<duration|null>",
+      "grace_time": "<grace_time|null>"
+    }
+  ]
 }
 ```
 
@@ -424,14 +414,16 @@ Response:
 Request:
 
 ```txt
-POST /goals/<id>/verify
+POST /groups/<id>/goal/verify
 Authorization: Bearer <token>
 Content-Type: application/json
 
 [
   {
-    "method": "<verify_method>",
-    "data": "<verify_data>"
+    "type": "<verification_type>",
+    "photo_url": "<photo_url|null>",
+    "photo_description": "<description|null>",
+    "start_time": "<start_time|null>"
   }
 ]
 ```
@@ -440,7 +432,7 @@ Response:
 
 ```txt
 {
-    "message": "Data successfully sent to server."
+  "message": "Verification log submitted."
 }
 ```
 
@@ -467,29 +459,7 @@ Response:
 
 ## Section 4 - Examples
 
-### 1. Signup and Fetch Profile
-
-Request:
-
-```txt
-POST /signup
-Content-Type: application/json
-
-{
-  "method": "google",
-  "token": "ya29.a0AWY7..."
-}
-```
-
-Response (201 Created):
-
-```txt
-{
-  "id": "user_12345"
-}
-```
-
----
+### 1. Fetch Profile
 
 Request:
 
@@ -503,10 +473,10 @@ Response (200 OK):
 ```txt
 {
   "id": "user_12345",
-  "username": "johndoe",
-  "display_name": "John Doe",
+  "name": "John Doe",
   "email": "john.doe@example.com",
-  "stripe_status": "inactive"
+  "image": "https://example.com/avatar.png",
+  "email_verified": true
 }
 ```
 
@@ -520,10 +490,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1...
 Content-Type: application/json
 
 {
-  "title": "Run 5km every morning",
-  "stake": "50 USD",
-  "deadline_rrule": "FREQ=DAILY;COUNT=30",
-  "group_name": null
+  "name": "Run 5km every morning",
+  "description": "Daily accountability run",
+  "stake_cents": 5000,
+  "currency": "CHF",
+  "recurrence": {
+    "freq": "DAILY",
+    "count": 30
+  },
+  "start_date": "2025-09-01T06:00:00Z",
+  "end_date": "2025-09-30T06:00:00Z",
+  "due_start_time": "2025-09-01T06:00:00Z",
+  "due_end_time": "2025-09-01T09:00:00Z",
+  "destination_type": "charity",
+  "destination_charity_id": "charity_111"
 }
 ```
 
@@ -547,8 +527,10 @@ Content-Type: application/json
 
 [
   {
-    "method": "photo",
-    "data": "iVBORw0KGgoAAAANSUhEUgAAAXcAA..."
+    "type": "photo",
+    "photo_url": "https://cdn.commit.app/uploads/run1.jpg",
+    "photo_description": "Morning run selfie",
+    "start_time": "2025-09-02T06:30:00Z"
   }
 ]
 ```
@@ -557,7 +539,7 @@ Response (200 OK):
 
 ```txt
 {
-  "message": "Data successfully sent to server."
+  "message": "Verification log submitted."
 }
 ```
 
@@ -581,7 +563,7 @@ Response (201 Created):
 ```txt
 {
   "id": "group_456",
-  "invite_link": "https://commit.app/invite/group_456"
+  "code_invite": "ABC123"
 }
 ```
 
@@ -599,16 +581,26 @@ Response (200 OK):
 ```txt
 {
   "id": "goal_789",
-  "title": "Run 5km every morning",
-  "stake": "50 USD",
-  "deadline_rrule": "FREQ=DAILY;COUNT=30",
-  "group_name": "Morning Runners",
-  "start_date": "2025-09-01",
-  "end_date": "2025-09-30",
-  "beneficiary": "SaveTheChildren",
-  "description": "Daily morning accountability run for 30 days.",
-  "verification_window": "06:00-09:00",
-  "status": "ongoing"
+  "name": "Run 5km every morning",
+  "description": "Daily accountability run",
+  "stake_cents": 5000,
+  "currency": "USD",
+  "recurrence": {
+    "freq": "DAILY",
+    "count": 30
+  },
+  "start_date": "2025-09-01T06:00:00Z",
+  "end_date": "2025-09-30T06:00:00Z",
+  "due_start_time": "2025-09-01T06:00:00Z",
+  "due_end_time": "2025-09-01T09:00:00Z",
+  "destination_type": "charity",
+  "destination_charity_id": "charity_111",
+  "verification_methods": [
+    {
+      "method": "photo",
+      "grace_time": null
+    }
+  ]
 }
 ```
 
@@ -629,29 +621,21 @@ Response (200 OK):
 }
 ```
 
-### 5. Error Example – Goal Verification Failure (File Too Large)
+### 5. Error Example – Invalid Group Invite Code
 
 Request:
 
 ```txt
-POST /goals/goal_789/verify
+GET /groups/group_456/invite/verify?code=WRONGCODE
 Authorization: Bearer eyJhbGciOiJIUzI1...
-Content-Type: application/json
-
-[
-  {
-    "method": "photo",
-    "data": "<very_large_base64_string>"
-  }
-]
 ```
 
 Response:
 
 ```txt
 {
-  "error": "Payload too large",
-  "code": 413,
-  "message": "Verification data exceeds the 5MB limit."
+  "error": "Bad Request",
+  "code": 400,
+  "message": "The provided invite code is not valid."
 }
 ```
