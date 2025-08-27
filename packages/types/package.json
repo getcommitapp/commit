@@ -2,12 +2,21 @@
   "name": "@commit/types",
   "version": "0.1.0",
   "types": "src/index.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
   "files": [
     "src"
   ],
   "scripts": {},
   "license": "MIT",
   "private": false,
-  "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+  "zod": "^4.1.3"
+  }
 }

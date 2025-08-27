@@ -1,67 +1,95 @@
-export interface GoalVerificationMethod {
-  method: string;
-  latitude?: number | null;
-  longitude?: number | null;
-  radiusM?: number | null;
-  durationSeconds?: number | null;
-  graceTime?: string | null; // ISO timestamp
-}
+import * as z from "zod";
 
-export interface GoalBase {
-  id: string;
-  name: string;
-  description: string | null;
-  stakeCents: number | null;
-  currency: string | null;
-  recurrence: unknown | null;
-  startDate: string | null;
-  endDate: string | null;
-  dueStartTime: string | null;
-  dueEndTime: string | null;
-  destinationType: string | null; // "dev" | "charity"
-  destinationUserId: string | null;
-  destinationCharityId: string | null;
-}
+// ---------------- Zod Schemas ----------------
 
-export interface GoalDetails extends GoalBase {
-  verificationMethods: GoalVerificationMethod[];
-}
+export const GoalVerificationMethodSchema = z.object({
+  method: z.string(),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
+  radiusM: z.number().int().nullable().optional(),
+  durationSeconds: z.number().int().nullable().optional(),
+  graceTime: z.string().datetime().nullable().optional(), // ISO timestamp
+});
 
-export type GoalsListResponse = GoalBase[];
+export const GoalBaseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  stakeCents: z.number().int().nullable(),
+  currency: z.string().nullable(),
+  recurrence: z.unknown().nullable(),
+  startDate: z.string().datetime().nullable(),
+  endDate: z.string().datetime().nullable(),
+  dueStartTime: z.string().datetime().nullable(),
+  dueEndTime: z.string().datetime().nullable(),
+  // could be z.enum(["dev", "charity"]).nullable() in the future
+  destinationType: z.string().nullable(),
+  destinationUserId: z.string().nullable(),
+  destinationCharityId: z.string().nullable(),
+});
 
-export interface GoalCreateRequest {
-  name: string;
-  description?: string | null;
-  stakeCents?: number | null;
-  currency?: string | null;
-  recurrence?: unknown | null;
-  startDate?: string | null;
-  endDate?: string | null;
-  dueStartTime?: string | null;
-  dueEndTime?: string | null;
-  destinationType?: string | null;
-  destinationUserId?: string | null;
-  destinationCharityId?: string | null;
-}
+export const GoalDetailsSchema = GoalBaseSchema.extend({
+  verificationMethods: z.array(GoalVerificationMethodSchema),
+});
 
-// Optimistic UI: return created goal
-export type GoalCreateResponse = GoalBase;
+export const GoalsListResponseSchema = z.array(GoalBaseSchema);
 
-export type GoalGetResponse = GoalDetails;
+export const GoalCreateRequestSchema = z.object({
+  name: z.string(),
+  description: z.string().nullable().optional(),
+  stakeCents: z.number().int().nullable().optional(),
+  currency: z.string().nullable().optional(),
+  recurrence: z.unknown().nullable().optional(),
+  startDate: z.string().datetime().nullable().optional(),
+  endDate: z.string().datetime().nullable().optional(),
+  dueStartTime: z.string().datetime().nullable().optional(),
+  dueEndTime: z.string().datetime().nullable().optional(),
+  destinationType: z.string().nullable().optional(),
+  destinationUserId: z.string().nullable().optional(),
+  destinationCharityId: z.string().nullable().optional(),
+});
 
-export interface GoalDeleteResponse {
-  message: string; // "Goal deleted successfully."
-}
+export const GoalCreateResponseSchema = GoalBaseSchema; // Optimistic UI: return created goal
 
-export interface GoalVerificationInput {
-  type: string;
-  photoUrl?: string | null;
-  photoDescription?: string | null;
-  startTime?: string | null; // ISO timestamp
-}
+export const GoalGetResponseSchema = GoalDetailsSchema;
 
-export type GoalVerifyRequest = GoalVerificationInput[];
+export const GoalDeleteResponseSchema = z.object({
+  message: z.string(), // "Goal deleted successfully."
+});
 
-export interface GoalVerifyResponse {
-  message: string; // "Verification log submitted."
-}
+export const GoalVerificationInputSchema = z.object({
+  type: z.string(),
+  photoUrl: z.string().nullable().optional(),
+  photoDescription: z.string().nullable().optional(),
+  startTime: z.string().datetime().nullable().optional(), // ISO timestamp
+});
+
+export const GoalVerifyRequestSchema = z.array(GoalVerificationInputSchema);
+
+export const GoalVerifyResponseSchema = z.object({
+  message: z.string(), // "Verification log submitted."
+});
+
+// ---------------- Inferred Types (backwards-compatible names) ----------------
+
+export type GoalVerificationMethod = z.infer<typeof GoalVerificationMethodSchema>;
+
+export type GoalBase = z.infer<typeof GoalBaseSchema>;
+
+export type GoalDetails = z.infer<typeof GoalDetailsSchema>;
+
+export type GoalsListResponse = z.infer<typeof GoalsListResponseSchema>;
+
+export type GoalCreateRequest = z.infer<typeof GoalCreateRequestSchema>;
+
+export type GoalCreateResponse = z.infer<typeof GoalCreateResponseSchema>;
+
+export type GoalGetResponse = z.infer<typeof GoalGetResponseSchema>;
+
+export type GoalDeleteResponse = z.infer<typeof GoalDeleteResponseSchema>;
+
+export type GoalVerificationInput = z.infer<typeof GoalVerificationInputSchema>;
+
+export type GoalVerifyRequest = z.infer<typeof GoalVerifyRequestSchema>;
+
+export type GoalVerifyResponse = z.infer<typeof GoalVerifyResponseSchema>;
