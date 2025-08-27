@@ -3,11 +3,11 @@ import { Hono } from "hono";
 import { createAuth } from "./auth";
 import { cors } from "hono/cors";
 
-// Profile
-import { ProfileFetch } from "./endpoints/profileFetch";
-import { ProfileUpdate } from "./endpoints/profileUpdate";
-import { ProfileStripeCreate } from "./endpoints/profileStripeCreate";
-import { ProfileDelete } from "./endpoints/profileDelete";
+// user
+import { UserFetch } from "./endpoints/userFetch";
+import { UserUpdate } from "./endpoints/userUpdate";
+import { UserStripeCreate } from "./endpoints/userStripeCreate";
+import { UserDelete } from "./endpoints/userDelete";
 
 // Goals
 import { GoalsList } from "./endpoints/goalsList";
@@ -35,11 +35,11 @@ const openapi = fromHono(app, {
 
 // -------------------- Register OpenAPI endpoints --------------------
 
-// Profile
-openapi.get("/profile", ProfileFetch);
-openapi.put("/profile", ProfileUpdate);
-openapi.post("/profile", ProfileStripeCreate);
-openapi.delete("/profile", ProfileDelete);
+// User
+openapi.get("/user", UserFetch);
+openapi.put("/user", UserUpdate);
+openapi.post("/user", UserStripeCreate);
+openapi.delete("/user", UserDelete);
 
 // Goals
 openapi.get("/goals", GoalsList);

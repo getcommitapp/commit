@@ -1,10 +1,10 @@
 import { OpenAPIRoute } from "chanfana";
 import { type AppContext } from "../types";
 
-export class ProfileUpdate extends OpenAPIRoute {
+export class UserUpdate extends OpenAPIRoute {
   schema = {
-    tags: ["Profile"],
-    summary: "Update a Profile",
+    tags: ["User"],
+    summary: "Update a user",
     responses: {
       "200": {
         description: "Returns if successfully updated",
