@@ -5,7 +5,7 @@
   "scripts": {
     "format": "prettier --write ./docs ./README.md && pnpm --parallel run format",
     "lint": "prettier --check ./docs ./README.md && pnpm --parallel run lint",
-    "test": "pnpm --filter '@commit/mobile' run test"
+    "test": "pnpm --parallel --filter '@commit/api' --filter '@commit/mobile' run test"
   },
   "keywords": [],
   "author": "",
