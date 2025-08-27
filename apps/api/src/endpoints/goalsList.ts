@@ -1,6 +1,9 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { GoalsListResponseSchema } from "@commit/types";
+import * as schema from "../db/schema";
+import { drizzle } from "drizzle-orm/d1";
+import { eq } from "drizzle-orm";
 
 export class GoalsList extends OpenAPIRoute {
   schema = {
@@ -18,18 +21,26 @@ export class GoalsList extends OpenAPIRoute {
     },
   };
 
-  async handle(_c: AppContext) {
-    // Get validated data
-    const data = await this.getValidatedData<typeof this.schema>();
+  async handle(c: AppContext) {
+    const user = c.var.user!;
+    const db = drizzle(c.env.DB);
 
-    // Retrieve the validated request body
-    const _taskToCreate = data.body;
+    // Get all goals owned by the current user
+    const goals = await db
+      .select()
+      .from(schema.Goal)
+      .where(eq(schema.Goal.ownerId, user.id));
 
-    // Implement your own object insertion here
+    const response = goals.map((goal) => ({
+      ...goal,
+      startDate: goal.startDate?.toISOString(),
+      endDate: goal.endDate?.toISOString() ?? null,
+      dueStartTime: goal.dueStartTime?.toISOString(),
+      dueEndTime: goal.dueEndTime?.toISOString() ?? null,
+      createdAt: goal.createdAt.toISOString(),
+      updatedAt: goal.updatedAt.toISOString(),
+    }));
 
-    // return the new task
-    return {
-      success: true,
-    };
+    return c.json(response, 200);
   }
 }

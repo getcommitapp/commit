@@ -10,8 +10,96 @@ CREATE TABLE `account` (
 	`refreshTokenExpiresAt` integer,
 	`scope` text,
 	`password` text,
-	`createdAt` integer NOT NULL,
-	`updatedAt` integer NOT NULL,
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `charity` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`url` text,
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `goal` (
+	`id` text PRIMARY KEY NOT NULL,
+	`ownerId` text NOT NULL,
+	`name` text NOT NULL,
+	`description` text,
+	`startDate` integer NOT NULL,
+	`endDate` integer,
+	`dueStartTime` integer NOT NULL,
+	`dueEndTime` integer,
+	`recurrence` text,
+	`stakeCents` integer NOT NULL,
+	`currency` text NOT NULL,
+	`destinationType` text NOT NULL,
+	`destinationUserId` text,
+	`destinationCharityId` text,
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`ownerId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`destinationUserId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`destinationCharityId`) REFERENCES `charity`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `goal_verifications_log` (
+	`id` text PRIMARY KEY NOT NULL,
+	`goalId` text NOT NULL,
+	`userId` text NOT NULL,
+	`type` text NOT NULL,
+	`verifiedAt` integer,
+	`approvalStatus` text NOT NULL,
+	`approvedBy` text,
+	`startTime` integer,
+	`photoDescription` text,
+	`photoUrl` text,
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`approvedBy`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `goal_verifications_method` (
+	`id` text PRIMARY KEY NOT NULL,
+	`goalId` text NOT NULL,
+	`method` text NOT NULL,
+	`latitude` real,
+	`longitude` real,
+	`radiusM` integer,
+	`durationSeconds` integer,
+	`graceTime` integer,
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `group` (
+	`id` text PRIMARY KEY NOT NULL,
+	`creatorId` text NOT NULL,
+	`goalId` text,
+	`name` text NOT NULL,
+	`description` text,
+	`inviteCode` text NOT NULL,
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL,
+	FOREIGN KEY (`creatorId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `group_inviteCode_unique` ON `group` (`inviteCode`);--> statement-breakpoint
+CREATE TABLE `group_participants` (
+	`groupId` text NOT NULL,
+	`userId` text NOT NULL,
+	`joinedAt` integer NOT NULL,
+	`status` text,
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL,
+	PRIMARY KEY(`groupId`, `userId`),
+	FOREIGN KEY (`groupId`) REFERENCES `group`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -19,8 +107,8 @@ CREATE TABLE `session` (
 	`id` text PRIMARY KEY NOT NULL,
 	`expiresAt` integer NOT NULL,
 	`token` text NOT NULL,
-	`createdAt` integer NOT NULL,
-	`updatedAt` integer NOT NULL,
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL,
 	`ipAddress` text,
 	`userAgent` text,
 	`userId` text NOT NULL,
@@ -34,8 +122,8 @@ CREATE TABLE `user` (
 	`email` text NOT NULL,
 	`emailVerified` integer NOT NULL,
 	`image` text,
-	`createdAt` integer NOT NULL,
-	`updatedAt` integer NOT NULL
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);--> statement-breakpoint
@@ -44,6 +132,6 @@ CREATE TABLE `verification` (
 	`identifier` text NOT NULL,
 	`value` text NOT NULL,
 	`expiresAt` integer NOT NULL,
-	`createdAt` integer,
-	`updatedAt` integer
+	`created_at` integer DEFAULT (current_timestamp),
+	`updated_at` integer NOT NULL
 );
