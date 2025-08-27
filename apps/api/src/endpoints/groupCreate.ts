@@ -43,7 +43,7 @@ export class GroupCreate extends OpenAPIRoute {
     if (!userId) return new Response("Unauthorized", { status: 401 });
 
     const id = crypto.randomUUID();
-    const inviteCode = Math.random().toString(36).slice(2, 10).toUpperCase();
+    const inviteCode = Math.random().toString(36).slice(2, 8).toUpperCase();
     const now = new Date();
 
     await db
