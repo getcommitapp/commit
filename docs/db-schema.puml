@@ -89,7 +89,7 @@ entity "Goal" as goal {
   end_date: timestamptz
   due_start_time: timestamptz
   due_end_time: timestamptz
-  recurrence: jsonb
+  recurrence: text
   stake_cents: int
   currency: text
   destination_type: text
@@ -139,7 +139,7 @@ entity "Group" as group {
   goal_id: uuid  ' fk -> goals.id (nullable)
   name: text
   description: text
-  code_invite: text
+  invite_code: text
   created_at: timestamptz
   updated_at: timestamptz
 }
