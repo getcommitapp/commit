@@ -31,14 +31,14 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
 > [!NOTE]
 > Endpoint `/auth` has been created by Better-Auth/Hono
 
-### Profile
+### User
 
-#### Get Profile
+#### Get User
 
 Request:
 
 ```txt
-GET /profile
+GET /user
 Authorization: Bearer <token>
 ```
 
@@ -56,12 +56,12 @@ Response:
 
 ---
 
-#### Update Profile
+#### Update User
 
 Request:
 
 ```txt
-PUT /profile
+PUT /user
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -77,7 +77,7 @@ Response:
 
 ```txt
 {
-  "message": "Profile updated successfully."
+  "message": "User updated successfully."
 }
 ```
 
@@ -88,7 +88,7 @@ Response:
 Request:
 
 ```txt
-DELETE /profile
+DELETE /user
 Authorization: Bearer <token>
 ```
 
@@ -469,12 +469,12 @@ Response:
 
 ## Section 4 - Examples
 
-### 1. Fetch Profile
+### 1. Fetch User
 
 Request:
 
 ```txt
-GET /profile
+GET /user
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
