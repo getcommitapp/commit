@@ -68,6 +68,7 @@ Content-Type: application/json
   "name": "<new_name>",
 }
 ```
+
 > [!WARNING]
 > Only the `name` can be changed !
 
