@@ -43,20 +43,6 @@ const openapi = fromHono(app, {
 
 // -------------------- Middleware Sections --------------------
 
-// Add logMiddleware
-/*app.use("*", async (c, next) => {
-  console.log("Context object:", {
-    method: c.req.method,
-    url: c.req.url,
-    path: c.req.path,
-    headers: c.req.header(),
-    // Full context object (be careful - this might be large)
-    fullContext: c,
-  });
-
-  await next();
-});*/
-
 // Add authMiddleware
 app.use("*", async (c, next) => {
   const session = await createAuth(c.env).api.getSession({
