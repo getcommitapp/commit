@@ -1,89 +1,43 @@
 import React from "react";
-import { Pressable, View as RNView } from "react-native";
+import { Pressable, View, Text } from "react-native";
 import { useRouter, type Href } from "expo-router";
-import {
-  Text,
-  View,
-  spacing,
-  radii,
-  textVariants,
-  useThemeColor,
-} from "@/components/Themed";
+import { textVariants, spacing, useThemeColor } from "@/components/Themed";
 import ChevronRight from "@/assets/icons/chevron-right.svg";
 
-type SettingsGroupProps = {
-  title?: string;
-  children: React.ReactNode;
-  footer?: string;
-  style?: any;
-};
-
-export function SettingsGroup({
-  title,
-  children,
-  footer,
-  style,
-}: SettingsGroupProps) {
-  const card = useThemeColor({}, "card");
-  const muted = useThemeColor({}, "mutedForeground");
-
-  return (
-    <RNView style={style}>
-      {title ? (
-        <Text
-          style={{
-            ...textVariants.footnote,
-            textTransform: "uppercase",
-            color: muted,
-            marginBottom: spacing.sm,
-            marginLeft: spacing.xs,
-          }}
-        >
-          {title}
-        </Text>
-      ) : null}
-      <View
-        style={{
-          backgroundColor: card,
-          borderRadius: radii.md,
-          overflow: "hidden",
-        }}
-      >
-        {children}
-      </View>
-      {footer ? (
-        <Text
-          style={{
-            color: muted,
-            marginTop: spacing.xs,
-            marginLeft: spacing.xs,
-          }}
-        >
-          {footer}
-        </Text>
-      ) : null}
-      <RNView style={{ height: spacing.xl }} />
-    </RNView>
-  );
-}
-
-type SettingsRowProps = {
+interface FormItemProps {
   label: string;
   value?: string | React.ReactNode;
   onPress?: () => void;
-  last?: boolean;
   testID?: string;
   navigateTo?: Href;
-};
+}
 
-export function SettingsRow({
+export function FormItem({
   label,
   value,
   onPress,
-  last,
   testID,
   navigateTo,
-}: SettingsRowProps) {
+}: FormItemProps) {
+  // Lightweight event emitter to coordinate blur across Form controls
+  // Singleton stored on globalThis to avoid duplicate instances across fast refresh
+  const formEmitter: {
+    listeners?: Set<(sourceId?: string) => void>;
+    emit?: (sourceId?: string) => void;
+    subscribe?: (listener: (sourceId?: string) => void) => () => void;
+  } = (globalThis as any).__COMMIT_FORM_EMITTER__ || {};
+  if (!formEmitter.listeners) {
+    formEmitter.listeners = new Set();
+    formEmitter.emit = (sourceId?: string) => {
+      formEmitter.listeners?.forEach((l) => l(sourceId));
+    };
+    formEmitter.subscribe = (listener: (sourceId?: string) => void) => {
+      formEmitter.listeners?.add(listener);
+      return () => formEmitter.listeners?.delete(listener);
+    };
+    (globalThis as any).__COMMIT_FORM_EMITTER__ = formEmitter;
+  }
+
   const border = useThemeColor({}, "border");
   const mutedForeground = useThemeColor({}, "mutedForeground");
   const muted = useThemeColor({}, "muted");
@@ -91,6 +45,8 @@ export function SettingsRow({
   const router = useRouter();
 
   const handlePress = () => {
+    // Notify listeners so any open popovers can close
+    formEmitter.emit?.(testID);
     if (navigateTo) {
       router.push(navigateTo);
       return;
@@ -102,7 +58,7 @@ export function SettingsRow({
 
   const RowContent = (
     <>
-      <RNView
+      <View
         style={{
           paddingVertical: spacing.md,
           paddingHorizontal: spacing.xl,
@@ -113,7 +69,7 @@ export function SettingsRow({
         }}
       >
         <Text style={{ ...textVariants.body, color: text }}>{label}</Text>
-        <RNView
+        <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -139,17 +95,8 @@ export function SettingsRow({
               }}
             />
           ) : null}
-        </RNView>
-      </RNView>
-      {!last ? (
-        <RNView
-          style={{
-            height: 0.5,
-            backgroundColor: border,
-            marginLeft: spacing.xl,
-          }}
-        />
-      ) : null}
+        </View>
+      </View>
     </>
   );
 
@@ -170,9 +117,4 @@ export function SettingsRow({
     );
   }
   return RowContent;
-}
-
-type SettingsSpacerProps = { size?: keyof typeof spacing };
-export function SettingsSpacer({ size = "xl" }: SettingsSpacerProps) {
-  return <RNView style={{ height: spacing[size] }} />;
 }

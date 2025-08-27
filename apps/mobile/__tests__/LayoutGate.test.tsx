@@ -3,19 +3,12 @@ import { render, screen, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RootLayout from "@/app/_layout";
 
-// AsyncStorage
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-}));
-
 // Config used in layout
 jest.mock("@/config", () => ({
   config: { devResetOnboardingOnReload: false, devDefaultPage: undefined },
 }));
 
-// Colors and themed components used in layout
+// Colors, theme, and color scheme used in layout
 jest.mock("@/constants/Colors", () => ({
   __esModule: true,
   default: {
@@ -36,41 +29,16 @@ jest.mock("@/constants/Colors", () => ({
   },
 }));
 jest.mock("@/components/Themed", () => ({
-  View: ({ children }: any) => children,
+  ThemedView: ({ children }: any) => children,
 }));
 jest.mock("@/components/useColorScheme", () => ({
   useColorScheme: () => "light",
 }));
+// Safe area context is globally mocked in jest.setup.ts
 
-// Expo modules used in layout
-jest.mock("expo-font", () => ({
-  useFonts: () => [true, undefined],
-}));
-jest.mock("expo-splash-screen", () => ({
-  preventAutoHideAsync: jest.fn(),
-  hideAsync: jest.fn(),
-}));
-jest.mock("expo-web-browser", () => ({
-  maybeCompleteAuthSession: jest.fn(),
-}));
-jest.mock("expo-status-bar", () => ({
-  StatusBar: () => null,
-}));
+// React Navigation is globally mocked in jest.setup.ts
 
-// Safe area: ensure provider renders children in test env
-jest.mock("react-native-safe-area-context", () => ({
-  SafeAreaProvider: ({ children }: any) => children,
-}));
-
-// React Navigation (ESM) - provide minimal mocks to avoid ESM parsing in Jest
-jest.mock("@react-navigation/native", () => ({
-  DarkTheme: { colors: {} },
-  DefaultTheme: { colors: {} },
-  ThemeProvider: ({ children }: any) => children,
-}));
-
-// Reanimated side-effect import
-jest.mock("react-native-reanimated", () => ({}));
+// Reanimated is globally mocked in jest.setup.ts
 
 // Router: mock Stack to expose initialRouteName via a testID node
 jest.mock("expo-router", () => {

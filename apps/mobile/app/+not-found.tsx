@@ -1,7 +1,7 @@
 import { Link, Stack, usePathname } from "expo-router";
 import { StyleSheet } from "react-native";
 
-import { Text, View, useThemeColor } from "@/components/Themed";
+import { ThemedText, ThemedView, useThemeColor } from "@/components/Themed";
 
 export default function NotFoundScreen() {
   const linkColor = useThemeColor({}, "link");
@@ -10,18 +10,22 @@ export default function NotFoundScreen() {
   return (
     <>
       <Stack.Screen options={{ title: "Oops!" }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn&apos;t exist.</Text>
+      <ThemedView style={styles.container}>
+        <ThemedText style={styles.title}>
+          This screen doesn&apos;t exist.
+        </ThemedText>
         {!!pathname && (
-          <Text style={styles.subtitle}>Requested path: {pathname}</Text>
+          <ThemedText style={styles.subtitle}>
+            Requested path: {pathname}
+          </ThemedText>
         )}
 
         <Link href="/(tabs)/home" style={styles.link}>
-          <Text style={[styles.linkText, { color: linkColor }]}>
+          <ThemedText style={[styles.linkText, { color: linkColor }]}>
             Go to home screen!
-          </Text>
+          </ThemedText>
         </Link>
-      </View>
+      </ThemedView>
     </>
   );
 }

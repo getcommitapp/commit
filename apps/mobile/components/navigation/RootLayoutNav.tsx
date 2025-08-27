@@ -10,7 +10,7 @@ import { StatusBar } from "expo-status-bar";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import Colors from "@/constants/Colors";
-import { View } from "@/components/Themed";
+import { ThemedView } from "@/components/Themed";
 import { config } from "@/config";
 
 export interface RootLayoutNavProps {
@@ -59,7 +59,7 @@ export function RootLayoutNav({ initialRouteName }: RootLayoutNavProps) {
   return (
     <SafeAreaProvider>
       <ThemeProvider value={navigationTheme}>
-        <View
+        <ThemedView
           lightColor={Colors.light.background}
           darkColor={Colors.dark.background}
           style={{ flex: 1 }}
@@ -70,7 +70,7 @@ export function RootLayoutNav({ initialRouteName }: RootLayoutNavProps) {
             <Stack.Screen name="onboarding" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
-        </View>
+        </ThemedView>
       </ThemeProvider>
     </SafeAreaProvider>
   );
