@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GroupsListResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
-import { Group, GroupParticipants, Session } from "../db/schema";
+import { Group, GroupParticipants } from "../db/schema";
 
 export class GroupsList extends OpenAPIRoute {
   schema = {
@@ -23,22 +23,15 @@ export class GroupsList extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB);
-    const auth = c.req.header("Authorization");
-    const token = auth?.startsWith("Bearer ") ? auth.split(" ")[1] : undefined;
-    if (!token) return new Response("Unauthorized", { status: 401 });
-
-    const session = await db
-      .select({ userId: Session.userId })
-      .from(Session)
-      .where(eq(Session.token, token))
-      .get();
-    if (!session) return new Response("Unauthorized", { status: 401 });
+    const user = c.get("user");
+    const userId = user?.id as string | undefined;
+    if (!userId) return new Response("Unauthorized", { status: 401 });
 
     // Groups where user is creator
     const created = await db
       .select()
       .from(Group)
-      .where(eq(Group.creatorId, session.userId))
+      .where(eq(Group.creatorId, userId))
       .all();
 
     // Groups where user is a participant
@@ -48,7 +41,7 @@ export class GroupsList extends OpenAPIRoute {
       })
       .from(GroupParticipants)
       .innerJoin(Group, eq(GroupParticipants.groupId, Group.id))
-      .where(eq(GroupParticipants.userId, session.userId))
+      .where(eq(GroupParticipants.userId, userId))
       .all();
 
     const map = new Map<string, (typeof created)[number]>();

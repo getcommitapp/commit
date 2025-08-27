@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GroupInviteGetResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
-import { Group, Session } from "../db/schema";
+import { Group } from "../db/schema";
 
 export class GroupInvite extends OpenAPIRoute {
   schema = {
@@ -23,20 +23,10 @@ export class GroupInvite extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB);
-    const auth = c.req.header("Authorization");
-    const token = auth?.startsWith("Bearer ") ? auth.split(" ")[1] : undefined;
-    if (!token) return new Response("Unauthorized", { status: 401 });
+    const userId = c.get("user")?.id as string | undefined;
+    if (!userId) return new Response("Unauthorized", { status: 401 });
 
-    const session = await db
-      .select({ userId: Session.userId })
-      .from(Session)
-      .where(eq(Session.token, token))
-      .get();
-    if (!session) return new Response("Unauthorized", { status: 401 });
-
-    const url = new URL(c.req.url);
-    const match = url.pathname.match(/\/groups\/([^/]+)/);
-    const id = match?.[1];
+    const { id } = c.req.param();
     if (!id) return new Response("Bad Request", { status: 400 });
 
     const g = await db
@@ -45,7 +35,7 @@ export class GroupInvite extends OpenAPIRoute {
       .where(eq(Group.id, id))
       .get();
     if (!g) return new Response("Not Found", { status: 404 });
-    if (g.creatorId !== session.userId)
+    if (g.creatorId !== userId)
       return new Response("Forbidden", { status: 403 });
 
     return { inviteCode: g.inviteCode };

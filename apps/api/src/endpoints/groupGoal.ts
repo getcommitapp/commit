@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GroupGoalGetResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
-import { Group, Goal, GoalVerificationsMethod, Session } from "../db/schema";
+import { Group, Goal, GoalVerificationsMethod } from "../db/schema";
 
 export class GroupGoal extends OpenAPIRoute {
   schema = {
@@ -23,20 +23,7 @@ export class GroupGoal extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB);
-    const auth = c.req.header("Authorization");
-    const token = auth?.startsWith("Bearer ") ? auth.split(" ")[1] : undefined;
-    if (!token) return new Response("Unauthorized", { status: 401 });
-
-    const session = await db
-      .select({ userId: Session.userId })
-      .from(Session)
-      .where(eq(Session.token, token))
-      .get();
-    if (!session) return new Response("Unauthorized", { status: 401 });
-
-    const url = new URL(c.req.url);
-    const match = url.pathname.match(/\/groups\/([^/]+)/);
-    const id = match?.[1];
+    const { id } = c.req.param();
     if (!id) return new Response("Bad Request", { status: 400 });
 
     const g = await db
