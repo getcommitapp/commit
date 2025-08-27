@@ -30,18 +30,15 @@ export class UserStripeCreate extends OpenAPIRoute {
     },
   };
 
-  async handle(_c: AppContext) {
-    // Get validated data
-    const data = await this.getValidatedData<typeof this.schema>();
+  async handle(c: AppContext) {
+    const current = c.var.user;
+    if (!current) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
 
-    // Retrieve the validated request body
-    const _taskToCreate = data.body;
+    await this.getValidatedData<typeof this.schema>();
 
-    // Implement your own object insertion here
-
-    // return the new task
-    return {
-      success: true,
-    };
+    // Placeholder for future Stripe account/link creation
+    return c.json({ success: true });
   }
 }

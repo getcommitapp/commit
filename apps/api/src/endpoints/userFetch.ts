@@ -1,6 +1,9 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { UserGetResponseSchema } from "@commit/types";
+import { drizzle } from "drizzle-orm/d1";
+import * as schema from "../db/schema";
+import { eq } from "drizzle-orm";
 
 export class UserFetch extends OpenAPIRoute {
   schema = {
@@ -18,18 +21,19 @@ export class UserFetch extends OpenAPIRoute {
     },
   };
 
-  async handle(_c: AppContext) {
-    // Get validated data
-    const data = await this.getValidatedData<typeof this.schema>();
+  async handle(c: AppContext) {
+    const current = c.var.user;
+    if (!current) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
 
-    // Retrieve the validated request body
-    const _taskToCreate = data.body;
+    const db = drizzle(c.env.DB, { schema });
+    const [row] = await db.select().from(schema.User).where(eq(schema.User.id, current.id)).limit(1);
 
-    // Implement your own object insertion here
+    if (!row) {
+      return c.json({ error: "User not found" }, 404);
+    }
 
-    // return the new task
-    return {
-      success: true,
-    };
+    return c.json(row);
   }
 }
