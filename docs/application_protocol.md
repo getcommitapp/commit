@@ -265,7 +265,7 @@ Response:
     "name": "<group_name>",
     "description": "<group_description>",
     "goal_id": "<goal_id|null>",
-    "code_invite": "<invite_code>"
+    "invite_code": "<invite_code>"
   }
 ]
 ```
@@ -290,7 +290,7 @@ Response:
   "description": "<group_description>",
   "creator_id": "<user_id>",
   "goal_id": "<goal_id|null>",
-  "code_invite": "<invite_code>",
+  "invite_code": "<invite_code>",
   "members": [
     {
       "user_id": "<user_id>",
@@ -323,7 +323,7 @@ Response:
 ```txt
 {
   "id": "<group_id>",
-  "code_invite": "<invite_code>"
+  "invite_code": "<invite_code>"
 }
 ```
 
@@ -342,7 +342,7 @@ Response:
 
 ```txt
 {
-  "code_invite": "<invite_code>"
+  "invite_code": "<invite_code>"
 }
 ```
 
@@ -560,7 +560,7 @@ Response (201 Created):
 ```txt
 {
   "id": "group_456",
-  "code_invite": "ABC123"
+  "invite_code": "ABC123"
 }
 ```
 
