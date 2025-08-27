@@ -31,10 +31,7 @@ export class UserStripeCreate extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const current = c.var.user;
-    if (!current) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
+    const _user = c.var.user;
 
     await this.getValidatedData<typeof this.schema>();
 

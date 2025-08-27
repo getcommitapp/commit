@@ -22,13 +22,14 @@ export class UserFetch extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const current = c.var.user;
-    if (!current) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
+    const user = c.var.user;
 
     const db = drizzle(c.env.DB, { schema });
-    const [row] = await db.select().from(schema.User).where(eq(schema.User.id, current.id)).limit(1);
+    const [row] = await db
+      .select()
+      .from(schema.User)
+      .where(eq(schema.User.id, user.id))
+      .limit(1);
 
     if (!row) {
       return c.json({ error: "User not found" }, 404);

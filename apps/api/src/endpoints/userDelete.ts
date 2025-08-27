@@ -22,19 +22,19 @@ export class UserDelete extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const current = c.var.user;
-    if (!current) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
+    const user = c.var.user;
 
     const db = drizzle(c.env.DB, { schema });
 
     // Attempt deletion (will fail with FK constraint if referenced elsewhere)
     try {
-      await db.delete(schema.User).where(eq(schema.User.id, current.id));
-    } catch (e) {
+      await db.delete(schema.User).where(eq(schema.User.id, user.id));
+    } catch (_e) {
       // For now, surface a controlled error (could implement soft-delete later)
-      return c.json({ message: "Unable to delete user (in use)." });
+      return c.json({
+        message:
+          "Cannot delete user account as it has associated data. Please contact support for assistance.",
+      });
     }
 
     return c.json({ message: "User deleted successfully." });

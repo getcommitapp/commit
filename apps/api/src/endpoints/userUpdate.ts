@@ -34,10 +34,7 @@ export class UserUpdate extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const current = c.var.user;
-    if (!current) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
+    const user = c.var.user;
 
     const data = await this.getValidatedData<typeof this.schema>();
     const { name } = data.body;
@@ -45,20 +42,11 @@ export class UserUpdate extends OpenAPIRoute {
     const db = drizzle(c.env.DB, { schema });
     const now = new Date();
 
-    await db
+    const updated = await db
       .update(schema.User)
       .set({ name, updatedAt: now })
-      .where(eq(schema.User.id, current.id));
-
-    const [updated] = await db
-      .select()
-      .from(schema.User)
-      .where(eq(schema.User.id, current.id))
-      .limit(1);
-
-    if (!updated) {
-      return c.json({ error: "User not found" }, 404);
-    }
+      .where(eq(schema.User.id, user.id))
+      .returning();
 
     return c.json(updated);
   }
