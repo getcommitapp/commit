@@ -1,11 +1,13 @@
-### Auth / Profile
+### Auth
 
-- POST `/signup` – create account (from Google or Apple)
-- GET `/profile` – fetch own profile
-- PUT `/profile` – update profile
-- POST `/profile/stripe` – add Stripe/payment info
-- DELETE `/profile` – delete the account
-- POST `/logout` – log out
+Handled by BetterAuth.
+
+### User
+
+- GET `/user` – fetch own user
+- PUT `/user` – update user
+- POST `/user` – add Stripe/payment info
+- DELETE `/user` – delete the account
 
 ---
 
