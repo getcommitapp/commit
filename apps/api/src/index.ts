@@ -3,8 +3,6 @@ import { Hono } from "hono";
 import { createAuth } from "./auth";
 import { cors } from "hono/cors";
 
-import type { User, Session } from "better-auth";
-
 // user
 import { UserFetch } from "./endpoints/userFetch";
 import { UserUpdate } from "./endpoints/userUpdate";
@@ -26,64 +24,15 @@ import { GroupInvite } from "./endpoints/groupInvite";
 import { GroupInviteVerify } from "./endpoints/groupInviteVerify";
 import { GroupGoal } from "./endpoints/groupGoal";
 import { GroupLeave } from "./endpoints/groupLeave";
+import { HonoContext } from "./types";
 
 // Start a Hono app
-const app = new Hono<{
-  Bindings: Env;
-  Variables: {
-    user: User | null;
-    session: Session | null;
-  };
-}>();
+const app = new Hono<HonoContext>();
 
 // Setup OpenAPI registry
 const openapi = fromHono(app, {
   docs_url: "/",
 });
-
-// -------------------- Middleware Sections --------------------
-
-// Add authMiddleware
-app.use("*", async (c, next) => {
-  const session = await createAuth(c.env).api.getSession({
-    headers: c.req.raw.headers,
-  });
-
-  if (!session) {
-    c.set("user", null);
-    c.set("session", null);
-    return next();
-  }
-
-  c.set("user", session.user);
-  c.set("session", session.session);
-
-  return next();
-});
-
-// -------------------- Register OpenAPI endpoints --------------------
-
-// User
-openapi.get("/user", UserFetch);
-openapi.put("/user", UserUpdate);
-openapi.post("/user", UserStripeCreate);
-openapi.delete("/user", UserDelete);
-
-// Goals
-openapi.get("/goals", GoalsList);
-openapi.post("/goals", GoalCreate);
-openapi.get("/goals/:id", GoalFetch);
-openapi.delete("/goals/:id", GoalDelete);
-openapi.post("/goals/:id/verify", GoalVerify);
-
-// Groups
-openapi.get("/groups", GroupsList);
-openapi.post("/groups", GroupCreate);
-openapi.get("/groups/:id", GroupFetch);
-openapi.get("/groups/:id/goal", GroupGoal);
-openapi.get("/groups/:id/invite", GroupInvite);
-openapi.get("/groups/:id/invite/verify", GroupInviteVerify);
-openapi.post("/groups/:id/leave", GroupLeave);
 
 // CORS for auth routes (adjust origin as needed)
 app.use(
@@ -103,8 +52,44 @@ app.on(["POST", "GET"], "/api/auth/*", (c) =>
   createAuth(c.env).handler(c.req.raw)
 );
 
-// You may also register routes for non OpenAPI directly on Hono
-// app.get('/test', (c) => c.text('Hono!'))
+// Protect all routes
+app.use("*", async (c, next) => {
+  const session = await createAuth(c.env).api.getSession({
+    headers: c.req.raw.headers,
+  });
 
-// Export the Hono app
+  if (!session) {
+    c.set("user", null);
+    c.set("session", null);
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  c.set("user", session.user);
+  c.set("session", session.session);
+
+  return next();
+});
+
+// User
+openapi.get("/api/user", UserFetch);
+openapi.put("/api/user", UserUpdate);
+openapi.post("/api/user", UserStripeCreate);
+openapi.delete("/api/user", UserDelete);
+
+// Goals
+openapi.get("/api/goals", GoalsList);
+openapi.post("/api/goals", GoalCreate);
+openapi.get("/api/goals/:id", GoalFetch);
+openapi.delete("/api/goals/:id", GoalDelete);
+openapi.post("/api/goals/:id/verify", GoalVerify);
+
+// Groups
+openapi.get("/api/groups", GroupsList);
+openapi.post("/api/groups", GroupCreate);
+openapi.get("/api/groups/:id", GroupFetch);
+openapi.get("/api/groups/:id/goal", GroupGoal);
+openapi.get("/api/groups/:id/invite", GroupInvite);
+openapi.get("/api/groups/:id/invite/verify", GroupInviteVerify);
+openapi.post("/api/groups/:id/leave", GroupLeave);
+
 export default app;
