@@ -1,8 +1,12 @@
 import { OpenAPIRoute } from "chanfana";
+import type { AppContext } from "../types";
 import {
   GroupInviteVerifyRequestQuerySchema,
   GroupInviteVerifyResponseSchema,
 } from "@commit/types";
+import { drizzle } from "drizzle-orm/d1";
+import { eq } from "drizzle-orm";
+import { Group } from "../db/schema";
 
 export class GroupInviteVerify extends OpenAPIRoute {
   schema = {
@@ -23,7 +27,15 @@ export class GroupInviteVerify extends OpenAPIRoute {
     },
   };
 
-  async handle() {
-    return { success: true };
+  async handle(c: AppContext) {
+    const data = await this.getValidatedData<typeof this.schema>();
+    const { code } = data.query;
+    const db = drizzle(c.env.DB);
+    const g = await db
+      .select({ id: Group.id })
+      .from(Group)
+      .where(eq(Group.inviteCode, code))
+      .get();
+    return { valid: !!g };
   }
 }
