@@ -52,7 +52,7 @@ export default function ProfileScreen() {
           />
           <SettingsRow
             label="Method"
-            value="TWINT"
+            value="Card"
             navigateTo="/(tabs)/profile/method"
             last
             testID="row-payment-method"
