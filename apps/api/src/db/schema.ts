@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   sqliteTable,
   text,
@@ -12,7 +13,10 @@ export const User = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull(),
   image: text("image"),
-  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+
+  createdAt: integer("createdAt", {
+    mode: "timestamp",
+  }).default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
@@ -20,9 +24,13 @@ export const Session = sqliteTable("session", {
   id: text("id").primaryKey(),
   expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
   token: text("token").notNull().unique(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+
+  createdAt: integer("createdAt", {
+    mode: "timestamp",
+  }).default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
   ipAddress: text("ipAddress"),
+
   userAgent: text("userAgent"),
   userId: text("userId")
     .notNull()
@@ -45,7 +53,10 @@ export const Account = sqliteTable("account", {
   }),
   scope: text("scope"),
   password: text("password"),
-  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+
+  createdAt: integer("createdAt", {
+    mode: "timestamp",
+  }).default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
@@ -54,15 +65,21 @@ export const Verification = sqliteTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" }),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }),
+
+  createdAt: integer("createdAt", {
+    mode: "timestamp",
+  }).default(sql`(unixepoch())`),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
 export const Charity = sqliteTable("charity", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   url: text("url"),
-  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+
+  createdAt: integer("createdAt", {
+    mode: "timestamp",
+  }).default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
@@ -93,7 +110,9 @@ export const Goal = sqliteTable("goal", {
     () => Charity.id
   ),
 
-  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  createdAt: integer("createdAt", {
+    mode: "timestamp",
+  }).default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
@@ -113,7 +132,9 @@ export const GoalVerificationsMethod = sqliteTable(
     durationSeconds: integer("durationSeconds"),
     graceTime: integer("graceTime", { mode: "timestamp" }),
 
-    createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+    createdAt: integer("createdAt", {
+      mode: "timestamp",
+    }).default(sql`(unixepoch())`),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
   }
 );
@@ -137,7 +158,9 @@ export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
   photoDescription: text("photoDescription"),
   photoUrl: text("photoUrl"),
 
-  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  createdAt: integer("createdAt", {
+    mode: "timestamp",
+  }).default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
@@ -154,7 +177,9 @@ export const Group = sqliteTable("group", {
   description: text("description"),
   inviteCode: text("inviteCode").notNull().unique(),
 
-  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  createdAt: integer("createdAt", {
+    mode: "timestamp",
+  }).default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
@@ -171,7 +196,9 @@ export const GroupParticipants = sqliteTable(
     joinedAt: integer("joinedAt", { mode: "timestamp" }).notNull(),
     status: text("status"),
 
-    createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+    createdAt: integer("createdAt", {
+      mode: "timestamp",
+    }).default(sql`(unixepoch())`),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
   },
   (t) => ({
