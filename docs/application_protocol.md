@@ -244,8 +244,6 @@ Response:
 }
 ```
 
----
-
 ### Groups
 
 #### List Groups
@@ -454,8 +452,6 @@ Response:
   "message": "Left group successfully."
 }
 ```
-
----
 
 ## Section 4 - Examples
 
