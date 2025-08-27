@@ -5,7 +5,9 @@
   "scripts": {
     "format": "prettier --write ./docs ./README.md && pnpm --parallel run format",
     "lint": "prettier --check ./docs ./README.md && pnpm --parallel run lint",
-    "test": "pnpm --filter '@commit/mobile' run test"
+  "test": "pnpm --filter '@commit/mobile' run test",
+  "deploy:preview": "pnpm --filter cloudflare-workers-openapi deploy:preview",
+  "deploy:production": "pnpm --filter cloudflare-workers-openapi deploy:production"
   },
   "keywords": [],
   "author": "",

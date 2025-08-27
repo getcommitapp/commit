@@ -8,6 +8,8 @@ import { ProfileFetch } from "./endpoints/profileFetch";
 import { ProfileUpdate } from "./endpoints/profileUpdate";
 import { ProfileStripeCreate } from "./endpoints/profileStripeCreate";
 import { ProfileDelete } from "./endpoints/profileDelete";
+// Stripe
+import { StripeSetupIntent } from "./endpoints/stripeSetupIntent";
 
 // Goals
 import { GoalsList } from "./endpoints/goalsList";
@@ -35,27 +37,30 @@ const openapi = fromHono(app, {
 
 // -------------------- Register OpenAPI endpoints --------------------
 
-// Profile
-openapi.get("/profile", ProfileFetch);
-openapi.put("/profile", ProfileUpdate);
-openapi.post("/profile", ProfileStripeCreate);
-openapi.delete("/profile", ProfileDelete);
+// Profile (prefixed with /api)
+openapi.get("/api/profile", ProfileFetch);
+openapi.put("/api/profile", ProfileUpdate);
+openapi.post("/api/profile", ProfileStripeCreate);
+openapi.delete("/api/profile", ProfileDelete);
 
 // Goals
-openapi.get("/goals", GoalsList);
-openapi.post("/goals", GoalCreate);
-openapi.get("/goals/:id", GoalFetch);
-openapi.delete("/goals/:id", GoalDelete);
-openapi.post("/goals/:id/verify", GoalVerify);
+openapi.get("/api/goals", GoalsList);
+openapi.post("/api/goals", GoalCreate);
+openapi.get("/api/goals/:id", GoalFetch);
+openapi.delete("/api/goals/:id", GoalDelete);
+openapi.post("/api/goals/:id/verify", GoalVerify);
 
 // Groups
-openapi.get("/groups", GroupsList);
-openapi.post("/groups", GroupCreate);
-openapi.get("/groups/:id", GroupFetch);
-openapi.get("/groups/:id/goal", GroupGoal);
-openapi.get("/groups/:id/invite", GroupInvite);
-openapi.get("/groups/:id/invite/verify", GroupInviteVerify);
-openapi.post("/groups/:id/leave", GroupLeave);
+openapi.get("/api/groups", GroupsList);
+openapi.post("/api/groups", GroupCreate);
+openapi.get("/api/groups/:id", GroupFetch);
+openapi.get("/api/groups/:id/goal", GroupGoal);
+openapi.get("/api/groups/:id/invite", GroupInvite);
+openapi.get("/api/groups/:id/invite/verify", GroupInviteVerify);
+openapi.post("/api/groups/:id/leave", GroupLeave);
+
+// Stripe (Payment method setup)
+openapi.post("/api/stripe/setup-intent", StripeSetupIntent);
 
 // CORS for auth routes (adjust origin as needed)
 app.use(

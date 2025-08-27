@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { StripeProvider } from '@stripe/stripe-react-native';
 import { AppState, AppStateStatus } from "react-native";
 import {
   QueryClient,
@@ -45,7 +46,10 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <StripeProvider publishableKey={publishableKey || ''}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </StripeProvider>
   );
 }
