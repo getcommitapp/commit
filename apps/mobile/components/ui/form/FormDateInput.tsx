@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Easing, View, Keyboard, Platform } from "react-native";
 import { spacing, useThemeColor } from "@/components/Themed";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
 import { FormItem } from "./FormItem";
 
 interface FormDateInputProps {
@@ -92,7 +94,22 @@ export function FormDateInput({
         value={valueLabel}
         onPress={() => {
           Keyboard.dismiss();
-          setOpen((v) => !v);
+          if (Platform.OS === "android") {
+            DateTimePickerAndroid.open({
+              mode: "date",
+              display: "calendar",
+              value: date ?? new Date(),
+              minimumDate: minimumDate,
+              maximumDate: maximumDate,
+              onChange: (event, selectedDate) => {
+                if (event?.type === "dismissed") return;
+                if (selectedDate) onChange(selectedDate);
+              },
+              testID: testID ? `${testID}-picker` : undefined,
+            });
+          } else {
+            setOpen((v) => !v);
+          }
         }}
         testID={testID}
       />
@@ -106,23 +123,7 @@ export function FormDateInput({
           }}
         />
       )}
-      {Platform.OS === "android" ? (
-        open ? (
-          <DateTimePicker
-            mode="date"
-            display="spinner"
-            textColor={text}
-            value={date ?? new Date()}
-            minimumDate={minimumDate}
-            maximumDate={maximumDate}
-            onChange={(event, selectedDate) => {
-              if (event?.type === "dismissed") return;
-              if (selectedDate) onChange(selectedDate);
-            }}
-            testID={testID ? `${testID}-picker` : undefined}
-          />
-        ) : null
-      ) : (
+      {Platform.OS === "ios" && (
         <Animated.View
           style={{
             height: heightAnim,

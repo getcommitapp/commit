@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Easing, View, Keyboard, Platform } from "react-native";
 import { spacing, useThemeColor } from "@/components/Themed";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
 import { FormItem } from "./FormItem";
 
 interface FormTimeInputProps {
@@ -76,7 +78,6 @@ export function FormTimeInput({
       return String(time);
     }
   }, [time, placeholder]);
-
   return (
     <>
       <FormItem
@@ -84,10 +85,24 @@ export function FormTimeInput({
         value={valueLabel}
         onPress={() => {
           Keyboard.dismiss();
-          setOpen((v) => !v);
+          if (Platform.OS === "android") {
+            DateTimePickerAndroid.open({
+              mode: "time",
+              display: "clock",
+              value: time ?? new Date(),
+              onChange: (event, selectedDate) => {
+                if (event?.type === "dismissed") return;
+                if (selectedDate) onChange(selectedDate);
+              },
+              testID: testID ? `${testID}-picker` : undefined,
+            });
+          } else {
+            setOpen((v) => !v);
+          }
         }}
         testID={testID}
       />
+
       {Platform.OS !== "android" && open && (
         <View
           style={{
@@ -98,21 +113,7 @@ export function FormTimeInput({
           }}
         />
       )}
-      {Platform.OS === "android" ? (
-        open ? (
-          <DateTimePicker
-            mode="time"
-            display="spinner"
-            textColor={text}
-            value={time ?? new Date()}
-            onChange={(event, selectedDate) => {
-              if (event?.type === "dismissed") return;
-              if (selectedDate) onChange(selectedDate);
-            }}
-            testID={testID ? `${testID}-picker` : undefined}
-          />
-        ) : null
-      ) : (
+      {Platform.OS === "ios" && (
         <Animated.View
           style={{
             height: heightAnim,
