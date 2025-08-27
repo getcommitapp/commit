@@ -11,10 +11,10 @@ import { UserDelete } from "./endpoints/userDelete";
 
 // Goals
 import { GoalsList } from "./endpoints/goalsList";
-import { GoalCreate } from "./endpoints/goalCreate";
-import { GoalFetch } from "./endpoints/goalFetch";
-import { GoalDelete } from "./endpoints/goalDelete";
-import { GoalVerify } from "./endpoints/goalVerify";
+import { GoalsCreate } from "./endpoints/goalsCreate";
+import { GoalsFetch } from "./endpoints/goalsFetch";
+import { GoalsDelete } from "./endpoints/goalsDelete";
+import { GoalsVerify } from "./endpoints/goalsVerify";
 
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
@@ -78,10 +78,10 @@ openapi.delete("/api/user", UserDelete);
 
 // Goals
 openapi.get("/api/goals", GoalsList);
-openapi.post("/api/goals", GoalCreate);
-openapi.get("/api/goals/:id", GoalFetch);
-openapi.delete("/api/goals/:id", GoalDelete);
-openapi.post("/api/goals/:id/verify", GoalVerify);
+openapi.post("/api/goals", GoalsCreate);
+openapi.get("/api/goals/:id", GoalsFetch);
+openapi.delete("/api/goals/:id", GoalsDelete);
+openapi.post("/api/goals/:id/verify", GoalsVerify);
 
 // Groups
 openapi.get("/api/groups", GroupsList);

@@ -2,10 +2,10 @@ import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { GoalDeleteResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
-import { Goal } from "../db/schema";
+import * as schema from "../db/schema";
 import { eq } from "drizzle-orm";
 
-export class GoalDelete extends OpenAPIRoute {
+export class GoalsDelete extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Delete a Goal",
@@ -41,8 +41,8 @@ export class GoalDelete extends OpenAPIRoute {
     // Check if goal exists and user owns it
     const [existingGoal] = await db
       .select()
-      .from(Goal)
-      .where(eq(Goal.id, goalId))
+      .from(schema.Goal)
+      .where(eq(schema.Goal.id, goalId))
       .limit(1);
 
     if (!existingGoal) {
@@ -54,7 +54,7 @@ export class GoalDelete extends OpenAPIRoute {
     }
 
     // Delete the goal
-    await db.delete(Goal).where(eq(Goal.id, goalId));
+    await db.delete(schema.Goal).where(eq(schema.Goal.id, goalId));
 
     return c.json({ message: "Goal deleted successfully." }, 200);
   }

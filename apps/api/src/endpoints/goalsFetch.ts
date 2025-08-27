@@ -1,11 +1,11 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { GoalGetResponseSchema } from "@commit/types";
-import { Goal, GoalVerificationsMethod } from "../db/schema";
+import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 
-export class GoalFetch extends OpenAPIRoute {
+export class GoalsFetch extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Get a single Goal by id",
@@ -47,8 +47,8 @@ export class GoalFetch extends OpenAPIRoute {
     // Get goal with verification methods
     const [goal] = await db
       .select()
-      .from(Goal)
-      .where(eq(Goal.id, goalId))
+      .from(schema.Goal)
+      .where(eq(schema.Goal.id, goalId))
       .limit(1);
 
     if (!goal) {
@@ -62,8 +62,8 @@ export class GoalFetch extends OpenAPIRoute {
     // Get verification methods
     const verificationMethods = await db
       .select()
-      .from(GoalVerificationsMethod)
-      .where(eq(GoalVerificationsMethod.goalId, goalId));
+      .from(schema.GoalVerificationsMethod)
+      .where(eq(schema.GoalVerificationsMethod.goalId, goalId));
 
     const response = {
       ...goal,

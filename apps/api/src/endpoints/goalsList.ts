@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { GoalsListResponseSchema } from "@commit/types";
-import { Goal } from "../db/schema";
+import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 
@@ -26,7 +26,10 @@ export class GoalsList extends OpenAPIRoute {
     const db = drizzle(c.env.DB);
 
     // Get all goals owned by the current user
-    const goals = await db.select().from(Goal).where(eq(Goal.ownerId, user.id));
+    const goals = await db
+      .select()
+      .from(schema.Goal)
+      .where(eq(schema.Goal.ownerId, user.id));
 
     const response = goals.map((goal) => ({
       ...goal,

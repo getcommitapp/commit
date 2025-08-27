@@ -4,11 +4,11 @@ import {
   GoalCreateRequestSchema,
   GoalCreateResponseSchema,
 } from "@commit/types";
-import { Goal } from "../db/schema";
+import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
 import { v7 as uuid } from "uuid";
 
-export class GoalCreate extends OpenAPIRoute {
+export class GoalsCreate extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Create a new Goal",
@@ -44,7 +44,7 @@ export class GoalCreate extends OpenAPIRoute {
     // Create the goal in the db
     const now = new Date();
     const [created] = await db
-      .insert(Goal)
+      .insert(schema.Goal)
       .values({
         id: id,
         ownerId: user.id,

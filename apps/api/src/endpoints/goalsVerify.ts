@@ -4,12 +4,12 @@ import {
   GoalVerifyRequestSchema,
   GoalVerifyResponseSchema,
 } from "@commit/types";
-import { Goal, GoalVerificationsLog } from "../db/schema";
+import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { v7 as uuid } from "uuid";
 
-export class GoalVerify extends OpenAPIRoute {
+export class GoalsVerify extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Verify the completion of the goal",
@@ -62,8 +62,8 @@ export class GoalVerify extends OpenAPIRoute {
     // Check if goal exists and user owns it
     const [goal] = await db
       .select()
-      .from(Goal)
-      .where(eq(Goal.id, goalId))
+      .from(schema.Goal)
+      .where(eq(schema.Goal.id, goalId))
       .limit(1);
 
     if (!goal) {
@@ -77,7 +77,7 @@ export class GoalVerify extends OpenAPIRoute {
     // Create verification log entries
     const now = new Date();
     for (const verification of verificationInputs) {
-      await db.insert(GoalVerificationsLog).values({
+      await db.insert(schema.GoalVerificationsLog).values({
         id: uuid(),
         goalId: goalId,
         userId: user.id,
