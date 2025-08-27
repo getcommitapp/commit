@@ -21,10 +21,18 @@
     "lib": ["es2022"],
     "types": [
       "./worker-configuration.d.ts",
+      "@cloudflare/vitest-pool-workers",
       "@types/node",
       "@types/service-worker-mock"
     ]
   },
   "exclude": ["node_modules", "dist", "tests"],
-  "include": ["src", "worker-configuration.d.ts", "drizzle.config.ts"]
+  "include": [
+    "src",
+    "env.d.ts",
+    "worker-configuration.d.ts",
+    "drizzle.config.ts",
+    "vitest.config.ts",
+    "__tests__"
+  ]
 }
