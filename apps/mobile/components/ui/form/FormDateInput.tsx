@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, View, Keyboard } from "react-native";
+import { Animated, Easing, View, Keyboard, Platform } from "react-native";
 import { spacing, useThemeColor } from "@/components/Themed";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { FormItem } from "./FormItem";
@@ -43,6 +43,7 @@ export function FormDateInput({
   }, []);
 
   useEffect(() => {
+    if (Platform.OS === "android") return;
     const duration = open ? 300 : 220;
     const bezier = Easing.bezier(0.2, 0.9, 0.1, 1);
     Animated.parallel([
@@ -95,7 +96,7 @@ export function FormDateInput({
         }}
         testID={testID}
       />
-      {open && (
+      {Platform.OS !== "android" && open && (
         <View
           style={{
             height: 0.5,
@@ -105,47 +106,65 @@ export function FormDateInput({
           }}
         />
       )}
-      <Animated.View
-        style={{
-          height: heightAnim,
-          overflow: "hidden",
-        }}
-      >
+      {Platform.OS === "android" ? (
+        open ? (
+          <DateTimePicker
+            mode="date"
+            display="spinner"
+            textColor={text}
+            value={date ?? new Date()}
+            minimumDate={minimumDate}
+            maximumDate={maximumDate}
+            onChange={(event, selectedDate) => {
+              if (event?.type === "dismissed") return;
+              if (selectedDate) onChange(selectedDate);
+            }}
+            testID={testID ? `${testID}-picker` : undefined}
+          />
+        ) : null
+      ) : (
         <Animated.View
           style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: spacing.xl,
-            opacity: revealAnim,
-            transform: [
-              {
-                translateY: revealAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-8, 0],
-                }),
-              },
-            ],
+            height: heightAnim,
+            overflow: "hidden",
           }}
-          pointerEvents={open ? "auto" : "none"}
         >
-          {open ? (
-            <DateTimePicker
-              mode="date"
-              display="spinner"
-              textColor={text}
-              value={date ?? new Date()}
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
-              onChange={(event, selectedDate) => {
-                if (event?.type === "dismissed") return;
-                if (selectedDate) onChange(selectedDate);
-              }}
-              testID={testID ? `${testID}-picker` : undefined}
-            />
-          ) : null}
+          <Animated.View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: spacing.xl,
+              opacity: revealAnim,
+              transform: [
+                {
+                  translateY: revealAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-8, 0],
+                  }),
+                },
+              ],
+            }}
+            pointerEvents={open ? "auto" : "none"}
+          >
+            {open ? (
+              <DateTimePicker
+                mode="date"
+                display="spinner"
+                textColor={text}
+                value={date ?? new Date()}
+                minimumDate={minimumDate}
+                maximumDate={maximumDate}
+                onChange={(event, selectedDate) => {
+                  if (event?.type === "dismissed") return;
+                  if (selectedDate) onChange(selectedDate);
+                }}
+                testID={testID ? `${testID}-picker` : undefined}
+              />
+            ) : null}
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
+      )}
     </>
   );
 }

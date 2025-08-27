@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import { Pressable } from "react-native";
+import { Platform, Pressable } from "react-native";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { useThemeColor } from "@/components/Themed";
 import { CancelButton } from "@/components/navigation/CancelButton";
@@ -37,6 +37,7 @@ export default function GoalsStackLayout() {
         options={{
           title: "New Goal",
           headerTitle: "New Goal",
+          headerTitleAlign: Platform.select({ android: "center" }),
           headerTransparent: false,
           presentation: "modal",
           headerLargeTitle: false,
@@ -49,6 +50,7 @@ export default function GoalsStackLayout() {
         options={{
           title: "Custom Goal",
           headerTitle: "Custom Goal",
+          headerTitleAlign: Platform.select({ android: "center" }),
           headerTransparent: false,
           presentation: "modal",
           headerLargeTitle: false,
@@ -61,6 +63,7 @@ export default function GoalsStackLayout() {
         options={{
           title: "New Goal",
           headerTitle: "New Goal",
+          headerTitleAlign: Platform.select({ android: "center" }),
           headerTransparent: false,
           presentation: "modal",
           headerLargeTitle: false,

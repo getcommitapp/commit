@@ -14,7 +14,7 @@ export default function ProfileScreen() {
   const success = useThemeColor({}, "success");
 
   return (
-    <ScreenLayout>
+    <ScreenLayout largeTitle>
       <FormGroup title="Account">
         <FormItem label="Name" value="John Appleseed" />
         <FormItem label="Username" value="@johnny" />

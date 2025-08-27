@@ -252,7 +252,7 @@ const mockGroups: Group[] = [
 
 export default function GroupsScreen() {
   return (
-    <ScreenLayout>
+    <ScreenLayout largeTitle>
       <CardList>
         {mockGroups.map((group) => (
           <GroupCard key={group.id} group={group} />
