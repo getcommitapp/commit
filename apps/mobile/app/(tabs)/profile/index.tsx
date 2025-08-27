@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import { Form, FormItem } from "@/components/ui/Form";
+import { FormGroup, FormItem } from "@/components/ui/form";
 import {
   spacing,
   ThemedText,
@@ -15,12 +15,12 @@ export default function ProfileScreen() {
 
   return (
     <ScreenLayout>
-      <Form title="Account">
+      <FormGroup title="Account">
         <FormItem label="Name" value="John Appleseed" />
-        <FormItem label="Username" value="@johnny" last />
-      </Form>
+        <FormItem label="Username" value="@johnny" />
+      </FormGroup>
 
-      <Form title="Payment">
+      <FormGroup title="Payment">
         <FormItem
           label="Status"
           value={
@@ -47,10 +47,9 @@ export default function ProfileScreen() {
           label="Method"
           value="TWINT"
           navigateTo="/(tabs)/profile/method"
-          last
           testID="row-payment-method"
         />
-      </Form>
+      </FormGroup>
     </ScreenLayout>
   );
 }

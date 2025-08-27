@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/Button";
-import { Form, FormInput } from "@/components/ui/Form";
+import { FormGroup, FormInput } from "@/components/ui/form";
 import { spacing } from "@/components/Themed";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -39,7 +39,7 @@ export default function CreateGroupScreen() {
           paddingBottom: insets.bottom,
         }}
       >
-        <Form title="Name">
+        <FormGroup title="Name">
           <FormInput
             label="Title"
             placeholder="Enter a title"
@@ -55,9 +55,8 @@ export default function CreateGroupScreen() {
             onChangeText={setDescription}
             multiline
             numberOfLines={4}
-            last
           />
-        </Form>
+        </FormGroup>
 
         <View style={{ flex: 1 }} />
 

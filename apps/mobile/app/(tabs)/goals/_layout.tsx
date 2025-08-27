@@ -56,6 +56,18 @@ export default function GoalsStackLayout() {
           headerLeft: () => <CancelButton onPress={() => router.back()} />,
         }}
       />
+      <Stack.Screen
+        name="create/new"
+        options={{
+          title: "New Goal",
+          headerTitle: "New Goal",
+          headerTransparent: false,
+          presentation: "modal",
+          headerLargeTitle: false,
+          headerBackVisible: false,
+          headerLeft: () => <CancelButton onPress={() => router.back()} />,
+        }}
+      />
     </Stack>
   );
 }

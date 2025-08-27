@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { textVariants, spacing, useThemeColor } from "@/components/Themed";
 import type { Group } from "@/components/groups/GroupCard";
-import { Form, FormItem } from "@/components/ui/Form";
+import { FormGroup, FormItem } from "@/components/ui/form";
 import { DetailsSheet } from "@/components/ui/DetailsSheet";
 import PeopleCircle from "@/assets/icons/people-circle.svg";
 
@@ -55,7 +55,7 @@ export const GroupDetailsSheet = forwardRef<
           group
         </Text>
       </View>
-      <Form
+      <FormGroup
         title="Group Details"
         backgroundStyle={{ backgroundColor: background }}
       >
@@ -65,20 +65,20 @@ export const GroupDetailsSheet = forwardRef<
         <FormItem label="Start Date" value={group.startDate} />
         <FormItem label="End Date" value={group.endDate} />
         <FormItem label="Invitation Code" value={group.invitationCode} />
-      </Form>
+      </FormGroup>
 
-      <Form title="Goal" backgroundStyle={{ backgroundColor: background }}>
+      <FormGroup title="Goal" backgroundStyle={{ backgroundColor: background }}>
         <FormItem label="Title" value={group.goal.title} />
         <FormItem label="Stake" value={group.goal.stake} />
         <FormItem label="Time Left" value={group.goal.timeLeft} />
         <FormItem label="Start Date" value={group.goal.startDate} />
         <FormItem label="End Date" value={group.goal.endDate} />
         {group.goal.streak !== undefined ? (
-          <FormItem label="Streak" value={group.goal.streak?.toString()} last />
+          <FormItem label="Streak" value={group.goal.streak?.toString()} />
         ) : (
-          <FormItem label="Streak" value="—" last />
+          <FormItem label="Streak" value="—" />
         )}
-      </Form>
+      </FormGroup>
     </DetailsSheet>
   );
 });

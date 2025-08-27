@@ -11,6 +11,7 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import { SmallText } from "@/components/ui/SmallText";
+import { useRouter } from "expo-router";
 
 type OptionKey = "location" | "photo" | "checkin" | "movement";
 
@@ -36,6 +37,7 @@ const optionMeta: Record<OptionKey, { title: string; description: string }> = {
 };
 
 export default function CustomGoalValidationScreen() {
+  const router = useRouter();
   const muted = useThemeColor({}, "muted");
   const border = useThemeColor({}, "border");
   const primary = useThemeColor({}, "primary");
@@ -104,7 +106,7 @@ export default function CustomGoalValidationScreen() {
       <Button
         title="Next"
         size="lg"
-        onPress={() => {}}
+        onPress={() => router.push("/(tabs)/goals/create/new")}
         disabled={selected.size === 0}
         style={{}}
       />

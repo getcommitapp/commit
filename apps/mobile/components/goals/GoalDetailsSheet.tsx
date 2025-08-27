@@ -2,7 +2,7 @@ import React, { forwardRef } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useThemeColor } from "@/components/Themed";
 import type { Goal } from "@/components/goals/GoalCard";
-import { Form, FormItem } from "@/components/ui/Form";
+import { FormGroup, FormItem } from "@/components/ui/form";
 import { DetailsSheet } from "@/components/ui/DetailsSheet";
 
 interface GoalDetailsSheetProps {
@@ -41,14 +41,17 @@ export const GoalDetailsSheet = forwardRef<
             : undefined
         }
       >
-        <Form title="Details" backgroundStyle={{ backgroundColor: background }}>
+        <FormGroup
+          title="Details"
+          backgroundStyle={{ backgroundColor: background }}
+        >
           <FormItem label="Stake" value={goal.stake} />
           <FormItem label="Time Left" value={goal.timeLeft} />
           <FormItem label="Start Date" value={goal.startDate} />
           <FormItem label="End Date" value={goal.endDate} />
           <FormItem label="Frequency" value="Daily" />
-          <FormItem label="Category" value="Fitness" last />
-        </Form>
+          <FormItem label="Category" value="Fitness" />
+        </FormGroup>
       </DetailsSheet>
     );
   }
