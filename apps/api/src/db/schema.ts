@@ -76,14 +76,12 @@ export const Charity = sqliteTable("charity", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   url: text("url"),
-
   createdAt: integer("createdAt", {
     mode: "timestamp",
   }).default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
 
-// Base goal
 export const Goal = sqliteTable("goal", {
   id: text("id").primaryKey(),
 
@@ -94,17 +92,17 @@ export const Goal = sqliteTable("goal", {
   name: text("name").notNull(),
   description: text("description"),
 
-  startDate: integer("startDate", { mode: "timestamp" }),
+  startDate: integer("startDate", { mode: "timestamp" }).notNull(),
   endDate: integer("endDate", { mode: "timestamp" }),
-  dueStartTime: integer("dueStartTime", { mode: "timestamp" }),
+  dueStartTime: integer("dueStartTime", { mode: "timestamp" }).notNull(),
   dueEndTime: integer("dueEndTime", { mode: "timestamp" }),
 
   recurrence: text("recurrence"),
 
-  stakeCents: integer("stakeCents"),
-  currency: text("currency"),
+  stakeCents: integer("stakeCents").notNull(),
+  currency: text("currency").notNull(),
 
-  destinationType: text("destinationType"),
+  destinationType: text("destinationType").notNull(),
   destinationUserId: text("destinationUserId").references(() => User.id),
   destinationCharityId: text("destinationCharityId").references(
     () => Charity.id
@@ -151,7 +149,7 @@ export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
 
   type: text("type").notNull(),
   verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
-  approvalStatus: text("approvalStatus"),
+  approvalStatus: text("approvalStatus").notNull(),
   approvedBy: text("approvedBy").references(() => User.id),
 
   startTime: integer("startTime", { mode: "timestamp" }),
