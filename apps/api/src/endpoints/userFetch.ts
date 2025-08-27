@@ -1,5 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
+import { UserGetResponseSchema } from "@commit/types";
 
 export class UserFetch extends OpenAPIRoute {
   schema = {
@@ -8,6 +9,11 @@ export class UserFetch extends OpenAPIRoute {
     responses: {
       "200": {
         description: "Returns a single user if found",
+        content: {
+          "application/json": {
+            schema: UserGetResponseSchema,
+          },
+        },
       },
     },
   };

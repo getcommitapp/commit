@@ -1,4 +1,5 @@
 import { OpenAPIRoute } from "chanfana";
+import { GroupLeaveResponseSchema } from "@commit/types";
 
 export class GroupLeave extends OpenAPIRoute {
   schema = {
@@ -7,6 +8,11 @@ export class GroupLeave extends OpenAPIRoute {
     responses: {
       "200": {
         description: "Left group successfully",
+        content: {
+          "application/json": {
+            schema: GroupLeaveResponseSchema,
+          },
+        },
       },
     },
   };

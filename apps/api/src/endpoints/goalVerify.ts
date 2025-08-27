@@ -1,13 +1,31 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
+import {
+  GoalVerifyRequestSchema,
+  GoalVerifyResponseSchema,
+} from "@commit/types";
 
 export class GoalVerify extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Verify the completion of the goal",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: GoalVerifyRequestSchema,
+          },
+        },
+      },
+    },
     responses: {
       "200": {
-        description: "Returns if successfully completed",
+        description: "Verification log submitted.",
+        content: {
+          "application/json": {
+            schema: GoalVerifyResponseSchema,
+          },
+        },
       },
     },
   };

@@ -1,5 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
+import { GoalDeleteResponseSchema } from "@commit/types";
 
 export class GoalDelete extends OpenAPIRoute {
   schema = {
@@ -8,6 +9,11 @@ export class GoalDelete extends OpenAPIRoute {
     responses: {
       "200": {
         description: "Returns if the goal was deleted successfully",
+        content: {
+          "application/json": {
+            schema: GoalDeleteResponseSchema,
+          },
+        },
       },
     },
   };

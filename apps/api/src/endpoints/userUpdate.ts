@@ -1,13 +1,31 @@
 import { OpenAPIRoute } from "chanfana";
 import { type AppContext } from "../types";
+import {
+  UserUpdateRequestSchema,
+  UserUpdateResponseSchema,
+} from "@commit/types";
 
 export class UserUpdate extends OpenAPIRoute {
   schema = {
     tags: ["User"],
     summary: "Update a user",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: UserUpdateRequestSchema,
+          },
+        },
+      },
+    },
     responses: {
       "200": {
-        description: "Returns if successfully updated",
+        description: "Returns the updated user",
+        content: {
+          "application/json": {
+            schema: UserUpdateResponseSchema,
+          },
+        },
       },
     },
   };

@@ -3,29 +3,34 @@ import * as z from "zod";
 // ---------------- Zod Schemas ----------------
 
 export const GoalVerificationMethodSchema = z.object({
+  id: z.string(),
   method: z.string(),
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),
   radiusM: z.number().int().nullable().optional(),
   durationSeconds: z.number().int().nullable().optional(),
-  graceTime: z.string().datetime().nullable().optional(), // ISO timestamp
+  graceTime: z.string().datetime().nullable().optional(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 
 export const GoalBaseSchema = z.object({
   id: z.string(),
+  ownerId: z.string(),
   name: z.string(),
   description: z.string().nullable(),
-  stakeCents: z.number().int().nullable(),
-  currency: z.string().nullable(),
-  recurrence: z.unknown().nullable(),
-  startDate: z.string().datetime().nullable(),
+  startDate: z.string().date().nullable(),
   endDate: z.string().datetime().nullable(),
   dueStartTime: z.string().datetime().nullable(),
   dueEndTime: z.string().datetime().nullable(),
-  // could be z.enum(["dev", "charity"]).nullable() in the future
+  recurrence: z.string().nullable(),
+  stakeCents: z.number().int().nullable(),
+  currency: z.string().nullable(),
   destinationType: z.string().nullable(),
   destinationUserId: z.string().nullable(),
   destinationCharityId: z.string().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 
 export const GoalDetailsSchema = GoalBaseSchema.extend({
@@ -39,8 +44,8 @@ export const GoalCreateRequestSchema = z.object({
   description: z.string().nullable().optional(),
   stakeCents: z.number().int().nullable().optional(),
   currency: z.string().nullable().optional(),
-  recurrence: z.unknown().nullable().optional(),
-  startDate: z.string().datetime().nullable().optional(),
+  recurrence: z.string().nullable().optional(),
+  startDate: z.string().date().nullable().optional(),
   endDate: z.string().datetime().nullable().optional(),
   dueStartTime: z.string().datetime().nullable().optional(),
   dueEndTime: z.string().datetime().nullable().optional(),
@@ -49,10 +54,8 @@ export const GoalCreateRequestSchema = z.object({
   destinationCharityId: z.string().nullable().optional(),
 });
 
-export const GoalCreateResponseSchema = GoalBaseSchema; // Optimistic UI: return created goal
-
+export const GoalCreateResponseSchema = GoalBaseSchema;
 export const GoalGetResponseSchema = GoalDetailsSchema;
-
 export const GoalDeleteResponseSchema = z.object({
   message: z.string(), // "Goal deleted successfully."
 });
@@ -61,7 +64,7 @@ export const GoalVerificationInputSchema = z.object({
   type: z.string(),
   photoUrl: z.string().nullable().optional(),
   photoDescription: z.string().nullable().optional(),
-  startTime: z.string().datetime().nullable().optional(), // ISO timestamp
+  startTime: z.string().datetime().nullable().optional(),
 });
 
 export const GoalVerifyRequestSchema = z.array(GoalVerificationInputSchema);

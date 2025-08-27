@@ -1,5 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
+import { GoalsListResponseSchema } from "@commit/types";
 
 export class GoalsList extends OpenAPIRoute {
   schema = {
@@ -8,6 +9,11 @@ export class GoalsList extends OpenAPIRoute {
     responses: {
       "200": {
         description: "Returns a list of goals",
+        content: {
+          "application/json": {
+            schema: GoalsListResponseSchema,
+          },
+        },
       },
     },
   };
