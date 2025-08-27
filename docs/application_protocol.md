@@ -47,9 +47,10 @@ Response:
 ```txt
 {
   "id": "<user_id>",
-  "display_name": "<display_name>",
+  "name": "<name>",
   "email": "<email>",
-  "stripe_status": active|descative
+  "emailVerified": true|false,
+  "image": "<image_url|null>"
 }
 ```
 
@@ -65,7 +66,7 @@ Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "name": "<new_name>",
+  "name": "<new_name>"
 }
 ```
 
@@ -77,30 +78,6 @@ Response:
 ```txt
 {
   "message": "Profile updated successfully."
-}
-```
-
----
-
-#### Add Stripe Info
-
-Request:
-
-```txt
-POST /profile/stripe
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "stripe_customer_id": "<stripe_id>"
-}
-```
-
-Response:
-
-```txt
-{
-  "message": "Stripe account linked successfully."
 }
 ```
 
@@ -125,6 +102,42 @@ Response:
 
 ### Goals
 
+#### Create Goal
+
+Request:
+
+```txt
+POST /goals
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "name": "<goal_name>",
+  "description": "<goal_description>",
+  "stakeCents": <stake_cents>,
+  "currency": "<currency>",
+  "recurrence": "<recurrence_json>",
+  "startDate": "<start_date>",
+  "endDate": "<end_date>",
+  "dueStartTime": "<due_start_time>",
+  "dueEndTime": "<due_end_time>",
+  "destinationType": "dev|charity",
+  "destinationUserId": "<user_id|null>",
+  "destinationCharityId": "<charity_id|null>"
+}
+```
+
+Response:
+
+```txt
+{
+  "id": "<goal_id>",
+  "message": "Goal created successfully."
+}
+```
+
+---
+
 #### List Goals
 
 Request:
@@ -142,16 +155,16 @@ Response:
     "id": "<goal_id>",
     "name": "<goal_name>",
     "description": "<goal_description>",
-    "stake_cents": <stake_cents>,
+    "stakeCents": <stake_cents>,
     "currency": "<currency>",
     "recurrence": "<recurrence_json>",
-    "start_date": "<start_date>",
-    "end_date": "<end_date>",
-    "due_start_time": "<due_start_time>",
-    "due_end_time": "<due_end_time>",
-    "destination_type": "dev|charity",
-    "destination_user_id": "<user_id|null>",
-    "destination_charity_id": "<charity_id|null>"
+    "startDate": "<start_date>",
+    "endDate": "<end_date>",
+    "dueStartTime": "<due_start_time>",
+    "dueEndTime": "<due_end_time>",
+    "destinationType": "dev|charity",
+    "destinationUserId": "<user_id|null>",
+    "destinationCharityId": "<charity_id|null>"
   }
 ]
 ```
@@ -174,24 +187,24 @@ Response:
   "id": "<goal_id>",
   "name": "<goal_name>",
   "description": "<goal_description>",
-  "stake_cents": <stake_cents>,
+  "stakeCents": <stake_cents>,
   "currency": "<currency>",
   "recurrence": "<recurrence_json>",
-  "start_date": "<start_date>",
-  "end_date": "<end_date>",
-  "due_start_time": "<due_start_time>",
-  "due_end_time": "<due_end_time>",
-  "destination_type": "dev|charity",
-  "destination_user_id": "<user_id|null>",
-  "destination_charity_id": "<charity_id|null>",
-  "verification_methods": [
+  "startDate": "<start_date>",
+  "endDate": "<end_date>",
+  "dueStartTime": "<due_start_time>",
+  "dueEndTime": "<due_end_time>",
+  "destinationType": "dev|charity",
+  "destinationUserId": "<user_id|null>",
+  "destinationCharityId": "<charity_id|null>",
+  "verificationMethods": [
     {
       "method": "<method_type>",
       "latitude": "<latitude|null>",
       "longitude": "<longitude|null>",
-      "radius_m": "<radius|null>",
-      "duration_seconds": "<duration|null>",
-      "grace_time": "<grace_time|null>"
+      "radiusM": "<radius|null>",
+      "durationSeconds": "<duration|null>",
+      "graceTime": "<grace_time|null>"
     }
   ]
 }
@@ -230,9 +243,9 @@ Content-Type: application/json
 [
   {
     "type": "<verification_type>",
-    "photo_url": "<photo_url|null>",
-    "photo_description": "<description|null>",
-    "start_time": "<start_time|null>"
+    "photoUrl": "<photo_url|null>",
+    "photoDescription": "<description|null>",
+    "startTime": "<start_time|null>"
   }
 ]
 ```
@@ -264,8 +277,8 @@ Response:
     "id": "<group_id>",
     "name": "<group_name>",
     "description": "<group_description>",
-    "goal_id": "<goal_id|null>",
-    "invite_code": "<invite_code>"
+    "goalId": "<goal_id|null>",
+    "inviteCode": "<invite_code>"
   }
 ]
 ```
@@ -288,14 +301,14 @@ Response:
   "id": "<group_id>",
   "name": "<group_name>",
   "description": "<group_description>",
-  "creator_id": "<user_id>",
-  "goal_id": "<goal_id|null>",
-  "invite_code": "<invite_code>",
+  "creatorId": "<user_id>",
+  "goalId": "<goal_id|null>",
+  "inviteCode": "<invite_code>",
   "members": [
     {
-      "user_id": "<user_id>",
+      "userId": "<user_id>",
       "status": "<member_status>",
-      "joined_at": "<joined_at>"
+      "joinedAt": "<joined_at>"
     }
   ]
 }
@@ -323,7 +336,7 @@ Response:
 ```txt
 {
   "id": "<group_id>",
-  "invite_code": "<invite_code>"
+  "inviteCode": "<invite_code>"
 }
 ```
 
@@ -342,7 +355,7 @@ Response:
 
 ```txt
 {
-  "invite_code": "<invite_code>"
+  "inviteCode": "<invite_code>"
 }
 ```
 
@@ -383,24 +396,24 @@ Response:
   "id": "<goal_id>",
   "name": "<goal_name>",
   "description": "<goal_description>",
-  "stake_cents": <stake_cents>,
+  "stakeCents": <stake_cents>,
   "currency": "<currency>",
   "recurrence": "<recurrence_json>",
-  "start_date": "<start_date>",
-  "end_date": "<end_date>",
-  "due_start_time": "<due_start_time>",
-  "due_end_time": "<due_end_time>",
-  "destination_type": "dev|charity",
-  "destination_user_id": "<user_id|null>",
-  "destination_charity_id": "<charity_id|null>",
-  "verification_methods": [
+  "startDate": "<start_date>",
+  "endDate": "<end_date>",
+  "dueStartTime": "<due_start_time>",
+  "dueEndTime": "<due_end_time>",
+  "destinationType": "dev|charity",
+  "destinationUserId": "<user_id|null>",
+  "destinationCharityId": "<charity_id|null>",
+  "verificationMethods": [
     {
       "method": "<method_type>",
       "latitude": "<latitude|null>",
       "longitude": "<longitude|null>",
-      "radius_m": "<radius|null>",
-      "duration_seconds": "<duration|null>",
-      "grace_time": "<grace_time|null>"
+      "radiusM": "<radius|null>",
+      "durationSeconds": "<duration|null>",
+      "graceTime": "<grace_time|null>"
     }
   ]
 }
@@ -420,9 +433,9 @@ Content-Type: application/json
 [
   {
     "type": "<verification_type>",
-    "photo_url": "<photo_url|null>",
-    "photo_description": "<description|null>",
-    "start_time": "<start_time|null>"
+    "photoUrl": "<photo_url|null>",
+    "photoDescription": "<description|null>",
+    "startTime": "<start_time|null>"
   }
 ]
 ```
@@ -473,7 +486,7 @@ Response (200 OK):
   "name": "John Doe",
   "email": "john.doe@example.com",
   "image": "https://example.com/avatar.png",
-  "email_verified": true
+  "emailVerified": true
 }
 ```
 
@@ -489,18 +502,18 @@ Content-Type: application/json
 {
   "name": "Run 5km every morning",
   "description": "Daily accountability run",
-  "stake_cents": 5000,
+  "stakeCents": 5000,
   "currency": "CHF",
   "recurrence": {
     "freq": "DAILY",
     "count": 30
   },
-  "start_date": "2025-09-01T06:00:00Z",
-  "end_date": "2025-09-30T06:00:00Z",
-  "due_start_time": "2025-09-01T06:00:00Z",
-  "due_end_time": "2025-09-01T09:00:00Z",
-  "destination_type": "charity",
-  "destination_charity_id": "charity_111"
+  "startDate": "2025-09-01T06:00:00Z",
+  "endDate": "2025-09-30T06:00:00Z",
+  "dueStartTime": "2025-09-01T06:00:00Z",
+  "dueEndTime": "2025-09-01T09:00:00Z",
+  "destinationType": "charity",
+  "destinationCharityId": "charity_111"
 }
 ```
 
@@ -525,9 +538,9 @@ Content-Type: application/json
 [
   {
     "type": "photo",
-    "photo_url": "https://cdn.commit.app/uploads/run1.jpg",
-    "photo_description": "Morning run selfie",
-    "start_time": "2025-09-02T06:30:00Z"
+    "photoUrl": "https://cdn.commit.app/uploads/run1.jpg",
+    "photoDescription": "Morning run selfie",
+    "startTime": "2025-09-02T06:30:00Z"
   }
 ]
 ```
@@ -560,7 +573,7 @@ Response (201 Created):
 ```txt
 {
   "id": "group_456",
-  "invite_code": "ABC123"
+  "inviteCode": "ABC123"
 }
 ```
 
@@ -580,22 +593,22 @@ Response (200 OK):
   "id": "goal_789",
   "name": "Run 5km every morning",
   "description": "Daily accountability run",
-  "stake_cents": 5000,
+  "stakeCents": 5000,
   "currency": "USD",
   "recurrence": {
     "freq": "DAILY",
     "count": 30
   },
-  "start_date": "2025-09-01T06:00:00Z",
-  "end_date": "2025-09-30T06:00:00Z",
-  "due_start_time": "2025-09-01T06:00:00Z",
-  "due_end_time": "2025-09-01T09:00:00Z",
-  "destination_type": "charity",
-  "destination_charity_id": "charity_111",
-  "verification_methods": [
+  "startDate": "2025-09-01T06:00:00Z",
+  "endDate": "2025-09-30T06:00:00Z",
+  "dueStartTime": "2025-09-01T06:00:00Z",
+  "dueEndTime": "2025-09-01T09:00:00Z",
+  "destinationType": "charity",
+  "destinationCharityId": "charity_111",
+  "verificationMethods": [
     {
       "method": "photo",
-      "grace_time": null
+      "graceTime": null
     }
   ]
 }
