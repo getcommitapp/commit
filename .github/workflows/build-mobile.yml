@@ -31,13 +31,13 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm -w install --frozen-lockfile --filter ./apps/mobile
+        run: pnpm -w install --frozen-lockfile --filter '@commit/mobile' --filter '@commit/types'
 
       - name: Lint mobile app
-        run: pnpm --filter './apps/mobile' run lint
+        run: pnpm --filter '@commit/mobile' run lint
 
       - name: Test mobile app
-        run: pnpm --filter './apps/mobile' run test
+        run: pnpm --filter '@commit/mobile' run test
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
