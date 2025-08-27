@@ -1,5 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
+import { GoalGetResponseSchema } from "@commit/types";
 
 export class GoalFetch extends OpenAPIRoute {
   schema = {
@@ -8,6 +9,11 @@ export class GoalFetch extends OpenAPIRoute {
     responses: {
       "200": {
         description: "Returns a single goal if found",
+        content: {
+          "application/json": {
+            schema: GoalGetResponseSchema,
+          },
+        },
       },
     },
   };

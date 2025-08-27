@@ -1,13 +1,31 @@
 import { OpenAPIRoute } from "chanfana";
 import { type AppContext } from "../types";
+import {
+  GoalCreateRequestSchema,
+  GoalCreateResponseSchema,
+} from "@commit/types";
 
 export class GoalCreate extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Create a new Goal",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: GoalCreateRequestSchema,
+          },
+        },
+      },
+    },
     responses: {
       "200": {
         description: "Returns the created goal",
+        content: {
+          "application/json": {
+            schema: GoalCreateResponseSchema,
+          },
+        },
       },
     },
   };

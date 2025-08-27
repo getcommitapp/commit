@@ -1,31 +1,59 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  emailVerified: boolean;
-  image: string | null;
-}
+import * as z from "zod";
 
-export type UserGetResponse = User;
+// ---------------- Zod Schemas ----------------
 
-export interface UserUpdateRequest {
-  name: string;
-}
+export const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  emailVerified: z.boolean(),
+  image: z.string().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+export const UserGetResponseSchema = UserSchema;
+
+export const UserUpdateRequestSchema = z.object({
+  name: z.string(),
+});
 
 // Optimistic UI: return updated user
-export type UserUpdateResponse = User;
+export const UserUpdateResponseSchema = UserSchema;
 
-export interface UserStripeCreateRequest {}
+export const UserStripeCreateRequestSchema = z.object({});
 
-export interface UserStripeCreateResponse {
+export const UserStripeCreateResponseSchema = z.object({
   // shape can be extended when Stripe fields are known
-  success: boolean;
-}
+  success: z.boolean(),
+});
 
-export interface UserDeleteResponse {
-  message: string;
-}
+export const UserDeleteResponseSchema = z.object({
+  message: z.string(),
+});
 
-export interface LogoutResponse {
-  message: string;
-}
+export const LogoutResponseSchema = z.object({
+  message: z.string(),
+});
+
+// ---------------- Inferred Types (backwards-compatible names) ----------------
+
+export type User = z.infer<typeof UserSchema>;
+
+export type UserGetResponse = z.infer<typeof UserGetResponseSchema>;
+
+export type UserUpdateRequest = z.infer<typeof UserUpdateRequestSchema>;
+
+export type UserUpdateResponse = z.infer<typeof UserUpdateResponseSchema>;
+
+export type UserStripeCreateRequest = z.infer<
+  typeof UserStripeCreateRequestSchema
+>;
+
+export type UserStripeCreateResponse = z.infer<
+  typeof UserStripeCreateResponseSchema
+>;
+
+export type UserDeleteResponse = z.infer<typeof UserDeleteResponseSchema>;
+
+export type LogoutResponse = z.infer<typeof LogoutResponseSchema>;

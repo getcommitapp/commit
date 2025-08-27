@@ -1,56 +1,106 @@
-import type { GoalDetails, GoalVerificationInput } from "./goals";
+import * as z from "zod";
+import {
+  GoalDetailsSchema,
+  GoalVerificationInputSchema,
+} from "./goals";
 
-export interface GroupSummary {
-  id: string;
-  name: string;
-  description: string | null;
-  goalId: string | null;
-  inviteCode: string;
-}
+// ---------------- Zod Schemas ----------------
 
-export interface GroupMember {
-  userId: string;
-  status: string;
-  joinedAt: string; // ISO timestamp
-}
+export const GroupSummarySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  goalId: z.string().nullable(),
+  inviteCode: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
 
-export interface GroupDetails extends GroupSummary {
-  creatorId: string;
-  members: GroupMember[];
-}
+export const GroupMemberSchema = z.object({
+  userId: z.string(),
+  status: z.string().nullable(),
+  joinedAt: z.string().datetime(),
+});
 
-export type GroupsListResponse = GroupSummary[];
+export const GroupDetailsSchema = GroupSummarySchema.extend({
+  creatorId: z.string(),
+  members: z.array(GroupMemberSchema),
+});
 
-export interface GroupCreateRequest {
-  name: string;
-  description?: string | null;
-}
+export const GroupsListResponseSchema = z.array(GroupSummarySchema);
+
+export const GroupCreateRequestSchema = z.object({
+  name: z.string(),
+  description: z.string().nullable().optional(),
+});
 
 // Optimistic UI: return created group
-export interface GroupCreateResponse extends GroupSummary {}
+export const GroupCreateResponseSchema = GroupSummarySchema;
 
-export type GroupGetResponse = GroupDetails;
+export const GroupGetResponseSchema = GroupDetailsSchema;
 
-export interface GroupInviteGetResponse {
-  inviteCode: string;
-}
+export const GroupInviteGetResponseSchema = z.object({
+  inviteCode: z.string(),
+});
 
-export interface GroupInviteVerifyRequestQuery {
-  code: string;
-}
+export const GroupInviteVerifyRequestQuerySchema = z.object({
+  code: z.string(),
+});
 
-export interface GroupInviteVerifyResponse {
-  valid: boolean;
-}
+export const GroupInviteVerifyResponseSchema = z.object({
+  valid: z.boolean(),
+});
 
-export type GroupGoalGetResponse = GoalDetails;
+export const GroupGoalGetResponseSchema = GoalDetailsSchema;
 
-export type GroupGoalVerifyRequest = GoalVerificationInput[];
+export const GroupGoalVerifyRequestSchema = z.array(
+  GoalVerificationInputSchema
+);
 
-export interface GroupGoalVerifyResponse {
-  message: string; // "Verification log submitted."
-}
+export const GroupGoalVerifyResponseSchema = z.object({
+  message: z.string(), // "Verification log submitted."
+});
 
-export interface GroupLeaveResponse {
-  message: string; // "Left group successfully."
-}
+export const GroupLeaveResponseSchema = z.object({
+  message: z.string(), // "Left group successfully."
+});
+
+// ---------------- Inferred Types (backwards-compatible names) ----------------
+
+export type GroupSummary = z.infer<typeof GroupSummarySchema>;
+
+export type GroupMember = z.infer<typeof GroupMemberSchema>;
+
+export type GroupDetails = z.infer<typeof GroupDetailsSchema>;
+
+export type GroupsListResponse = z.infer<typeof GroupsListResponseSchema>;
+
+export type GroupCreateRequest = z.infer<typeof GroupCreateRequestSchema>;
+
+export type GroupCreateResponse = z.infer<typeof GroupCreateResponseSchema>;
+
+export type GroupGetResponse = z.infer<typeof GroupGetResponseSchema>;
+
+export type GroupInviteGetResponse = z.infer<
+  typeof GroupInviteGetResponseSchema
+>;
+
+export type GroupInviteVerifyRequestQuery = z.infer<
+  typeof GroupInviteVerifyRequestQuerySchema
+>;
+
+export type GroupInviteVerifyResponse = z.infer<
+  typeof GroupInviteVerifyResponseSchema
+>;
+
+export type GroupGoalGetResponse = z.infer<typeof GroupGoalGetResponseSchema>;
+
+export type GroupGoalVerifyRequest = z.infer<
+  typeof GroupGoalVerifyRequestSchema
+>;
+
+export type GroupGoalVerifyResponse = z.infer<
+  typeof GroupGoalVerifyResponseSchema
+>;
+
+export type GroupLeaveResponse = z.infer<typeof GroupLeaveResponseSchema>;

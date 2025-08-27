@@ -1,5 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
+import { UserDeleteResponseSchema } from "@commit/types";
 
 export class UserDelete extends OpenAPIRoute {
   schema = {
@@ -8,6 +9,11 @@ export class UserDelete extends OpenAPIRoute {
     responses: {
       "200": {
         description: "Returns if the user was deleted successfully",
+        content: {
+          "application/json": {
+            schema: UserDeleteResponseSchema,
+          },
+        },
       },
     },
   };

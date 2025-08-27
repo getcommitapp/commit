@@ -1,4 +1,5 @@
 import { OpenAPIRoute } from "chanfana";
+import { GroupGoalGetResponseSchema } from "@commit/types";
 
 export class GroupGoal extends OpenAPIRoute {
   schema = {
@@ -7,6 +8,11 @@ export class GroupGoal extends OpenAPIRoute {
     responses: {
       "200": {
         description: "Returns the group's goal",
+        content: {
+          "application/json": {
+            schema: GroupGoalGetResponseSchema,
+          },
+        },
       },
     },
   };

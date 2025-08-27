@@ -1,4 +1,5 @@
 import { OpenAPIRoute } from "chanfana";
+import { GroupGetResponseSchema } from "@commit/types";
 
 export class GroupFetch extends OpenAPIRoute {
   schema = {
@@ -7,6 +8,11 @@ export class GroupFetch extends OpenAPIRoute {
     responses: {
       "200": {
         description: "Returns the requested group",
+        content: {
+          "application/json": {
+            schema: GroupGetResponseSchema,
+          },
+        },
       },
     },
   };
