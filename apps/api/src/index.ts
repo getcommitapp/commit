@@ -3,6 +3,8 @@ import { Hono } from "hono";
 import { createAuth } from "./auth";
 import { cors } from "hono/cors";
 
+import type { User, Session } from "better-auth";
+
 // user
 import { UserFetch } from "./endpoints/userFetch";
 import { UserUpdate } from "./endpoints/userUpdate";
@@ -26,11 +28,51 @@ import { GroupGoal } from "./endpoints/groupGoal";
 import { GroupLeave } from "./endpoints/groupLeave";
 
 // Start a Hono app
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{
+  Bindings: Env;
+  Variables: {
+    user: User | null;
+    session: Session | null;
+  };
+}>();
 
 // Setup OpenAPI registry
 const openapi = fromHono(app, {
   docs_url: "/",
+});
+
+// -------------------- Middleware Sections --------------------
+
+// Add logMiddleware
+/*app.use("*", async (c, next) => {
+  console.log("Context object:", {
+    method: c.req.method,
+    url: c.req.url,
+    path: c.req.path,
+    headers: c.req.header(),
+    // Full context object (be careful - this might be large)
+    fullContext: c,
+  });
+
+  await next();
+});*/
+
+// Add authMiddleware
+app.use("*", async (c, next) => {
+  const session = await createAuth(c.env).api.getSession({
+    headers: c.req.raw.headers,
+  });
+
+  if (!session) {
+    c.set("user", null);
+    c.set("session", null);
+    return next();
+  }
+
+  c.set("user", session.user);
+  c.set("session", session.session);
+
+  return next();
 });
 
 // -------------------- Register OpenAPI endpoints --------------------
