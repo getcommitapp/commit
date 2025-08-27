@@ -72,7 +72,9 @@ export const GoalVerifyResponseSchema = z.object({
 
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 
-export type GoalVerificationMethod = z.infer<typeof GoalVerificationMethodSchema>;
+export type GoalVerificationMethod = z.infer<
+  typeof GoalVerificationMethodSchema
+>;
 
 export type GoalBase = z.infer<typeof GoalBaseSchema>;
 
