@@ -7,10 +7,12 @@ declare interface Env {
   AUTH_GOOGLE_CLIENT_SECRET: string;
   AUTH_APPLE_CLIENT_ID: string;
   AUTH_APPLE_CLIENT_SECRET?: string;
+  AUTH_BYPASS?: string;
 }
 
 declare module "cloudflare:test" {
   interface ProvidedEnv extends Env {
     DB: D1Database;
+    TEST_MIGRATIONS: D1Migration[];
   }
 }

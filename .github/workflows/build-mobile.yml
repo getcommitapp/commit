@@ -34,9 +34,10 @@ jobs:
         run: pnpm -w install --frozen-lockfile --filter ./apps/mobile
 
       - name: Lint mobile app
-        run: pnpm --filter './apps/mobile' lint
+        run: pnpm --filter './apps/mobile' run lint
+
       - name: Test mobile app
-        run: pnpm --filter './apps/mobile' test
+        run: pnpm --filter './apps/mobile' run test
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
