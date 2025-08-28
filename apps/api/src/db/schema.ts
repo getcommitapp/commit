@@ -18,6 +18,9 @@ export const User = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull(),
   image: text("image"),
+  role: text("role", { enum: ["user", "reviewer", "admin"] })
+    .notNull()
+    .default("user"),
 
   createdAt: createCreatedAt(),
   updatedAt: createUpdatedAt(),

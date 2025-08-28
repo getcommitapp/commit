@@ -21,7 +21,7 @@ describe("PUT /api/users (update)", () => {
     expect(updated.id).toBe("user_1");
   });
 
-  it("rejects invalid payload", async () => {
+  it("rejects empty payload (no fields)", async () => {
     const res = await app.request(
       "/api/users",
       {
@@ -33,4 +33,6 @@ describe("PUT /api/users (update)", () => {
     );
     expect([400, 422]).toContain(res.status);
   });
+
+  // Role changes are not supported via API in MVP; handled manually via DB.
 });

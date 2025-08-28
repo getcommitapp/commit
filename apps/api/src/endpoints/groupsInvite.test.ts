@@ -28,10 +28,10 @@ describe("GET /api/groups/:id/invite (invite)", () => {
     const groupId = crypto.randomUUID();
     // Ensure other user exists
     await testEnv.DB.exec(
-      `INSERT INTO user (id, name, email, emailVerified, image, updated_at) VALUES ('user_2','Other','other@example.com',1,NULL,strftime('%s','now'));`
+      `INSERT INTO user (id, name, email, emailVerified, image, updatedAt) VALUES ('user_2','Other','other@example.com',1,NULL,strftime('%s','now'));`
     );
     await testEnv.DB.exec(
-      `INSERT INTO "group" (id, creatorId, name, inviteCode, updated_at) VALUES ('${groupId}', 'user_2', 'Their Group', 'ABCDEF', strftime('%s','now'));`
+      `INSERT INTO "group" (id, creatorId, name, inviteCode, updatedAt) VALUES ('${groupId}', 'user_2', 'Their Group', 'ABCDEF', strftime('%s','now'));`
     );
 
     const res = await app.request(`/api/groups/${groupId}/invite`, {}, env);

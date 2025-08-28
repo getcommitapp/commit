@@ -63,7 +63,7 @@ describe("GET /api/groups/:id/goal (goal)", () => {
 
     // Link goal to group
     await testEnv.DB.exec(
-      `UPDATE \`group\` SET goalId='${goal.id}', updated_at=strftime('%s','now') WHERE id='${g.id}';`
+      `UPDATE \`group\` SET goalId='${goal.id}', updatedAt=strftime('%s','now') WHERE id='${g.id}';`
     );
 
     const res = await app.request(`/api/groups/${g.id}/goal`, {}, env);
