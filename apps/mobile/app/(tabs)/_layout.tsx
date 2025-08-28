@@ -9,6 +9,7 @@ import { spacing } from "@/components/Themed";
 import HomeIcon from "@/assets/icons/home.svg";
 import TargetIcon from "@/assets/icons/target.svg";
 import IonIcons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -74,6 +75,19 @@ export default function TabLayout() {
           title: "Groups",
           tabBarIcon: ({ color }) => (
             <IonIcons name="people-circle-outline" size={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="reviews"
+        options={{
+          title: "Reviews",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="clipboard-clock-outline"
+              size={28}
+              color={color}
+            />
           ),
         }}
       />
