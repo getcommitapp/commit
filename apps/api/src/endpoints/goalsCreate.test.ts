@@ -9,7 +9,7 @@ describe("POST /api/goals (create)", () => {
       name: "Run daily",
       description: "Run 5km",
       stakeCents: 5000,
-      currency: "USD",
+      currency: "CHF",
       recurrence: "daily",
       startDate: new Date().toISOString(),
       endDate: null,

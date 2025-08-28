@@ -31,16 +31,6 @@ export class GoalsList extends OpenAPIRoute {
       .from(schema.Goal)
       .where(eq(schema.Goal.ownerId, user.id));
 
-    const response = goals.map((goal) => ({
-      ...goal,
-      startDate: goal.startDate?.toISOString(),
-      endDate: goal.endDate?.toISOString() ?? null,
-      dueStartTime: goal.dueStartTime?.toISOString(),
-      dueEndTime: goal.dueEndTime?.toISOString() ?? null,
-      createdAt: goal.createdAt.toISOString(),
-      updatedAt: goal.updatedAt.toISOString(),
-    }));
-
-    return c.json(response, 200);
+    return c.json(goals, 200);
   }
 }

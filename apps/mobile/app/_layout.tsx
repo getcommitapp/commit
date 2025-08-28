@@ -8,6 +8,7 @@ import { Image as RNImage } from "react-native";
 
 import { config } from "@/config";
 import { authClient } from "@/lib/auth-client";
+import { ensureDevToken } from "@/lib/api";
 import { RootProviders } from "@/components/providers/RootProviders";
 import { RootLayoutNav } from "@/components/navigation/RootLayoutNav";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -47,6 +48,14 @@ export default function RootLayout() {
           } catch (_) {
             // Ignore sign out errors in dev reset flow
           }
+        }
+        // If dev auto-auth is enabled, mint a dev session up front
+        try {
+          if (config.devAutoAuthAsTestUser) {
+            await ensureDevToken();
+          }
+        } catch (_) {
+          // Ignore errors here; normal auth flow can still proceed
         }
         const value = await AsyncStorage.getItem("hasSeenOnboarding");
         const hasSeenOnboarding = value === "true";
@@ -90,7 +99,11 @@ export default function RootLayout() {
   return (
     <RootProviders>
       <RootLayoutNav
-        initialRouteName={hasSeenOnboarding ? "(tabs)" : "signup"}
+        initialRouteName={
+          config.devAutoAuthAsTestUser || hasSeenOnboarding
+            ? "(tabs)"
+            : "signup"
+        }
       />
     </RootProviders>
   );

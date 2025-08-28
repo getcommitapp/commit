@@ -72,6 +72,7 @@ Available variables:
   - Use `https://commit-api-preview.leo-c50.workers.dev/` for Expo Go on physical devices
 - `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (dev-only, optional): If defined, onboarding is reset on each reload in development. Outside development, this is always ignored (feature is disabled).
 - `EXPO_PUBLIC_DEV_DEFAULT_PAGE` (dev-only, optional): If defined, the app will redirect to this route on launch during development. Examples: `/signup`, `/onboarding/1`, `/(tabs)/home`.
+- `EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER` (dev-only, optional): If defined, the app will auto-authenticate with the test user on launch during development.
 
 ## Scripts
 

@@ -67,17 +67,8 @@ export class GoalsFetch extends OpenAPIRoute {
 
     const response = {
       ...goal,
-      startDate: goal.startDate?.toISOString(),
-      endDate: goal.endDate?.toISOString() ?? null,
-      dueStartTime: goal.dueStartTime?.toISOString(),
-      dueEndTime: goal.dueEndTime?.toISOString() ?? null,
-      createdAt: goal.createdAt.toISOString(),
-      updatedAt: goal.updatedAt.toISOString(),
       verificationMethods: verificationMethods.map((vm) => ({
         ...vm,
-        graceTime: vm.graceTime?.toISOString() ?? null,
-        createdAt: vm.createdAt.toISOString(),
-        updatedAt: vm.updatedAt.toISOString(),
       })),
     };
 

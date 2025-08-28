@@ -594,7 +594,7 @@ Response (200 OK):
   "name": "Run 5km every morning",
   "description": "Daily accountability run",
   "stakeCents": 5000,
-  "currency": "USD",
+  "currency": "CHF",
   "recurrence": {
     "freq": "DAILY",
     "count": 30
