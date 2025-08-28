@@ -1,8 +1,11 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { UserDeleteResponseSchema } from "@commit/types";
+import { drizzle } from "drizzle-orm/d1";
+import * as schema from "../db/schema";
+import { eq } from "drizzle-orm";
 
-export class UserDelete extends OpenAPIRoute {
+export class UsersDelete extends OpenAPIRoute {
   schema = {
     tags: ["User"],
     summary: "Delete a user",
@@ -18,18 +21,13 @@ export class UserDelete extends OpenAPIRoute {
     },
   };
 
-  async handle(_c: AppContext) {
-    // Get validated data
-    const data = await this.getValidatedData<typeof this.schema>();
+  async handle(c: AppContext) {
+    const user = c.var.user;
 
-    // Retrieve the validated request body
-    const _taskToCreate = data.body;
+    const db = drizzle(c.env.DB, { schema });
 
-    // Implement your own object insertion here
+    await db.delete(schema.User).where(eq(schema.User.id, user.id));
 
-    // return the new task
-    return {
-      success: true,
-    };
+    return c.json({ message: "User deleted successfully." });
   }
 }

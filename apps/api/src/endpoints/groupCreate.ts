@@ -1,4 +1,4 @@
-import { OpenAPIRoute } from "chanfana";
+import { OpenAPIRoute, contentJson } from "chanfana";
 import {
   GroupCreateRequestSchema,
   GroupCreateResponseSchema,
@@ -14,13 +14,7 @@ export class GroupCreate extends OpenAPIRoute {
     tags: ["Groups"],
     summary: "Create a new group",
     request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: GroupCreateRequestSchema,
-          },
-        },
-      },
+      body: contentJson(GroupCreateRequestSchema),
     },
     responses: {
       "200": {

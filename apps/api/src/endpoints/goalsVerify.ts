@@ -1,4 +1,4 @@
-import { OpenAPIRoute } from "chanfana";
+import { OpenAPIRoute, contentJson } from "chanfana";
 import type { AppContext } from "../types";
 import {
   GoalVerifyRequestSchema,
@@ -25,13 +25,7 @@ export class GoalsVerify extends OpenAPIRoute {
       },
     ],
     request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: GoalVerifyRequestSchema,
-          },
-        },
-      },
+      body: contentJson(GoalVerifyRequestSchema),
     },
     responses: {
       "200": {

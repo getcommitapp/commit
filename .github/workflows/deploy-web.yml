@@ -30,10 +30,10 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm -w install --frozen-lockfile --filter ./apps/web
+        run: pnpm -w install --frozen-lockfile --filter '@commit/web'
 
       - name: Lint web app
-        run: pnpm --filter './apps/web' lint
+        run: pnpm --filter '@commit/web' lint
 
       - name: Deploy to Cloudflare Workers (Wrangler)
         working-directory: apps/web

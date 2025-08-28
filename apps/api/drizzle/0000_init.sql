@@ -12,7 +12,7 @@ CREATE TABLE `account` (
 	`password` text,
 	`created_at` integer DEFAULT (current_timestamp),
 	`updated_at` integer NOT NULL,
-	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `charity` (
@@ -40,9 +40,9 @@ CREATE TABLE `goal` (
 	`destinationCharityId` text,
 	`created_at` integer DEFAULT (current_timestamp),
 	`updated_at` integer NOT NULL,
-	FOREIGN KEY (`ownerId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`destinationUserId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`destinationCharityId`) REFERENCES `charity`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`ownerId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`destinationUserId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`destinationCharityId`) REFERENCES `charity`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `goal_verifications_log` (
@@ -58,9 +58,9 @@ CREATE TABLE `goal_verifications_log` (
 	`photoUrl` text,
 	`created_at` integer DEFAULT (current_timestamp),
 	`updated_at` integer NOT NULL,
-	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`approvedBy`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`approvedBy`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `goal_verifications_method` (
@@ -74,7 +74,7 @@ CREATE TABLE `goal_verifications_method` (
 	`graceTime` integer,
 	`created_at` integer DEFAULT (current_timestamp),
 	`updated_at` integer NOT NULL,
-	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `group` (
@@ -86,8 +86,8 @@ CREATE TABLE `group` (
 	`inviteCode` text NOT NULL,
 	`created_at` integer DEFAULT (current_timestamp),
 	`updated_at` integer NOT NULL,
-	FOREIGN KEY (`creatorId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`creatorId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `group_inviteCode_unique` ON `group` (`inviteCode`);--> statement-breakpoint
@@ -99,8 +99,8 @@ CREATE TABLE `group_participants` (
 	`created_at` integer DEFAULT (current_timestamp),
 	`updated_at` integer NOT NULL,
 	PRIMARY KEY(`groupId`, `userId`),
-	FOREIGN KEY (`groupId`) REFERENCES `group`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`groupId`) REFERENCES `group`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `session` (
@@ -112,7 +112,7 @@ CREATE TABLE `session` (
 	`ipAddress` text,
 	`userAgent` text,
 	`userId` text NOT NULL,
-	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `session_token_unique` ON `session` (`token`);--> statement-breakpoint

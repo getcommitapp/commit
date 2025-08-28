@@ -1,4 +1,4 @@
-import { OpenAPIRoute } from "chanfana";
+import { OpenAPIRoute, contentJson } from "chanfana";
 import { type AppContext } from "../types";
 import {
   GoalCreateRequestSchema,
@@ -13,13 +13,7 @@ export class GoalsCreate extends OpenAPIRoute {
     tags: ["Goals"],
     summary: "Create a new Goal",
     request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: GoalCreateRequestSchema,
-          },
-        },
-      },
+      body: contentJson(GoalCreateRequestSchema),
     },
     responses: {
       "200": {
