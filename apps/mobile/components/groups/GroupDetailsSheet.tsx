@@ -53,7 +53,8 @@ export const GroupDetailsSheet = forwardRef<
         <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
           {group.memberCount !== undefined
             ? `${group.memberCount} member${group.memberCount !== 1 ? "s" : ""}`
-            : "Members unknown"} in this group
+            : "Members unknown"}{" "}
+          in this group
         </Text>
       </View>
       <FormGroup
@@ -88,10 +89,7 @@ export const GroupDetailsSheet = forwardRef<
               value={group.goal.endDate ?? group.endDate ?? "—"}
             />
             {group.goal.streak !== undefined ? (
-              <FormItem
-                label="Streak"
-                value={group.goal.streak?.toString()}
-              />
+              <FormItem label="Streak" value={group.goal.streak?.toString()} />
             ) : (
               <FormItem label="Streak" value="—" />
             )}

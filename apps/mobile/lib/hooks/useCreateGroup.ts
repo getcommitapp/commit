@@ -1,24 +1,34 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import { GroupCreateRequestSchema, GroupCreateResponseSchema, type GroupCreateResponse } from "@commit/types";
+import {
+  GroupCreateRequestSchema,
+  GroupCreateResponseSchema,
+  type GroupCreateResponse,
+} from "@commit/types";
 import { z } from "zod";
 import type { Group } from "@/components/groups/GroupCard";
 import { formatTimestamp } from "@/lib/formatDate";
 
-const CreateInputSchema = z.object({ name: z.string().min(1), description: z.string().optional() });
+const CreateInputSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+});
 export type CreateGroupInput = z.infer<typeof CreateInputSchema>;
 
 export function useCreateGroup() {
   const qc = useQueryClient();
   return useMutation({
-    mutationKey: ["groups","create"],
+    mutationKey: ["groups", "create"],
     mutationFn: async (input: CreateGroupInput): Promise<Group> => {
       const parsed = CreateInputSchema.parse(input);
       const created = await apiFetch<GroupCreateResponse>(
         "/groups",
         {
           method: "POST",
-          body: JSON.stringify({ name: parsed.name, description: parsed.description ?? null }),
+          body: JSON.stringify({
+            name: parsed.name,
+            description: parsed.description ?? null,
+          }),
         },
         GroupCreateResponseSchema
       );
@@ -40,6 +50,6 @@ export function useCreateGroup() {
         if (old.some((g) => g.id === group.id)) return old;
         return [group, ...old];
       });
-    }
+    },
   });
 }

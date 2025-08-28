@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
-import { GroupsListResponseSchema } from "@commit/types";
+import { GroupsListResponseSchema, type GroupSummary } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { Group, GroupParticipants } from "../db/schema";
@@ -48,7 +48,7 @@ export class GroupsList extends OpenAPIRoute {
     for (const g of created) map.set(g.id, g);
     for (const j of joined) map.set(j.group.id, j.group);
 
-    const res = [] as any[];
+    const res: GroupSummary[] = [];
     for (const g of map.values()) {
       const participantCount = await db
         .select({ id: GroupParticipants.userId })
@@ -62,12 +62,18 @@ export class GroupsList extends OpenAPIRoute {
         description: g.description ?? null,
         goalId: g.goalId ?? null,
         inviteCode: g.inviteCode,
-        createdAt: g.createdAt,
-        updatedAt: g.updatedAt,
+        createdAt:
+          typeof g.createdAt === "string"
+            ? g.createdAt
+            : new Date(g.createdAt).toISOString(),
+        updatedAt:
+          typeof g.updatedAt === "string"
+            ? g.updatedAt
+            : new Date(g.updatedAt).toISOString(),
         memberCount,
       });
     }
 
-  return c.json(res);
+    return c.json(res);
   }
 }

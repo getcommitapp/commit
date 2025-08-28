@@ -84,9 +84,7 @@ export function GroupCard({
           </Text>
         ) : null}
         {group.timeLeft ? (
-          <Text
-            style={{ ...textVariants.subheadline, color: mutedForeground }}
-          >
+          <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
             {group.timeLeft}
           </Text>
         ) : null}
@@ -121,12 +119,12 @@ export function GroupCard({
           right={rightNode}
           accessibilityLabel={
             accessibilityLabel ??
-            (`Group ${group.title}` +
+            `Group ${group.title}` +
               (group.totalStake ? `, ${group.totalStake}` : "") +
               (group.memberCount !== undefined
                 ? `, ${group.memberCount} members`
                 : "") +
-              (group.timeLeft ? `, ${group.timeLeft}` : ""))
+              (group.timeLeft ? `, ${group.timeLeft}` : "")
           }
           testID={testID}
         />

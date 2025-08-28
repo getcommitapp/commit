@@ -29,7 +29,6 @@ import { GroupsLeave } from "./endpoints/groupsLeave";
 import { HonoContext } from "./types";
 import { GroupsJoin } from "./endpoints/groupsJoin";
 
-
 // Start a Hono app
 const app = new Hono<HonoContext>();
 

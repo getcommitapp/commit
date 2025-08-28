@@ -118,7 +118,7 @@ export default function HomeScreen() {
         />
         <Button
           title="Join Group"
-            variant="border"
+          variant="border"
           size="lg"
           onPress={() => router.push("/(tabs)/groups/join")}
         />

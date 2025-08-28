@@ -3,10 +3,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { eq, and } from "drizzle-orm";
 import type { AppContext } from "../types";
 import { Group, GroupParticipants } from "../db/schema";
-import {
-  GroupJoinRequestSchema,
-  GroupJoinResponseSchema,
-} from "@commit/types";
+import { GroupJoinRequestSchema, GroupJoinResponseSchema } from "@commit/types";
 
 export class GroupsJoin extends OpenAPIRoute {
   schema = {
@@ -48,7 +45,7 @@ export class GroupsJoin extends OpenAPIRoute {
       .where(
         and(
           eq(GroupParticipants.groupId, g.id),
-            eq(GroupParticipants.userId, userId)
+          eq(GroupParticipants.userId, userId)
         )
       )
       .get();

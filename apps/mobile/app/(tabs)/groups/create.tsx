@@ -3,10 +3,9 @@ import { KeyboardAvoidingView, Platform, View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import { FormGroup, FormInput } from "@/components/ui/form";
-import { spacing } from "@/components/Themed";
+import { spacing, ThemedText, textVariants } from "@/components/Themed";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCreateGroup } from "@/lib/hooks/useCreateGroup";
-import { ThemedText, textVariants } from "@/components/Themed";
 
 export default function CreateGroupScreen() {
   const [name, setName] = useState("");
@@ -67,8 +66,8 @@ export default function CreateGroupScreen() {
             numberOfLines={4}
           />
           {isError && (
-            <ThemedText style={{ ...textVariants.subheadline, color: 'red' }}>
-              {(error as Error)?.message || 'Failed to create group'}
+            <ThemedText style={{ ...textVariants.subheadline, color: "red" }}>
+              {(error as Error)?.message || "Failed to create group"}
             </ThemedText>
           )}
         </FormGroup>

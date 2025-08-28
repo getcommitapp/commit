@@ -24,7 +24,7 @@ export function useJoinGroup() {
         const group: Group = {
           id: res.id,
           title: res.name,
-            description: res.description || "",
+          description: res.description || "",
           invitationCode: res.inviteCode,
           startDate,
           memberCount: 1, // unknown until refetched

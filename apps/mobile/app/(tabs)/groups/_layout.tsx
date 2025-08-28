@@ -26,19 +26,35 @@ export default function GroupsStackLayout() {
         options={{
           title: "My Groups",
           headerRight: () => (
-            <View style={{ flexDirection: 'row', gap: 12 }}>
+            <View style={{ flexDirection: "row", gap: 12 }}>
               <Pressable
                 accessibilityRole="button"
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20, backgroundColor: textColor + '15' }}
-                onPress={() => router.push('/(tabs)/groups/create')}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 4,
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: 20,
+                  backgroundColor: textColor + "15",
+                }}
+                onPress={() => router.push("/(tabs)/groups/create")}
               >
                 <IonIcons name="create-outline" size={18} color={textColor} />
                 <ThemedText style={{ fontSize: 14 }}>Create</ThemedText>
               </Pressable>
               <Pressable
                 accessibilityRole="button"
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20, backgroundColor: textColor + '15' }}
-                onPress={() => router.push('/(tabs)/groups/join')}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 4,
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: 20,
+                  backgroundColor: textColor + "15",
+                }}
+                onPress={() => router.push("/(tabs)/groups/join")}
               >
                 <IonIcons name="enter-outline" size={18} color={textColor} />
                 <ThemedText style={{ fontSize: 14 }}>Join</ThemedText>
