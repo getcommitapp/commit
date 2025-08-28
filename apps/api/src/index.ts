@@ -27,6 +27,8 @@ import { GroupsInviteVerify } from "./endpoints/groupsInviteVerify";
 import { GroupsGoal } from "./endpoints/groupsGoal";
 import { GroupsLeave } from "./endpoints/groupsLeave";
 import { HonoContext } from "./types";
+import { GroupsJoin } from "./endpoints/groupsJoin";
+
 
 // Start a Hono app
 const app = new Hono<HonoContext>();
@@ -137,5 +139,6 @@ openapi.get("/api/groups/:id/goal", GroupsGoal);
 openapi.get("/api/groups/:id/invite", GroupsInvite);
 openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
 openapi.post("/api/groups/:id/leave", GroupsLeave);
+openapi.post("/api/groups/join", GroupsJoin);
 
 export default app;

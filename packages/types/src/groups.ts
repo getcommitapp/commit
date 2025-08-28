@@ -65,6 +65,11 @@ export const GroupLeaveResponseSchema = z.object({
   message: z.string(), // "Left group successfully."
 });
 
+export const GroupJoinRequestSchema = z.object({ code: z.string() });
+
+export const GroupJoinResponseSchema = GroupSummarySchema;
+
+
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 
 export type GroupSummary = z.infer<typeof GroupSummarySchema>;
@@ -104,3 +109,7 @@ export type GroupGoalVerifyResponse = z.infer<
 >;
 
 export type GroupLeaveResponse = z.infer<typeof GroupLeaveResponseSchema>;
+
+export type GroupJoinRequest = z.infer<typeof GroupJoinRequestSchema>;
+
+export type GroupJoinResponse = z.infer<typeof GroupJoinResponseSchema>;
