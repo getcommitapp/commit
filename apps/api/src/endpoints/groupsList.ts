@@ -54,10 +54,10 @@ export class GroupsList extends OpenAPIRoute {
       description: g.description ?? null,
       goalId: g.goalId ?? null,
       inviteCode: g.inviteCode,
-      createdAt: (g.createdAt as Date).toISOString(),
-      updatedAt: (g.updatedAt as Date).toISOString(),
+      createdAt: g.createdAt,
+      updatedAt: g.updatedAt,
     }));
 
-    return res;
+    return c.json(res);
   }
 }

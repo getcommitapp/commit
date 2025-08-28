@@ -6,7 +6,7 @@ import {
 import type { AppContext } from "../types";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
-import { Group, GroupParticipants } from "../db/schema";
+import * as schema from "../db/schema";
 
 export class GroupsCreate extends OpenAPIRoute {
   // schema with minimal info per request: tags, summary, and 200 response description
@@ -30,8 +30,8 @@ export class GroupsCreate extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
-    const { name } = data.body;
-    const db = drizzle(c.env.DB);
+    const { name, description } = data.body;
+    const db = drizzle(c.env.DB, { schema });
     const user = c.get("user");
     const userId = user?.id as string | undefined;
     if (!userId) return new Response("Unauthorized", { status: 401 });
@@ -41,19 +41,21 @@ export class GroupsCreate extends OpenAPIRoute {
     const now = new Date();
 
     await db
-      .insert(Group)
+      .insert(schema.Group)
       .values({
         id,
         creatorId: userId,
         name,
+        description: description ?? null,
         inviteCode,
+        createdAt: now,
         updatedAt: now,
       })
       .run?.();
 
     // Add creator as participant
     await db
-      .insert(GroupParticipants)
+      .insert(schema.GroupParticipants)
       .values({
         groupId: id,
         userId,
@@ -62,17 +64,21 @@ export class GroupsCreate extends OpenAPIRoute {
       })
       .run?.();
 
-    const created = await db.select().from(Group).where(eq(Group.id, id)).get();
+    const created = await db
+      .select()
+      .from(schema.Group)
+      .where(eq(schema.Group.id, id))
+      .get();
     if (!created) return new Response("Failed to create", { status: 500 });
 
-    return {
+    return c.json({
       id: created.id,
       name: created.name,
       description: created.description ?? null,
       goalId: created.goalId ?? null,
       inviteCode: created.inviteCode,
-      createdAt: (created.createdAt as Date).toISOString(),
-      updatedAt: (created.updatedAt as Date).toISOString(),
-    };
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt,
+    });
   }
 }

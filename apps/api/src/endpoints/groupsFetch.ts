@@ -43,19 +43,19 @@ export class GroupsFetch extends OpenAPIRoute {
     const members = membersRows.map((m) => ({
       userId: m.userId,
       status: m.status ?? null,
-      joinedAt: (m.joinedAt as Date).toISOString(),
+      joinedAt: m.joinedAt,
     }));
 
-    return {
+    return c.json({
       id: g.id,
       name: g.name,
       description: g.description ?? null,
       goalId: g.goalId ?? null,
       inviteCode: g.inviteCode,
-      createdAt: (g.createdAt as Date).toISOString(),
-      updatedAt: (g.updatedAt as Date).toISOString(),
+      createdAt: g.createdAt,
+      updatedAt: g.updatedAt,
       creatorId: g.creatorId,
       members,
-    };
+    });
   }
 }

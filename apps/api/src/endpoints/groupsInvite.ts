@@ -38,6 +38,6 @@ export class GroupsInvite extends OpenAPIRoute {
     if (g.creatorId !== userId)
       return new Response("Forbidden", { status: 403 });
 
-    return { inviteCode: g.inviteCode };
+    return c.json({ inviteCode: g.inviteCode });
   }
 }

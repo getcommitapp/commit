@@ -46,6 +46,6 @@ export class GroupsLeave extends OpenAPIRoute {
       )
       .run?.();
 
-    return { message: "Left group successfully." };
+    return c.json({ message: "Left group successfully." });
   }
 }

@@ -46,29 +46,23 @@ export class GroupsGoal extends OpenAPIRoute {
       .where(eq(GoalVerificationsMethod.goalId, g.goalId))
       .all();
 
-    return {
+    return c.json({
       id: goal.id,
       ownerId: goal.ownerId,
       name: goal.name,
       description: goal.description ?? null,
-      startDate: goal.startDate
-        ? (goal.startDate as Date).toISOString().slice(0, 10)
-        : null,
-      endDate: goal.endDate ? (goal.endDate as Date).toISOString() : null,
-      dueStartTime: goal.dueStartTime
-        ? (goal.dueStartTime as Date).toISOString()
-        : null,
-      dueEndTime: goal.dueEndTime
-        ? (goal.dueEndTime as Date).toISOString()
-        : null,
+      startDate: goal.startDate,
+      endDate: goal.endDate ?? null,
+      dueStartTime: goal.dueStartTime,
+      dueEndTime: goal.dueEndTime ?? null,
       recurrence: goal.recurrence ?? null,
       stakeCents: goal.stakeCents ?? null,
       currency: goal.currency ?? null,
       destinationType: goal.destinationType ?? null,
       destinationUserId: goal.destinationUserId ?? null,
       destinationCharityId: goal.destinationCharityId ?? null,
-      createdAt: (goal.createdAt as Date).toISOString(),
-      updatedAt: (goal.updatedAt as Date).toISOString(),
+      createdAt: goal.createdAt,
+      updatedAt: goal.updatedAt,
       verificationMethods: methods.map((m) => ({
         id: m.id,
         method: m.method,
@@ -76,10 +70,10 @@ export class GroupsGoal extends OpenAPIRoute {
         longitude: m.longitude ?? null,
         radiusM: m.radiusM ?? null,
         durationSeconds: m.durationSeconds ?? null,
-        graceTime: m.graceTime ? (m.graceTime as Date).toISOString() : null,
-        createdAt: (m.createdAt as Date).toISOString(),
-        updatedAt: (m.updatedAt as Date).toISOString(),
+        graceTime: m.graceTime ?? null,
+        createdAt: m.createdAt,
+        updatedAt: m.updatedAt,
       })),
-    };
+    });
   }
 }

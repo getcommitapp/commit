@@ -36,6 +36,6 @@ export class GroupsInviteVerify extends OpenAPIRoute {
       .from(Group)
       .where(eq(Group.inviteCode, code))
       .get();
-    return { valid: !!g };
+    return c.json({ valid: !!g });
   }
 }
