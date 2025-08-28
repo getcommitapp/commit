@@ -34,7 +34,13 @@ describe("Tabs layout", () => {
       screens.map((s: any) => [s.props.name, s])
     );
 
-    expect(Object.keys(byName)).toEqual(["home", "goals", "groups", "reviews", "profile"]);
+    expect(Object.keys(byName)).toEqual([
+      "home",
+      "goals",
+      "groups",
+      "reviews",
+      "profile",
+    ]);
     expect(byName.home.props.options.title).toBe("Home");
     expect(byName.goals.props.options.title).toBe("Goals");
     expect(byName.groups.props.options.title).toBe("Groups");

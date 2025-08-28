@@ -1,19 +1,19 @@
-import { View, StyleSheet, Dimensions, Pressable } from "react-native";
+import { View, StyleSheet, Dimensions, Pressable, Text } from "react-native";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import {
   ThemedText,
   spacing,
-  //textVariants,
+  textVariants,
   useThemeColor,
 } from "@/components/Themed";
 
 export default function ReviewsScreen() {
   const failColor = useThemeColor({}, "danger");
   const successColor = useThemeColor({}, "success");
-  const textGray = useThemeColor({}, "textSecondary");
-  const placeholderBg = useThemeColor({}, "cardBackground");
+  const mutedForeground = useThemeColor({}, "mutedForeground");
+  const card = useThemeColor({}, "card");
   const placeholderBorder = useThemeColor({}, "border");
 
   const goal = {
@@ -25,8 +25,8 @@ export default function ReviewsScreen() {
   const imageHeight = screenHeight * 0.5;
 
   return (
-    <ScreenLayout largeTitle style={{ backgroundColor: "#fff" }}>
-      <ThemedText style={styles.title}>{goal.title}</ThemedText>
+    <ScreenLayout largeTitle>
+      <ThemedText style={{ ...textVariants.title3 }}>{goal.title}</ThemedText>
 
       {/* Placeholder for image */}
       <View
@@ -34,17 +34,17 @@ export default function ReviewsScreen() {
           styles.imagePlaceholder,
           {
             height: imageHeight,
-            backgroundColor: placeholderBg,
+            backgroundColor: card,
             borderColor: placeholderBorder,
           },
         ]}
       >
-        <ThemedText style={[styles.placeholderText, { color: textGray }]}>
+        <Text style={[styles.placeholderText, { color: mutedForeground }]}>
           Image Placeholder
-        </ThemedText>
+        </Text>
       </View>
 
-      <ThemedText style={[styles.description, { color: textGray }]}>
+      <ThemedText style={[styles.description, { color: mutedForeground }]}>
         {goal.imageDescription}
       </ThemedText>
 
@@ -69,12 +69,6 @@ export default function ReviewsScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: spacing.md,
-    textAlign: "center",
-  },
   imagePlaceholder: {
     width: "100%",
     borderWidth: 2,
