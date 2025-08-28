@@ -20,12 +20,12 @@ import { GoalsVerify } from "./endpoints/goalsVerify";
 
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
-import { GroupCreate } from "./endpoints/groupCreate";
-import { GroupFetch } from "./endpoints/groupFetch";
-import { GroupInvite } from "./endpoints/groupInvite";
-import { GroupInviteVerify } from "./endpoints/groupInviteVerify";
-import { GroupGoal } from "./endpoints/groupGoal";
-import { GroupLeave } from "./endpoints/groupLeave";
+import { GroupsCreate } from "./endpoints/groupsCreate";
+import { GroupsFetch } from "./endpoints/groupsFetch";
+import { GroupsInvite } from "./endpoints/groupsInvite";
+import { GroupsInviteVerify } from "./endpoints/groupsInviteVerify";
+import { GroupsGoal } from "./endpoints/groupsGoal";
+import { GroupsLeave } from "./endpoints/groupsLeave";
 import { HonoContext } from "./types";
 
 // Start a Hono app
@@ -131,11 +131,11 @@ openapi.post("/api/goals/:id/verify", GoalsVerify);
 
 // Groups
 openapi.get("/api/groups", GroupsList);
-openapi.post("/api/groups", GroupCreate);
-openapi.get("/api/groups/:id", GroupFetch);
-openapi.get("/api/groups/:id/goal", GroupGoal);
-openapi.get("/api/groups/:id/invite", GroupInvite);
-openapi.get("/api/groups/:id/invite/verify", GroupInviteVerify);
-openapi.post("/api/groups/:id/leave", GroupLeave);
+openapi.post("/api/groups", GroupsCreate);
+openapi.get("/api/groups/:id", GroupsFetch);
+openapi.get("/api/groups/:id/goal", GroupsGoal);
+openapi.get("/api/groups/:id/invite", GroupsInvite);
+openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
+openapi.post("/api/groups/:id/leave", GroupsLeave);
 
 export default app;
