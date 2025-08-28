@@ -121,7 +121,7 @@ const mockGoals: Goal[] = [
 
 export default function GoalsScreen() {
   return (
-    <ScreenLayout>
+    <ScreenLayout largeTitle>
       <CardList>
         {mockGoals.map((goal) => (
           <GoalCard key={goal.id} goal={goal} />

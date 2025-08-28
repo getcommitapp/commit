@@ -26,10 +26,8 @@ export default function TabLayout() {
             borderTopWidth: 1,
           },
           android: {
-            position: "absolute",
-            backgroundColor: "transparent",
+            backgroundColor: Colors[colorScheme ?? "light"].card,
             borderTopWidth: 1,
-            elevation: 0,
           },
           default: {
             backgroundColor: Colors[colorScheme ?? "light"].card,
@@ -41,11 +39,6 @@ export default function TabLayout() {
           <BlurView
             tint={(colorScheme ?? "light") as "light" | "dark"}
             intensity={50}
-            // Enable experimental blur on Android per docs
-            experimentalBlurMethod={
-              Platform.OS === "android" ? "dimezisBlurView" : "none"
-            }
-            // Tweak to better match iOS perceived blur on Android
             blurReductionFactor={Platform.OS === "android" ? 4 : undefined}
             style={StyleSheet.absoluteFill}
           />
