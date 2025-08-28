@@ -48,16 +48,26 @@ export class GroupsList extends OpenAPIRoute {
     for (const g of created) map.set(g.id, g);
     for (const j of joined) map.set(j.group.id, j.group);
 
-    const res = Array.from(map.values()).map((g) => ({
-      id: g.id,
-      name: g.name,
-      description: g.description ?? null,
-      goalId: g.goalId ?? null,
-      inviteCode: g.inviteCode,
-      createdAt: g.createdAt,
-      updatedAt: g.updatedAt,
-    }));
+    const res = [] as any[];
+    for (const g of map.values()) {
+      const participantCount = await db
+        .select({ id: GroupParticipants.userId })
+        .from(GroupParticipants)
+        .where(eq(GroupParticipants.groupId, g.id))
+        .all();
+      const memberCount = participantCount.length + 1; // include creator
+      res.push({
+        id: g.id,
+        name: g.name,
+        description: g.description ?? null,
+        goalId: g.goalId ?? null,
+        inviteCode: g.inviteCode,
+        createdAt: g.createdAt,
+        updatedAt: g.updatedAt,
+        memberCount,
+      });
+    }
 
-    return c.json(res);
+  return c.json(res);
   }
 }

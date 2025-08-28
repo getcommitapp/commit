@@ -14,6 +14,7 @@ export const GroupSummarySchema = z.object({
   inviteCode: z.string(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+  memberCount: z.number().optional(),
 });
 
 export const GroupMemberSchema = z.object({

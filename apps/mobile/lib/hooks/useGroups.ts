@@ -77,7 +77,7 @@ export function useGroups() {
             id: g.id,
             title: g.name,
             description: g.description || "",
-            memberCount: details?.members.length ?? 1,
+            memberCount: (g as any).memberCount ?? details?.members.length ?? 1,
             invitationCode: g.inviteCode,
           } as Group;
 
