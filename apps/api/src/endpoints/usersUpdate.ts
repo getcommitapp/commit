@@ -1,6 +1,9 @@
 import { OpenAPIRoute, contentJson } from "chanfana";
 import { type AppContext } from "../types";
-import { UserUpdateRequestSchema, UserUpdateResponseSchema } from "@commit/types";
+import {
+  UserUpdateRequestSchema,
+  UserUpdateResponseSchema,
+} from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
 import { eq } from "drizzle-orm";
@@ -27,8 +30,8 @@ export class UsersUpdate extends OpenAPIRoute {
   async handle(c: AppContext) {
     const user = c.var.user;
 
-  const data = await this.getValidatedData<typeof this.schema>();
-  const { name } = data.body;
+    const data = await this.getValidatedData<typeof this.schema>();
+    const { name } = data.body;
 
     const db = drizzle(c.env.DB, { schema });
     const now = new Date();

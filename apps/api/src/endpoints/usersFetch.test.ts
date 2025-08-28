@@ -12,6 +12,6 @@ describe("GET /api/users (fetch current user)", () => {
     expect(typeof user.email).toBe("string");
     expect(user.email.includes("@")).toBe(true);
     expect(typeof user.name).toBe("string");
-  expect(["user", "admin", "reviewer"]).toContain(user.role);
+    expect(["user", "admin", "reviewer"]).toContain(user.role);
   });
 });
