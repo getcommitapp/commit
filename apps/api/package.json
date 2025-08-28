@@ -15,6 +15,8 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "wrangler d1 execute commit-api-db --local --file ./drizzle-seed/seed-dev-preview.sql",
     "db:seed:preview": "wrangler d1 execute commit-api-db-preview --remote --env preview --file ./drizzle-seed/seed-dev-preview.sql",
+    "db:reset": "wrangler d1 execute commit-api-db --local --file ./drizzle-seed/reset-db.sql && pnpm db:migrate",
+    "db:reset:preview": "wrangler d1 execute commit-api-db-preview --remote --env preview --file ./drizzle-seed/reset-db.sql && pnpm db:migrate:preview",
     "db:migrate": "wrangler d1 migrations apply commit-api-db --local && pnpm db:seed",
     "db:migrate:preview": "wrangler d1 migrations apply commit-api-db-preview --remote --env preview && pnpm db:seed:preview",
     "db:migrate:production": "wrangler d1 migrations apply commit-api-db --remote --env production",

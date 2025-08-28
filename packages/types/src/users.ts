@@ -16,7 +16,7 @@ export const UserSchema = z.object({
 export const UserGetResponseSchema = UserSchema;
 
 export const UserUpdateRequestSchema = z.object({
-  name: z.string()
+  name: z.string(),
 });
 
 // Optimistic UI: return updated user
