@@ -1,7 +1,7 @@
 @startuml db-schema
 title commit. - Database Schema
 !theme plain
-!pragma layout elk
+'!pragma layout elk
 left to right direction
 hide circle
 hide methods
@@ -22,6 +22,7 @@ entity "User" as user {
   email: text [unique]
   emailVerified: boolean
   image: text
+  role: text ' (user, admin, reviewer)
   createdAt: integer [timestamp]
   updatedAt: integer [timestamp]
 }
@@ -157,6 +158,7 @@ entity "Group_participants" as group_participants {
 ' Relationships
 user ||--o{ goal : owns
 user ||--o{ goal_verifications_log : submits
+user ||--o{ goal_verifications_log : approves
 user ||--o{ group : creates
 user ||--o{ group_participants : participates
 user ||--o{ session : has
@@ -170,5 +172,10 @@ goal ||--o{ group : spawns
 
 group ||--o{ group_participants : has
 
-@enduml
+note right of goal_verifications_log
+approvedBy -> user.id
+Only admin or reviewer roles can approve
+(logical integrity constraint; in SQLite use a trigger)
+end note
 
+@enduml

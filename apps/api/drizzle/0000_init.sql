@@ -123,7 +123,8 @@ CREATE TABLE `user` (
 	`emailVerified` integer NOT NULL,
 	`image` text,
 	`createdAt` integer DEFAULT (current_timestamp),
-	`updatedAt` integer NOT NULL
+	`updatedAt` integer NOT NULL,
+    `role` text NOT NULL DEFAULT 'user'
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);--> statement-breakpoint

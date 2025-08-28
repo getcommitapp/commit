@@ -7,13 +7,21 @@ vi.hoisted(() => {
 });
 vi.mock("../../auth", () => {
   return {
-    createAuth: (_env: Env) => ({
+    createAuth: (env: Env) => ({
       handler: async (_req: Request) => new Response("OK", { status: 200 }),
       api: {
-        getSession: async (_opts: { headers: Headers }) => ({
-          user: { id: "user_1" },
-          session: { id: "session_1" },
-        }),
+        getSession: async (_opts: { headers: Headers }) => {
+          // Query current user role from DB so tests reflect updates
+          const result = await env.DB.prepare(
+            "SELECT role FROM user WHERE id = ? LIMIT 1"
+          )
+            .bind("user_1")
+            .first<{ role: string }>();
+          return {
+            user: { id: "user_1", role: result?.role ?? "user" },
+            session: { id: "session_1" },
+          };
+        },
       },
     }),
   };
@@ -39,7 +47,7 @@ async function resetDb() {
     .join("\n");
 
   const seedUserStatement =
-    "INSERT INTO user (id, name, email, emailVerified, image, updatedAt) VALUES ('user_1','Test User','test@example.com',1,NULL,strftime('%s','now'));";
+    "INSERT INTO user (id, name, email, emailVerified, image, updatedAt, role) VALUES ('user_1','Test User','test@example.com',1,NULL,strftime('%s','now'),'user');";
 
   await env.DB.exec(`${deleteStatements}\n${seedUserStatement}`);
 }

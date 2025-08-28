@@ -8,6 +8,7 @@ export const UserSchema = z.object({
   email: z.string(),
   emailVerified: z.boolean(),
   image: z.string().nullable(),
+  role: z.enum(["user", "admin", "reviewer"]),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
@@ -15,7 +16,7 @@ export const UserSchema = z.object({
 export const UserGetResponseSchema = UserSchema;
 
 export const UserUpdateRequestSchema = z.object({
-  name: z.string(),
+  name: z.string()
 });
 
 // Optimistic UI: return updated user
