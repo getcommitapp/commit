@@ -39,3 +39,11 @@ export async function apiFetch<T = unknown>(
 }
 
 export type ApiSuccess<T> = { success: true } & T;
+
+// Dev helper used by the app layout to mint a test session in preview builds.
+// In this branch we don't require a specific API call; the header in apiFetch
+// already impersonates the test user when enabled. Keep this as a no-op.
+export async function ensureDevToken(): Promise<void> {
+  if (!config.devAutoAuthAsTestUser) return;
+  // No-op; presence of the header is enough for dev flows.
+}

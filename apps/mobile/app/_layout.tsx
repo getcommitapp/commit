@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { Image as ExpoImage } from "expo-image";
 import { Image as RNImage } from "react-native";
+import * as Location from "expo-location";
 
 import { config } from "@/config";
 import { authClient } from "@/lib/auth-client";
@@ -60,6 +61,11 @@ export default function RootLayout() {
         const value = await AsyncStorage.getItem("hasSeenOnboarding");
         const hasSeenOnboarding = value === "true";
         setHasSeenOnboarding(hasSeenOnboarding);
+
+        // Pre-warm location permission request once during app load (best-effort)
+        try {
+          await Location.requestForegroundPermissionsAsync();
+        } catch (_) {}
 
         // Prefetch app assets (populate expo-image cache)
         try {
