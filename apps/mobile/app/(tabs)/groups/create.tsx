@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { FormGroup, FormInput } from "@/components/ui/form";
 import { spacing } from "@/components/Themed";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useCreateGroup } from "@/lib/hooks/useCreateGroup";
+import { ThemedText, textVariants } from "@/components/Themed";
 
 export default function CreateGroupScreen() {
   const [name, setName] = useState("");
@@ -12,11 +14,19 @@ export default function CreateGroupScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const canCreate = name.trim().length > 0 && description.trim().length > 0;
+  const { mutate, isPending, isError, error } = useCreateGroup();
+
+  const canCreate = name.trim().length > 0; // description optional
 
   const handleCreate = () => {
-    // TODO: Hook up API call. For now, just close modal.
-    router.back();
+    mutate(
+      { name: name.trim(), description: description.trim() || undefined },
+      {
+        onSuccess: () => {
+          router.back();
+        },
+      }
+    );
   };
 
   return (
@@ -39,10 +49,10 @@ export default function CreateGroupScreen() {
           paddingBottom: insets.bottom,
         }}
       >
-        <FormGroup title="Name">
+        <FormGroup title="Group">
           <FormInput
-            label="Title"
-            placeholder="Enter a title"
+            label="Name"
+            placeholder="Enter a group name"
             value={name}
             onChangeText={setName}
             autoCapitalize="words"
@@ -56,15 +66,20 @@ export default function CreateGroupScreen() {
             multiline
             numberOfLines={4}
           />
+          {isError && (
+            <ThemedText style={{ ...textVariants.subheadline, color: 'red' }}>
+              {(error as Error)?.message || 'Failed to create group'}
+            </ThemedText>
+          )}
         </FormGroup>
 
         <View style={{ flex: 1 }} />
 
         <Button
-          title="Create Group"
+          title={isPending ? "Creating..." : "Create Group"}
           size="lg"
           onPress={handleCreate}
-          disabled={!canCreate}
+          disabled={!canCreate || isPending}
           style={{}}
         />
       </ScrollView>

@@ -67,32 +67,37 @@ export function useGroups() {
           const stake =
             goal?.stakeCents && goal?.currency
               ? `${goal.currency} ${(goal.stakeCents / 100).toFixed(2)}`
-              : "—";
+              : undefined;
           const rawStart = goal?.startDate ?? g.createdAt;
           const rawEnd = goal?.endDate ?? null;
           const startDate = formatTimestamp(rawStart);
           const endDate = rawEnd ? formatTimestamp(rawEnd) : "";
 
-          return {
+          const base = {
             id: g.id,
             title: g.name,
             description: g.description || "",
-            totalStake: stake, // Currently using single goal stake (no aggregation)
-            memberCount: details?.members.length ?? 1, // fallback creator only
-            timeLeft: calculateTimeLeft(rawEnd),
-            startDate,
-            endDate,
+            memberCount: details?.members.length ?? 1,
             invitationCode: g.inviteCode,
-            goal: {
-              id: goal?.id || g.goalId || g.id,
-              title: goal?.name || g.name,
+          } as Group;
+
+          if (rawStart) base.startDate = startDate;
+          if (rawEnd) base.endDate = endDate;
+          if (stake) base.totalStake = stake;
+          if (rawEnd) base.timeLeft = calculateTimeLeft(rawEnd);
+
+          if (goal) {
+            base.goal = {
+              id: goal.id,
+              title: goal.name,
               stake,
               timeLeft: calculateTimeLeft(rawEnd),
               startDate,
               endDate,
-              // streak unknown
-            },
-          };
+            };
+          }
+
+          return base;
         })
       );
 
