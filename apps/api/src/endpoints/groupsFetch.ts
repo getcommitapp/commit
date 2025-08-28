@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { Group, GroupParticipants } from "../db/schema";
 
-export class GroupFetch extends OpenAPIRoute {
+export class GroupsFetch extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Get a group by id",

@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { and, eq } from "drizzle-orm";
 import { Group, GroupParticipants } from "../db/schema";
 
-export class GroupLeave extends OpenAPIRoute {
+export class GroupsLeave extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Leave a group",

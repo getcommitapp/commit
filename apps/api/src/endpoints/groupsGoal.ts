@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { Group, Goal, GoalVerificationsMethod } from "../db/schema";
 
-export class GroupGoal extends OpenAPIRoute {
+export class GroupsGoal extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Get the group's goal",

@@ -8,7 +8,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { Group, GroupParticipants } from "../db/schema";
 
-export class GroupCreate extends OpenAPIRoute {
+export class GroupsCreate extends OpenAPIRoute {
   // schema with minimal info per request: tags, summary, and 200 response description
   schema = {
     tags: ["Groups"],

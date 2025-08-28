@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { Group } from "../db/schema";
 
-export class GroupInvite extends OpenAPIRoute {
+export class GroupsInvite extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Create an invite link for a group",

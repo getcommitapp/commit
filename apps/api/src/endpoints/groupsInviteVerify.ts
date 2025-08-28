@@ -8,7 +8,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { Group } from "../db/schema";
 
-export class GroupInviteVerify extends OpenAPIRoute {
+export class GroupsInviteVerify extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Verify a group invite",
