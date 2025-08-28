@@ -4,11 +4,19 @@ import { GoalsListResponseSchema } from "@commit/types";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
+
+const HeaderSchema = z.object({
+  "X-Commit-Dev-Auto-Auth": z.string(),
+});
 
 export class GoalsList extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "List Goals",
+    request: {
+      headers: HeaderSchema,
+    },
     responses: {
       "200": {
         description: "Returns a list of goals",
