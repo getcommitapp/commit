@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
 import { eq } from "drizzle-orm";
 
-export class UserFetch extends OpenAPIRoute {
+export class UsersFetch extends OpenAPIRoute {
   schema = {
     tags: ["User"],
     summary: "Get a single user by id",

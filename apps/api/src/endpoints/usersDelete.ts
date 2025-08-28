@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
 import { eq } from "drizzle-orm";
 
-export class UserDelete extends OpenAPIRoute {
+export class UsersDelete extends OpenAPIRoute {
   schema = {
     tags: ["User"],
     summary: "Delete a user",
@@ -26,16 +26,7 @@ export class UserDelete extends OpenAPIRoute {
 
     const db = drizzle(c.env.DB, { schema });
 
-    // Attempt deletion (will fail with FK constraint if referenced elsewhere)
-    try {
-      await db.delete(schema.User).where(eq(schema.User.id, user.id));
-    } catch (_e) {
-      // For now, surface a controlled error (could implement soft-delete later)
-      return c.json({
-        message:
-          "Cannot delete user account as it has associated data. Please contact support for assistance.",
-      });
-    }
+    await db.delete(schema.User).where(eq(schema.User.id, user.id));
 
     return c.json({ message: "User deleted successfully." });
   }

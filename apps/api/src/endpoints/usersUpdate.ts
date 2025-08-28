@@ -1,4 +1,4 @@
-import { OpenAPIRoute } from "chanfana";
+import { OpenAPIRoute, contentJson } from "chanfana";
 import { type AppContext } from "../types";
 import {
   UserUpdateRequestSchema,
@@ -8,18 +8,12 @@ import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
 import { eq } from "drizzle-orm";
 
-export class UserUpdate extends OpenAPIRoute {
+export class UsersUpdate extends OpenAPIRoute {
   schema = {
     tags: ["User"],
     summary: "Update a user",
     request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: UserUpdateRequestSchema,
-          },
-        },
-      },
+      body: contentJson(UserUpdateRequestSchema),
     },
     responses: {
       "200": {
@@ -48,6 +42,6 @@ export class UserUpdate extends OpenAPIRoute {
       .where(eq(schema.User.id, user.id))
       .returning();
 
-    return c.json(updated);
+    return c.json(updated[0]);
   }
 }

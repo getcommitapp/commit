@@ -4,9 +4,9 @@ import { createAuth } from "./auth";
 import { cors } from "hono/cors";
 
 // user
-import { UserFetch } from "./endpoints/userFetch";
-import { UserUpdate } from "./endpoints/userUpdate";
-import { UserDelete } from "./endpoints/userDelete";
+import { UsersFetch } from "./endpoints/usersFetch";
+import { UsersUpdate } from "./endpoints/usersUpdate";
+import { UsersDelete } from "./endpoints/usersDelete";
 
 // Goals
 import { GoalsList } from "./endpoints/goalsList";
@@ -70,9 +70,9 @@ app.use("*", async (c, next) => {
 });
 
 // User
-openapi.get("/api/user", UserFetch);
-openapi.put("/api/user", UserUpdate);
-openapi.delete("/api/user", UserDelete);
+openapi.get("/api/users", UsersFetch);
+openapi.put("/api/users", UsersUpdate);
+openapi.delete("/api/users", UsersDelete);
 
 // Goals
 openapi.get("/api/goals", GoalsList);
