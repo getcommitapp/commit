@@ -38,7 +38,7 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
 Request:
 
 ```txt
-GET /user
+GET /api/users
 Authorization: Bearer <token>
 ```
 
@@ -61,7 +61,7 @@ Response:
 Request:
 
 ```txt
-PUT /user
+PUT /api/users
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -88,7 +88,7 @@ Response:
 Request:
 
 ```txt
-DELETE /user
+DELETE /api/users
 Authorization: Bearer <token>
 ```
 
@@ -107,7 +107,7 @@ Response:
 Request:
 
 ```txt
-POST /goals
+POST /api/goals
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -143,7 +143,7 @@ Response:
 Request:
 
 ```txt
-GET /goals
+GET /api/goals
 Authorization: Bearer <token>
 ```
 
@@ -176,7 +176,7 @@ Response:
 Request:
 
 ```txt
-GET /goals/<id>
+GET /api/goals/<id>
 Authorization: Bearer <token>
 ```
 
@@ -217,7 +217,7 @@ Response:
 Request:
 
 ```txt
-DELETE /goals/<id>
+DELETE /api/goals/<id>
 Authorization: Bearer <token>
 ```
 
@@ -236,7 +236,7 @@ Response:
 Request:
 
 ```txt
-POST /goals/<id>/verify
+POST /api/goals/<id>/verify
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -265,7 +265,7 @@ Response:
 Request:
 
 ```txt
-GET /groups
+GET /api/groups
 Authorization: Bearer <token>
 ```
 
@@ -290,7 +290,7 @@ Response:
 Request:
 
 ```txt
-GET /groups/<id>
+GET /api/groups/<id>
 Authorization: Bearer <token>
 ```
 
@@ -321,7 +321,7 @@ Response:
 Request:
 
 ```txt
-POST /groups
+POST /api/groups
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -347,7 +347,7 @@ Response:
 Request:
 
 ```txt
-GET /groups/<id>/invite
+GET /api/groups/<id>/invite
 Authorization: Bearer <token>
 ```
 
@@ -366,7 +366,7 @@ Response:
 Request:
 
 ```txt
-GET /groups/<id>/invite/verify?code=<invite_code>
+GET /api/groups/<id>/invite/verify?code=<invite_code>
 Authorization: Bearer <token>
 ```
 
@@ -385,7 +385,7 @@ Response:
 Request:
 
 ```txt
-GET /groups/<id>/goal
+GET /api/groups/<id>/goal
 Authorization: Bearer <token>
 ```
 
@@ -426,7 +426,7 @@ Response:
 Request:
 
 ```txt
-POST /groups/<id>/goal/verify
+POST /api/groups/<id>/goal/verify
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -455,7 +455,7 @@ Response:
 Request:
 
 ```txt
-POST /groups/<id>/leave
+POST /api/groups/<id>/leave
 Authorization: Bearer <token>
 ```
 
@@ -474,7 +474,7 @@ Response:
 Request:
 
 ```txt
-GET /user
+GET /api/users
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
@@ -495,7 +495,7 @@ Response (200 OK):
 Request:
 
 ```txt
-POST /goals
+POST /api/goals
 Authorization: Bearer eyJhbGciOiJIUzI1...
 Content-Type: application/json
 
@@ -531,7 +531,7 @@ Response (201 Created):
 Request:
 
 ```txt
-POST /goals/goal_789/verify
+POST /api/goals/goal_789/verify
 Authorization: Bearer eyJhbGciOiJIUzI1...
 Content-Type: application/json
 
@@ -558,7 +558,7 @@ Response (200 OK):
 Request:
 
 ```txt
-POST /groups
+POST /api/groups
 Authorization: Bearer eyJhbGciOiJIUzI1...
 Content-Type: application/json
 
@@ -582,7 +582,7 @@ Response (201 Created):
 Request:
 
 ```txt
-GET /groups/group_456/goal
+GET /api/groups/group_456/goal
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
@@ -619,7 +619,7 @@ Response (200 OK):
 Request:
 
 ```txt
-POST /groups/group_456/leave
+POST /api/groups/group_456/leave
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
@@ -636,7 +636,7 @@ Response (200 OK):
 Request:
 
 ```txt
-GET /groups/group_456/invite/verify?code=WRONGCODE
+GET /api/groups/group_456/invite/verify?code=WRONGCODE
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
