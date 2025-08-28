@@ -6,7 +6,6 @@ Handled by BetterAuth.
 
 - GET `/user` – fetch own user
 - PUT `/user` – update user
-- POST `/user` – add Stripe/payment info
 - DELETE `/user` – delete the account
 
 ---

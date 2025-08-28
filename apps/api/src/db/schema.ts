@@ -37,7 +37,7 @@ export const Session = sqliteTable("session", {
   userAgent: text("userAgent"),
   userId: text("userId")
     .notNull()
-    .references(() => User.id),
+    .references(() => User.id, { onDelete: "cascade" }),
 });
 
 export const Account = sqliteTable("account", {
@@ -46,7 +46,7 @@ export const Account = sqliteTable("account", {
   providerId: text("providerId").notNull(),
   userId: text("userId")
     .notNull()
-    .references(() => User.id),
+    .references(() => User.id, { onDelete: "cascade" }),
   accessToken: text("accessToken"),
   refreshToken: text("refreshToken"),
   idToken: text("idToken"),
@@ -84,7 +84,7 @@ export const Goal = sqliteTable("goal", {
 
   ownerId: text("ownerId")
     .notNull()
-    .references(() => User.id),
+    .references(() => User.id, { onDelete: "cascade" }),
 
   name: text("name").notNull(),
   description: text("description"),
@@ -100,9 +100,12 @@ export const Goal = sqliteTable("goal", {
   currency: text("currency").notNull(),
 
   destinationType: text("destinationType").notNull(),
-  destinationUserId: text("destinationUserId").references(() => User.id),
+  destinationUserId: text("destinationUserId").references(() => User.id, {
+    onDelete: "cascade",
+  }),
   destinationCharityId: text("destinationCharityId").references(
-    () => Charity.id
+    () => Charity.id,
+    { onDelete: "cascade" }
   ),
 
   createdAt: createCreatedAt(),
@@ -115,7 +118,7 @@ export const GoalVerificationsMethod = sqliteTable(
     id: text("id").primaryKey(),
     goalId: text("goalId")
       .notNull()
-      .references(() => Goal.id),
+      .references(() => Goal.id, { onDelete: "cascade" }),
 
     method: text("method").notNull(),
 
@@ -134,16 +137,18 @@ export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
   id: text("id").primaryKey(), // uuid stored as text
   goalId: text("goalId")
     .notNull()
-    .references(() => Goal.id),
+    .references(() => Goal.id, { onDelete: "cascade" }),
 
   userId: text("userId")
     .notNull()
-    .references(() => User.id),
+    .references(() => User.id, { onDelete: "cascade" }),
 
   type: text("type").notNull(),
   verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
   approvalStatus: text("approvalStatus").notNull(),
-  approvedBy: text("approvedBy").references(() => User.id),
+  approvedBy: text("approvedBy").references(() => User.id, {
+    onDelete: "cascade",
+  }),
 
   startTime: integer("startTime", { mode: "timestamp" }),
   photoDescription: text("photoDescription"),
@@ -158,9 +163,9 @@ export const Group = sqliteTable("group", {
 
   creatorId: text("creatorId")
     .notNull()
-    .references(() => User.id),
+    .references(() => User.id, { onDelete: "cascade" }),
 
-  goalId: text("goalId").references(() => Goal.id),
+  goalId: text("goalId").references(() => Goal.id, { onDelete: "cascade" }),
 
   name: text("name").notNull(),
   description: text("description"),
@@ -175,10 +180,10 @@ export const GroupParticipants = sqliteTable(
   {
     groupId: text("groupId")
       .notNull()
-      .references(() => Group.id),
+      .references(() => Group.id, { onDelete: "cascade" }),
     userId: text("userId")
       .notNull()
-      .references(() => User.id),
+      .references(() => User.id, { onDelete: "cascade" }),
 
     joinedAt: integer("joinedAt", { mode: "timestamp" }).notNull(),
     status: text("status"),

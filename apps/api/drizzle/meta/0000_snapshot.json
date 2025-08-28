@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "30ad265e-69c3-4c5f-bb6e-0eeadcdb6f7b",
+  "id": "4dc1836d-eace-4271-9d36-aebf7fd6a8f2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -108,7 +108,7 @@
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -287,7 +287,7 @@
           "tableTo": "user",
           "columnsFrom": ["ownerId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "goal_destinationUserId_user_id_fk": {
@@ -296,7 +296,7 @@
           "tableTo": "user",
           "columnsFrom": ["destinationUserId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "goal_destinationCharityId_charity_id_fk": {
@@ -305,7 +305,7 @@
           "tableTo": "charity",
           "columnsFrom": ["destinationCharityId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -410,7 +410,7 @@
           "tableTo": "goal",
           "columnsFrom": ["goalId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "goal_verifications_log_userId_user_id_fk": {
@@ -419,7 +419,7 @@
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "goal_verifications_log_approvedBy_user_id_fk": {
@@ -428,7 +428,7 @@
           "tableTo": "user",
           "columnsFrom": ["approvedBy"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -519,7 +519,7 @@
           "tableTo": "goal",
           "columnsFrom": ["goalId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -602,7 +602,7 @@
           "tableTo": "user",
           "columnsFrom": ["creatorId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "group_goalId_goal_id_fk": {
@@ -611,7 +611,7 @@
           "tableTo": "goal",
           "columnsFrom": ["goalId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -674,7 +674,7 @@
           "tableTo": "group",
           "columnsFrom": ["groupId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "group_participants_userId_user_id_fk": {
@@ -683,7 +683,7 @@
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -771,7 +771,7 @@
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

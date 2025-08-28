@@ -21,13 +21,6 @@ export const UserUpdateRequestSchema = z.object({
 // Optimistic UI: return updated user
 export const UserUpdateResponseSchema = UserSchema;
 
-export const UserStripeCreateRequestSchema = z.object({});
-
-export const UserStripeCreateResponseSchema = z.object({
-  // shape can be extended when Stripe fields are known
-  success: z.boolean(),
-});
-
 export const UserDeleteResponseSchema = z.object({
   message: z.string(),
 });
@@ -45,14 +38,6 @@ export type UserGetResponse = z.infer<typeof UserGetResponseSchema>;
 export type UserUpdateRequest = z.infer<typeof UserUpdateRequestSchema>;
 
 export type UserUpdateResponse = z.infer<typeof UserUpdateResponseSchema>;
-
-export type UserStripeCreateRequest = z.infer<
-  typeof UserStripeCreateRequestSchema
->;
-
-export type UserStripeCreateResponse = z.infer<
-  typeof UserStripeCreateResponseSchema
->;
 
 export type UserDeleteResponse = z.infer<typeof UserDeleteResponseSchema>;
 

@@ -6,7 +6,6 @@ import { cors } from "hono/cors";
 // user
 import { UserFetch } from "./endpoints/userFetch";
 import { UserUpdate } from "./endpoints/userUpdate";
-import { UserStripeCreate } from "./endpoints/userStripeCreate";
 import { UserDelete } from "./endpoints/userDelete";
 
 // Goals
@@ -73,7 +72,6 @@ app.use("*", async (c, next) => {
 // User
 openapi.get("/api/user", UserFetch);
 openapi.put("/api/user", UserUpdate);
-openapi.post("/api/user", UserStripeCreate);
 openapi.delete("/api/user", UserDelete);
 
 // Goals
