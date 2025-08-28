@@ -9,6 +9,7 @@ import {
 import * as Network from "expo-network";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 // React Query client with sane defaults for mobile
 const queryClient = new QueryClient({
@@ -50,7 +51,11 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView>
-        <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+        <StripeProvider
+          publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}
+        >
+          <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+        </StripeProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>
   );

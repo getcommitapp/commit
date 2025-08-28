@@ -7,7 +7,8 @@ declare interface Env {
   AUTH_GOOGLE_CLIENT_SECRET: string;
   AUTH_APPLE_CLIENT_ID: string;
   AUTH_APPLE_CLIENT_SECRET?: string;
-  AUTH_BYPASS?: string;
+  STRIPE_SECRET_KEY: string;
+  STRIPE_WEBHOOK_SECRET: string;
 }
 
 declare module "cloudflare:test" {

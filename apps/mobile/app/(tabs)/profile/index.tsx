@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 
 import { FormGroup, FormItem } from "@/components/ui/form";
 import {
@@ -10,6 +10,7 @@ import {
 import CheckCircle from "@/assets/icons/check-circle.svg";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { apiFetch } from "@/lib/api";
 
 export default function ProfileScreen() {
   const success = useThemeColor({}, "success");
@@ -50,6 +51,40 @@ export default function ProfileScreen() {
           value="TWINT"
           navigateTo="/(tabs)/profile/method"
           testID="row-payment-method"
+        />
+        <FormItem
+          label="Test debit 10 CHF"
+          onPress={async () => {
+            try {
+              const res = await apiFetch<{ id: string; status: string }>(
+                "/payments/test/debit",
+                { method: "POST" }
+              );
+              Alert.alert("Debit", `Status: ${res.status} (id: ${res.id})`);
+            } catch (e: any) {
+              Alert.alert("Debit failed", e?.message ?? String(e));
+            }
+          }}
+          testID="row-test-debit"
+        />
+        <FormItem
+          label="Test credit 10 CHF"
+          onPress={async () => {
+            try {
+              const res = await apiFetch<{
+                id: string;
+                amount: number;
+                currency: string;
+              }>("/payments/test/credit", { method: "POST" });
+              Alert.alert(
+                "Credit",
+                `Credited ${(Math.abs(res.amount) / 100).toFixed(2)} ${res.currency.toUpperCase()} (id: ${res.id})`
+              );
+            } catch (e: any) {
+              Alert.alert("Credit failed", e?.message ?? String(e));
+            }
+          }}
+          testID="row-test-credit"
         />
       </FormGroup>
     </ScreenLayout>

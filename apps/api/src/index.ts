@@ -28,6 +28,11 @@ import { GroupsGoal } from "./endpoints/groupsGoal";
 import { GroupsLeave } from "./endpoints/groupsLeave";
 import { HonoContext } from "./types";
 import { GroupsJoin } from "./endpoints/groupsJoin";
+import { PaymentsSetupIntent } from "./endpoints/paymentsSetupIntent";
+import { PaymentsCharge } from "./endpoints/paymentsCharge";
+import { PaymentsRefund } from "./endpoints/paymentsRefund";
+import { PaymentsDebitTest } from "./endpoints/paymentsDebitTest";
+import { PaymentsCreditTest } from "./endpoints/paymentsCreditTest";
 
 // Start a Hono app
 const app = new Hono<HonoContext>();
@@ -40,6 +45,19 @@ const openapi = fromHono(app, {
 // CORS for auth routes (adjust origin as needed)
 app.use(
   "/api/auth/*",
+  cors({
+    origin: (origin) => origin || "*",
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  })
+);
+
+// CORS for payments routes
+app.use(
+  "/api/payments/*",
   cors({
     origin: (origin) => origin || "*",
     allowHeaders: ["Content-Type", "Authorization"],
@@ -93,6 +111,7 @@ app.use("*", async (c, next) => {
       name: user.name,
       email: user.email,
       image: user.image,
+      stripeCustomerId: user.stripeCustomerId,
       emailVerified: user.emailVerified,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -139,5 +158,12 @@ openapi.get("/api/groups/:id/invite", GroupsInvite);
 openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
 openapi.post("/api/groups/:id/leave", GroupsLeave);
 openapi.post("/api/groups/join", GroupsJoin);
+
+// Payments
+openapi.post("/api/payments/setup-intent", PaymentsSetupIntent);
+openapi.post("/api/payments/charge", PaymentsCharge);
+openapi.post("/api/payments/refund", PaymentsRefund);
+openapi.post("/api/payments/test/debit", PaymentsDebitTest);
+openapi.post("/api/payments/test/credit", PaymentsCreditTest);
 
 export default app;
