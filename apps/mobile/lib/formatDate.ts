@@ -1,4 +1,6 @@
-export function formatTimestamp(value: string | number | null | undefined): string {
+export function formatTimestamp(
+  value: string | number | null | undefined
+): string {
   if (value === null || value === undefined || value === "") return "";
   let date: Date;
   if (typeof value === "number") {

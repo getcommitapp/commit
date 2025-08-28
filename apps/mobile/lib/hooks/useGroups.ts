@@ -1,6 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import { GroupsListResponseSchema, GroupGetResponseSchema, GroupGoalGetResponseSchema, type GroupsListResponse, type GroupGetResponse, type GroupGoalGetResponse } from "@commit/types";
+import {
+  GroupsListResponseSchema,
+  GroupGetResponseSchema,
+  GroupGoalGetResponseSchema,
+  type GroupsListResponse,
+  type GroupGetResponse,
+  type GroupGoalGetResponse,
+} from "@commit/types";
 import type { Group } from "@/components/groups/GroupCard";
 import { formatTimestamp } from "@/lib/formatDate";
 
@@ -57,13 +64,14 @@ export function useGroups() {
             // ignore missing goal
           }
 
-            const stake = goal?.stakeCents && goal?.currency
+          const stake =
+            goal?.stakeCents && goal?.currency
               ? `${goal.currency} ${(goal.stakeCents / 100).toFixed(2)}`
               : "—";
-            const rawStart = goal?.startDate ?? g.createdAt;
-            const rawEnd = goal?.endDate ?? null;
-            const startDate = formatTimestamp(rawStart);
-            const endDate = rawEnd ? formatTimestamp(rawEnd) : "";
+          const rawStart = goal?.startDate ?? g.createdAt;
+          const rawEnd = goal?.endDate ?? null;
+          const startDate = formatTimestamp(rawStart);
+          const endDate = rawEnd ? formatTimestamp(rawEnd) : "";
 
           return {
             id: g.id,
