@@ -21,7 +21,7 @@ describe("GET /api/goals (list)", () => {
             name,
             description: null,
             stakeCents: 100,
-            currency: "USD",
+            currency: "CHF",
             recurrence: null,
             startDate: new Date().toISOString(),
             endDate: null,

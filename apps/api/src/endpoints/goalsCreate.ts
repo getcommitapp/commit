@@ -63,12 +63,6 @@ export class GoalsCreate extends OpenAPIRoute {
 
     const response = {
       ...created,
-      startDate: created.startDate?.toISOString(),
-      endDate: created.endDate?.toISOString() ?? null,
-      dueStartTime: created.dueStartTime?.toISOString(),
-      dueEndTime: created.dueEndTime?.toISOString() ?? null,
-      createdAt: created.createdAt.toISOString(),
-      updatedAt: created.updatedAt.toISOString(),
     };
 
     return c.json(response, 200);

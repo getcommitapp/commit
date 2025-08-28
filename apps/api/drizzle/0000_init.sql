@@ -10,8 +10,8 @@ CREATE TABLE `account` (
 	`refreshTokenExpiresAt` integer,
 	`scope` text,
 	`password` text,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL,
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
@@ -19,8 +19,8 @@ CREATE TABLE `charity` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`url` text,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `goal` (
@@ -38,8 +38,8 @@ CREATE TABLE `goal` (
 	`destinationType` text NOT NULL,
 	`destinationUserId` text,
 	`destinationCharityId` text,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL,
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`ownerId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`destinationUserId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`destinationCharityId`) REFERENCES `charity`(`id`) ON UPDATE no action ON DELETE cascade
@@ -56,8 +56,8 @@ CREATE TABLE `goal_verifications_log` (
 	`startTime` integer,
 	`photoDescription` text,
 	`photoUrl` text,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL,
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`approvedBy`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
@@ -72,8 +72,8 @@ CREATE TABLE `goal_verifications_method` (
 	`radiusM` integer,
 	`durationSeconds` integer,
 	`graceTime` integer,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL,
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
@@ -84,8 +84,8 @@ CREATE TABLE `group` (
 	`name` text NOT NULL,
 	`description` text,
 	`inviteCode` text NOT NULL,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL,
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`creatorId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade
 );
@@ -96,8 +96,8 @@ CREATE TABLE `group_participants` (
 	`userId` text NOT NULL,
 	`joinedAt` integer NOT NULL,
 	`status` text,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL,
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL,
 	PRIMARY KEY(`groupId`, `userId`),
 	FOREIGN KEY (`groupId`) REFERENCES `group`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
@@ -107,8 +107,8 @@ CREATE TABLE `session` (
 	`id` text PRIMARY KEY NOT NULL,
 	`expiresAt` integer NOT NULL,
 	`token` text NOT NULL,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL,
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL,
 	`ipAddress` text,
 	`userAgent` text,
 	`userId` text NOT NULL,
@@ -122,8 +122,8 @@ CREATE TABLE `user` (
 	`email` text NOT NULL,
 	`emailVerified` integer NOT NULL,
 	`image` text,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);--> statement-breakpoint
@@ -132,6 +132,6 @@ CREATE TABLE `verification` (
 	`identifier` text NOT NULL,
 	`value` text NOT NULL,
 	`expiresAt` integer NOT NULL,
-	`created_at` integer DEFAULT (current_timestamp),
-	`updated_at` integer NOT NULL
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL
 );

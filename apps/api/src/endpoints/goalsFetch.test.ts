@@ -51,7 +51,7 @@ describe("GET /api/goals/:id (fetch)", () => {
     // Insert another user and their goal
     const otherUserId = "user_2";
     await testEnv.DB.exec(
-      `INSERT INTO user (id, name, email, emailVerified, image, updated_at) VALUES ('${otherUserId}','Other','other@example.com',1,NULL,strftime('%s','now'));`
+      `INSERT INTO user (id, name, email, emailVerified, image, updatedAt) VALUES ('${otherUserId}','Other','other@example.com',1,NULL,strftime('%s','now'));`
     );
     const goalId = uuid();
     const now = new Date();
@@ -66,7 +66,7 @@ describe("GET /api/goals/:id (fetch)", () => {
       dueEndTime: null,
       recurrence: null,
       stakeCents: 100,
-      currency: "USD",
+      currency: "CHF",
       destinationType: "user",
       destinationUserId: null,
       destinationCharityId: null,

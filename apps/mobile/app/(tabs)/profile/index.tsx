@@ -9,15 +9,17 @@ import {
 } from "@/components/Themed";
 import CheckCircle from "@/assets/icons/check-circle.svg";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function ProfileScreen() {
   const success = useThemeColor({}, "success");
+  const { user, loading: _loading, token: _token } = useAuth();
 
   return (
     <ScreenLayout largeTitle>
       <FormGroup title="Account">
-        <FormItem label="Name" value="John Appleseed" />
-        <FormItem label="Username" value="@johnny" />
+        <FormItem label="Name" value={user?.name ?? "-"} />
+        <FormItem label="Email" value={user?.email ?? "-"} />
       </FormGroup>
 
       <FormGroup title="Payment">

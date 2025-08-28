@@ -55,7 +55,7 @@ describe("DELETE /api/goals/:id (delete)", () => {
     const db = drizzle(testEnv.DB);
     const otherUserId = "user_2";
     await testEnv.DB.exec(
-      `INSERT INTO user (id, name, email, emailVerified, image, updated_at) VALUES ('${otherUserId}','Other','other@example.com',1,NULL,strftime('%s','now'));`
+      `INSERT INTO user (id, name, email, emailVerified, image, updatedAt) VALUES ('${otherUserId}','Other','other@example.com',1,NULL,strftime('%s','now'));`
     );
     const goalId = uuid();
     const now = new Date();
@@ -70,7 +70,7 @@ describe("DELETE /api/goals/:id (delete)", () => {
       dueEndTime: null,
       recurrence: null,
       stakeCents: 100,
-      currency: "USD",
+      currency: "CHF",
       destinationType: "user",
       destinationUserId: null,
       destinationCharityId: null,

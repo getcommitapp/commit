@@ -2,6 +2,9 @@ import { fromHono } from "chanfana";
 import { Hono } from "hono";
 import { createAuth } from "./auth";
 import { cors } from "hono/cors";
+import { drizzle } from "drizzle-orm/d1";
+import * as schema from "./db/schema";
+import { eq } from "drizzle-orm";
 
 // user
 import { UsersFetch } from "./endpoints/usersFetch";
@@ -53,6 +56,51 @@ app.on(["POST", "GET"], "/api/auth/*", (c) =>
 
 // Protect all routes
 app.use("*", async (c, next) => {
+  // Allow dev login endpoint without auth in dev/preview
+  const env = c.env;
+  const environment = env["ENVIRONMENT"] || "development";
+  const devAutoAuthEmail = c.req.header("X-Commit-Dev-Auto-Auth");
+
+  // Dev/preview override: trust custom header to impersonate seeded user
+  if (
+    (environment === "development" || environment === "preview") &&
+    devAutoAuthEmail
+  ) {
+    const db = drizzle(c.env.DB, { schema });
+    // Load user
+    const [user] = await db
+      .select()
+      .from(schema.User)
+      .where(eq(schema.User.email, devAutoAuthEmail))
+      .limit(1);
+    if (!user) {
+      return c.json({ error: "Dev user not found" }, 401);
+    }
+
+    // Load pre-seeded session (fixed token) for the user
+    const [session] = await db
+      .select()
+      .from(schema.Session)
+      .where(eq(schema.Session.userId, user.id))
+      .limit(1);
+    if (!session) {
+      return c.json({ error: "Dev session not found" }, 401);
+    }
+
+    c.set("user", {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      emailVerified: user.emailVerified,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
+    c.set("session", session);
+    return next();
+  }
+
+  // Default: use Better Auth
   const session = await createAuth(c.env).api.getSession({
     headers: c.req.raw.headers,
   });

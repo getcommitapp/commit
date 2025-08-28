@@ -1,0 +1,51 @@
+import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "../api";
+import { GoalsListResponseSchema, type GoalsListResponse } from "@commit/types";
+import { Goal } from "@/components/goals/GoalCard";
+
+export function useGoals() {
+  return useQuery({
+    queryKey: ["goals"],
+    queryFn: async (): Promise<Goal[]> => {
+      const goals = await apiFetch<GoalsListResponse>(
+        "/goals",
+        {},
+        GoalsListResponseSchema
+      );
+
+      // Transform API response to match GoalCard interface
+      return goals.map((goal) => ({
+        id: goal.id,
+        title: goal.name,
+        description: goal.description || "",
+        stake: `${goal.currency} ${(goal.stakeCents / 100).toFixed(2)}`,
+        timeLeft: calculateTimeLeft(goal.endDate),
+        startDate: goal.startDate,
+        endDate: goal.endDate || "",
+        // Note: streak is not available in the API response, so it's omitted
+      }));
+    },
+  });
+}
+
+function calculateTimeLeft(endDate: string | null): string {
+  if (!endDate) return "No deadline";
+
+  const now = new Date();
+  const end = new Date(endDate);
+  const diffMs = end.getTime() - now.getTime();
+
+  if (diffMs <= 0) return "Overdue";
+
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays > 0) {
+    return `${diffDays}d left`;
+  } else if (diffHours > 0) {
+    return `${diffHours}h left`;
+  } else {
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    return `${diffMinutes}m left`;
+  }
+}

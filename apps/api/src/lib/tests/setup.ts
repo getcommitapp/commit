@@ -39,7 +39,7 @@ async function resetDb() {
     .join("\n");
 
   const seedUserStatement =
-    "INSERT INTO user (id, name, email, emailVerified, image, updated_at) VALUES ('user_1','Test User','test@example.com',1,NULL,strftime('%s','now'));";
+    "INSERT INTO user (id, name, email, emailVerified, image, updatedAt) VALUES ('user_1','Test User','test@example.com',1,NULL,strftime('%s','now'));";
 
   await env.DB.exec(`${deleteStatements}\n${seedUserStatement}`);
 }

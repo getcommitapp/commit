@@ -8,11 +8,9 @@ import {
 } from "drizzle-orm/sqlite-core";
 
 const createCreatedAt = () =>
-  integer("created_at", { mode: "timestamp" }).default(
-    sql`(current_timestamp)`
-  );
+  integer("createdAt", { mode: "timestamp" }).default(sql`(current_timestamp)`);
 const createUpdatedAt = () =>
-  integer("updated_at", { mode: "timestamp" }).notNull();
+  integer("updatedAt", { mode: "timestamp" }).notNull();
 
 export const User = sqliteTable("user", {
   id: text("id").primaryKey(),
