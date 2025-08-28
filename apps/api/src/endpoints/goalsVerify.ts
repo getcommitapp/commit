@@ -76,7 +76,6 @@ export class GoalsVerify extends OpenAPIRoute {
         goalId: goalId,
         userId: user.id,
         type: verification.type,
-        verifiedAt: null,
         approvalStatus: "pending",
         approvedBy: null,
         startTime: verification.startTime
@@ -86,8 +85,11 @@ export class GoalsVerify extends OpenAPIRoute {
         photoUrl: verification.photoUrl ?? null,
         createdAt: now,
         updatedAt: now,
-      });
+      } as unknown as schema.GoalVerificationsLogInsert);
     }
+
+    // TODO(commit): if this goal is recurrent and verification implies completion or failure,
+    // reset the per-user timer for this goal: set goal_timer.startedAt = NULL for (goalId,userId).
 
     return c.json({ message: "Verification log submitted." }, 200);
   }

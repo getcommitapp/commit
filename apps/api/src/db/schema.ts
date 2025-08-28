@@ -160,6 +160,18 @@ export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
   updatedAt: createUpdatedAt(),
 });
 
+export const GoalTimer = sqliteTable("goal_timer", {
+  id: text("id").primaryKey(),
+  goalId: text("goalId")
+    .notNull()
+    .references(() => Goal.id, { onDelete: "cascade" }),
+  userId: text("userId")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  startedAt: integer("startedAt", { mode: "timestamp" }),
+  createdAt: createCreatedAt(),
+});
+
 export const Group = sqliteTable("group", {
   id: text("id").primaryKey(),
 
@@ -231,3 +243,6 @@ export type GroupInsert = typeof Group.$inferInsert;
 
 export type GroupParticipantsSelect = typeof GroupParticipants.$inferSelect;
 export type GroupParticipantsInsert = typeof GroupParticipants.$inferInsert;
+
+export type GoalTimerSelect = typeof GoalTimer.$inferSelect;
+export type GoalTimerInsert = typeof GoalTimer.$inferInsert;

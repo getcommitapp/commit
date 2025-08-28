@@ -17,6 +17,8 @@ import { GoalsCreate } from "./endpoints/goalsCreate";
 import { GoalsFetch } from "./endpoints/goalsFetch";
 import { GoalsDelete } from "./endpoints/goalsDelete";
 import { GoalsVerify } from "./endpoints/goalsVerify";
+import { GoalsTimerGet } from "./endpoints/goalsTimerGet";
+import { GoalsTimerStart } from "./endpoints/goalsTimerStart";
 
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
@@ -147,6 +149,8 @@ openapi.post("/api/goals", GoalsCreate);
 openapi.get("/api/goals/:id", GoalsFetch);
 openapi.delete("/api/goals/:id", GoalsDelete);
 openapi.post("/api/goals/:id/verify", GoalsVerify);
+openapi.get("/api/goals/:id/timer", GoalsTimerGet);
+openapi.post("/api/goals/:id/timer/start", GoalsTimerStart);
 
 // Groups
 openapi.get("/api/groups", GroupsList);

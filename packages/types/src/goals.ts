@@ -73,6 +73,23 @@ export const GoalVerifyResponseSchema = z.object({
   message: z.string(), // "Verification log submitted."
 });
 
+// ---------------- Goal Timer Schemas ----------------
+
+export const GoalTimerSchema = z.object({
+  goalId: z.string(),
+  userId: z.string(),
+  startedAt: z.string().datetime().nullable(),
+});
+
+export const GoalTimerGetResponseSchema = z.object({
+  timer: GoalTimerSchema.nullable(),
+});
+
+export const GoalTimerStartResponseSchema = z.object({
+  timer: GoalTimerSchema,
+  created: z.boolean(),
+});
+
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 
 export type GoalVerificationMethod = z.infer<
@@ -98,3 +115,9 @@ export type GoalVerificationInput = z.infer<typeof GoalVerificationInputSchema>;
 export type GoalVerifyRequest = z.infer<typeof GoalVerifyRequestSchema>;
 
 export type GoalVerifyResponse = z.infer<typeof GoalVerifyResponseSchema>;
+
+export type GoalTimer = z.infer<typeof GoalTimerSchema>;
+export type GoalTimerGetResponse = z.infer<typeof GoalTimerGetResponseSchema>;
+export type GoalTimerStartResponse = z.infer<
+  typeof GoalTimerStartResponseSchema
+>;
