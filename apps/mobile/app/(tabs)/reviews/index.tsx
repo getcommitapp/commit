@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   ThemedText,
   spacing,
-  textVariants,
+  //textVariants,
   useThemeColor,
 } from "@/components/Themed";
 
