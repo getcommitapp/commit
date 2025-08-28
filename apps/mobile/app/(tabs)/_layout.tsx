@@ -9,7 +9,7 @@ import { spacing } from "@/components/Themed";
 import HomeIcon from "@/assets/icons/home.svg";
 import TargetIcon from "@/assets/icons/target.svg";
 import IonIcons from "@expo/vector-icons/Ionicons";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -83,7 +83,11 @@ export default function TabLayout() {
         options={{
           title: "Reviews",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="clipboard-clock-outline" size={28} color={color} />
+            <MaterialCommunityIcons
+              name="clipboard-clock-outline"
+              size={28}
+              color={color}
+            />
           ),
         }}
       />

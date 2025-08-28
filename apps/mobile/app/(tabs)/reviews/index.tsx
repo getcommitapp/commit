@@ -32,7 +32,11 @@ export default function ReviewsScreen() {
       <View
         style={[
           styles.imagePlaceholder,
-          { height: imageHeight, backgroundColor: placeholderBg, borderColor: placeholderBorder },
+          {
+            height: imageHeight,
+            backgroundColor: placeholderBg,
+            borderColor: placeholderBorder,
+          },
         ]}
       >
         <ThemedText style={[styles.placeholderText, { color: textGray }]}>
@@ -46,10 +50,18 @@ export default function ReviewsScreen() {
 
       <View style={styles.buttons}>
         <Pressable style={styles.iconButton} onPress={() => {}}>
-          <MaterialCommunityIcons name="close-circle-outline" size={60} color={failColor} />
+          <MaterialCommunityIcons
+            name="close-circle-outline"
+            size={60}
+            color={failColor}
+          />
         </Pressable>
         <Pressable style={styles.iconButton} onPress={() => {}}>
-          <MaterialCommunityIcons name="check-circle-outline" size={60} color={successColor} />
+          <MaterialCommunityIcons
+            name="check-circle-outline"
+            size={60}
+            color={successColor}
+          />
         </Pressable>
       </View>
     </ScreenLayout>
