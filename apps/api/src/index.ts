@@ -18,6 +18,8 @@ import { GoalsDelete } from "./endpoints/goalsDelete";
 import { GoalsVerify } from "./endpoints/goalsVerify";
 import { GoalsTimerGet } from "./endpoints/goalsTimerGet";
 import { GoalsTimerStart } from "./endpoints/goalsTimerStart";
+import { GoalsReviewList } from "./endpoints/goalsReviewList";
+import { GoalsReviewUpdate } from "./endpoints/goalsReviewUpdate";
 
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
@@ -113,6 +115,7 @@ app.use("*", async (c, next) => {
       image: user.image,
       stripeCustomerId: user.stripeCustomerId,
       emailVerified: user.emailVerified,
+      role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
@@ -145,10 +148,12 @@ openapi.delete("/api/users", UsersDelete);
 // Goals
 openapi.get("/api/goals", GoalsList);
 openapi.post("/api/goals", GoalsCreate);
+openapi.get("/api/goals/review", GoalsReviewList);
 openapi.delete("/api/goals/:id", GoalsDelete);
 openapi.post("/api/goals/:id/verify", GoalsVerify);
 openapi.get("/api/goals/:id/timer", GoalsTimerGet);
 openapi.post("/api/goals/:id/timer/start", GoalsTimerStart);
+openapi.put("/api/goals/:id/review", GoalsReviewUpdate);
 
 // Groups
 openapi.get("/api/groups", GroupsList);

@@ -21,6 +21,15 @@ export function createAuth(env: Env) {
   const stripeClient = new Stripe(STRIPE_SECRET_KEY ?? "");
 
   return betterAuth({
+    user: {
+      additionalFields: {
+        role: {
+          type: "string",
+          input: false,
+          output: true,
+        },
+      },
+    },
     database: drizzleAdapter(db, {
       provider: "sqlite",
       // map Better Auth expected names to our schema when needed
