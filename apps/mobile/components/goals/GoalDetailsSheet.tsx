@@ -1,11 +1,13 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef } from "react";
+import { View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import type { Goal } from "@/components/goals/GoalCard";
 import { FormGroup, FormItem } from "@/components/ui/form";
 import { DetailsSheet } from "@/components/ui/DetailsSheet";
 import { useGoalTimer, useStartGoalTimer } from "@/lib/hooks/useGoalTimer";
-import { ThemedText, textVariants, useThemeColor } from "@/components/Themed";
-import { Pressable, View } from "react-native";
+import { spacing, useThemeColor } from "@/components/Themed";
+import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
+import { Button } from "@/components/ui/Button";
 
 interface GoalDetailsSheetProps {
   goal: Goal;
@@ -24,29 +26,9 @@ export const GoalDetailsSheet = forwardRef<
     ref
   ) => {
     const background = useThemeColor({}, "background");
-    const primary = useThemeColor({}, "primary");
     const { data: timer } = useGoalTimer(goal.id);
     const { mutate: startTimer, isPending } = useStartGoalTimer(goal.id);
-
-    // Force a tick every second to update the elapsed label
-    const [, setTick] = useState(0);
-    useEffect(() => {
-      if (!timer?.startedAt) return; // only tick when running
-      const id = setInterval(() => setTick((t) => (t + 1) % 1_000_000), 1000);
-      return () => clearInterval(id);
-    }, [timer?.startedAt]);
-
-    const elapsed = (() => {
-      if (!timer?.startedAt) return null;
-      const start = new Date(timer.startedAt).getTime();
-      const now = Date.now();
-      const diff = Math.max(0, now - start);
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      const pad = (n: number) => String(n).padStart(2, "0");
-      return `${pad(h)}:${pad(m)}:${pad(s)}`;
-    })();
+    const { elapsedLabel } = useElapsedTimer(timer?.startedAt);
 
     return (
       <DetailsSheet
@@ -68,44 +50,35 @@ export const GoalDetailsSheet = forwardRef<
               : undefined
         }
       >
-        <FormGroup
-          title="Progress"
-          backgroundStyle={{ backgroundColor: background }}
-        >
-          {timer ? (
-            <View style={{ gap: 6 }}>
-              <ThemedText style={textVariants.subheadline}>Running</ThemedText>
-              {elapsed && (
-                <ThemedText style={textVariants.title2}>{elapsed}</ThemedText>
-              )}
-            </View>
-          ) : (
-            <View>
-              <ThemedText style={textVariants.subheadline}>
-                Timer not started
-              </ThemedText>
-              {/* Simple inline button since DetailsSheet has a single footer action slot */}
-              <View style={{ height: 12 }} />
-              <Pressable
-                style={{
-                  backgroundColor: primary,
-                  paddingVertical: 12,
-                  borderRadius: 12,
-                  alignItems: "center",
-                }}
-                accessibilityRole="button"
-                accessibilityLabel="start-goal-timer"
-                onPress={() => !isPending && startTimer()}
-              >
-                <ThemedText
-                  style={{ ...textVariants.bodyEmphasized, color: "white" }}
-                >
-                  {isPending ? "Starting…" : "Start Timer"}
-                </ThemedText>
-              </Pressable>
-            </View>
-          )}
-        </FormGroup>
+        <View style={{ marginBottom: spacing.xl }}>
+          <FormGroup
+            title="Progress"
+            style={{ marginBottom: spacing.sm }}
+            backgroundStyle={{ backgroundColor: background }}
+          >
+            {timer ? (
+              <>
+                <FormItem label="Status" value="Running" />
+                <FormItem label="Elapsed" value={elapsedLabel ?? "–"} />
+              </>
+            ) : (
+              <>
+                <FormItem label="Status" value="Timer not started" />
+              </>
+            )}
+          </FormGroup>
+
+          {!timer ? (
+            <Button
+              title={isPending ? "Starting…" : "Start Timer"}
+              onPress={() => !isPending && startTimer()}
+              loading={isPending}
+              testID="start-goal-timer"
+              accessibilityLabel="start-goal-timer"
+            />
+          ) : null}
+        </View>
+
         <FormGroup
           title="Details"
           backgroundStyle={{ backgroundColor: background }}

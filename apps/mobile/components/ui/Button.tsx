@@ -26,6 +26,8 @@ type Props = {
   textStyle?: TextStyle | TextStyle[];
   loading?: boolean;
   rightIcon?: ReactNode;
+  testID?: string;
+  accessibilityLabel?: string;
 };
 
 export function Button({
@@ -39,6 +41,8 @@ export function Button({
   textStyle,
   loading = false,
   rightIcon,
+  testID,
+  accessibilityLabel,
 }: Props) {
   const primary = useThemeColor({}, "primary");
   const secondary = useThemeColor({}, "secondary");
@@ -68,6 +72,9 @@ export function Button({
     <Pressable
       onPress={onPress}
       disabled={disabled || loading}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      testID={testID}
       style={[
         {
           backgroundColor,
