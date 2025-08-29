@@ -8,6 +8,8 @@ import {
   FormTimeInput,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
+import { useCreateGoal } from "@/lib/hooks/useCreateGoal";
+import { useRouter } from "expo-router";
 import {
   AndroidNativeProps,
   IOSNativeProps,
@@ -22,6 +24,9 @@ export default function GoalNewScreen() {
   const [endAt, setEndAt] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(new Date());
   const [endTime, setEndTime] = useState<Date | null>(null);
+
+  const createGoal = useCreateGoal();
+  const router = useRouter();
 
   const onChangeStart: NonNullable<
     IOSNativeProps["onChange"] | AndroidNativeProps["onChange"]
@@ -94,15 +99,31 @@ export default function GoalNewScreen() {
       <FormSpacer size="xl" />
 
       <Button
-        title="Create Goal"
+        title={createGoal.isPending ? "Creating..." : "Create Goal"}
         size="lg"
         onPress={() => {
-          // TODO: wire API
+          if (!startAt) return;
+          createGoal.mutate(
+            {
+              title,
+              description,
+              stake,
+              startDate: startAt,
+              endDate: endAt,
+              dueStartTime: startTime,
+              dueEndTime: endTime,
+            },
+            {
+              onSuccess: () => {
+                router.back();
+              },
+            }
+          );
         }}
-        disabled={!title || !startAt}
+        disabled={!title || !startAt || createGoal.isPending}
       />
 
-      {null}
+      {createGoal.error && <FormSpacer size="md" />}
     </ScreenLayout>
   );
 }
