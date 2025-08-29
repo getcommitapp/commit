@@ -1,11 +1,10 @@
-import React, { forwardRef, useEffect, useMemo, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useThemeColor } from "@/components/Themed";
 import type { Goal } from "@/components/goals/GoalCard";
 import { FormGroup, FormItem } from "@/components/ui/form";
 import { DetailsSheet } from "@/components/ui/DetailsSheet";
 import { useGoalTimer, useStartGoalTimer } from "@/lib/hooks/useGoalTimer";
-import { ThemedText, textVariants } from "@/components/Themed";
+import { ThemedText, textVariants, useThemeColor } from "@/components/Themed";
 import { Pressable, View } from "react-native";
 
 interface GoalDetailsSheetProps {
@@ -30,14 +29,14 @@ export const GoalDetailsSheet = forwardRef<
     const { mutate: startTimer, isPending } = useStartGoalTimer(goal.id);
 
     // Force a tick every second to update the elapsed label
-    const [tick, setTick] = useState(0);
+    const [, setTick] = useState(0);
     useEffect(() => {
       if (!timer?.startedAt) return; // only tick when running
       const id = setInterval(() => setTick((t) => (t + 1) % 1_000_000), 1000);
       return () => clearInterval(id);
     }, [timer?.startedAt]);
 
-  const elapsed = useMemo(() => {
+    const elapsed = (() => {
       if (!timer?.startedAt) return null;
       const start = new Date(timer.startedAt).getTime();
       const now = Date.now();
@@ -47,7 +46,7 @@ export const GoalDetailsSheet = forwardRef<
       const s = Math.floor((diff % 60000) / 1000);
       const pad = (n: number) => String(n).padStart(2, "0");
       return `${pad(h)}:${pad(m)}:${pad(s)}`;
-  }, [timer?.startedAt, tick]);
+    })();
 
     return (
       <DetailsSheet
@@ -61,15 +60,18 @@ export const GoalDetailsSheet = forwardRef<
           timer
             ? undefined
             : onDelete
-            ? {
-                label: "Delete Goal",
-                onPress: () => onDelete(goal),
-                variant: "danger",
-              }
-            : undefined
+              ? {
+                  label: "Delete Goal",
+                  onPress: () => onDelete(goal),
+                  variant: "danger",
+                }
+              : undefined
         }
       >
-        <FormGroup title="Progress" backgroundStyle={{ backgroundColor: background }}>
+        <FormGroup
+          title="Progress"
+          backgroundStyle={{ backgroundColor: background }}
+        >
           {timer ? (
             <View style={{ gap: 6 }}>
               <ThemedText style={textVariants.subheadline}>Running</ThemedText>
