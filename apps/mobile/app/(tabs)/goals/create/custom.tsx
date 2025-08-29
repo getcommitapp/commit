@@ -41,64 +41,75 @@ export default function CustomGoalValidationScreen() {
   const muted = useThemeColor({}, "muted");
   const border = useThemeColor({}, "border");
   const primary = useThemeColor({}, "primary");
-  const [selected, setSelected] = useState<Set<OptionKey>>(new Set());
+  const [selected, setSelected] = useState<OptionKey | null>(null);
 
   return (
     <ScreenLayout style={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
       <SmallText>Validation Method</SmallText>
       <View style={{ gap: spacing.xs }}>
-        {optionOrder.map((key) => (
-          <CardList key={key}>
-            <Pressable
-              onPress={() =>
-                setSelected((prev) => {
-                  const next = new Set(prev);
-                  if (next.has(key)) {
-                    next.delete(key);
-                  } else {
-                    next.add(key);
-                  }
-                  return next;
-                })
-              }
-              style={{
-                borderWidth: 1,
-                borderColor: selected.has(key) ? primary : border,
-                borderRadius: 12,
-              }}
-            >
-              <Card
-                left={
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: spacing.lg,
-                    }}
-                  >
+        {optionOrder.map((key) => {
+          const isSelected = selected === key;
+          return (
+            <CardList key={key}>
+              <Pressable
+                onPress={() => setSelected((prev) => (prev === key ? null : key))}
+                style={{
+                  borderWidth: 1,
+                  borderColor: isSelected ? primary : border,
+                  borderRadius: 12,
+                  opacity: isSelected ? 1 : 0.95,
+                }}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isSelected }}
+                testID={`goal-option-${key}`}
+              >
+                <Card
+                  left={
                     <View
                       style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 8,
-                        backgroundColor: muted,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: spacing.lg,
                       }}
-                      accessibilityLabel={`${key}-icon`}
-                    />
-                    <View style={{ gap: 4, flex: 1, minWidth: 0 }}>
-                      <ThemedText style={textVariants.bodyEmphasized}>
-                        {optionMeta[key].title}
-                      </ThemedText>
-                      <ThemedText style={textVariants.footnote}>
-                        {optionMeta[key].description}
-                      </ThemedText>
+                    >
+                      <View
+                        style={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: 8,
+                          backgroundColor: muted,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        accessibilityLabel={`${key}-icon`}
+                      >
+                        {isSelected && (
+                          <View
+                            style={{
+                              width: 18,
+                              height: 18,
+                              borderRadius: 9,
+                              backgroundColor: primary,
+                            }}
+                            accessibilityLabel="selected-indicator"
+                          />
+                        )}
+                      </View>
+                      <View style={{ gap: 4, flex: 1, minWidth: 0 }}>
+                        <ThemedText style={textVariants.bodyEmphasized}>
+                          {optionMeta[key].title}
+                        </ThemedText>
+                        <ThemedText style={textVariants.footnote}>
+                          {optionMeta[key].description}
+                        </ThemedText>
+                      </View>
                     </View>
-                  </View>
-                }
-              />
-            </Pressable>
-          </CardList>
-        ))}
+                  }
+                />
+              </Pressable>
+            </CardList>
+          );
+        })}
       </View>
 
       <View style={{ flex: 1 }} />
@@ -106,8 +117,13 @@ export default function CustomGoalValidationScreen() {
       <Button
         title="Next"
         size="lg"
-        onPress={() => router.push("/(tabs)/goals/create/new")}
-        disabled={selected.size === 0}
+        onPress={() =>
+          router.push({
+            pathname: "/(tabs)/goals/create/new",
+            params: { method: selected ?? undefined },
+          } as any)
+        }
+        disabled={!selected}
         style={{}}
       />
     </ScreenLayout>

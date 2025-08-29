@@ -56,6 +56,16 @@ export const GoalCreateRequestSchema = z.object({
   destinationType: z.string(),
   destinationUserId: z.string().nullable().optional(),
   destinationCharityId: z.string().nullable().optional(),
+  verificationMethod: z
+    .object({
+      method: z.string(),
+      durationSeconds: z.number().int().nullable().optional(),
+      latitude: z.number().nullable().optional(),
+      longitude: z.number().nullable().optional(),
+      radiusM: z.number().int().nullable().optional(),
+      graceTime: z.string().datetime().nullable().optional(),
+    })
+    .optional(),
 });
 
 export const GoalCreateResponseSchema = GoalBaseSchema;

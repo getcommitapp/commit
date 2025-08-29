@@ -9,11 +9,9 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
 import { useCreateGoal } from "@/lib/hooks/useCreateGoal";
-import { useRouter } from "expo-router";
-import {
-  AndroidNativeProps,
-  IOSNativeProps,
-} from "@react-native-community/datetimepicker";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { AndroidNativeProps, IOSNativeProps } from "@react-native-community/datetimepicker";
+import { useThemeColor } from "@/components/Themed";
 
 export default function GoalNewScreen() {
   const [title, setTitle] = useState("");
@@ -27,6 +25,10 @@ export default function GoalNewScreen() {
 
   const createGoal = useCreateGoal();
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const method = typeof params.method === "string" ? params.method : undefined;
+  const [durationMinutes, setDuration] = useState<Date | null>(new Date(0, 0, 0, 0, 0, 0, 0));
+
 
   const onChangeStart: NonNullable<
     IOSNativeProps["onChange"] | AndroidNativeProps["onChange"]
@@ -68,7 +70,7 @@ export default function GoalNewScreen() {
           }
           testID="start-date"
         />
-        <FormDateInput
+{/**        <FormDateInput
           label="End date"
           date={endAt}
           onChange={(d) =>
@@ -78,6 +80,7 @@ export default function GoalNewScreen() {
           placeholder="Optional"
           testID="end-date"
         />
+*/}
       </FormGroup>
 
       <FormGroup title="Due time">
@@ -96,13 +99,29 @@ export default function GoalNewScreen() {
         />
       </FormGroup>
 
-      <FormSpacer size="xl" />
+      {/** Duration input<FormSpacer size="xl" /> */}
 
+      {method && (method === "location" || method === "movement") && (
+      <FormGroup title="Duration">
+        <FormTimeInput
+          label="Interval"
+          time={durationMinutes}
+          onChange={(d) => setDuration(d)}
+          testID="interval"
+        />
+      </FormGroup>
+      )}
+
+      {/** Button section */}
       <Button
         title={createGoal.isPending ? "Creating..." : "Create Goal"}
         size="lg"
         onPress={() => {
           if (!startAt) return;
+          const computedDurationMinutes =
+            method && (method === "location" || method === "movement") && durationMinutes
+              ? durationMinutes.getHours() * 60 + durationMinutes.getMinutes()
+              : undefined;
           createGoal.mutate(
             {
               title,
@@ -112,6 +131,14 @@ export default function GoalNewScreen() {
               endDate: endAt,
               dueStartTime: startTime,
               dueEndTime: endTime,
+              verificationMethod: method
+                ? {
+                    method,
+                    durationSeconds: computedDurationMinutes
+                      ? computedDurationMinutes * 60
+                      : undefined,
+                  }
+                : undefined,
             },
             {
               onSuccess: () => {
@@ -120,7 +147,15 @@ export default function GoalNewScreen() {
             }
           );
         }}
-        disabled={!title || !startAt || createGoal.isPending}
+        disabled={
+          !title ||
+          !startAt ||
+          createGoal.isPending ||
+          ((method === "location" || method === "movement") &&
+            !(durationMinutes &&
+              (durationMinutes.getHours() > 0 ||
+                durationMinutes.getMinutes() > 0)))
+        }
       />
 
       {createGoal.error && <FormSpacer size="md" />}

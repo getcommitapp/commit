@@ -35,7 +35,7 @@ export class GoalsCreate extends OpenAPIRoute {
     const db = drizzle(c.env.DB);
     const id = uuid();
 
-    // Create the goal in the db
+  // Create the goal in the db
     const now = new Date();
     const [created] = await db
       .insert(schema.Goal)
@@ -60,6 +60,35 @@ export class GoalsCreate extends OpenAPIRoute {
         updatedAt: now,
       })
       .returning();
+
+    let insertedVerification: any = null;
+    // Optional single verification method
+    if (goalToCreate.verificationMethod) {
+      try {
+        const vm = goalToCreate.verificationMethod;
+        console.log("[GoalsCreate] Incoming verificationMethod", vm);
+        const [vmRow] = await db
+          .insert(schema.GoalVerificationsMethod)
+          .values({
+            id: uuid(),
+            goalId: created.id,
+            method: vm.method,
+            latitude: vm.latitude ?? null,
+            longitude: vm.longitude ?? null,
+            radiusM: vm.radiusM ?? null,
+            durationSeconds: vm.durationSeconds ?? null,
+            graceTime: vm.graceTime ? new Date(vm.graceTime) : null,
+            createdAt: now,
+            updatedAt: now,
+          })
+          .returning();
+        insertedVerification = vmRow;
+      } catch (e) {
+        console.error("[GoalsCreate] Failed to insert verification method", e);
+      }
+    } else {
+      console.log("[GoalsCreate] No verificationMethod provided in request body");
+    }
 
     const response = {
       ...created,

@@ -17,6 +17,16 @@ const CreateGoalInputSchema = z.object({
   endDate: z.date().optional().nullable(),
   dueStartTime: z.date().optional().nullable(),
   dueEndTime: z.date().optional().nullable(),
+  verificationMethod: z
+    .object({
+      method: z.string(),
+      durationSeconds: z.number().int().nullable().optional(),
+      latitude: z.number().nullable().optional(),
+      longitude: z.number().nullable().optional(),
+      radiusM: z.number().int().nullable().optional(),
+      graceTime: z.date().nullable().optional(),
+    })
+    .optional(),
 });
 export type CreateGoalInput = z.infer<typeof CreateGoalInputSchema>;
 
@@ -64,6 +74,18 @@ export function useCreateGoal() {
         destinationType: "user", // only user destination for now
         destinationUserId: null,
         destinationCharityId: null,
+        verificationMethod: parsed.verificationMethod
+          ? {
+              method: parsed.verificationMethod.method,
+              durationSeconds: parsed.verificationMethod.durationSeconds ?? null,
+              latitude: parsed.verificationMethod.latitude ?? null,
+              longitude: parsed.verificationMethod.longitude ?? null,
+              radiusM: parsed.verificationMethod.radiusM ?? null,
+              graceTime: parsed.verificationMethod.graceTime
+                ? parsed.verificationMethod.graceTime.toISOString()
+                : null,
+            }
+          : undefined,
       } satisfies z.infer<typeof GoalCreateRequestSchema>;
 
       const created = await apiFetch<GoalCreateResponse>(
