@@ -50,34 +50,36 @@ export const GoalDetailsSheet = forwardRef<
               : undefined
         }
       >
-        <View style={{ marginBottom: spacing.xl }}>
-          <FormGroup
-            title="Progress"
-            style={{ marginBottom: spacing.sm }}
-            backgroundStyle={{ backgroundColor: background }}
-          >
-            {timer ? (
-              <>
-                <FormItem label="Status" value="Running" />
-                <FormItem label="Elapsed" value={elapsedLabel ?? "–"} />
-              </>
-            ) : (
-              <>
-                <FormItem label="Status" value="Timer not started" />
-              </>
-            )}
-          </FormGroup>
+        {goal.hasDurationVerification ? (
+          <View style={{ marginBottom: spacing.xl }}>
+            <FormGroup
+              title="Progress"
+              style={{ marginBottom: spacing.sm }}
+              backgroundStyle={{ backgroundColor: background }}
+            >
+              {timer ? (
+                <>
+                  <FormItem label="Status" value="Running" />
+                  <FormItem label="Elapsed" value={elapsedLabel ?? "–"} />
+                </>
+              ) : (
+                <>
+                  <FormItem label="Status" value="Timer not started" />
+                </>
+              )}
+            </FormGroup>
 
-          {!timer ? (
-            <Button
-              title={isPending ? "Starting…" : "Start Timer"}
-              onPress={() => !isPending && startTimer()}
-              loading={isPending}
-              testID="start-goal-timer"
-              accessibilityLabel="start-goal-timer"
-            />
-          ) : null}
-        </View>
+            {!timer ? (
+              <Button
+                title={isPending ? "Starting…" : "Start Timer"}
+                onPress={() => !isPending && startTimer()}
+                loading={isPending}
+                testID="start-goal-timer"
+                accessibilityLabel="start-goal-timer"
+              />
+            ) : null}
+          </View>
+        ) : null}
 
         <FormGroup
           title="Details"

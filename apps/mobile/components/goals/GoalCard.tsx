@@ -9,6 +9,8 @@ import {
 } from "@/components/Themed";
 import Flame from "@/assets/icons/flame.svg";
 import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
+import { useGoalTimer } from "@/lib/hooks/useGoalTimer";
+import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 
 export type Goal = {
@@ -20,6 +22,7 @@ export type Goal = {
   startDate: string; // e.g. 2025-01-01
   endDate: string; // e.g. 2025-01-31
   streak?: number; // optional flame count
+  hasDurationVerification: boolean;
 };
 
 type GoalCardProps = {
@@ -73,6 +76,8 @@ export default function GoalCard({
           {goal.timeLeft}
         </Text>
       </View>
+
+      {goal.hasDurationVerification ? <GoalTimerRow goalId={goal.id} /> : null}
     </View>
   );
 
@@ -113,5 +118,19 @@ export default function GoalCard({
 
       <GoalDetailsSheet ref={bottomSheetRef} goal={goal} />
     </>
+  );
+}
+
+function GoalTimerRow({ goalId }: { goalId: string }) {
+  const mutedForeground = useThemeColor({}, "mutedForeground");
+  const { data: timer } = useGoalTimer(goalId);
+  const { elapsedLabel } = useElapsedTimer(timer?.startedAt);
+  if (!timer) return null;
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+      <Text style={{ ...textVariants.footnote, color: mutedForeground }}>
+        Timer: {elapsedLabel ?? "–"}
+      </Text>
+    </View>
   );
 }

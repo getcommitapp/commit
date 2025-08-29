@@ -2,7 +2,7 @@ import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNotNull } from "drizzle-orm";
 import { GoalTimerStartResponseSchema } from "@commit/types";
 
 export class GoalsTimerStart extends OpenAPIRoute {
@@ -42,6 +42,27 @@ export class GoalsTimerStart extends OpenAPIRoute {
     if (!goal) return c.json({ error: "Goal not found" }, 404);
     if (goal.ownerId !== user.id) {
       return c.json({ error: "Forbidden" }, 403);
+    }
+
+    // Ensure the goal has at least one verification method with a duration
+    const [vm] = await db
+      .select({ id: schema.GoalVerificationsMethod.id })
+      .from(schema.GoalVerificationsMethod)
+      .where(
+        and(
+          eq(schema.GoalVerificationsMethod.goalId, goalId),
+          isNotNull(schema.GoalVerificationsMethod.durationSeconds)
+        )
+      )
+      .limit(1);
+    if (!vm) {
+      return c.json(
+        {
+          error:
+            "Timer not allowed: goal has no verification method with duration",
+        },
+        400
+      );
     }
 
     const now = new Date();

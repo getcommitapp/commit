@@ -37,7 +37,11 @@ export const GoalDetailsSchema = GoalBaseSchema.extend({
   verificationMethods: z.array(GoalVerificationMethodSchema),
 });
 
-export const GoalsListResponseSchema = z.array(GoalBaseSchema);
+export const GoalsListItemSchema = GoalBaseSchema.extend({
+  hasDurationVerification: z.boolean(),
+});
+
+export const GoalsListResponseSchema = z.array(GoalsListItemSchema);
 
 export const GoalCreateRequestSchema = z.object({
   name: z.string(),
@@ -100,6 +104,7 @@ export type GoalBase = z.infer<typeof GoalBaseSchema>;
 
 export type GoalDetails = z.infer<typeof GoalDetailsSchema>;
 
+export type GoalsListItem = z.infer<typeof GoalsListItemSchema>;
 export type GoalsListResponse = z.infer<typeof GoalsListResponseSchema>;
 
 export type GoalCreateRequest = z.infer<typeof GoalCreateRequestSchema>;

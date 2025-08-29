@@ -19,7 +19,7 @@ export function useGoals() {
         timeLeft: calculateTimeLeft(goal.endDate),
         startDate: goal.startDate,
         endDate: goal.endDate || "",
-        // Note: streak is not available in the API response, so it's omitted
+        hasDurationVerification: goal.hasDurationVerification,
       }));
     },
   });
