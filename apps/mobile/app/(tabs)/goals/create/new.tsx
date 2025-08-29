@@ -144,7 +144,7 @@ export default function GoalNewScreen() {
               destinationType: "burn",
               verificationMethod: method
                 ? {
-                    method,
+                    method: method as "location" | "movement",
                     durationSeconds: computedDurationMinutes
                       ? computedDurationMinutes * 60
                       : undefined,
