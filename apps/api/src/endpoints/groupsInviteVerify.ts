@@ -29,6 +29,7 @@ export class GroupsInviteVerify extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
+
     const { code } = data.query;
     const db = drizzle(c.env.DB);
     const g = await db

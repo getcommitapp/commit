@@ -1,9 +1,10 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
-import { GroupsListResponseSchema, type GroupSummary } from "@commit/types";
+import { GroupsListResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
-import { eq } from "drizzle-orm";
+import { eq, or, sql } from "drizzle-orm";
 import { Group, GroupParticipants, Goal } from "../db/schema";
+import { alias } from "drizzle-orm/sqlite-core";
 
 export class GroupsList extends OpenAPIRoute {
   schema = {
@@ -23,83 +24,44 @@ export class GroupsList extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB);
-    const user = c.get("user");
-    const userId = user?.id as string | undefined;
-    if (!userId) return new Response("Unauthorized", { status: 401 });
+    const userId = c.var.user.id;
 
-    // Groups where user is creator
-    const created = await db
-      .select()
-      .from(Group)
-      .where(eq(Group.creatorId, userId))
-      .all();
+    // Single query using joins and aggregation
+    const gpFilter = alias(GroupParticipants, "gpFilter");
+    const gpAll = alias(GroupParticipants, "gpAll");
 
-    // Groups where user is a participant
-    const joined = await db
+    const rows = await db
       .select({
         group: Group,
+        goal: {
+          id: Goal.id,
+          name: Goal.name,
+          startDate: Goal.startDate,
+          endDate: Goal.endDate,
+          stakeCents: Goal.stakeCents,
+          currency: Goal.currency,
+        },
+        memberCount: sql<number>`count(distinct ${gpAll.userId}) + 1`,
       })
-      .from(GroupParticipants)
-      .innerJoin(Group, eq(GroupParticipants.groupId, Group.id))
-      .where(eq(GroupParticipants.userId, userId))
+      .from(Group)
+      .leftJoin(gpAll, eq(gpAll.groupId, Group.id))
+      .leftJoin(Goal, eq(Goal.id, Group.goalId))
+      .leftJoin(gpFilter, eq(gpFilter.groupId, Group.id))
+      .where(or(eq(Group.creatorId, userId), eq(gpFilter.userId, userId)))
+      .groupBy(Group.id)
       .all();
 
-    const map = new Map<string, (typeof created)[number]>();
-    for (const g of created) map.set(g.id, g);
-    for (const j of joined) map.set(j.group.id, j.group);
-
-    const res: GroupSummary[] = [];
-    for (const g of map.values()) {
-      const participantCount = await db
-        .select({ id: GroupParticipants.userId })
-        .from(GroupParticipants)
-        .where(eq(GroupParticipants.groupId, g.id))
-        .all();
-      const memberCount = participantCount.length + 1; // include creator
-      const base: GroupSummary = {
-        id: g.id,
-        name: g.name,
-        description: g.description ?? null,
-        goalId: g.goalId ?? null,
-        inviteCode: g.inviteCode,
-        createdAt:
-          typeof g.createdAt === "string"
-            ? g.createdAt
-            : new Date(g.createdAt).toISOString(),
-        updatedAt:
-          typeof g.updatedAt === "string"
-            ? g.updatedAt
-            : new Date(g.updatedAt).toISOString(),
-        memberCount,
-      };
-
-      if (g.goalId) {
-        const goal = await db
-          .select()
-          .from(Goal)
-          .where(eq(Goal.id, g.goalId))
-          .get();
-        if (goal) {
-          base.goal = {
-            id: goal.id,
-            name: goal.name,
-            startDate:
-              typeof goal.startDate === "string"
-                ? goal.startDate
-                : new Date(goal.startDate).toISOString(),
-            endDate: goal.endDate
-              ? typeof goal.endDate === "string"
-                ? goal.endDate
-                : new Date(goal.endDate).toISOString()
-              : null,
-            stakeCents: goal.stakeCents,
-            currency: goal.currency,
-          };
-        }
-      }
-
-      res.push(base);
-    }
+    const res = rows.map(({ group: g, goal, memberCount }) => ({
+      id: g.id,
+      name: g.name,
+      description: g.description ?? null,
+      goalId: g.goalId,
+      inviteCode: g.inviteCode,
+      createdAt: g.createdAt as unknown as string,
+      updatedAt: g.updatedAt as unknown as string,
+      memberCount: Number(memberCount ?? 1),
+      goal: goal,
+    }));
 
     return c.json(res);
   }

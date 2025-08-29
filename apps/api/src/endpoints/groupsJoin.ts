@@ -23,8 +23,7 @@ export class GroupsJoin extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const userId = c.get("user")?.id as string | undefined;
-    if (!userId) return new Response("Unauthorized", { status: 401 });
+    const userId = c.var.user.id;
 
     const data = await this.getValidatedData<typeof this.schema>();
     const { code } = data.body;
