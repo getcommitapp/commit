@@ -78,6 +78,7 @@ async function resetDb() {
   const tablesInDeleteOrder = [
     "goal_verifications_log",
     "goal_verifications_method",
+    "goal_timer",
     "group_participants",
     "group",
     "account",
@@ -88,6 +89,7 @@ async function resetDb() {
     "user",
   ];
 
+  // Use DELETE with error handling in case tables don't exist
   const deleteStatements = tablesInDeleteOrder
     .map((tableName) => `DELETE FROM \`${tableName}\`;`)
     .join("\n");
@@ -95,7 +97,12 @@ async function resetDb() {
   const seedUserStatement =
     "INSERT INTO user (id, name, email, emailVerified, image, updatedAt, role) VALUES ('user_1','Test User','test@example.com',1,NULL,strftime('%s','now'),'user');";
 
-  await env.DB.exec(`${deleteStatements}\n${seedUserStatement}`);
+  try {
+    await env.DB.exec(`${deleteStatements}\n${seedUserStatement}`);
+  } catch (_) {
+    // If tables don't exist, just seed the user (for fresh database)
+    await env.DB.exec(seedUserStatement);
+  }
 }
 
 beforeEach(async () => {

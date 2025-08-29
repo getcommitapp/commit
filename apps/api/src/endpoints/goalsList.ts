@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GoalsListResponseSchema } from "@commit/types";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
-import { eq } from "drizzle-orm";
+import { and, eq, exists, isNotNull } from "drizzle-orm";
 
 export class GoalsList extends OpenAPIRoute {
   schema = {
@@ -23,14 +23,47 @@ export class GoalsList extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const user = c.var.user!;
-    const db = drizzle(c.env.DB);
+    const db = drizzle(c.env.DB, { schema });
 
-    // Get all goals owned by the current user
-    const goals = await db
-      .select()
+    // Single query using correlated exists for hasDurationVerification
+    const rows = await db
+      .select({
+        id: schema.Goal.id,
+        ownerId: schema.Goal.ownerId,
+        name: schema.Goal.name,
+        description: schema.Goal.description,
+        startDate: schema.Goal.startDate,
+        endDate: schema.Goal.endDate,
+        dueStartTime: schema.Goal.dueStartTime,
+        dueEndTime: schema.Goal.dueEndTime,
+        recurrence: schema.Goal.recurrence,
+        stakeCents: schema.Goal.stakeCents,
+        currency: schema.Goal.currency,
+        destinationType: schema.Goal.destinationType,
+        destinationUserId: schema.Goal.destinationUserId,
+        destinationCharityId: schema.Goal.destinationCharityId,
+        createdAt: schema.Goal.createdAt,
+        updatedAt: schema.Goal.updatedAt,
+        hasDurationVerification: exists(
+          db
+            .select({ one: schema.GoalVerificationsMethod.id })
+            .from(schema.GoalVerificationsMethod)
+            .where(
+              and(
+                eq(schema.GoalVerificationsMethod.goalId, schema.Goal.id),
+                isNotNull(schema.GoalVerificationsMethod.durationSeconds)
+              )
+            )
+        ),
+      })
       .from(schema.Goal)
       .where(eq(schema.Goal.ownerId, user.id));
 
-    return c.json(goals, 200);
+    const response = rows.map((r) => ({
+      ...r,
+      hasDurationVerification: Boolean(r.hasDurationVerification),
+    }));
+
+    return c.json(response, 200);
   }
 }

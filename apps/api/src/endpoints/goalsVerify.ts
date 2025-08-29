@@ -89,6 +89,9 @@ export class GoalsVerify extends OpenAPIRoute {
       });
     }
 
+    // TODO: if this goal is recurrent and verification implies completion or failure,
+    // reset the per-user timer for this goal: set goal_timer.startedAt = NULL for (goalId,userId).
+
     return c.json({ message: "Verification log submitted." }, 200);
   }
 }

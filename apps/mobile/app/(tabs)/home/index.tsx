@@ -1,6 +1,6 @@
 import { StyleSheet, Pressable, View } from "react-native";
-import CardList from "@/components/ui/CardList";
-import GoalCard, { Goal } from "@/components/goals/GoalCard";
+import { CardList } from "@/components/ui/CardList";
+import { GoalCard } from "@/components/goals/GoalCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 
@@ -11,44 +11,26 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import { useRouter } from "expo-router";
-
-// Goal type imported from GoalCard
-
-const mockGoals: Goal[] = [
-  {
-    id: "1",
-    title: "Morning Workout",
-    description: "Complete a 30-minute morning workout routine.",
-    stake: "CHF 50",
-    timeLeft: "2h left",
-    startDate: "2025-01-01",
-    endDate: "2025-01-31",
-    streak: 2,
-  },
-  {
-    id: "2",
-    title: "Run 2 km",
-    description: "Run at least 2 kilometers without stopping.",
-    stake: "CHF 20",
-    timeLeft: "6h left",
-    startDate: "2025-02-01",
-    endDate: "2025-02-28",
-    streak: 10,
-  },
-  {
-    id: "3",
-    title: "Stay at school for 3 hours",
-    description: "Remain at school and study for at least 3 hours.",
-    stake: "CHF 40",
-    timeLeft: "2h left",
-    startDate: "2025-03-10",
-    endDate: "2025-04-10",
-  },
-];
+import { useGoals } from "@/lib/hooks/useGoals";
+import { useMemo } from "react";
 
 export default function HomeScreen() {
   const router = useRouter();
   const mutedForeground = useThemeColor({}, "mutedForeground");
+  const { data: goals } = useGoals();
+
+  const totalDisplay = useMemo(() => {
+    const totalsByCurrency = (goals ?? []).reduce<Record<string, number>>(
+      (acc, g) => {
+        acc[g.currency] = (acc[g.currency] ?? 0) + g.stakeCents;
+        return acc;
+      },
+      {}
+    );
+    return Object.entries(totalsByCurrency)
+      .map(([cur, cents]) => `${cur} ${(cents / 100).toFixed(2)}`)
+      .join("  ");
+  }, [goals]);
 
   return (
     <ScreenLayout style={{ gap: spacing.xl }}>
@@ -66,7 +48,7 @@ export default function HomeScreen() {
           }}
         >
           <ThemedText style={[textVariants.title1, { fontWeight: "700" }]}>
-            CHF 250{" "}
+            {totalDisplay || "–"}{" "}
           </ThemedText>
           <ThemedText
             style={[
@@ -99,7 +81,7 @@ export default function HomeScreen() {
         </View>
 
         <CardList>
-          {mockGoals.map((g) => (
+          {(goals ?? []).map((g) => (
             <GoalCard key={g.id} goal={g} />
           ))}
         </CardList>

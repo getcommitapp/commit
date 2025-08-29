@@ -1,40 +1,27 @@
 import React, { useRef, useCallback } from "react";
 import { Text, View, Pressable } from "react-native";
-import Card from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
 import {
   ThemedText,
   textVariants,
   spacing,
   useThemeColor,
 } from "@/components/Themed";
-import Flame from "@/assets/icons/flame.svg";
 import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
+import { useGoalTimer } from "@/lib/hooks/useGoalTimer";
+import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
+import { useGoals } from "@/lib/hooks/useGoals";
+import { formatStake } from "@/lib/utils";
 
-export type Goal = {
-  id: string;
-  title: string;
-  description: string;
-  stake: string; // e.g. CHF 50
-  timeLeft: string; // e.g. 2h left
-  startDate: string; // e.g. 2025-01-01
-  endDate: string; // e.g. 2025-01-31
-  streak?: number; // optional flame count
-};
-
-type GoalCardProps = {
-  goal: Goal;
+interface GoalCardProps {
+  goal: NonNullable<ReturnType<typeof useGoals>["data"]>[number];
   accessibilityLabel?: string;
   testID?: string;
-};
+}
 
-export default function GoalCard({
-  goal,
-  accessibilityLabel,
-  testID,
-}: GoalCardProps) {
+export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   const mutedForeground = useThemeColor({}, "mutedForeground");
-  const danger = useThemeColor({}, "danger");
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { dismissAll } = useBottomSheetModal();
@@ -53,12 +40,12 @@ export default function GoalCard({
         }}
         numberOfLines={1}
       >
-        {goal.title}
+        {goal.name}
       </ThemedText>
 
       <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
         <ThemedText style={{ ...textVariants.subheadline }}>
-          {goal.stake}
+          {formatStake(goal.currency, goal.stakeCents)}
         </ThemedText>
         <Text
           style={{
@@ -73,12 +60,14 @@ export default function GoalCard({
           {goal.timeLeft}
         </Text>
       </View>
+
+      {goal.hasDurationVerification ? <GoalTimerRow goalId={goal.id} /> : null}
     </View>
   );
 
   const rightNode = (
     <View style={{ alignItems: "flex-end", gap: 2, marginLeft: spacing.lg }}>
-      {goal.streak && (
+      {/* {goal.streak && (
         <>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
             <Flame width={16} height={16} color={danger} />
@@ -93,7 +82,7 @@ export default function GoalCard({
             </Text>
           </View>
         </>
-      )}
+      )} */}
     </View>
   );
 
@@ -105,7 +94,7 @@ export default function GoalCard({
           right={rightNode}
           accessibilityLabel={
             accessibilityLabel ??
-            `Goal ${goal.title}, ${goal.stake}, ${goal.timeLeft}`
+            `Goal ${goal.name}, ${formatStake(goal.currency, goal.stakeCents)}, ${goal.timeLeft}`
           }
           testID={testID}
         />
@@ -113,5 +102,19 @@ export default function GoalCard({
 
       <GoalDetailsSheet ref={bottomSheetRef} goal={goal} />
     </>
+  );
+}
+
+function GoalTimerRow({ goalId }: { goalId: string }) {
+  const mutedForeground = useThemeColor({}, "mutedForeground");
+  const { data: timer } = useGoalTimer(goalId);
+  const { elapsedLabel } = useElapsedTimer(timer?.startedAt);
+  if (!timer) return null;
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+      <Text style={{ ...textVariants.footnote, color: mutedForeground }}>
+        Timer: {elapsedLabel ?? "–"}
+      </Text>
+    </View>
   );
 }

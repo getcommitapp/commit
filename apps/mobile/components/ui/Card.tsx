@@ -7,19 +7,14 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 
-type CardProps = {
+interface CardProps {
   left: React.ReactNode;
   right?: React.ReactNode;
   accessibilityLabel?: string;
   testID?: string;
-};
+}
 
-export default function Card({
-  left,
-  right,
-  accessibilityLabel,
-  testID,
-}: CardProps) {
+export function Card({ left, right, accessibilityLabel, testID }: CardProps) {
   const text = useThemeColor({}, "text");
 
   return (

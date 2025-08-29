@@ -15,7 +15,7 @@ import {
 
 type ButtonVariant = "primary" | "secondary" | "accent" | "border";
 
-type Props = {
+interface ButtonProps {
   title: string;
   onPress?: () => void;
   disabled?: boolean;
@@ -26,7 +26,9 @@ type Props = {
   textStyle?: TextStyle | TextStyle[];
   loading?: boolean;
   rightIcon?: ReactNode;
-};
+  testID?: string;
+  accessibilityLabel?: string;
+}
 
 export function Button({
   title,
@@ -39,7 +41,9 @@ export function Button({
   textStyle,
   loading = false,
   rightIcon,
-}: Props) {
+  testID,
+  accessibilityLabel,
+}: ButtonProps) {
   const primary = useThemeColor({}, "primary");
   const secondary = useThemeColor({}, "secondary");
   const accent = useThemeColor({}, "accent");
@@ -68,6 +72,9 @@ export function Button({
     <Pressable
       onPress={onPress}
       disabled={disabled || loading}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      testID={testID}
       style={[
         {
           backgroundColor,

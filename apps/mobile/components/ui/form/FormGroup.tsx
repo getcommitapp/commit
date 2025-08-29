@@ -24,7 +24,7 @@ export function FormGroup({
   const border = useThemeColor({}, "border");
 
   return (
-    <View style={style}>
+    <View style={{ marginBottom: spacing.xl, ...style }}>
       {title ? <SmallText>{title}</SmallText> : null}
       <View
         style={{
@@ -76,7 +76,6 @@ export function FormGroup({
           {footer}
         </ThemedText>
       ) : null}
-      <View style={{ height: spacing.xl }} />
     </View>
   );
 }

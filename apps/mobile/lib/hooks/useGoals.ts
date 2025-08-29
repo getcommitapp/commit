@@ -2,24 +2,22 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api";
 import { calculateTimeLeft } from "../utils";
 import { GoalsListResponseSchema } from "@commit/types";
-import { Goal } from "@/components/goals/GoalCard";
+import { formatDate, formatTime } from "../utils";
 
 export function useGoals() {
   return useQuery({
     queryKey: ["goals"],
-    queryFn: async (): Promise<Goal[]> => {
+    queryFn: async () => {
       const goals = await apiFetch("/goals", {}, GoalsListResponseSchema);
-
-      // Transform API response to match GoalCard interface
       return goals.map((goal) => ({
-        id: goal.id,
-        title: goal.name,
-        description: goal.description || "",
-        stake: `${goal.currency} ${(goal.stakeCents / 100).toFixed(2)}`,
+        ...goal,
+        startDate: formatDate(goal.startDate),
+        endDate: formatDate(goal.endDate),
+        dueStartTime: formatTime(goal.dueStartTime),
+        dueEndTime: formatTime(goal.dueEndTime),
+        createdAt: formatDate(goal.createdAt),
+        updatedAt: formatDate(goal.updatedAt),
         timeLeft: calculateTimeLeft(goal.endDate),
-        startDate: goal.startDate,
-        endDate: goal.endDate || "",
-        // Note: streak is not available in the API response, so it's omitted
       }));
     },
   });

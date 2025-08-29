@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from "react";
 import { Text, View, Pressable } from "react-native";
-import Card from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
 import {
   ThemedText,
   textVariants,
@@ -10,30 +10,11 @@ import {
 import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
 import { GroupDetailsSheet } from "./GroupDetailsSheet";
 import IonIcons from "@expo/vector-icons/Ionicons";
-
-export type Group = {
-  id: string;
-  title: string;
-  description: string;
-  invitationCode: string; // always provided
-  totalStake?: string;
-  memberCount?: number;
-  timeLeft?: string;
-  startDate?: string;
-  endDate?: string;
-  goal?: {
-    id: string;
-    title: string;
-    stake?: string;
-    timeLeft?: string;
-    startDate?: string;
-    endDate?: string;
-    streak?: number;
-  };
-};
+import { useGroups } from "@/lib/hooks/useGroups";
+import { formatStake } from "@/lib/utils";
 
 interface GroupCardProps {
-  group: Group;
+  group: NonNullable<ReturnType<typeof useGroups>["data"]>[number];
   accessibilityLabel?: string;
   testID?: string;
 }
@@ -63,16 +44,16 @@ export function GroupCard({
         }}
         numberOfLines={1}
       >
-        {group.title}
+        {group.name}
       </ThemedText>
 
       <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
         {group.totalStake ? (
           <ThemedText style={{ ...textVariants.subheadline }}>
-            {group.totalStake}
+            {formatStake(group.goal.currency, group.totalStake)}
           </ThemedText>
         ) : null}
-        {group.totalStake && group.timeLeft ? (
+        {group.totalStake && group.goal.timeLeft ? (
           <Text
             style={{
               ...textVariants.subheadline,
@@ -83,9 +64,9 @@ export function GroupCard({
             &middot;
           </Text>
         ) : null}
-        {group.timeLeft ? (
+        {group.goal.timeLeft ? (
           <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
-            {group.timeLeft}
+            {group.goal.timeLeft}
           </Text>
         ) : null}
       </View>
@@ -119,12 +100,12 @@ export function GroupCard({
           right={rightNode}
           accessibilityLabel={
             accessibilityLabel ??
-            `Group ${group.title}` +
+            `Group ${group.name}` +
               (group.totalStake ? `, ${group.totalStake}` : "") +
               (group.memberCount !== undefined
                 ? `, ${group.memberCount} members`
                 : "") +
-              (group.timeLeft ? `, ${group.timeLeft}` : "")
+              (group.goal.timeLeft ? `, ${group.goal.timeLeft}` : "")
           }
           testID={testID}
         />

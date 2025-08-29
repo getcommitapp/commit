@@ -65,7 +65,6 @@ export class GroupsJoin extends OpenAPIRoute {
       id: g.id,
       name: g.name,
       description: g.description ?? null,
-      goalId: g.goalId ?? null,
       inviteCode: g.inviteCode,
       createdAt: g.createdAt,
       updatedAt: g.updatedAt,

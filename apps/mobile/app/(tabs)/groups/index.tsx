@@ -1,4 +1,4 @@
-import CardList from "@/components/ui/CardList";
+import { CardList } from "@/components/ui/CardList";
 import { GroupCard } from "@/components/groups/GroupCard";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { useGroups } from "@/lib/hooks/useGroups";

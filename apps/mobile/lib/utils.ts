@@ -23,3 +23,26 @@ export function calculateTimeLeft(endDate: string | null): string {
     return `${diffMinutes}m left`;
   }
 }
+
+export function formatDate(timestamp: string | null | undefined) {
+  if (!timestamp) return timestamp;
+  const date = new Date(timestamp);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+export function formatTime(timestamp: string | null | undefined) {
+  if (!timestamp) return timestamp;
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export function formatStake(currency: string, stakeCents: number) {
+  return `${currency} ${(stakeCents / 100).toFixed(2)}`;
+}

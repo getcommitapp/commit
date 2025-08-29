@@ -1,12 +1,12 @@
 import { Text, TextStyle } from "react-native";
 import { spacing, textVariants, useThemeColor } from "@/components/Themed";
 
-interface Props {
+interface SmallTextProps {
   children: React.ReactNode;
   style?: TextStyle;
 }
 
-export function SmallText({ children, style }: Props) {
+export function SmallText({ children, style }: SmallTextProps) {
   const mutedForeground = useThemeColor({}, "mutedForeground");
   return (
     <Text
