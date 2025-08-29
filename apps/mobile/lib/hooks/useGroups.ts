@@ -1,102 +1,76 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import {
-  GroupsListResponseSchema,
-  GroupGetResponseSchema,
-  GroupGoalGetResponseSchema,
-  type GroupGetResponse,
-  type GroupGoalGetResponse,
-} from "@commit/types";
+import { GroupsListResponseSchema } from "@commit/types";
 import type { Group } from "@/components/groups/GroupCard";
 import { formatTimestamp } from "@/lib/formatDate";
-
-// Reuse logic from goals hook for time left calculation
-function calculateTimeLeft(endDate: string | null): string {
-  if (!endDate) return "No deadline";
-  const now = new Date();
-  const end = new Date(endDate);
-  const diffMs = end.getTime() - now.getTime();
-  if (diffMs <= 0) return "Overdue";
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays > 0) {
-    return `${diffDays}d left`;
-  } else if (diffHours > 0) {
-    return `${diffHours}h left`;
-  } else {
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    return `${diffMinutes}m left`;
-  }
-}
+import { useGoals } from "./useGoals";
 
 export function useGroups() {
-  return useQuery({
+  // Fetch groups list once
+  const groupsQuery = useQuery({
     queryKey: ["groups"],
-    queryFn: async (): Promise<Group[]> => {
+    queryFn: async (): Promise<(Group & { goalId?: string | null })[]> => {
       const summaries = await apiFetch("/groups", {}, GroupsListResponseSchema);
 
-      // Enrich each group with details + goal (optional)
-      const groups: Group[] = await Promise.all(
-        summaries.map(async (g): Promise<Group> => {
-          let details: GroupGetResponse | undefined;
-          let goal: GroupGoalGetResponse | undefined;
-          try {
-            details = await apiFetch(
-              `/groups/${g.id}`,
-              {},
-              GroupGetResponseSchema
-            );
-          } catch (e) {
-            // ignore, fallback to summary only
-          }
-          try {
-            goal = await apiFetch(
-              `/groups/${g.id}/goal`,
-              {},
-              GroupGoalGetResponseSchema
-            );
-          } catch (e) {
-            // ignore missing goal
-          }
-
-          const stake =
-            goal?.stakeCents && goal?.currency
-              ? `${goal.currency} ${(goal.stakeCents / 100).toFixed(2)}`
-              : undefined;
-          const rawStart = goal?.startDate ?? g.createdAt;
-          const rawEnd = goal?.endDate ?? null;
-          const startDate = formatTimestamp(rawStart);
-          const endDate = rawEnd ? formatTimestamp(rawEnd) : "";
-
-          const base = {
-            id: g.id,
-            title: g.name,
-            description: g.description || "",
-            memberCount: (g as any).memberCount ?? details?.members.length ?? 1,
-            invitationCode: g.inviteCode,
-          } as Group;
-
-          if (rawStart) base.startDate = startDate;
-          if (rawEnd) base.endDate = endDate;
-          if (stake) base.totalStake = stake;
-          if (rawEnd) base.timeLeft = calculateTimeLeft(rawEnd);
-
-          if (goal) {
-            base.goal = {
-              id: goal.id,
-              title: goal.name,
-              stake,
-              timeLeft: calculateTimeLeft(rawEnd),
-              startDate,
-              endDate,
-            };
-          }
-
-          return base;
-        })
-      );
-
-      return groups;
+      return summaries.map((g) => {
+        // Note: include goalId at runtime for later enrichment; UI types ignore it.
+        const base = {
+          id: g.id,
+          title: g.name,
+          description: g.description || "",
+          invitationCode: g.inviteCode,
+          memberCount: g.memberCount,
+          startDate: formatTimestamp(g.createdAt),
+          goalId: g.goalId ?? null,
+        } as Group & { goalId?: string | null };
+        return base;
+      });
     },
   });
+
+  // Fetch goals list once and enrich groups locally (no per-group calls)
+  const goalsQuery = useGoals();
+
+  const merged = useMemo(() => {
+    const groups = (groupsQuery.data ?? []) as (Group & {
+      goalId?: string | null;
+    })[];
+    const goals = goalsQuery.data ?? [];
+
+    const goalsById = new Map(goals.map((goal) => [goal.id, goal]));
+
+    return groups.map((grp) => {
+      const goal = grp.goalId ? goalsById.get(grp.goalId) : undefined;
+      if (!goal) return grp as Group;
+
+      return {
+        ...grp,
+        totalStake: goal.stake,
+        timeLeft: goal.timeLeft,
+        endDate: goal.endDate,
+        // Provide goal block for details sheet
+        goal: {
+          id: goal.id,
+          title: goal.title,
+          stake: goal.stake,
+          timeLeft: goal.timeLeft,
+          startDate: goal.startDate,
+          endDate: goal.endDate,
+        },
+      } as Group;
+    });
+  }, [groupsQuery.data, goalsQuery.data]);
+
+  // Return a unified query-like object with fields the UI uses
+  return {
+    data: merged as Group[] | undefined,
+    isLoading: groupsQuery.isLoading || goalsQuery.isLoading,
+    isFetching: groupsQuery.isFetching || goalsQuery.isFetching,
+    isError: groupsQuery.isError || goalsQuery.isError,
+    error: (groupsQuery.error as any) ?? (goalsQuery.error as any),
+    refetch: async () => {
+      await Promise.all([groupsQuery.refetch(), goalsQuery.refetch()]);
+    },
+  };
 }
