@@ -2,12 +2,12 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useThemeColor, radii } from "@/components/Themed";
 
-type CardListProps = {
+interface CardListProps {
   children: React.ReactNode;
   style?: any;
-};
+}
 
-export default function CardList({ children, style }: CardListProps) {
+export function CardList({ children, style }: CardListProps) {
   const card = useThemeColor({}, "card");
   const border = useThemeColor({}, "border");
 

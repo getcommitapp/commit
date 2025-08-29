@@ -14,7 +14,6 @@ import { UsersDelete } from "./endpoints/usersDelete";
 // Goals
 import { GoalsList } from "./endpoints/goalsList";
 import { GoalsCreate } from "./endpoints/goalsCreate";
-import { GoalsFetch } from "./endpoints/goalsFetch";
 import { GoalsDelete } from "./endpoints/goalsDelete";
 import { GoalsVerify } from "./endpoints/goalsVerify";
 import { GoalsTimerGet } from "./endpoints/goalsTimerGet";
@@ -146,7 +145,6 @@ openapi.delete("/api/users", UsersDelete);
 // Goals
 openapi.get("/api/goals", GoalsList);
 openapi.post("/api/goals", GoalsCreate);
-openapi.get("/api/goals/:id", GoalsFetch);
 openapi.delete("/api/goals/:id", GoalsDelete);
 openapi.post("/api/goals/:id/verify", GoalsVerify);
 openapi.get("/api/goals/:id/timer", GoalsTimerGet);

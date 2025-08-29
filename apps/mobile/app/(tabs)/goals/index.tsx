@@ -1,5 +1,5 @@
-import CardList from "@/components/ui/CardList";
-import GoalCard from "@/components/goals/GoalCard";
+import { CardList } from "@/components/ui/CardList";
+import { GoalCard } from "@/components/goals/GoalCard";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { useGoals } from "@/lib/hooks/useGoals";
 import { ActivityIndicator, Text, View } from "react-native";

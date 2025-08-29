@@ -15,7 +15,7 @@ import {
 
 type ButtonVariant = "primary" | "secondary" | "accent" | "border";
 
-type Props = {
+interface ButtonProps {
   title: string;
   onPress?: () => void;
   disabled?: boolean;
@@ -28,7 +28,7 @@ type Props = {
   rightIcon?: ReactNode;
   testID?: string;
   accessibilityLabel?: string;
-};
+}
 
 export function Button({
   title,
@@ -43,7 +43,7 @@ export function Button({
   rightIcon,
   testID,
   accessibilityLabel,
-}: Props) {
+}: ButtonProps) {
   const primary = useThemeColor({}, "primary");
   const secondary = useThemeColor({}, "secondary");
   const accent = useThemeColor({}, "accent");
