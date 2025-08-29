@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Pressable } from "react-native";
 import { useRouter } from "expo-router";
-import Card from "@/components/ui/Card";
-import CardList from "@/components/ui/CardList";
+import { Card } from "@/components/ui/Card";
+import { CardList } from "@/components/ui/CardList";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import {
   spacing,
