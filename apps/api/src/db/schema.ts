@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   sqliteTable,
   text,
@@ -179,7 +180,9 @@ export const Group = sqliteTable("group", {
     .notNull()
     .references(() => User.id, { onDelete: "cascade" }),
 
-  goalId: text("goalId").references(() => Goal.id, { onDelete: "cascade" }),
+  goalId: text("goalId")
+    .notNull()
+    .references(() => Goal.id, { onDelete: "cascade" }),
 
   name: text("name").notNull(),
   description: text("description"),
@@ -207,6 +210,43 @@ export const GroupParticipants = sqliteTable(
   },
   (t) => ({
     pk: primaryKey({ columns: [t.groupId, t.userId] }),
+  })
+);
+
+// ---------- Relations ----------
+export const GroupRelations = relations(Group, ({ one, many }) => ({
+  goal: one(Goal, {
+    fields: [Group.goalId],
+    references: [Goal.id],
+  }),
+  participants: many(GroupParticipants),
+}));
+
+export const GoalRelations = relations(Goal, ({ many }) => ({
+  verificationMethods: many(GoalVerificationsMethod),
+}));
+
+export const GoalVerificationsMethodRelations = relations(
+  GoalVerificationsMethod,
+  ({ one }) => ({
+    goal: one(Goal, {
+      fields: [GoalVerificationsMethod.goalId],
+      references: [Goal.id],
+    }),
+  })
+);
+
+export const GroupParticipantsRelations = relations(
+  GroupParticipants,
+  ({ one }) => ({
+    group: one(Group, {
+      fields: [GroupParticipants.groupId],
+      references: [Group.id],
+    }),
+    user: one(User, {
+      fields: [GroupParticipants.userId],
+      references: [User.id],
+    }),
   })
 );
 

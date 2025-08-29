@@ -3,16 +3,13 @@ import { GoalDetailsSchema, GoalVerificationInputSchema } from "./goals";
 
 // ---------------- Zod Schemas ----------------
 
-export const GroupSummarySchema = z.object({
+export const GroupBaseSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().nullable(),
-  goalId: z.string().nullable(),
   inviteCode: z.string(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  memberCount: z.number().optional(),
-  goal: GoalDetailsSchema,
 });
 
 export const GroupMemberSchema = z.object({
@@ -21,22 +18,21 @@ export const GroupMemberSchema = z.object({
   joinedAt: z.string().datetime(),
 });
 
-export const GroupDetailsSchema = GroupSummarySchema.extend({
-  creatorId: z.string(),
-  members: z.array(GroupMemberSchema),
+export const GroupListItemSchema = GroupBaseSchema.extend({
+  memberCount: z.number(),
+  goal: GoalDetailsSchema,
 });
 
-export const GroupsListResponseSchema = z.array(GroupSummarySchema);
+export const GroupsListResponseSchema = z.array(GroupListItemSchema);
 
 export const GroupCreateRequestSchema = z.object({
   name: z.string(),
   description: z.string().nullable().optional(),
+  goalId: z.string(),
 });
 
 // Optimistic UI: return created group
-export const GroupCreateResponseSchema = GroupSummarySchema;
-
-export const GroupGetResponseSchema = GroupDetailsSchema;
+export const GroupCreateResponseSchema = GroupBaseSchema;
 
 export const GroupInviteGetResponseSchema = z.object({
   inviteCode: z.string(),
@@ -66,23 +62,20 @@ export const GroupLeaveResponseSchema = z.object({
 
 export const GroupJoinRequestSchema = z.object({ code: z.string() });
 
-export const GroupJoinResponseSchema = GroupSummarySchema;
+export const GroupJoinResponseSchema = GroupBaseSchema;
 
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 
-export type GroupSummary = z.infer<typeof GroupSummarySchema>;
+export type GroupBase = z.infer<typeof GroupBaseSchema>;
 
 export type GroupMember = z.infer<typeof GroupMemberSchema>;
 
-export type GroupDetails = z.infer<typeof GroupDetailsSchema>;
-
+export type GroupListItem = z.infer<typeof GroupListItemSchema>;
 export type GroupsListResponse = z.infer<typeof GroupsListResponseSchema>;
 
 export type GroupCreateRequest = z.infer<typeof GroupCreateRequestSchema>;
 
 export type GroupCreateResponse = z.infer<typeof GroupCreateResponseSchema>;
-
-export type GroupGetResponse = z.infer<typeof GroupGetResponseSchema>;
 
 export type GroupInviteGetResponse = z.infer<
   typeof GroupInviteGetResponseSchema

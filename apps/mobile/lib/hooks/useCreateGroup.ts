@@ -2,12 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api";
 import { GroupCreateResponseSchema } from "@commit/types";
 import { z } from "zod";
-import type { Group } from "@/components/groups/GroupCard";
-import { formatTimestamp } from "@/lib/formatDate";
 
 const CreateInputSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
+  goalId: z.string(),
 });
 export type CreateGroupInput = z.infer<typeof CreateInputSchema>;
 
@@ -24,28 +23,15 @@ export function useCreateGroup() {
           body: JSON.stringify({
             name: parsed.name,
             description: parsed.description ?? null,
+            goalId: parsed.goalId,
           }),
         },
         GroupCreateResponseSchema
       );
-      const startDate = formatTimestamp(created.createdAt);
-      const group: Group = {
-        id: created.id,
-        title: created.name,
-        description: created.description || "",
-        memberCount: created.memberCount ?? 1,
-        invitationCode: created.inviteCode,
-        startDate,
-      };
-      return group;
+      return created;
     },
-    onSuccess: (group) => {
-      qc.setQueryData<Group[] | undefined>(["groups"], (old) => {
-        if (!old) return [group];
-        // Avoid duplicates
-        if (old.some((g) => g.id === group.id)) return old;
-        return [group, ...old];
-      });
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["groups"] });
     },
   });
 }

@@ -30,7 +30,7 @@ export class GroupsCreate extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
-    const { name, description } = data.body;
+    const { name, description, goalId } = data.body;
     const db = drizzle(c.env.DB, { schema });
     const user = c.get("user");
     const userId = user?.id as string | undefined;
@@ -45,6 +45,7 @@ export class GroupsCreate extends OpenAPIRoute {
       .values({
         id,
         creatorId: userId,
+        goalId,
         name,
         description: description ?? null,
         inviteCode,
@@ -75,7 +76,6 @@ export class GroupsCreate extends OpenAPIRoute {
       id: created.id,
       name: created.name,
       description: created.description ?? null,
-      goalId: created.goalId ?? null,
       inviteCode: created.inviteCode,
       createdAt: created.createdAt,
       updatedAt: created.updatedAt,

@@ -1,11 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import { GroupSummarySchema } from "@commit/types";
-import type { Group } from "@/components/groups/GroupCard";
-import { formatTimestamp } from "@/lib/formatDate";
+import { GroupJoinResponseSchema } from "@commit/types";
 
 // Expected API: POST /api/groups/join { code } -> GroupSummary
-// Backend not yet implemented; this will fail until endpoint exists.
 export function useJoinGroup() {
   const qc = useQueryClient();
   return useMutation({
@@ -18,18 +15,9 @@ export function useJoinGroup() {
             method: "POST",
             body: JSON.stringify({ code }),
           },
-          GroupSummarySchema
+          GroupJoinResponseSchema
         );
-        const startDate = formatTimestamp(res.createdAt);
-        const group: Group = {
-          id: res.id,
-          title: res.name,
-          description: res.description || "",
-          invitationCode: res.inviteCode,
-          startDate,
-          memberCount: 1, // unknown until refetched
-        };
-        return group;
+        return res;
       } catch (e) {
         if (e instanceof Error) {
           // Map common backend errors
@@ -44,12 +32,8 @@ export function useJoinGroup() {
         throw e;
       }
     },
-    onSuccess: (group) => {
-      qc.setQueryData<Group[] | undefined>(["groups"], (old) => {
-        if (!old) return [group];
-        if (old.some((g) => g.id === group.id)) return old;
-        return [...old, group];
-      });
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["groups"] });
     },
   });
 }

@@ -42,3 +42,7 @@ export function formatTime(timestamp: string | null | undefined) {
     minute: "2-digit",
   });
 }
+
+export function formatStake(currency: string, stakeCents: number) {
+  return `${currency} ${(stakeCents / 100).toFixed(2)}`;
+}

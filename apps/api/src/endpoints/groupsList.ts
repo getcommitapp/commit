@@ -2,9 +2,8 @@ import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { GroupsListResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
-import { eq, or, sql } from "drizzle-orm";
-import { Group, GroupParticipants, Goal } from "../db/schema";
-import { alias } from "drizzle-orm/sqlite-core";
+import { and, eq, exists, or } from "drizzle-orm";
+import * as schema from "../db/schema";
 
 export class GroupsList extends OpenAPIRoute {
   schema = {
@@ -23,46 +22,63 @@ export class GroupsList extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const db = drizzle(c.env.DB);
+    const db = drizzle(c.env.DB, { schema });
     const userId = c.var.user.id;
 
-    // Single query using joins and aggregation
-    const gpFilter = alias(GroupParticipants, "gpFilter");
-    const gpAll = alias(GroupParticipants, "gpAll");
-
-    const rows = await db
-      .select({
-        group: Group,
+    const groups = await db.query.Group.findMany({
+      with: {
         goal: {
-          id: Goal.id,
-          name: Goal.name,
-          startDate: Goal.startDate,
-          endDate: Goal.endDate,
-          stakeCents: Goal.stakeCents,
-          currency: Goal.currency,
+          with: {
+            verificationMethods: true,
+          },
         },
-        memberCount: sql<number>`count(distinct ${gpAll.userId}) + 1`,
-      })
-      .from(Group)
-      .leftJoin(gpAll, eq(gpAll.groupId, Group.id))
-      .leftJoin(Goal, eq(Goal.id, Group.goalId))
-      .leftJoin(gpFilter, eq(gpFilter.groupId, Group.id))
-      .where(or(eq(Group.creatorId, userId), eq(gpFilter.userId, userId)))
-      .groupBy(Group.id)
-      .all();
+        participants: true,
+      },
+      where: or(
+        eq(schema.Group.creatorId, userId),
+        exists(
+          db
+            .select({ one: schema.GroupParticipants.userId })
+            .from(schema.GroupParticipants)
+            .where(
+              and(
+                eq(schema.GroupParticipants.groupId, schema.Group.id),
+                eq(schema.GroupParticipants.userId, userId)
+              )
+            )
+        )
+      ),
+    });
 
-    const res = rows.map(({ group: g, goal, memberCount }) => ({
+    const response = groups.map((g) => ({
       id: g.id,
       name: g.name,
-      description: g.description ?? null,
-      goalId: g.goalId,
+      description: g.description,
       inviteCode: g.inviteCode,
-      createdAt: g.createdAt as unknown as string,
-      updatedAt: g.updatedAt as unknown as string,
-      memberCount: Number(memberCount ?? 1),
-      goal: goal,
+      createdAt: g.createdAt,
+      updatedAt: g.updatedAt,
+      memberCount: (g.participants?.length ?? 0) + 1,
+      goal: {
+        id: g.goal.id,
+        ownerId: g.goal.ownerId,
+        name: g.goal.name,
+        description: g.goal.description,
+        startDate: g.goal.startDate,
+        endDate: g.goal.endDate,
+        dueStartTime: g.goal.dueStartTime,
+        dueEndTime: g.goal.dueEndTime,
+        recurrence: g.goal.recurrence,
+        stakeCents: g.goal.stakeCents,
+        currency: g.goal.currency,
+        destinationType: g.goal.destinationType,
+        destinationUserId: g.goal.destinationUserId,
+        destinationCharityId: g.goal.destinationCharityId,
+        createdAt: g.goal.createdAt,
+        updatedAt: g.goal.updatedAt,
+        verificationMethods: g.goal.verificationMethods ?? [],
+      },
     }));
 
-    return c.json(res);
+    return c.json(response);
   }
 }

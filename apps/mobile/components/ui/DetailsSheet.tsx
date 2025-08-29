@@ -18,7 +18,7 @@ import {
 
 interface DetailsSheetProps {
   title: string;
-  description: string;
+  description?: string | null;
   snapPoints?: string[];
   enableDynamicSizing?: boolean;
   onDismiss?: () => void;
@@ -98,11 +98,16 @@ export const DetailsSheet = forwardRef<BottomSheetModal, DetailsSheetProps>(
               <ThemedText style={{ ...textVariants.title3 }}>
                 {title}
               </ThemedText>
-              <Text
-                style={{ ...textVariants.subheadline, color: mutedForeground }}
-              >
-                {description}
-              </Text>
+              {description ? (
+                <Text
+                  style={{
+                    ...textVariants.subheadline,
+                    color: mutedForeground,
+                  }}
+                >
+                  {description}
+                </Text>
+              ) : null}
             </View>
 
             {children}

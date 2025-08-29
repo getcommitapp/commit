@@ -12,19 +12,64 @@ describe("GET /api/groups (list)", () => {
   });
 
   it("lists groups after creating some", async () => {
-    const create = async (name: string) =>
+    // Create goals first
+    const goal1Res = await app.request(
+      "/api/goals",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Goal A",
+          description: "A test goal",
+          startDate: new Date().toISOString(),
+          dueStartTime: new Date().toISOString(),
+          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+          stakeCents: 1000,
+          currency: "USD",
+          destinationType: "charity",
+        }),
+        headers: new Headers({ "Content-Type": "application/json" }),
+      },
+      env
+    );
+    const goal1 = await goal1Res.json();
+
+    const goal2Res = await app.request(
+      "/api/goals",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Goal B",
+          description: "Another test goal",
+          startDate: new Date().toISOString(),
+          dueStartTime: new Date().toISOString(),
+          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+          stakeCents: 1000,
+          currency: "USD",
+          destinationType: "charity",
+        }),
+        headers: new Headers({ "Content-Type": "application/json" }),
+      },
+      env
+    );
+    const goal2 = await goal2Res.json();
+
+    const create = async (name: string, goalId: string) =>
       app.request(
         "/api/groups",
         {
           method: "POST",
-          body: JSON.stringify({ name, description: null }),
+          body: JSON.stringify({
+            name,
+            description: null,
+            goalId,
+          }),
           headers: new Headers({ "Content-Type": "application/json" }),
         },
         env
       );
 
-    await create("A");
-    await create("B");
+    await create("A", goal1.id);
+    await create("B", goal2.id);
 
     const res = await app.request("/api/groups", {}, env);
     expect(res.status).toBe(200);

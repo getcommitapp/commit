@@ -86,8 +86,8 @@ VALUES
   ('00000000-0000-4000-8000-0000000000c2', 'UNICEF', 'https://www.unicef.org', strftime('%s','now'), strftime('%s','now')),
   ('00000000-0000-4000-8000-0000000000c3', 'Doctors Without Borders', 'https://www.msf.org', strftime('%s','now'), strftime('%s','now'));
 
--- Insert test goals
-INSERT OR IGNORE INTO goal (id, ownerId, name, description, startDate, endDate, dueStartTime, dueEndTime, recurrence, stakeCents, currency, destinationType, destinationCharityId, createdAt, updatedAt)
+-- Insert/Update test goals (upsert)
+INSERT INTO goal (id, ownerId, name, description, startDate, endDate, dueStartTime, dueEndTime, recurrence, stakeCents, currency, destinationType, destinationCharityId, createdAt, updatedAt)
 VALUES 
   -- Test User's goals
   ('00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', 'Daily Exercise', 'Work out for 30 minutes every day', strftime('%s','now'), strftime('%s','now', '+30 days'), strftime('%s','now', '+6 hours'), strftime('%s','now', '+8 hours'), 'daily', 5000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now')),
@@ -97,7 +97,22 @@ VALUES
   ('00000000-0000-4000-8000-0000000000g3', '00000000-0000-4000-8000-000000000002', 'Learn Guitar', 'Practice guitar for 1 hour daily', strftime('%s','now'), strftime('%s','now', '+90 days'), strftime('%s','now', '+18 hours'), strftime('%s','now', '+19 hours'), 'daily', 2000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c3', strftime('%s','now'), strftime('%s','now')),
   
   -- Bob's goals
-  ('00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'Meditation', 'Meditate for 15 minutes every morning', strftime('%s','now'), strftime('%s','now', '+45 days'), strftime('%s','now', '+7 hours'), strftime('%s','now', '+7.25 hours'), 'daily', 1500, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now'));
+  ('00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'Meditation', 'Meditate for 15 minutes every morning', strftime('%s','now'), strftime('%s','now', '+45 days'), strftime('%s','now', '+7 hours'), strftime('%s','now', '+7.25 hours'), 'daily', 1500, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now'))
+ON CONFLICT(id) DO UPDATE SET
+  ownerId=excluded.ownerId,
+  name=excluded.name,
+  description=excluded.description,
+  startDate=excluded.startDate,
+  endDate=excluded.endDate,
+  dueStartTime=excluded.dueStartTime,
+  dueEndTime=excluded.dueEndTime,
+  recurrence=excluded.recurrence,
+  stakeCents=excluded.stakeCents,
+  currency=excluded.currency,
+  destinationType=excluded.destinationType,
+  destinationUserId=excluded.destinationUserId,
+  destinationCharityId=excluded.destinationCharityId,
+  updatedAt=excluded.updatedAt;
 
 -- Insert goal verification methods
 INSERT OR IGNORE INTO goal_verifications_method (id, goalId, method, latitude, longitude, radiusM, durationSeconds, graceTime, createdAt, updatedAt)
@@ -114,12 +129,23 @@ VALUES
   ('00000000-0000-4000-8000-0000000000v2', '00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', 'location', strftime('%s','now', '-2 days'), 'approved', strftime('%s','now', '-2 days', '-30 minutes'), NULL, NULL, strftime('%s','now'), strftime('%s','now')),
   ('00000000-0000-4000-8000-0000000000v3', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'photo', strftime('%s','now', '-1 day'), 'approved', strftime('%s','now', '-1 day', '-1 hour'), 'Reading page 15 of my book', 'https://example.com/photo1.jpg', strftime('%s','now'), strftime('%s','now'));
 
--- Insert test groups
-INSERT OR IGNORE INTO "group" (id, creatorId, goalId, name, description, inviteCode, createdAt, updatedAt)
+-- Sanity cleanup: remove orphan groups referencing non-existent goals
+DELETE FROM "group"
+WHERE goalId NOT IN (SELECT id FROM goal);
+
+-- Insert/Update test groups (upsert)
+INSERT INTO "group" (id, creatorId, goalId, name, description, inviteCode, createdAt, updatedAt)
 VALUES 
   ('00000000-0000-4000-8000-0000000000gr1', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-0000000000g1', 'Fitness Buddies', 'Group for daily exercise motivation', 'FITNESS123', strftime('%s','now'), strftime('%s','now')),
   ('00000000-0000-4000-8000-0000000000gr2', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-0000000000g3', 'Music Learners', 'Group for learning musical instruments', 'MUSIC456', strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000gr3', '00000000-0000-4000-8000-000000000003', NULL, 'Study Group', 'General study and productivity group', 'STUDY789', strftime('%s','now'), strftime('%s','now'));
+  ('00000000-0000-4000-8000-0000000000gr3', '00000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-0000000000g4', 'Study Group', 'General study and productivity group', 'STUDY789', strftime('%s','now'), strftime('%s','now'))
+ON CONFLICT(id) DO UPDATE SET
+  creatorId=excluded.creatorId,
+  goalId=excluded.goalId,
+  name=excluded.name,
+  description=excluded.description,
+  inviteCode=excluded.inviteCode,
+  updatedAt=excluded.updatedAt;
 
 -- Insert group participants
 INSERT OR IGNORE INTO group_participants (groupId, userId, joinedAt, status, createdAt, updatedAt)

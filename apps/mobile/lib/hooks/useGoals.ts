@@ -9,7 +9,6 @@ export function useGoals() {
     queryKey: ["goals"],
     queryFn: async () => {
       const goals = await apiFetch("/goals", {}, GoalsListResponseSchema);
-      console.log(goals);
       return goals.map((goal) => ({
         ...goal,
         startDate: formatDate(goal.startDate),

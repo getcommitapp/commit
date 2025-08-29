@@ -12,6 +12,7 @@ import { useGoalTimer } from "@/lib/hooks/useGoalTimer";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
+import { formatStake } from "@/lib/utils";
 
 interface GoalCardProps {
   goal: NonNullable<ReturnType<typeof useGoals>["data"]>[number];
@@ -116,8 +117,4 @@ function GoalTimerRow({ goalId }: { goalId: string }) {
       </Text>
     </View>
   );
-}
-
-function formatStake(currency: string, stakeCents: number) {
-  return `${currency} ${(stakeCents / 100).toFixed(2)}`;
 }

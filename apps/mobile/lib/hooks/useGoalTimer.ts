@@ -3,15 +3,13 @@ import { apiFetch } from "../api";
 import {
   GoalTimerGetResponseSchema,
   GoalTimerStartResponseSchema,
-  type GoalTimerGetResponse,
-  type GoalTimerStartResponse,
 } from "@commit/types";
 
 export function useGoalTimer(goalId: string) {
   return useQuery({
     queryKey: ["goal-timer", goalId],
     queryFn: async () => {
-      const res = await apiFetch<GoalTimerGetResponse>(
+      const res = await apiFetch(
         `/goals/${goalId}/timer`,
         {},
         GoalTimerGetResponseSchema
@@ -25,7 +23,7 @@ export function useStartGoalTimer(goalId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const res = await apiFetch<GoalTimerStartResponse>(
+      const res = await apiFetch(
         `/goals/${goalId}/timer/start`,
         { method: "POST" },
         GoalTimerStartResponseSchema

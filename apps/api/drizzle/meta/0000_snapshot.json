@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "cba857d4-60b2-4826-ba1e-c5991f55bfac",
+  "id": "61b92316-d841-40f4-b0af-fa653e34e63d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -313,6 +313,71 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
+    "goal_timer": {
+      "name": "goal_timer",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "goalId": {
+          "name": "goalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "startedAt": {
+          "name": "startedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(current_timestamp)"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "goal_timer_goalId_goal_id_fk": {
+          "name": "goal_timer_goalId_goal_id_fk",
+          "tableFrom": "goal_timer",
+          "tableTo": "goal",
+          "columnsFrom": ["goalId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "goal_timer_userId_user_id_fk": {
+          "name": "goal_timer_userId_user_id_fk",
+          "tableFrom": "goal_timer",
+          "tableTo": "user",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "goal_verifications_log": {
       "name": "goal_verifications_log",
       "columns": {
@@ -548,7 +613,7 @@
           "name": "goalId",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "name": {
