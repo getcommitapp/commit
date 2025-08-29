@@ -1,33 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import {
-  GroupsListResponseSchema,
-  GroupGetResponseSchema,
-  GroupGoalGetResponseSchema,
-  type GroupGetResponse,
-  type GroupGoalGetResponse,
-} from "@commit/types";
+import { GroupsListResponseSchema } from "@commit/types";
 import type { Group } from "@/components/groups/GroupCard";
 import { formatTimestamp } from "@/lib/formatDate";
-
-// Reuse logic from goals hook for time left calculation
-function calculateTimeLeft(endDate: string | null): string {
-  if (!endDate) return "No deadline";
-  const now = new Date();
-  const end = new Date(endDate);
-  const diffMs = end.getTime() - now.getTime();
-  if (diffMs <= 0) return "Overdue";
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays > 0) {
-    return `${diffDays}d left`;
-  } else if (diffHours > 0) {
-    return `${diffHours}h left`;
-  } else {
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    return `${diffMinutes}m left`;
-  }
-}
+import { calculateTimeLeft } from "@/lib/utils";
 
 export function useGroups() {
   return useQuery({
@@ -35,68 +11,34 @@ export function useGroups() {
     queryFn: async (): Promise<Group[]> => {
       const summaries = await apiFetch("/groups", {}, GroupsListResponseSchema);
 
-      // Enrich each group with details + goal (optional)
-      const groups: Group[] = await Promise.all(
-        summaries.map(async (g): Promise<Group> => {
-          let details: GroupGetResponse | undefined;
-          let goal: GroupGoalGetResponse | undefined;
-          try {
-            details = await apiFetch(
-              `/groups/${g.id}`,
-              {},
-              GroupGetResponseSchema
-            );
-          } catch (e) {
-            // ignore, fallback to summary only
-          }
-          try {
-            goal = await apiFetch(
-              `/groups/${g.id}/goal`,
-              {},
-              GroupGoalGetResponseSchema
-            );
-          } catch (e) {
-            // ignore missing goal
-          }
-
-          const stake =
-            goal?.stakeCents && goal?.currency
-              ? `${goal.currency} ${(goal.stakeCents / 100).toFixed(2)}`
-              : undefined;
-          const rawStart = goal?.startDate ?? g.createdAt;
-          const rawEnd = goal?.endDate ?? null;
-          const startDate = formatTimestamp(rawStart);
-          const endDate = rawEnd ? formatTimestamp(rawEnd) : "";
-
-          const base = {
-            id: g.id,
-            title: g.name,
-            description: g.description || "",
-            memberCount: (g as any).memberCount ?? details?.members.length ?? 1,
-            invitationCode: g.inviteCode,
-          } as Group;
-
-          if (rawStart) base.startDate = startDate;
-          if (rawEnd) base.endDate = endDate;
-          if (stake) base.totalStake = stake;
-          if (rawEnd) base.timeLeft = calculateTimeLeft(rawEnd);
-
-          if (goal) {
-            base.goal = {
-              id: goal.id,
-              title: goal.name,
-              stake,
-              timeLeft: calculateTimeLeft(rawEnd),
-              startDate,
-              endDate,
-            };
-          }
-
-          return base;
-        })
-      );
-
-      return groups;
+      return summaries.map((g) => {
+        const stake = g.goal
+          ? `${g.goal.currency} ${(g.goal.stakeCents / 100).toFixed(2)}`
+          : undefined;
+        const endDate = g.goal?.endDate ?? null;
+        const base: Group = {
+          id: g.id,
+          title: g.name,
+          description: g.description || "",
+          invitationCode: g.inviteCode,
+          memberCount: g.memberCount,
+          startDate: formatTimestamp(g.createdAt),
+        };
+        if (g.goal) {
+          base.totalStake = stake;
+          base.timeLeft = calculateTimeLeft(endDate);
+          base.endDate = endDate ? formatTimestamp(endDate) : "";
+          base.goal = {
+            id: g.goal.id,
+            title: g.goal.name,
+            stake,
+            timeLeft: calculateTimeLeft(endDate),
+            startDate: formatTimestamp(g.goal.startDate),
+            endDate: endDate ? formatTimestamp(endDate) : "",
+          };
+        }
+        return base;
+      });
     },
   });
 }

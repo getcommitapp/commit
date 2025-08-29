@@ -1,8 +1,5 @@
 import * as z from "zod";
-import {
-  GoalDetailsSchema,
-  GoalVerificationInputSchema,
-} from "./goals";
+import { GoalDetailsSchema, GoalVerificationInputSchema } from "./goals";
 
 // ---------------- Zod Schemas ----------------
 
@@ -15,6 +12,7 @@ export const GroupSummarySchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   memberCount: z.number().optional(),
+  goal: GoalDetailsSchema,
 });
 
 export const GroupMemberSchema = z.object({
@@ -69,7 +67,6 @@ export const GroupLeaveResponseSchema = z.object({
 export const GroupJoinRequestSchema = z.object({ code: z.string() });
 
 export const GroupJoinResponseSchema = GroupSummarySchema;
-
 
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 

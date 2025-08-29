@@ -21,10 +21,8 @@ import { GoalsVerify } from "./endpoints/goalsVerify";
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
 import { GroupsCreate } from "./endpoints/groupsCreate";
-import { GroupsFetch } from "./endpoints/groupsFetch";
 import { GroupsInvite } from "./endpoints/groupsInvite";
 import { GroupsInviteVerify } from "./endpoints/groupsInviteVerify";
-import { GroupsGoal } from "./endpoints/groupsGoal";
 import { GroupsLeave } from "./endpoints/groupsLeave";
 import { HonoContext } from "./types";
 import { GroupsJoin } from "./endpoints/groupsJoin";
@@ -153,8 +151,6 @@ openapi.post("/api/goals/:id/verify", GoalsVerify);
 // Groups
 openapi.get("/api/groups", GroupsList);
 openapi.post("/api/groups", GroupsCreate);
-openapi.get("/api/groups/:id", GroupsFetch);
-openapi.get("/api/groups/:id/goal", GroupsGoal);
 openapi.get("/api/groups/:id/invite", GroupsInvite);
 openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
 openapi.post("/api/groups/:id/leave", GroupsLeave);
