@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Pressable } from "react-native";
-import Card from "@/components/ui/Card";
-import CardList from "@/components/ui/CardList";
+import { Card } from "@/components/ui/Card";
+import { CardList } from "@/components/ui/CardList";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { Button } from "@/components/ui/Button";
 import {
@@ -52,7 +52,9 @@ export default function CustomGoalValidationScreen() {
           return (
             <CardList key={key}>
               <Pressable
-                onPress={() => setSelected((prev) => (prev === key ? null : key))}
+                onPress={() =>
+                  setSelected((prev) => (prev === key ? null : key))
+                }
                 style={{
                   borderWidth: 1,
                   borderColor: isSelected ? primary : border,
@@ -121,7 +123,7 @@ export default function CustomGoalValidationScreen() {
           router.push({
             pathname: "/(tabs)/goals/create/new",
             params: { method: selected ?? undefined },
-          } as any)
+          })
         }
         disabled={!selected}
         style={{}}

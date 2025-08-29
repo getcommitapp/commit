@@ -4,3 +4,4 @@ export { FormInput } from "./FormInput";
 export { FormDateInput } from "./FormDateInput";
 export { FormTimeInput } from "./FormTimeInput";
 export { FormSpacer } from "./FormSpacer";
+export { FormDurationInput } from "./FormDurationInput";

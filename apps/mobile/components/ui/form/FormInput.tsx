@@ -5,8 +5,10 @@ import { textVariants, spacing, useThemeColor } from "@/components/Themed";
 interface FormInputProps {
   label: string;
   placeholder?: string;
-  value: string;
-  onChangeText: (text: string) => void;
+  value: string | number;
+  onChangeText?: (text: string) => void;
+  onChangeNumber?: (value: number | null) => void;
+  type?: "text" | "number";
   onBlur?: () => void;
   onFocus?: () => void;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
@@ -23,6 +25,8 @@ export function FormInput({
   placeholder,
   value,
   onChangeText,
+  onChangeNumber,
+  type = "text",
   onBlur,
   onFocus,
   autoCapitalize = "none",
@@ -37,6 +41,28 @@ export function FormInput({
   const mutedForeground = useThemeColor({}, "mutedForeground");
   const card = useThemeColor({}, "card");
 
+  const displayValue =
+    typeof value === "number" ? String(value) : (value ?? "");
+
+  const handleChangeText = (incoming: string) => {
+    if (type === "number") {
+      // Allow digits and at most one decimal separator (dot or comma)
+      const sanitized = incoming.replace(/[^0-9.,]/g, "");
+      // Normalize first comma to dot, drop additional separators beyond first
+      const parts = sanitized.replace(/,/g, ".").split(".");
+      const normalized =
+        parts.length > 1 ? `${parts[0]}.${parts.slice(1).join("")}` : parts[0];
+      if (onChangeText) onChangeText(normalized);
+      if (onChangeNumber) {
+        const parsed = normalized.length ? Number(normalized) : NaN;
+        onChangeNumber(Number.isFinite(parsed) ? parsed : null);
+      }
+      return;
+    }
+    // Default text behavior
+    if (onChangeText) onChangeText(incoming);
+  };
+
   return (
     <>
       <View
@@ -49,13 +75,15 @@ export function FormInput({
         <TextInput
           placeholder={placeholder ?? label}
           placeholderTextColor={mutedForeground}
-          value={value}
-          onChangeText={onChangeText}
+          value={displayValue}
+          onChangeText={handleChangeText}
           onBlur={onBlur}
           onFocus={onFocus}
           autoCapitalize={autoCapitalize}
           secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType}
+          keyboardType={
+            keyboardType ?? (type === "number" ? "decimal-pad" : undefined)
+          }
           returnKeyType={returnKeyType}
           autoCorrect={autoCorrect}
           multiline={multiline}

@@ -6,20 +6,23 @@ import {
   FormSpacer,
   FormDateInput,
   FormTimeInput,
+  FormDurationInput,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
 import { useCreateGoal } from "@/lib/hooks/useCreateGoal";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { AndroidNativeProps, IOSNativeProps } from "@react-native-community/datetimepicker";
-import { useThemeColor } from "@/components/Themed";
+import {
+  AndroidNativeProps,
+  IOSNativeProps,
+} from "@react-native-community/datetimepicker";
 
 export default function GoalNewScreen() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [stake, setStake] = useState("");
+  const [stake, setStake] = useState<number | null>(null);
 
   const [startAt, setStartAt] = useState<Date | null>(new Date());
-  const [endAt, setEndAt] = useState<Date | null>(null);
+  // const [endAt, setEndAt] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(new Date());
   const [endTime, setEndTime] = useState<Date | null>(null);
 
@@ -27,8 +30,7 @@ export default function GoalNewScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const method = typeof params.method === "string" ? params.method : undefined;
-  const [durationMinutes, setDuration] = useState<Date | null>(new Date(0, 0, 0, 0, 0, 0, 0));
-
+  const [duration, setDuration] = useState<Date | null>(null);
 
   const onChangeStart: NonNullable<
     IOSNativeProps["onChange"] | AndroidNativeProps["onChange"]
@@ -36,11 +38,11 @@ export default function GoalNewScreen() {
     if (date) setStartAt(date);
   };
 
-  const onChangeEnd: NonNullable<
-    IOSNativeProps["onChange"] | AndroidNativeProps["onChange"]
-  > = (_event, date) => {
-    if (date) setEndAt(date);
-  };
+  // const onChangeEnd: NonNullable<
+  //   IOSNativeProps["onChange"] | AndroidNativeProps["onChange"]
+  // > = (_event, date) => {
+  //   if (date) setEndAt(date);
+  // };
 
   return (
     <ScreenLayout keyboardShouldPersistTaps="handled">
@@ -55,9 +57,9 @@ export default function GoalNewScreen() {
         />
         <FormInput
           label="Stake (CHF)"
-          value={stake}
-          onChangeText={setStake}
-          keyboardType="numeric"
+          value={stake ?? ""}
+          type="number"
+          onChangeNumber={setStake}
         />
       </FormGroup>
 
@@ -70,7 +72,7 @@ export default function GoalNewScreen() {
           }
           testID="start-date"
         />
-{/**        <FormDateInput
+        {/**        <FormDateInput
           label="End date"
           date={endAt}
           onChange={(d) =>
@@ -99,17 +101,16 @@ export default function GoalNewScreen() {
         />
       </FormGroup>
 
-      {/** Duration input<FormSpacer size="xl" /> */}
-
+      {/** Duration input */}
       {method && (method === "location" || method === "movement") && (
-      <FormGroup title="Duration">
-        <FormTimeInput
-          label="Interval"
-          time={durationMinutes}
-          onChange={(d) => setDuration(d)}
-          testID="interval"
-        />
-      </FormGroup>
+        <FormGroup title="Duration">
+          <FormDurationInput
+            label="Interval"
+            duration={duration}
+            onChange={(d) => setDuration(d)}
+            testID="interval"
+          />
+        </FormGroup>
       )}
 
       {/** Button section */}
@@ -118,19 +119,29 @@ export default function GoalNewScreen() {
         size="lg"
         onPress={() => {
           if (!startAt) return;
+          const stakeCents =
+            stake != null && Number.isFinite(stake)
+              ? Math.round(stake * 100)
+              : 0;
+          if (stakeCents < 100) {
+            return;
+          }
           const computedDurationMinutes =
-            method && (method === "location" || method === "movement") && durationMinutes
-              ? durationMinutes.getHours() * 60 + durationMinutes.getMinutes()
+            method &&
+            (method === "location" || method === "movement") &&
+            duration
+              ? duration.getHours() * 60 + duration.getMinutes()
               : undefined;
           createGoal.mutate(
             {
-              title,
-              description,
-              stake,
-              startDate: startAt,
-              endDate: endAt,
-              dueStartTime: startTime,
-              dueEndTime: endTime,
+              name: title,
+              description: description || null,
+              stakeCents,
+              startDate: startAt.toISOString(),
+              endDate: null,
+              dueStartTime: (startTime ?? startAt).toISOString(),
+              dueEndTime: endTime ? endTime.toISOString() : null,
+              destinationType: "burn",
               verificationMethod: method
                 ? {
                     method,
@@ -142,7 +153,8 @@ export default function GoalNewScreen() {
             },
             {
               onSuccess: () => {
-                router.back();
+                router.dismissAll();
+                router.replace("/(tabs)/goals");
               },
             }
           );
@@ -151,10 +163,11 @@ export default function GoalNewScreen() {
           !title ||
           !startAt ||
           createGoal.isPending ||
-          ((method === "location" || method === "movement") &&
-            !(durationMinutes &&
-              (durationMinutes.getHours() > 0 ||
-                durationMinutes.getMinutes() > 0)))
+          !(
+            stake != null &&
+            Number.isFinite(stake) &&
+            Math.round(stake * 100) >= 100
+          )
         }
       />
 

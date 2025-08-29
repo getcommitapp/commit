@@ -46,8 +46,7 @@ export const GoalsListResponseSchema = z.array(GoalsListItemSchema);
 export const GoalCreateRequestSchema = z.object({
   name: z.string(),
   description: z.string().nullable().optional(),
-  stakeCents: z.number().int(),
-  currency: z.string(),
+  stakeCents: z.number().int().min(100),
   recurrence: z.string().nullable().optional(),
   startDate: z.string().datetime(),
   endDate: z.string().datetime().nullable().optional(),
@@ -58,7 +57,7 @@ export const GoalCreateRequestSchema = z.object({
   destinationCharityId: z.string().nullable().optional(),
   verificationMethod: z
     .object({
-      method: z.string(),
+      method: z.enum(["location", "movement"]),
       durationSeconds: z.number().int().nullable().optional(),
       latitude: z.number().nullable().optional(),
       longitude: z.number().nullable().optional(),

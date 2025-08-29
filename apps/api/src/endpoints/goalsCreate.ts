@@ -32,10 +32,10 @@ export class GoalsCreate extends OpenAPIRoute {
     const goalToCreate = data.body;
 
     const user = c.var.user!;
-    const db = drizzle(c.env.DB);
+    const db = drizzle(c.env.DB, { schema });
     const id = uuid();
 
-  // Create the goal in the db
+    // Create the goal in the db
     const now = new Date();
     const [created] = await db
       .insert(schema.Goal)
@@ -52,7 +52,7 @@ export class GoalsCreate extends OpenAPIRoute {
           : null,
         recurrence: goalToCreate.recurrence ?? null,
         stakeCents: goalToCreate.stakeCents,
-        currency: goalToCreate.currency,
+        currency: "CHF",
         destinationType: goalToCreate.destinationType,
         destinationUserId: goalToCreate.destinationUserId ?? null,
         destinationCharityId: goalToCreate.destinationCharityId ?? null,
@@ -61,39 +61,32 @@ export class GoalsCreate extends OpenAPIRoute {
       })
       .returning();
 
-    let insertedVerification: any = null;
-    // Optional single verification method
+    // Optional single verification method (only allow specific methods)
     if (goalToCreate.verificationMethod) {
+      const allowed = new Set(["location", "movement"]);
+      if (!allowed.has(goalToCreate.verificationMethod.method)) {
+        return c.json({ message: "Unsupported verification method" }, 400);
+      }
       try {
         const vm = goalToCreate.verificationMethod;
-        console.log("[GoalsCreate] Incoming verificationMethod", vm);
-        const [vmRow] = await db
-          .insert(schema.GoalVerificationsMethod)
-          .values({
-            id: uuid(),
-            goalId: created.id,
-            method: vm.method,
-            latitude: vm.latitude ?? null,
-            longitude: vm.longitude ?? null,
-            radiusM: vm.radiusM ?? null,
-            durationSeconds: vm.durationSeconds ?? null,
-            graceTime: vm.graceTime ? new Date(vm.graceTime) : null,
-            createdAt: now,
-            updatedAt: now,
-          })
-          .returning();
-        insertedVerification = vmRow;
+        await db.insert(schema.GoalVerificationsMethod).values({
+          id: uuid(),
+          goalId: created.id,
+          method: vm.method,
+          latitude: vm.latitude ?? null,
+          longitude: vm.longitude ?? null,
+          radiusM: vm.radiusM ?? null,
+          durationSeconds: vm.durationSeconds ?? null,
+          graceTime: vm.graceTime ? new Date(vm.graceTime) : null,
+          createdAt: now,
+          updatedAt: now,
+        });
+        // Insert succeeded; verification not included in response payload
       } catch (e) {
         console.error("[GoalsCreate] Failed to insert verification method", e);
       }
-    } else {
-      console.log("[GoalsCreate] No verificationMethod provided in request body");
     }
 
-    const response = {
-      ...created,
-    };
-
-    return c.json(response, 200);
+    return c.json(created, 200);
   }
 }
