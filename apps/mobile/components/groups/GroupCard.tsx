@@ -15,19 +15,19 @@ export type Group = {
   id: string;
   title: string;
   description: string;
-  totalStake: string; // e.g. CHF 250
-  memberCount: number; // e.g. 5 members
-  timeLeft: string; // e.g. 2h left
-  startDate: string; // e.g. 2025-01-01
-  endDate: string; // e.g. 2025-01-31
-  invitationCode: string; // e.g. ABCD-1234
-  goal: {
+  invitationCode: string; // always provided
+  totalStake?: string;
+  memberCount?: number;
+  timeLeft?: string;
+  startDate?: string;
+  endDate?: string;
+  goal?: {
     id: string;
     title: string;
-    stake: string;
-    timeLeft: string;
-    startDate: string;
-    endDate: string;
+    stake?: string;
+    timeLeft?: string;
+    startDate?: string;
+    endDate?: string;
     streak?: number;
   };
 };
@@ -67,21 +67,27 @@ export function GroupCard({
       </ThemedText>
 
       <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
-        <ThemedText style={{ ...textVariants.subheadline }}>
-          {group.totalStake}
-        </ThemedText>
-        <Text
-          style={{
-            ...textVariants.subheadline,
-            color: mutedForeground,
-            marginHorizontal: 4,
-          }}
-        >
-          &middot;
-        </Text>
-        <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
-          {group.timeLeft}
-        </Text>
+        {group.totalStake ? (
+          <ThemedText style={{ ...textVariants.subheadline }}>
+            {group.totalStake}
+          </ThemedText>
+        ) : null}
+        {group.totalStake && group.timeLeft ? (
+          <Text
+            style={{
+              ...textVariants.subheadline,
+              color: mutedForeground,
+              marginHorizontal: 4,
+            }}
+          >
+            &middot;
+          </Text>
+        ) : null}
+        {group.timeLeft ? (
+          <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
+            {group.timeLeft}
+          </Text>
+        ) : null}
       </View>
     </View>
   );
@@ -99,7 +105,7 @@ export function GroupCard({
           }}
           numberOfLines={1}
         >
-          {group.memberCount}
+          {group.memberCount ?? "—"}
         </Text>
       </View>
     </View>
@@ -113,7 +119,12 @@ export function GroupCard({
           right={rightNode}
           accessibilityLabel={
             accessibilityLabel ??
-            `Group ${group.title}, ${group.totalStake}, ${group.memberCount} members, ${group.timeLeft}`
+            `Group ${group.title}` +
+              (group.totalStake ? `, ${group.totalStake}` : "") +
+              (group.memberCount !== undefined
+                ? `, ${group.memberCount} members`
+                : "") +
+              (group.timeLeft ? `, ${group.timeLeft}` : "")
           }
           testID={testID}
         />

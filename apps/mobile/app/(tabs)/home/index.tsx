@@ -116,6 +116,12 @@ export default function HomeScreen() {
           size="lg"
           onPress={() => router.push("/(tabs)/groups/create")}
         />
+        <Button
+          title="Join Group"
+          variant="border"
+          size="lg"
+          onPress={() => router.push("/(tabs)/groups/join")}
+        />
       </View>
     </ScreenLayout>
   );

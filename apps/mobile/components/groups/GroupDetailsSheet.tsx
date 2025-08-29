@@ -51,32 +51,51 @@ export const GroupDetailsSheet = forwardRef<
       >
         <PeopleCircle width={20} height={20} color={primary} />
         <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
-          {group.memberCount} member{group.memberCount !== 1 ? "s" : ""} in this
-          group
+          {group.memberCount !== undefined
+            ? `${group.memberCount} member${group.memberCount !== 1 ? "s" : ""}`
+            : "Members unknown"}{" "}
+          in this group
         </Text>
       </View>
       <FormGroup
         title="Group Details"
         backgroundStyle={{ backgroundColor: background }}
       >
-        <FormItem label="Total Stake" value={group.totalStake} />
-        <FormItem label="Members" value={group.memberCount.toString()} />
-        <FormItem label="Time Left" value={group.timeLeft} />
-        <FormItem label="Start Date" value={group.startDate} />
-        <FormItem label="End Date" value={group.endDate} />
+        <FormItem label="Total Stake" value={group.totalStake ?? "—"} />
+        <FormItem
+          label="Members"
+          value={
+            group.memberCount !== undefined ? group.memberCount.toString() : "—"
+          }
+        />
+        <FormItem label="Time Left" value={group.timeLeft ?? "—"} />
+        <FormItem label="Start Date" value={group.startDate ?? "—"} />
+        <FormItem label="End Date" value={group.endDate ?? "—"} />
         <FormItem label="Invitation Code" value={group.invitationCode} />
       </FormGroup>
 
       <FormGroup title="Goal" backgroundStyle={{ backgroundColor: background }}>
-        <FormItem label="Title" value={group.goal.title} />
-        <FormItem label="Stake" value={group.goal.stake} />
-        <FormItem label="Time Left" value={group.goal.timeLeft} />
-        <FormItem label="Start Date" value={group.goal.startDate} />
-        <FormItem label="End Date" value={group.goal.endDate} />
-        {group.goal.streak !== undefined ? (
-          <FormItem label="Streak" value={group.goal.streak?.toString()} />
+        {group.goal ? (
+          <>
+            <FormItem label="Title" value={group.goal.title} />
+            <FormItem label="Stake" value={group.goal.stake ?? "—"} />
+            <FormItem label="Time Left" value={group.goal.timeLeft ?? "—"} />
+            <FormItem
+              label="Start Date"
+              value={group.goal.startDate ?? group.startDate ?? "—"}
+            />
+            <FormItem
+              label="End Date"
+              value={group.goal.endDate ?? group.endDate ?? "—"}
+            />
+            {group.goal.streak !== undefined ? (
+              <FormItem label="Streak" value={group.goal.streak?.toString()} />
+            ) : (
+              <FormItem label="Streak" value="—" />
+            )}
+          </>
         ) : (
-          <FormItem label="Streak" value="—" />
+          <FormItem label="Status" value="No goal linked" />
         )}
       </FormGroup>
     </DetailsSheet>

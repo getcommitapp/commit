@@ -3,29 +3,22 @@ import { KeyboardAvoidingView, Platform, View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import { FormGroup, FormInput } from "@/components/ui/form";
-import { spacing, ThemedText, textVariants } from "@/components/Themed";
+import { spacing, textVariants, ThemedText } from "@/components/Themed";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useCreateGroup } from "@/lib/hooks/useCreateGroup";
+import { useJoinGroup } from "@/lib/hooks/useJoinGroup";
 
-export default function CreateGroupScreen() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+export default function JoinGroupScreen() {
+  const [code, setCode] = useState("");
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { mutate, isPending, isError, error } = useJoinGroup();
 
-  const { mutate, isPending, isError, error } = useCreateGroup();
+  const canJoin = code.trim().length >= 4;
 
-  const canCreate = name.trim().length > 0; // description optional
-
-  const handleCreate = () => {
-    mutate(
-      { name: name.trim(), description: description.trim() || undefined },
-      {
-        onSuccess: () => {
-          router.back();
-        },
-      }
-    );
+  const handleJoin = () => {
+    mutate(code.trim().toUpperCase(), {
+      onSuccess: () => router.back(),
+    });
   };
 
   return (
@@ -48,37 +41,27 @@ export default function CreateGroupScreen() {
           paddingBottom: insets.bottom,
         }}
       >
-        <FormGroup title="Group">
+        <FormGroup title="Join Group">
           <FormInput
-            label="Name"
-            placeholder="Enter a group name"
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="words"
-            returnKeyType="next"
-          />
-          <FormInput
-            label="Description"
-            placeholder="Describe your group"
-            value={description}
-            onChangeText={setDescription}
-            multiline
-            numberOfLines={4}
+            label="Invitation Code"
+            placeholder="Enter invite code"
+            value={code}
+            onChangeText={(t) => setCode(t.toUpperCase())}
+            autoCapitalize="characters"
+            returnKeyType="done"
           />
           {isError && (
             <ThemedText style={{ ...textVariants.subheadline, color: "red" }}>
-              {(error as Error)?.message || "Failed to create group"}
+              {(error as Error)?.message || "Failed to join"}
             </ThemedText>
           )}
         </FormGroup>
-
         <View style={{ flex: 1 }} />
-
         <Button
-          title={isPending ? "Creating..." : "Create Group"}
+          title={isPending ? "Joining..." : "Join Group"}
           size="lg"
-          onPress={handleCreate}
-          disabled={!canCreate || isPending}
+          disabled={!canJoin || isPending}
+          onPress={handleJoin}
           style={{}}
         />
       </ScrollView>
