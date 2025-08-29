@@ -80,9 +80,9 @@ app.use("*", async (c, next) => {
   // Allow dev login endpoint without auth in dev/preview
   const env = c.env;
   const environment = env["ENVIRONMENT"] || "production";
-  const devAutoAuthEmail = c.req.header("X-Commit-Dev-Auto-Auth");
+  const devAutoAuthEmail = c.req.header("X-Commit-Dev-Auto-Auth"); // e.g. "user@commit.local" or "reviewer@commit.local"
 
-  // Dev/preview override: trust custom header to impersonate seeded user
+  // Dev/preview override: trust custom header to impersonate a seeded user by email
   if (
     (environment === "development" || environment === "preview") &&
     devAutoAuthEmail

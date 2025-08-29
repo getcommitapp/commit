@@ -19,9 +19,10 @@ export async function apiFetch(
 ) {
   const headers = new Headers(init.headers);
 
-  // Dev/preview: signal API to impersonate the seeded test user
+  // Dev/preview: signal API to impersonate a seeded test user by email
+  // Set EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER to e.g. "user@commit.local" or "reviewer@commit.local"
   if (config.devAutoAuthAsTestUser) {
-    headers.set("X-Commit-Dev-Auto-Auth", "test@commit.local");
+    headers.set("X-Commit-Dev-Auto-Auth", config.devAutoAuthAsTestUser);
   }
 
   // Real session (if any)

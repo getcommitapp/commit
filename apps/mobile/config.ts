@@ -9,9 +9,12 @@ const devDefaultPage = __DEV__
   ? (process.env.EXPO_PUBLIC_DEV_DEFAULT_PAGE ?? null)
   : null;
 
-// In development, allow auto-authentication as test user if the env var is set.
+// In development, allow auto-authentication as a seeded test user if the env var is set.
+// Set EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER to an email like:
+//   - "user@commit.local" (role: user)
+//   - "reviewer@commit.local" (role: reviewer)
 const devAutoAuthAsTestUser = __DEV__
-  ? process.env.EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER !== undefined
+  ? process.env.EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER
   : false;
 
 export const config = {
