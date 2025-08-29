@@ -6,13 +6,14 @@ import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { spacing } from "@/components/Themed";
+import { useAuth } from "@/lib/hooks/useAuth";
 import HomeIcon from "@/assets/icons/home.svg";
 import TargetIcon from "@/assets/icons/target.svg";
 import IonIcons from "@expo/vector-icons/Ionicons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { isReviewerOrAdmin } = useAuth();
 
   return (
     <Tabs
@@ -81,13 +82,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="reviews"
         options={{
+          // Hide the tab for non-reviewers/admins and prevent auto-generated unstyled tab
+          href: isReviewerOrAdmin ? undefined : null,
           title: "Reviews",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="clipboard-clock-outline"
-              size={28}
-              color={color}
-            />
+            <IonIcons name="trail-sign-outline" size={26} color={color} />
           ),
         }}
       />

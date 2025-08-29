@@ -18,6 +18,7 @@
       "<rootDir>/jest.setup.ts"
     ],
     "moduleNameMapper": {
+      "^@commit/types$": "<rootDir>/../../packages/types/src/index.ts",
       "\\.(svg)$": "<rootDir>/__mocks__/svgMock.js",
       "^react$": "<rootDir>/node_modules/react",
       "^react-native$": "<rootDir>/node_modules/react-native"

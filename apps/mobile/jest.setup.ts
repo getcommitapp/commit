@@ -69,3 +69,15 @@ jest.mock("@stripe/stripe-react-native", () => ({
     createPaymentMethod: jest.fn(),
   }),
 }));
+
+// Mock auth to avoid hitting Expo Linking / BetterAuth in tests and to expose the Reviews tab
+jest.mock("@/lib/hooks/useAuth", () => {
+  return {
+    useAuth: () => ({
+      loading: false,
+      token: null,
+      user: { role: "reviewer" },
+      isReviewerOrAdmin: true as const,
+    }),
+  };
+});

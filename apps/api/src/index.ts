@@ -18,6 +18,8 @@ import { GoalsDelete } from "./endpoints/goalsDelete";
 import { GoalsVerify } from "./endpoints/goalsVerify";
 import { GoalsTimerGet } from "./endpoints/goalsTimerGet";
 import { GoalsTimerStart } from "./endpoints/goalsTimerStart";
+import { GoalsReviewList } from "./endpoints/goalsReviewList";
+import { GoalsReviewUpdate } from "./endpoints/goalsReviewUpdate";
 
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
@@ -78,9 +80,9 @@ app.use("*", async (c, next) => {
   // Allow dev login endpoint without auth in dev/preview
   const env = c.env;
   const environment = env["ENVIRONMENT"] || "production";
-  const devAutoAuthEmail = c.req.header("X-Commit-Dev-Auto-Auth");
+  const devAutoAuthEmail = c.req.header("X-Commit-Dev-Auto-Auth"); // e.g. "user@commit.local" or "reviewer@commit.local"
 
-  // Dev/preview override: trust custom header to impersonate seeded user
+  // Dev/preview override: trust custom header to impersonate a seeded user by email
   if (
     (environment === "development" || environment === "preview") &&
     devAutoAuthEmail
@@ -113,6 +115,7 @@ app.use("*", async (c, next) => {
       image: user.image,
       stripeCustomerId: user.stripeCustomerId,
       emailVerified: user.emailVerified,
+      role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
@@ -145,10 +148,12 @@ openapi.delete("/api/users", UsersDelete);
 // Goals
 openapi.get("/api/goals", GoalsList);
 openapi.post("/api/goals", GoalsCreate);
+openapi.get("/api/goals/review", GoalsReviewList);
 openapi.delete("/api/goals/:id", GoalsDelete);
 openapi.post("/api/goals/:id/verify", GoalsVerify);
 openapi.get("/api/goals/:id/timer", GoalsTimerGet);
 openapi.post("/api/goals/:id/timer/start", GoalsTimerStart);
+openapi.put("/api/goals/:id/review", GoalsReviewUpdate);
 
 // Groups
 openapi.get("/api/groups", GroupsList);

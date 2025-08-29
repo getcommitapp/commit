@@ -103,6 +103,19 @@ export const GoalTimerStartResponseSchema = z.object({
   created: z.boolean(),
 });
 
+export const GoalReviewDetails = z.object({
+  goalId: z.string(),
+  goalName: z.string(),
+  photoUrl: z.string().nullable().optional(),
+  photoDescription: z.string().nullable().optional(),
+});
+
+export const GoalReviewListResponseSchema = z.array(GoalReviewDetails);
+
+export const GoalReviewUpdateRequestSchema = z.object({
+  approvalStatus: z.enum(["approved", "rejected"]),
+});
+
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 
 export type GoalVerificationMethod = z.infer<
@@ -110,14 +123,12 @@ export type GoalVerificationMethod = z.infer<
 >;
 
 export type GoalBase = z.infer<typeof GoalBaseSchema>;
-
 export type GoalDetails = z.infer<typeof GoalDetailsSchema>;
 
 export type GoalsListItem = z.infer<typeof GoalsListItemSchema>;
 export type GoalsListResponse = z.infer<typeof GoalsListResponseSchema>;
 
 export type GoalCreateRequest = z.infer<typeof GoalCreateRequestSchema>;
-
 export type GoalCreateResponse = z.infer<typeof GoalCreateResponseSchema>;
 
 export type GoalGetResponse = z.infer<typeof GoalGetResponseSchema>;
@@ -125,13 +136,18 @@ export type GoalGetResponse = z.infer<typeof GoalGetResponseSchema>;
 export type GoalDeleteResponse = z.infer<typeof GoalDeleteResponseSchema>;
 
 export type GoalVerificationInput = z.infer<typeof GoalVerificationInputSchema>;
-
 export type GoalVerifyRequest = z.infer<typeof GoalVerifyRequestSchema>;
-
 export type GoalVerifyResponse = z.infer<typeof GoalVerifyResponseSchema>;
 
 export type GoalTimer = z.infer<typeof GoalTimerSchema>;
 export type GoalTimerGetResponse = z.infer<typeof GoalTimerGetResponseSchema>;
 export type GoalTimerStartResponse = z.infer<
   typeof GoalTimerStartResponseSchema
+>;
+
+export type GoalReviewListResponse = z.infer<
+  typeof GoalReviewListResponseSchema
+>;
+export type GoalReviewUpdateRequest = z.infer<
+  typeof GoalReviewUpdateRequestSchema
 >;

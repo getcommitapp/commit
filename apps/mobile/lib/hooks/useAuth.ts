@@ -37,5 +37,7 @@ export function useAuth() {
     };
   }, []);
 
-  return { loading, token, user } as const;
+  const isReviewerOrAdmin = user?.role === "reviewer" || user?.role === "admin";
+
+  return { loading, token, user, isReviewerOrAdmin } as const;
 }

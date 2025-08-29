@@ -3,7 +3,7 @@
 
 -- Constants
 -- Using fixed IDs and token for easy client testing
--- user: test@commit.local / name: Test User
+-- user: user@commit.local / name: Test User
 -- session token: 11111111-1111-4111-8111-111111111111
 
 -- Insert user if not exists
@@ -11,7 +11,7 @@ INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCusto
 VALUES (
   '00000000-0000-4000-8000-000000000001',
   'Test User',
-  'test@commit.local',
+  'user@commit.local',
   1,
   NULL,
   NULL,
@@ -24,7 +24,7 @@ INSERT INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, cre
 VALUES (
   '00000000-0000-4000-8000-000000000001',
   'Test User',
-  'test@commit.local',
+  'user@commit.local',
   1,
   NULL,
   NULL,
@@ -36,6 +36,41 @@ ON CONFLICT(id) DO UPDATE SET
   email=excluded.email,
   emailVerified=excluded.emailVerified,
   image=excluded.image,
+  stripeCustomerId=excluded.stripeCustomerId,
+  updatedAt=excluded.updatedAt;
+
+-- Insert reviewer test user (role: reviewer)
+INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, createdAt, updatedAt)
+VALUES (
+  '00000000-0000-4000-8000-000000000006',
+  'Reviewer User',
+  'reviewer@commit.local',
+  1,
+  NULL,
+  'reviewer',
+  NULL,
+  strftime('%s','now'),
+  strftime('%s','now')
+);
+
+INSERT INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, createdAt, updatedAt)
+VALUES (
+  '00000000-0000-4000-8000-000000000006',
+  'Reviewer User',
+  'reviewer@commit.local',
+  1,
+  NULL,
+  'reviewer',
+  NULL,
+  strftime('%s','now'),
+  strftime('%s','now')
+)
+ON CONFLICT(id) DO UPDATE SET
+  name=excluded.name,
+  email=excluded.email,
+  emailVerified=excluded.emailVerified,
+  image=excluded.image,
+  role=excluded.role,
   stripeCustomerId=excluded.stripeCustomerId,
   updatedAt=excluded.updatedAt;
 
@@ -57,6 +92,38 @@ VALUES (
   '11111111-1111-4111-8111-111111111111',
   '11111111-1111-4111-8111-111111111111',
   '00000000-0000-4000-8000-000000000001',
+  'seed-mock',
+  NULL,
+  strftime('%s','now', '+30 days'),
+  strftime('%s','now'),
+  strftime('%s','now')
+)
+ON CONFLICT(id) DO UPDATE SET
+  token=excluded.token,
+  userId=excluded.userId,
+  userAgent=excluded.userAgent,
+  ipAddress=excluded.ipAddress,
+  expiresAt=excluded.expiresAt,
+  updatedAt=excluded.updatedAt;
+
+-- Insert/update a fixed mock session for the reviewer test user
+INSERT OR IGNORE INTO session (id, token, userId, userAgent, ipAddress, expiresAt, createdAt, updatedAt)
+VALUES (
+  '22222222-2222-4222-8222-222222222222',
+  '22222222-2222-4222-8222-222222222222',
+  '00000000-0000-4000-8000-000000000006',
+  'seed-mock',
+  NULL,
+  strftime('%s','now', '+30 days'),
+  strftime('%s','now'),
+  strftime('%s','now')
+);
+
+INSERT INTO session (id, token, userId, userAgent, ipAddress, expiresAt, createdAt, updatedAt)
+VALUES (
+  '22222222-2222-4222-8222-222222222222',
+  '22222222-2222-4222-8222-222222222222',
+  '00000000-0000-4000-8000-000000000006',
   'seed-mock',
   NULL,
   strftime('%s','now', '+30 days'),
@@ -129,6 +196,29 @@ VALUES
   ('00000000-0000-4000-8000-0000000000v2', '00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', 'location', strftime('%s','now', '-2 days'), 'approved', strftime('%s','now', '-2 days', '-30 minutes'), NULL, NULL, strftime('%s','now'), strftime('%s','now')),
   ('00000000-0000-4000-8000-0000000000v3', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'photo', strftime('%s','now', '-1 day'), 'approved', strftime('%s','now', '-1 day', '-1 hour'), 'Reading page 15 of my book', 'https://example.com/photo1.jpg', strftime('%s','now'), strftime('%s','now'));
 
+-- Insert/Update some pending photo verifications for reviewer to approve
+INSERT OR IGNORE INTO goal_verifications_log (id, goalId, userId, type, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
+VALUES 
+  -- Test User's photo goal (g2): pending
+  ('00000000-0000-4000-8000-0000000000p1', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'photo', NULL, 'pending', strftime('%s','now', '-2 hours'), 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', strftime('%s','now'), strftime('%s','now')),
+  -- Bob's photo goal (g4): pending
+  ('00000000-0000-4000-8000-0000000000p2', '00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'photo', NULL, 'pending', strftime('%s','now', '-3 hours'), 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', strftime('%s','now'), strftime('%s','now'));
+
+INSERT INTO goal_verifications_log (id, goalId, userId, type, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
+VALUES 
+  ('00000000-0000-4000-8000-0000000000p1', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'photo', NULL, 'pending', strftime('%s','now', '-2 hours'), 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000p2', '00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'photo', NULL, 'pending', strftime('%s','now', '-3 hours'), 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', strftime('%s','now'), strftime('%s','now'))
+ON CONFLICT(id) DO UPDATE SET
+  goalId=excluded.goalId,
+  userId=excluded.userId,
+  type=excluded.type,
+  verifiedAt=excluded.verifiedAt,
+  approvalStatus=excluded.approvalStatus,
+  startTime=excluded.startTime,
+  photoDescription=excluded.photoDescription,
+  photoUrl=excluded.photoUrl,
+  updatedAt=excluded.updatedAt;
+
 -- Sanity cleanup: remove orphan groups referencing non-existent goals
 DELETE FROM "group"
 WHERE goalId NOT IN (SELECT id FROM goal);
@@ -164,5 +254,4 @@ VALUES
   ('00000000-0000-4000-8000-0000000000gr3', '00000000-0000-4000-8000-000000000003', strftime('%s','now', '-14 days'), 'active', strftime('%s','now'), strftime('%s','now')),
   ('00000000-0000-4000-8000-0000000000gr3', '00000000-0000-4000-8000-000000000001', strftime('%s','now', '-13 days'), 'active', strftime('%s','now'), strftime('%s','now')),
   ('00000000-0000-4000-8000-0000000000gr3', '00000000-0000-4000-8000-000000000004', strftime('%s','now', '-12 days'), 'active', strftime('%s','now'), strftime('%s','now'));
-
 
