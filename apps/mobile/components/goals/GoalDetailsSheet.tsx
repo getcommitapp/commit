@@ -30,14 +30,14 @@ export const GoalDetailsSheet = forwardRef<
     const { mutate: startTimer, isPending } = useStartGoalTimer(goal.id);
 
     // Force a tick every second to update the elapsed label
-    const [, setTick] = useState(0);
+    const [tick, setTick] = useState(0);
     useEffect(() => {
-      if (!timer) return; // only tick when running
+      if (!timer?.startedAt) return; // only tick when running
       const id = setInterval(() => setTick((t) => (t + 1) % 1_000_000), 1000);
       return () => clearInterval(id);
-    }, [timer]);
+    }, [timer?.startedAt]);
 
-    const elapsed = useMemo(() => {
+  const elapsed = useMemo(() => {
       if (!timer?.startedAt) return null;
       const start = new Date(timer.startedAt).getTime();
       const now = Date.now();
@@ -47,7 +47,7 @@ export const GoalDetailsSheet = forwardRef<
       const s = Math.floor((diff % 60000) / 1000);
       const pad = (n: number) => String(n).padStart(2, "0");
       return `${pad(h)}:${pad(m)}:${pad(s)}`;
-    }, [timer?.startedAt]);
+  }, [timer?.startedAt, tick]);
 
     return (
       <DetailsSheet
