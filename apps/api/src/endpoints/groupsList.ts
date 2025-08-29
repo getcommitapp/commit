@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GroupsListResponseSchema, type GroupSummary } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
-import { Group, GroupParticipants } from "../db/schema";
+import { Group, GroupParticipants, Goal } from "../db/schema";
 
 export class GroupsList extends OpenAPIRoute {
   schema = {
@@ -56,7 +56,7 @@ export class GroupsList extends OpenAPIRoute {
         .where(eq(GroupParticipants.groupId, g.id))
         .all();
       const memberCount = participantCount.length + 1; // include creator
-      res.push({
+      const base: GroupSummary = {
         id: g.id,
         name: g.name,
         description: g.description ?? null,
@@ -71,7 +71,34 @@ export class GroupsList extends OpenAPIRoute {
             ? g.updatedAt
             : new Date(g.updatedAt).toISOString(),
         memberCount,
-      });
+      };
+
+      if (g.goalId) {
+        const goal = await db
+          .select()
+          .from(Goal)
+          .where(eq(Goal.id, g.goalId))
+          .get();
+        if (goal) {
+          base.goal = {
+            id: goal.id,
+            name: goal.name,
+            startDate:
+              typeof goal.startDate === "string"
+                ? goal.startDate
+                : new Date(goal.startDate).toISOString(),
+            endDate: goal.endDate
+              ? typeof goal.endDate === "string"
+                ? goal.endDate
+                : new Date(goal.endDate).toISOString()
+              : null,
+            stakeCents: goal.stakeCents,
+            currency: goal.currency,
+          };
+        }
+      }
+
+      res.push(base);
     }
 
     return c.json(res);

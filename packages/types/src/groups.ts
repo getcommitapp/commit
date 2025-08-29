@@ -6,6 +6,15 @@ import {
 
 // ---------------- Zod Schemas ----------------
 
+export const GroupGoalSummarySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  startDate: z.string().datetime(),
+  endDate: z.string().datetime().nullable(),
+  stakeCents: z.number().int(),
+  currency: z.string(),
+});
+
 export const GroupSummarySchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -15,6 +24,7 @@ export const GroupSummarySchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   memberCount: z.number().optional(),
+  goal: GroupGoalSummarySchema.optional(),
 });
 
 export const GroupMemberSchema = z.object({
@@ -74,6 +84,8 @@ export const GroupJoinResponseSchema = GroupSummarySchema;
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 
 export type GroupSummary = z.infer<typeof GroupSummarySchema>;
+
+export type GroupGoalSummary = z.infer<typeof GroupGoalSummarySchema>;
 
 export type GroupMember = z.infer<typeof GroupMemberSchema>;
 
