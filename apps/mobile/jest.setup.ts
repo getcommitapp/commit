@@ -55,3 +55,17 @@ jest.mock("@react-native-async-storage/async-storage", () => ({
   setItem: jest.fn(),
   removeItem: jest.fn(),
 }));
+
+// Mock Stripe native module to avoid TurboModule error in Jest
+jest.mock("@stripe/stripe-react-native", () => ({
+  __esModule: true,
+  StripeProvider: ({ children }: any) => children,
+  CardField: () => null,
+  useStripe: () => ({
+    initPaymentSheet: jest.fn(),
+    presentPaymentSheet: jest.fn(),
+    confirmPayment: jest.fn(),
+    confirmSetupIntent: jest.fn(),
+    createPaymentMethod: jest.fn(),
+  }),
+}));

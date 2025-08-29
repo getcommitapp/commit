@@ -59,6 +59,8 @@ AUTH_GOOGLE_CLIENT_ID=your_google_client_id
 AUTH_GOOGLE_CLIENT_SECRET=your_google_client_secret
 AUTH_APPLE_CLIENT_ID=your_apple_client_id
 AUTH_APPLE_CLIENT_SECRET=
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
 > [!WARNING]

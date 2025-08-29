@@ -2,10 +2,20 @@ import { authClient } from "./auth-client";
 import { z } from "zod";
 import { config } from "../config";
 
-export async function apiFetch<T = unknown>(
+// Overloads to return schema-inferred types when a schema is provided
+export async function apiFetch(
+  input: string,
+  init?: RequestInit
+): Promise<unknown>;
+export async function apiFetch<S extends z.ZodTypeAny>(
+  input: string,
+  init: RequestInit | undefined,
+  schema: S
+): Promise<z.infer<S>>;
+export async function apiFetch(
   input: string,
   init: RequestInit = {},
-  schema?: z.ZodType<T>
+  schema?: z.ZodTypeAny
 ) {
   const headers = new Headers(init.headers);
 
@@ -35,7 +45,7 @@ export async function apiFetch<T = unknown>(
   }
 
   const json = await res.json();
-  return (schema ? schema.parse(json) : json) as T;
+  return schema ? schema.parse(json) : json;
 }
 
 export type ApiSuccess<T> = { success: true } & T;

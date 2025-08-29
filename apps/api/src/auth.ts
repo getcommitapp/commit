@@ -2,6 +2,8 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/d1";
 import { expo } from "@better-auth/expo";
+import { stripe as betterAuthStripe } from "@better-auth/stripe";
+import Stripe from "stripe";
 import * as schema from "./db/schema";
 
 export function createAuth(env: Env) {
@@ -12,7 +14,11 @@ export function createAuth(env: Env) {
     AUTH_GOOGLE_CLIENT_SECRET,
     AUTH_APPLE_CLIENT_ID,
     AUTH_APPLE_CLIENT_SECRET,
-  } = env as unknown as Record<string, string | undefined>;
+    STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET,
+  } = env;
+
+  const stripeClient = new Stripe(STRIPE_SECRET_KEY ?? "");
 
   return betterAuth({
     database: drizzleAdapter(db, {
@@ -26,7 +32,14 @@ export function createAuth(env: Env) {
         verification: schema.Verification,
       },
     }),
-    plugins: [expo()],
+    plugins: [
+      expo(),
+      betterAuthStripe({
+        stripeClient,
+        stripeWebhookSecret: STRIPE_WEBHOOK_SECRET ?? "",
+        createCustomerOnSignUp: true,
+      }) as ReturnType<typeof betterAuthStripe>,
+    ],
     trustedOrigins: ["commit://", "commit://*", "exp://", "exp://*"],
     socialProviders: {
       google: {

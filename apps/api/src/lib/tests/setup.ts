@@ -27,6 +27,52 @@ vi.mock("../../auth", () => {
   };
 });
 
+// Mock Stripe globally for API tests
+vi.mock("stripe", () => {
+  return {
+    default: class Stripe {
+      customers = {
+        create: vi
+          .fn()
+          .mockResolvedValue({ id: "cus_123", invoice_settings: {} }),
+        retrieve: vi
+          .fn()
+          .mockResolvedValue({ id: "cus_123", invoice_settings: {} }),
+        createBalanceTransaction: vi
+          .fn()
+          .mockResolvedValue({ id: "cbt_123", amount: -500, currency: "chf" }),
+      };
+      setupIntents = {
+        create: vi.fn().mockResolvedValue({ client_secret: "seti_secret_123" }),
+      };
+      paymentIntents = {
+        create: vi
+          .fn()
+          .mockResolvedValue({ id: "pi_123", status: "succeeded" }),
+        retrieve: vi.fn().mockResolvedValue({ id: "pi_123" }),
+      };
+      paymentMethods = {
+        list: vi.fn().mockResolvedValue({ data: [] }),
+        retrieve: vi.fn().mockResolvedValue({
+          id: "pm_123",
+          card: {
+            brand: "visa",
+            last4: "4242",
+            exp_month: 12,
+            exp_year: 2030,
+          },
+        }),
+      };
+      refunds = {
+        create: vi
+          .fn()
+          .mockResolvedValue({ id: "re_123", status: "succeeded" }),
+      };
+      constructor(_key: string) {}
+    },
+  };
+});
+
 async function resetDb() {
   // Truncate data in dependency-safe order (children before parents)
   const tablesInDeleteOrder = [

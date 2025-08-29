@@ -28,6 +28,12 @@ import { GroupsGoal } from "./endpoints/groupsGoal";
 import { GroupsLeave } from "./endpoints/groupsLeave";
 import { HonoContext } from "./types";
 import { GroupsJoin } from "./endpoints/groupsJoin";
+import { PaymentsSetupIntent } from "./endpoints/paymentsSetupIntent";
+import { PaymentsCharge as PaymentsDebit } from "./endpoints/paymentsDebit";
+import { PaymentsRefund } from "./endpoints/paymentsRefund";
+import { PaymentsCredit } from "./endpoints/paymentsCredit";
+import { PaymentsMethod } from "./endpoints/paymentsMethod";
+// (removed) test debit/credit endpoints
 
 // Start a Hono app
 const app = new Hono<HonoContext>();
@@ -50,6 +56,19 @@ app.use(
   })
 );
 
+// CORS for payments routes
+app.use(
+  "/api/payments/*",
+  cors({
+    origin: (origin) => origin || "*",
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  })
+);
+
 // Mount Better Auth handler (per-request to access env bindings)
 app.on(["POST", "GET"], "/api/auth/*", (c) =>
   createAuth(c.env).handler(c.req.raw)
@@ -59,7 +78,7 @@ app.on(["POST", "GET"], "/api/auth/*", (c) =>
 app.use("*", async (c, next) => {
   // Allow dev login endpoint without auth in dev/preview
   const env = c.env;
-  const environment = env["ENVIRONMENT"] || "development";
+  const environment = env["ENVIRONMENT"] || "production";
   const devAutoAuthEmail = c.req.header("X-Commit-Dev-Auto-Auth");
 
   // Dev/preview override: trust custom header to impersonate seeded user
@@ -93,6 +112,7 @@ app.use("*", async (c, next) => {
       name: user.name,
       email: user.email,
       image: user.image,
+      stripeCustomerId: user.stripeCustomerId,
       emailVerified: user.emailVerified,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -139,5 +159,13 @@ openapi.get("/api/groups/:id/invite", GroupsInvite);
 openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
 openapi.post("/api/groups/:id/leave", GroupsLeave);
 openapi.post("/api/groups/join", GroupsJoin);
+
+// Payments
+openapi.post("/api/payments/setup-intent", PaymentsSetupIntent);
+openapi.post("/api/payments/debit", PaymentsDebit);
+openapi.post("/api/payments/credit", PaymentsCredit);
+openapi.post("/api/payments/refund", PaymentsRefund);
+openapi.get("/api/payments/method", PaymentsMethod);
+// test payment endpoints removed
 
 export default app;

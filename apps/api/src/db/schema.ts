@@ -21,6 +21,7 @@ export const User = sqliteTable("user", {
   role: text("role", { enum: ["user", "reviewer", "admin"] })
     .notNull()
     .default("user"),
+  stripeCustomerId: text("stripeCustomerId"),
 
   createdAt: createCreatedAt(),
   updatedAt: createUpdatedAt(),

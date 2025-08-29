@@ -10,10 +10,13 @@ import {
 import CheckCircle from "@/assets/icons/check-circle.svg";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { usePaymentMethod } from "@/lib/hooks/usePaymentMethod";
+import { capitalize } from "@/lib/utils";
 
 export default function ProfileScreen() {
   const success = useThemeColor({}, "success");
-  const { user, loading: _loading, token: _token } = useAuth();
+  const { user } = useAuth();
+  const { data: payment } = usePaymentMethod();
 
   return (
     <ScreenLayout largeTitle>
@@ -40,14 +43,18 @@ export default function ProfileScreen() {
                   color: success,
                 }}
               >
-                Active
+                {capitalize(payment?.status ?? "inactive")}
               </ThemedText>
             </View>
           }
         />
         <FormItem
           label="Method"
-          value="TWINT"
+          value={
+            payment?.method
+              ? `${payment.method.brand?.toUpperCase() ?? "CARD"} •••• ${payment.method.last4 ?? ""}`
+              : "None"
+          }
           navigateTo="/(tabs)/profile/method"
           testID="row-payment-method"
         />
