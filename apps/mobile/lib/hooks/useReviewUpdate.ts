@@ -1,6 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import { GoalReviewUpdateRequestSchema } from "@commit/types";
+import {
+  GoalReviewUpdateRequest,
+  GoalReviewUpdateRequestSchema,
+} from "@commit/types";
 
 export function useReviewUpdate() {
   return useMutation({
@@ -9,7 +12,7 @@ export function useReviewUpdate() {
       approvalStatus,
     }: {
       goalId: string;
-      approvalStatus: "approved" | "rejected";
+      approvalStatus: GoalReviewUpdateRequest["approvalStatus"];
     }) => {
       return await apiFetch(
         `/goals/${goalId}/review`,

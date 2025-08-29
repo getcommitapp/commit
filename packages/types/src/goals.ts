@@ -113,7 +113,7 @@ export const GoalReviewDetails = z.object({
 export const GoalReviewListResponseSchema = z.array(GoalReviewDetails);
 
 export const GoalReviewUpdateRequestSchema = z.object({
-  approvalStatus: z.string(),
+  approvalStatus: z.enum(["approved", "rejected"]),
 });
 
 // ---------------- Inferred Types (backwards-compatible names) ----------------

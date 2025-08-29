@@ -32,8 +32,7 @@ export class GoalsReviewList extends OpenAPIRoute {
       return c.json({ error: "Unauthorized - reviewer access required" }, 403);
     }
 
-    // Build query with join to get goal information
-    let query = db
+    const verificationLogs = await db
       .select({
         goalId: schema.GoalVerificationsLog.goalId,
         goalName: schema.Goal.name,
@@ -52,16 +51,6 @@ export class GoalsReviewList extends OpenAPIRoute {
         )
       );
 
-    const verificationLogs = await query;
-
-    // Map to response format
-    const response = verificationLogs.map((log) => ({
-      goalId: log.goalId,
-      goalName: log.goalName,
-      photoUrl: log.photoUrl,
-      photoDescription: log.photoDescription,
-    }));
-
-    return c.json(response, 200);
+    return c.json(verificationLogs, 200);
   }
 }

@@ -59,10 +59,6 @@ export class GoalsReviewUpdate extends OpenAPIRoute {
       .where(eq(schema.GoalVerificationsLog.goalId, goalId))
       .returning();
 
-    if (!updated) {
-      return c.json({ error: "Verification log not found" }, 404);
-    }
-
     return c.json(updated[0]);
   }
 }
