@@ -28,7 +28,7 @@ export class GoalsReviewList extends OpenAPIRoute {
     const user = c.var.user!;
     const db = drizzle(c.env.DB);
 
-    if (user.role !== "reviewer") {
+    if (user.role !== "reviewer" && user.role !== "admin") {
       return c.json({ error: "Unauthorized - reviewer access required" }, 403);
     }
 
