@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import { GroupSummarySchema, type GroupSummary } from "@commit/types";
+import { GroupSummarySchema } from "@commit/types";
 import type { Group } from "@/components/groups/GroupCard";
 import { formatTimestamp } from "@/lib/formatDate";
 
@@ -10,9 +10,9 @@ export function useJoinGroup() {
   const qc = useQueryClient();
   return useMutation({
     mutationKey: ["groups", "join"],
-    mutationFn: async (code: string): Promise<Group> => {
+    mutationFn: async (code: string) => {
       try {
-        const res = await apiFetch<GroupSummary>(
+        const res = await apiFetch(
           "/groups/join",
           {
             method: "POST",

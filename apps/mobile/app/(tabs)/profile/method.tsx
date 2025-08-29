@@ -1,12 +1,13 @@
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText, spacing, textVariants } from "@/components/Themed";
+import { spacing, useThemeColor } from "@/components/Themed";
 import { Button } from "@/components/ui/Button";
 import { CardField, useConfirmSetupIntent } from "@stripe/stripe-react-native";
 import { apiFetch } from "@/lib/api";
 import { PaymentsSetupIntentResponseSchema } from "@commit/types";
 
 export default function PaymentMethodScreen() {
+  const cardColor = useThemeColor({}, "card");
   const { confirmSetupIntent, loading } = useConfirmSetupIntent();
 
   async function handleSaveCard() {
@@ -34,16 +35,18 @@ export default function PaymentMethodScreen() {
         }}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <ThemedText
-          style={[textVariants.bodyEmphasized, { marginTop: spacing.md }]}
-        >
-          Add a credit card
-        </ThemedText>
         <View style={{ marginTop: spacing.md }}>
           <CardField
-            postalCodeEnabled={true}
-            cardStyle={{ textColor: "#000000" }}
-            style={{ width: "100%", height: 50 }}
+            cardStyle={{
+              textColor: "#000000",
+              backgroundColor: cardColor,
+            }}
+            style={{
+              width: "100%",
+              height: 50,
+            }}
+            autofocus
+            postalCodeEnabled={false}
           />
         </View>
         <View style={{ height: spacing.md }} />
@@ -51,7 +54,7 @@ export default function PaymentMethodScreen() {
           onPress={handleSaveCard}
           disabled={loading}
           loading={loading}
-          title="Save card"
+          title="Update card"
         />
       </ScrollView>
     </SafeAreaView>

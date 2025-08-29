@@ -4,7 +4,6 @@ import {
   GroupsListResponseSchema,
   GroupGetResponseSchema,
   GroupGoalGetResponseSchema,
-  type GroupsListResponse,
   type GroupGetResponse,
   type GroupGoalGetResponse,
 } from "@commit/types";
@@ -34,11 +33,7 @@ export function useGroups() {
   return useQuery({
     queryKey: ["groups"],
     queryFn: async (): Promise<Group[]> => {
-      const summaries = await apiFetch<GroupsListResponse>(
-        "/groups",
-        {},
-        GroupsListResponseSchema
-      );
+      const summaries = await apiFetch("/groups", {}, GroupsListResponseSchema);
 
       // Enrich each group with details + goal (optional)
       const groups: Group[] = await Promise.all(
@@ -46,7 +41,7 @@ export function useGroups() {
           let details: GroupGetResponse | undefined;
           let goal: GroupGoalGetResponse | undefined;
           try {
-            details = await apiFetch<GroupGetResponse>(
+            details = await apiFetch(
               `/groups/${g.id}`,
               {},
               GroupGetResponseSchema
@@ -55,7 +50,7 @@ export function useGroups() {
             // ignore, fallback to summary only
           }
           try {
-            goal = await apiFetch<GroupGoalGetResponse>(
+            goal = await apiFetch(
               `/groups/${g.id}/goal`,
               {},
               GroupGoalGetResponseSchema

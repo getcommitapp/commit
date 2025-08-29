@@ -1,4 +1,4 @@
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 
 import { FormGroup, FormItem } from "@/components/ui/form";
 import {
@@ -10,11 +10,13 @@ import {
 import CheckCircle from "@/assets/icons/check-circle.svg";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { apiFetch } from "@/lib/api";
+import { usePaymentMethod } from "@/lib/hooks/usePaymentMethod";
+import { capitalize } from "@/lib/utils";
 
 export default function ProfileScreen() {
   const success = useThemeColor({}, "success");
-  const { user, loading: _loading, token: _token } = useAuth();
+  const { user } = useAuth();
+  const { data: payment } = usePaymentMethod();
 
   return (
     <ScreenLayout largeTitle>
@@ -41,50 +43,20 @@ export default function ProfileScreen() {
                   color: success,
                 }}
               >
-                Active
+                {capitalize(payment?.status ?? "inactive")}
               </ThemedText>
             </View>
           }
         />
         <FormItem
           label="Method"
-          value="TWINT"
+          value={
+            payment?.method
+              ? `${payment.method.brand?.toUpperCase() ?? "CARD"} •••• ${payment.method.last4 ?? ""}`
+              : "None"
+          }
           navigateTo="/(tabs)/profile/method"
           testID="row-payment-method"
-        />
-        <FormItem
-          label="Test debit 10 CHF"
-          onPress={async () => {
-            try {
-              const res = await apiFetch<{ id: string; status: string }>(
-                "/payments/test/debit",
-                { method: "POST" }
-              );
-              Alert.alert("Debit", `Status: ${res.status} (id: ${res.id})`);
-            } catch (e: any) {
-              Alert.alert("Debit failed", e?.message ?? String(e));
-            }
-          }}
-          testID="row-test-debit"
-        />
-        <FormItem
-          label="Test credit 10 CHF"
-          onPress={async () => {
-            try {
-              const res = await apiFetch<{
-                id: string;
-                amount: number;
-                currency: string;
-              }>("/payments/test/credit", { method: "POST" });
-              Alert.alert(
-                "Credit",
-                `Credited ${(Math.abs(res.amount) / 100).toFixed(2)} ${res.currency.toUpperCase()} (id: ${res.id})`
-              );
-            } catch (e: any) {
-              Alert.alert("Credit failed", e?.message ?? String(e));
-            }
-          }}
-          testID="row-test-credit"
         />
       </FormGroup>
     </ScreenLayout>

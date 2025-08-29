@@ -38,7 +38,7 @@ export function createAuth(env: Env) {
         stripeClient,
         stripeWebhookSecret: STRIPE_WEBHOOK_SECRET ?? "",
         createCustomerOnSignUp: true,
-      }) as unknown as any,
+      }) as ReturnType<typeof betterAuthStripe>,
     ],
     trustedOrigins: ["commit://", "commit://*", "exp://", "exp://*"],
     socialProviders: {

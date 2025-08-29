@@ -37,3 +37,19 @@ export const PaymentsRefundResponseSchema = z.object({
 export type PaymentsRefundResponse = z.infer<
   typeof PaymentsRefundResponseSchema
 >;
+
+export const PaymentsMethodResponseSchema = z.object({
+  status: z.enum(["active", "inactive"]).default("inactive"),
+  method: z
+    .object({
+      brand: z.string().optional(),
+      last4: z.string().optional(),
+      expMonth: z.number().optional(),
+      expYear: z.number().optional(),
+    })
+    .nullable()
+    .optional(),
+});
+export type PaymentsMethodResponse = z.infer<
+  typeof PaymentsMethodResponseSchema
+>;

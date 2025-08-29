@@ -6,12 +6,7 @@ import { UserGetResponseSchema, type UserGetResponse } from "@commit/types";
 export function useAuth() {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<{
-    id: string;
-    name: string | null;
-    email: string | null;
-    image: string | null;
-  } | null>(null);
+  const [user, setUser] = useState<UserGetResponse | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -26,18 +21,9 @@ export function useAuth() {
 
         // Always ask API for the current user; apiFetch will attach
         // the appropriate headers (real session or dev header)
-        const apiUser = await apiFetch<UserGetResponse>(
-          "/users",
-          {},
-          UserGetResponseSchema
-        );
+        const apiUser = await apiFetch("/users", {}, UserGetResponseSchema);
 
-        setUser({
-          id: apiUser.id,
-          name: apiUser.name ?? null,
-          email: apiUser.email ?? null,
-          image: apiUser.image ?? null,
-        });
+        setUser(apiUser);
       } catch (error) {
         console.error("[useAuth] Error getting session:", error);
       } finally {

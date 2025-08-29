@@ -1,6 +1,6 @@
 import { OpenAPIRoute, contentJson } from "chanfana";
 import { type AppContext } from "../types";
-import Stripe from "stripe";
+import { StripeService } from "../services/stripe";
 import {
   PaymentsRefundRequestSchema,
   PaymentsRefundResponseSchema,
@@ -28,14 +28,11 @@ export class PaymentsRefund extends OpenAPIRoute {
   async handle(c: AppContext) {
     const body = await this.getValidatedData<typeof this.schema>();
     const input = body.body;
-    const stripe = new Stripe(c.env.STRIPE_SECRET_KEY);
-    const paymentIntent = await stripe.paymentIntents.retrieve(
-      input.paymentIntentId
+    const stripe = new StripeService(c);
+    const refund = await stripe.refundPaymentIntent(
+      input.paymentIntentId,
+      input.amountCents
     );
-    const refund = await stripe.refunds.create({
-      payment_intent: paymentIntent.id,
-      amount: input.amountCents,
-    });
     return c.json({ id: refund.id, status: refund.status }, 200);
   }
 }

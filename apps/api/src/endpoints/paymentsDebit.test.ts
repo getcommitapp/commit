@@ -2,18 +2,19 @@ import app from "../index";
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import type {
-  PaymentsRefundRequest,
-  PaymentsRefundResponse,
+  PaymentsChargeRequest,
+  PaymentsChargeResponse,
 } from "@commit/types";
 
-describe("POST /api/payments/refund", () => {
-  it("creates a refund and returns its summary", async () => {
-    const body: PaymentsRefundRequest = {
-      paymentIntentId: "pi_123",
+describe("POST /api/payments/debit", () => {
+  it("creates a payment intent and returns its summary", async () => {
+    const body: PaymentsChargeRequest = {
+      amountCents: 1500,
+      currency: "CHF",
     };
 
     const res = await app.request(
-      "/api/payments/refund",
+      "/api/payments/debit",
       {
         method: "POST",
         body: JSON.stringify(body),
@@ -22,14 +23,14 @@ describe("POST /api/payments/refund", () => {
       env
     );
     expect(res.status).toBe(200);
-    const data: PaymentsRefundResponse = await res.json();
+    const data: PaymentsChargeResponse = await res.json();
     expect(data.id).toBeTruthy();
-    expect(data.status).toBe("succeeded");
+    expect(data.status).toBeTruthy();
   });
 
   it("validates payload and returns 400/422 on bad input", async () => {
     const res = await app.request(
-      "/api/payments/refund",
+      "/api/payments/debit",
       {
         method: "POST",
         body: JSON.stringify({}),

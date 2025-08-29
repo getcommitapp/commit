@@ -1,17 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import { GoalsListResponseSchema, type GoalsListResponse } from "@commit/types";
+import { GoalsListResponseSchema } from "@commit/types";
 import { Goal } from "@/components/goals/GoalCard";
 
 export function useGoals() {
   return useQuery({
     queryKey: ["goals"],
     queryFn: async (): Promise<Goal[]> => {
-      const goals = await apiFetch<GoalsListResponse>(
-        "/goals",
-        {},
-        GoalsListResponseSchema
-      );
+      const goals = await apiFetch("/goals", {}, GoalsListResponseSchema);
 
       // Transform API response to match GoalCard interface
       return goals.map((goal) => ({
