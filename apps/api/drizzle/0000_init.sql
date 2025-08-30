@@ -32,6 +32,8 @@ CREATE TABLE `goal` (
 	`endDate` integer,
 	`dueStartTime` integer NOT NULL,
 	`dueEndTime` integer,
+	`localDueStart` text,
+	`localDueEnd` text,
 	`recurrence` text,
 	`stakeCents` integer NOT NULL,
 	`currency` text NOT NULL,
@@ -133,6 +135,7 @@ CREATE TABLE `user` (
 	`image` text,
 	`role` text DEFAULT 'user' NOT NULL,
 	`stripeCustomerId` text,
+	`timezone` text DEFAULT 'UTC',
 	`createdAt` integer DEFAULT (current_timestamp),
 	`updatedAt` integer NOT NULL
 );

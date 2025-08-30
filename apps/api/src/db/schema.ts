@@ -23,6 +23,7 @@ export const User = sqliteTable("user", {
     .notNull()
     .default("user"),
   stripeCustomerId: text("stripeCustomerId"),
+  timezone: text("timezone").default("UTC"),
 
   createdAt: createCreatedAt(),
   updatedAt: createUpdatedAt(),
@@ -96,6 +97,9 @@ export const Goal = sqliteTable("goal", {
   endDate: integer("endDate", { mode: "timestamp" }),
   dueStartTime: integer("dueStartTime", { mode: "timestamp" }).notNull(),
   dueEndTime: integer("dueEndTime", { mode: "timestamp" }),
+  // For recurring goals: optional local time-of-day strings
+  localDueStart: text("localDueStart"), // HH:mm
+  localDueEnd: text("localDueEnd"), // HH:mm
 
   recurrence: text("recurrence"),
 

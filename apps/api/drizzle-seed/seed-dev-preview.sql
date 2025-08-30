@@ -7,7 +7,7 @@
 -- session token: 11111111-1111-4111-8111-111111111111
 
 -- Insert user if not exists
-INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, createdAt, updatedAt)
+INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES (
   '00000000-0000-4000-8000-000000000001',
   'Test User',
@@ -15,12 +15,13 @@ VALUES (
   1,
   NULL,
   NULL,
+  'Europe/Zurich',
   strftime('%s','now'),
   strftime('%s','now')
 );
 
 -- Ensure user data is up to date
-INSERT INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, createdAt, updatedAt)
+INSERT INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES (
   '00000000-0000-4000-8000-000000000001',
   'Test User',
@@ -28,6 +29,7 @@ VALUES (
   1,
   NULL,
   NULL,
+  'Europe/Zurich',
   strftime('%s','now'),
   strftime('%s','now')
 )
@@ -37,10 +39,11 @@ ON CONFLICT(id) DO UPDATE SET
   emailVerified=excluded.emailVerified,
   image=excluded.image,
   stripeCustomerId=excluded.stripeCustomerId,
+  timezone=excluded.timezone,
   updatedAt=excluded.updatedAt;
 
 -- Insert reviewer test user (role: reviewer)
-INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, createdAt, updatedAt)
+INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES (
   '00000000-0000-4000-8000-000000000006',
   'Reviewer User',
@@ -49,11 +52,12 @@ VALUES (
   NULL,
   'reviewer',
   NULL,
+  'Europe/Zurich',
   strftime('%s','now'),
   strftime('%s','now')
 );
 
-INSERT INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, createdAt, updatedAt)
+INSERT INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES (
   '00000000-0000-4000-8000-000000000006',
   'Reviewer User',
@@ -62,6 +66,7 @@ VALUES (
   NULL,
   'reviewer',
   NULL,
+  'Europe/Zurich',
   strftime('%s','now'),
   strftime('%s','now')
 )
@@ -72,6 +77,7 @@ ON CONFLICT(id) DO UPDATE SET
   image=excluded.image,
   role=excluded.role,
   stripeCustomerId=excluded.stripeCustomerId,
+  timezone=excluded.timezone,
   updatedAt=excluded.updatedAt;
 
 -- Insert/update a fixed mock session for the test user
@@ -139,12 +145,12 @@ ON CONFLICT(id) DO UPDATE SET
   updatedAt=excluded.updatedAt;
 
 -- Additional test users (no sessions needed)
-INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, createdAt, updatedAt)
+INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES 
-  ('00000000-0000-4000-8000-000000000002', 'Alice Johnson', 'alice@commit.local', 1, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-000000000003', 'Bob Smith', 'bob@commit.local', 1, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-000000000004', 'Carol Davis', 'carol@commit.local', 1, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-000000000005', 'David Wilson', 'david@commit.local', 1, NULL, NULL, strftime('%s','now'), strftime('%s','now'));
+  ('00000000-0000-4000-8000-000000000002', 'Alice Johnson', 'alice@commit.local', 1, NULL, NULL, 'Europe/Zurich', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-000000000003', 'Bob Smith', 'bob@commit.local', 1, NULL, NULL, 'Europe/Zurich', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-000000000004', 'Carol Davis', 'carol@commit.local', 1, NULL, NULL, 'Europe/Zurich', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-000000000005', 'David Wilson', 'david@commit.local', 1, NULL, NULL, 'Europe/Zurich', strftime('%s','now'), strftime('%s','now'));
 
 -- Insert charities for goal destinations
 INSERT OR IGNORE INTO charity (id, name, url, createdAt, updatedAt)

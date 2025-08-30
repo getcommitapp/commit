@@ -13,4 +13,35 @@ export const authClient = createAuthClient({
     }),
     stripeClient({ subscription: false }),
   ],
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        input: false,
+        output: true,
+      },
+      timezone: {
+        type: "string",
+        input: true,
+        output: true,
+        defaultValue: "UTC",
+      },
+    },
+  },
 });
+
+// Auto-inject timezone into social sign-in calls
+function resolveTimezone(): string {
+  try {
+    const tz = Intl?.DateTimeFormat?.().resolvedOptions().timeZone;
+    return tz || "UTC";
+  } catch {
+    return "UTC";
+  }
+}
+
+const originalSocial = authClient.signIn.social.bind(authClient.signIn);
+(authClient.signIn as any).social = (args: any) => {
+  const timezone = args?.timezone ?? resolveTimezone();
+  return originalSocial({ ...args, timezone });
+};

@@ -23,6 +23,8 @@ export const GoalBaseSchema = z.object({
   endDate: z.string().datetime().nullable(),
   dueStartTime: z.string().datetime(),
   dueEndTime: z.string().datetime().nullable(),
+  localDueStart: z.string().nullable().optional(), // HH:mm for recurring
+  localDueEnd: z.string().nullable().optional(),
   recurrence: z.string().nullable(),
   stakeCents: z.number().int(),
   currency: z.string(),

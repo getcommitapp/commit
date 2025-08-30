@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "55e8587c-ab3f-49ea-933f-4037f3738d5d",
+  "id": "0cc9cdbc-d297-4325-ad01-26978e4169ae",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -217,6 +217,20 @@
         "dueEndTime": {
           "name": "dueEndTime",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "localDueStart": {
+          "name": "localDueStart",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "localDueEnd": {
+          "name": "localDueEnd",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -890,6 +904,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'UTC'"
         },
         "createdAt": {
           "name": "createdAt",
