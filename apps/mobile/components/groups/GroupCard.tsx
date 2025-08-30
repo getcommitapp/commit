@@ -89,6 +89,16 @@ export function GroupCard({
           {group.memberCount ?? "—"}
         </Text>
       </View>
+      {group.isOwner ? (
+        <Text
+          style={{
+            ...textVariants.footnoteEmphasized,
+            color: mutedForeground,
+          }}
+        >
+          Owner
+        </Text>
+      ) : null}
     </View>
   );
 

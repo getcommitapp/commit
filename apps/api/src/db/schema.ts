@@ -221,6 +221,10 @@ export const GroupRelations = relations(Group, ({ one, many }) => ({
     fields: [Group.goalId],
     references: [Goal.id],
   }),
+  creator: one(User, {
+    fields: [Group.creatorId],
+    references: [User.id],
+  }),
   participants: many(GroupParticipants),
 }));
 

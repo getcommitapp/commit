@@ -23,7 +23,7 @@ export class GroupsLeave extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB);
-    const userId = c.var.user.id;
+    const userId = c.var.user!.id;
 
     const { id } = c.req.param();
     if (!id) return new Response("Bad Request", { status: 400 });

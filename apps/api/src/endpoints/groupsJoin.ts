@@ -23,10 +23,15 @@ export class GroupsJoin extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const userId = c.var.user.id;
+    const userId = c.var.user!.id;
 
     const data = await this.getValidatedData<typeof this.schema>();
     const { code } = data.body;
+
+    // Validate that code is not empty
+    if (!code || code.trim() === "") {
+      return new Response("Code is required", { status: 400 });
+    }
 
     const db = drizzle(c.env.DB);
 

@@ -13,6 +13,8 @@ export function useGroups() {
         createdAt: formatDate(group.createdAt),
         updatedAt: formatDate(group.updatedAt),
         totalStake: (group.goal.stakeCents ?? 0) * (group.memberCount ?? 1),
+        isOwner: group.isOwner,
+        members: group.members,
         goal: {
           ...group.goal,
           startDate: formatDate(group.goal.startDate),
