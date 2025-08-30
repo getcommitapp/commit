@@ -1,35 +1,10 @@
 import app from "../index";
 import { env, env as testEnv } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type {
-  GoalCreateResponse,
-  GroupLeaveResponse,
-  GroupCreateResponse,
-} from "@commit/types";
+import type { GroupLeaveResponse, GroupCreateResponse } from "@commit/types";
 
 describe("POST /api/groups/:id/leave (leave)", () => {
   it("creator cannot leave their own group", async () => {
-    // First create a goal
-    const goalRes = await app.request(
-      "/api/goals",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: "Test Goal",
-          description: "A test goal",
-          startDate: new Date().toISOString(),
-          dueStartTime: new Date().toISOString(),
-          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
-          stakeCents: 1000,
-          currency: "USD",
-          destinationType: "charity",
-        }),
-        headers: new Headers({ "Content-Type": "application/json" }),
-      },
-      env
-    );
-    const goal = await goalRes.json<GoalCreateResponse>();
-
     const createRes = await app.request(
       "/api/groups",
       {
@@ -37,7 +12,16 @@ describe("POST /api/groups/:id/leave (leave)", () => {
         body: JSON.stringify({
           name: "MyGroup",
           description: null,
-          goalId: goal.id,
+          goal: {
+            name: "Test Goal",
+            description: "A test goal",
+            startDate: new Date().toISOString(),
+            dueStartTime: new Date().toISOString(),
+            dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+            stakeCents: 1000,
+            currency: "USD",
+            destinationType: "charity",
+          },
         }),
         headers: new Headers({ "Content-Type": "application/json" }),
       },
@@ -53,13 +37,14 @@ describe("POST /api/groups/:id/leave (leave)", () => {
   });
 
   it("participant can leave successfully", async () => {
-    // Create a goal first
+    // Create a group with creator user_2 and add user_1 as participant
+    // First create a goal for FK
     const goalRes = await app.request(
       "/api/goals",
       {
         method: "POST",
         body: JSON.stringify({
-          name: "Test Goal",
+          name: "Other's Goal",
           description: "A test goal",
           startDate: new Date().toISOString(),
           dueStartTime: new Date().toISOString(),
@@ -74,7 +59,6 @@ describe("POST /api/groups/:id/leave (leave)", () => {
     );
     const goal = await goalRes.json<GoalCreateResponse>();
 
-    // Create a group with creator user_2 and add user_1 as participant
     const groupId = crypto.randomUUID();
     await testEnv.DB.exec(
       `INSERT INTO user (id, name, email, emailVerified, image, updatedAt) VALUES ('user_2','Other','other@example.com',1,NULL,strftime('%s','now'));`

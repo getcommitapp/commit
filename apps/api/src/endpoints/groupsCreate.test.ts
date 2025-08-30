@@ -1,35 +1,25 @@
 import app from "../index";
 import { env } from "cloudflare:test";
-import type { GoalCreateResponse, GroupCreateResponse } from "@commit/types";
+import type { GroupCreateResponse } from "@commit/types";
 import { describe, expect, it } from "vitest";
 
 describe("POST /api/groups (create)", () => {
   it("creates a group and returns it", async () => {
-    // First create a goal
-    const goalRes = await app.request(
-      "/api/goals",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: "Test Goal",
-          description: "A test goal",
-          startDate: new Date().toISOString(),
-          dueStartTime: new Date().toISOString(),
-          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
-          stakeCents: 1000,
-          currency: "USD",
-          destinationType: "charity",
-        }),
-        headers: new Headers({ "Content-Type": "application/json" }),
-      },
-      env
-    );
-    const goal = await goalRes.json<GoalCreateResponse>();
+    const goal = {
+      name: "Test Goal",
+      description: "A test goal",
+      startDate: new Date().toISOString(),
+      dueStartTime: new Date().toISOString(),
+      dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+      stakeCents: 1000,
+      currency: "USD",
+      destinationType: "charity",
+    };
 
     const body = {
       name: "Runners",
       description: "People who like to run",
-      goalId: goal.id,
+      goal,
     };
 
     const res = await app.request(
