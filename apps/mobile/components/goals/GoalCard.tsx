@@ -13,6 +13,7 @@ import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
 import { formatStake } from "@/lib/utils";
+import IonIcons from "@expo/vector-icons/Ionicons";
 
 interface GoalCardProps {
   goal: NonNullable<ReturnType<typeof useGoals>["data"]>[number];
@@ -65,24 +66,14 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
     </View>
   );
 
+  const primary = useThemeColor({}, "primary");
   const rightNode = (
     <View style={{ alignItems: "flex-end", gap: 2, marginLeft: spacing.lg }}>
-      {/* {goal.streak && (
-        <>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
-            <Flame width={16} height={16} color={danger} />
-            <Text
-              style={{
-                ...textVariants.subheadlineEmphasized,
-                color: mutedForeground,
-              }}
-              numberOfLines={1}
-            >
-              {goal.streak}
-            </Text>
-          </View>
-        </>
-      )} */}
+      {goal.group ? (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <IonIcons name="people" size={16} color={primary} />
+        </View>
+      ) : null}
     </View>
   );
 

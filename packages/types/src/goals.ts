@@ -39,6 +39,14 @@ export const GoalDetailsSchema = GoalBaseSchema.extend({
 
 export const GoalsListItemSchema = GoalBaseSchema.extend({
   hasDurationVerification: z.boolean(),
+  group: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      description: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
 });
 
 export const GoalsListResponseSchema = z.array(GoalsListItemSchema);

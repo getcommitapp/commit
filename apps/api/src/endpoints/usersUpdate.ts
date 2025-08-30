@@ -28,7 +28,7 @@ export class UsersUpdate extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const user = c.var.user;
+    const user = c.var.user!;
 
     const data = await this.getValidatedData<typeof this.schema>();
     const { name } = data.body;

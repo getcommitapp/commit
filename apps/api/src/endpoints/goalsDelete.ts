@@ -36,7 +36,7 @@ export class GoalsDelete extends OpenAPIRoute {
     const goalId = c.req.param("id");
 
     const user = c.var.user!;
-    const db = drizzle(c.env.DB);
+    const db = drizzle(c.env.DB, { schema });
 
     // Check if goal exists and user owns it
     const [existingGoal] = await db
@@ -51,6 +51,17 @@ export class GoalsDelete extends OpenAPIRoute {
 
     if (existingGoal.ownerId !== user.id) {
       return c.json({ error: "Unauthorized to delete this goal" }, 403);
+    }
+
+    // Prevent delete if goal is linked to a group
+    const [group] = await db
+      .select({ id: schema.Group.id })
+      .from(schema.Group)
+      .where(eq(schema.Group.goalId, goalId))
+      .limit(1);
+
+    if (group) {
+      return c.json({ error: "Cannot delete goal linked to a group" }, 409);
     }
 
     // Delete the goal
