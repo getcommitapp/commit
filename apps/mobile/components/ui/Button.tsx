@@ -13,7 +13,7 @@ import {
   textVariants,
 } from "@/components/Themed";
 
-type ButtonVariant = "primary" | "secondary" | "accent" | "border";
+type ButtonVariant = "primary" | "secondary" | "accent" | "border" | "danger";
 
 interface ButtonProps {
   title: string;
@@ -47,6 +47,7 @@ export function Button({
   const primary = useThemeColor({}, "primary");
   const secondary = useThemeColor({}, "secondary");
   const accent = useThemeColor({}, "accent");
+  const danger = useThemeColor({}, "danger");
   const border = useThemeColor({}, "border");
   const isSecondary = variant === "secondary";
   const isAccent = variant === "accent";
@@ -61,6 +62,8 @@ export function Button({
   } else if (isAccent) {
     backgroundColor = accent;
     textColor = primary;
+  } else if (variant === "danger") {
+    backgroundColor = danger;
   } else if (variant === "border") {
     backgroundColor = secondary;
     textColor = primary;

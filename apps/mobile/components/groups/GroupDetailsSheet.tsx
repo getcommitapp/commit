@@ -7,6 +7,7 @@ import { DetailsSheet } from "@/components/ui/DetailsSheet";
 import PeopleCircle from "@/assets/icons/people-circle.svg";
 import { useGroups } from "@/lib/hooks/useGroups";
 import { formatStake } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 interface GroupDetailsSheetProps {
   group: NonNullable<ReturnType<typeof useGroups>["data"]>[number];
@@ -36,11 +37,6 @@ export const GroupDetailsSheet = forwardRef<
       snapPoints={snapPoints}
       enableDynamicSizing={enableDynamicSizing}
       onDismiss={onDismiss}
-      actionButton={{
-        label: "Leave group",
-        onPress: handleLeaveGroup,
-        variant: "danger",
-      }}
     >
       <View
         style={{
@@ -107,6 +103,14 @@ export const GroupDetailsSheet = forwardRef<
           <FormItem label="Status" value="No goal linked" />
         )}
       </FormGroup>
+
+      <Button
+        title="Leave group"
+        onPress={handleLeaveGroup}
+        variant="accent"
+        accessibilityLabel="leave-group"
+        testID="leave-group"
+      />
     </DetailsSheet>
   );
 });

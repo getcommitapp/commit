@@ -25,7 +25,7 @@ export class GoalsList extends OpenAPIRoute {
     const user = c.var.user!;
     const db = drizzle(c.env.DB, { schema });
 
-    // Single query using correlated exists for hasDurationVerification
+    // Single query using correlated exists for hasDurationVerification and left-join group for group info
     const rows = await db
       .select({
         id: schema.Goal.id,
@@ -55,13 +55,24 @@ export class GoalsList extends OpenAPIRoute {
               )
             )
         ),
+        groupId: schema.Group.id,
+        groupName: schema.Group.name,
+        groupDescription: schema.Group.description,
       })
       .from(schema.Goal)
+      .leftJoin(schema.Group, eq(schema.Group.goalId, schema.Goal.id))
       .where(eq(schema.Goal.ownerId, user.id));
 
     const response = rows.map((r) => ({
       ...r,
       hasDurationVerification: Boolean(r.hasDurationVerification),
+      group: r.groupId
+        ? {
+            id: r.groupId,
+            name: r.groupName!,
+            description: r.groupDescription ?? undefined,
+          }
+        : null,
     }));
 
     return c.json(response, 200);

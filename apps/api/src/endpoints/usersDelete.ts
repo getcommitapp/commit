@@ -22,7 +22,7 @@ export class UsersDelete extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const user = c.var.user;
+    const user = c.var.user!;
 
     const db = drizzle(c.env.DB, { schema });
 

@@ -36,7 +36,7 @@ export class GoalsReviewUpdate extends OpenAPIRoute {
   async handle(c: AppContext) {
     const goalId = c.req.param("id");
 
-    const user = c.var.user;
+    const user = c.var.user!;
 
     const data = await this.getValidatedData<typeof this.schema>();
     const { approvalStatus } = data.body;

@@ -1,10 +1,6 @@
 import React, { forwardRef, useMemo, ReactNode } from "react";
-import { Text, View, Pressable } from "react-native";
-import {
-  BottomSheetModal,
-  BottomSheetScrollView,
-  useBottomSheetModal,
-} from "@gorhom/bottom-sheet";
+import { Text, View } from "react-native";
+import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   ThemedText,
   textVariants,
@@ -23,11 +19,6 @@ interface DetailsSheetProps {
   enableDynamicSizing?: boolean;
   onDismiss?: () => void;
   children?: ReactNode;
-  actionButton?: {
-    label: string;
-    onPress: () => void;
-    variant?: "primary" | "danger" | "secondary";
-  };
 }
 
 export const DetailsSheet = forwardRef<BottomSheetModal, DetailsSheetProps>(
@@ -39,40 +30,17 @@ export const DetailsSheet = forwardRef<BottomSheetModal, DetailsSheetProps>(
       enableDynamicSizing = false,
       onDismiss,
       children,
-      actionButton,
     },
     ref
   ) => {
     const insets = useSafeAreaInsets();
     const mutedForeground = useThemeColor({}, "mutedForeground");
-    const primary = useThemeColor({}, "primary");
-    const danger = useThemeColor({}, "danger");
     const border = useThemeColor({}, "border");
-    const { dismiss } = useBottomSheetModal();
 
     const resolvedSnapPoints = useMemo(
       () => snapPoints ?? ["75%"],
       [snapPoints]
     );
-
-    const getActionButtonStyle = () => {
-      switch (actionButton?.variant) {
-        case "danger":
-          return { backgroundColor: danger };
-        case "secondary":
-          return { backgroundColor: mutedForeground };
-        case "primary":
-        default:
-          return { backgroundColor: primary };
-      }
-    };
-
-    const handleActionPress = () => {
-      if (actionButton?.onPress) {
-        actionButton.onPress();
-      }
-      dismiss();
-    };
 
     return (
       <BottomSheetModal
@@ -111,28 +79,6 @@ export const DetailsSheet = forwardRef<BottomSheetModal, DetailsSheetProps>(
             </View>
 
             {children}
-
-            {actionButton && (
-              <Pressable
-                onPress={handleActionPress}
-                accessibilityRole="button"
-                style={{
-                  ...getActionButtonStyle(),
-                  paddingVertical: spacing.md,
-                  borderRadius: 12,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    ...textVariants.bodyEmphasized,
-                    color: "white",
-                  }}
-                >
-                  {actionButton.label}
-                </Text>
-              </Pressable>
-            )}
           </SafeAreaView>
         </BottomSheetScrollView>
       </BottomSheetModal>

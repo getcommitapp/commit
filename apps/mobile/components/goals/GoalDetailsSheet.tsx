@@ -8,6 +8,7 @@ import { spacing, useThemeColor } from "@/components/Themed";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { Button } from "@/components/ui/Button";
 import { useGoals } from "@/lib/hooks/useGoals";
+import { useDeleteGoal } from "@/lib/hooks/useDeleteGoal";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
 
@@ -31,6 +32,9 @@ export const GoalDetailsSheet = forwardRef<
     const { data: timer } = useGoalTimer(goal.id);
     const { mutate: startTimer, isPending } = useStartGoalTimer(goal.id);
     const { elapsedLabel } = useElapsedTimer(timer?.startedAt);
+    const { mutate: deleteGoal, isPending: isDeleting } = useDeleteGoal(
+      goal.id
+    );
 
     return (
       <DetailsSheet
@@ -40,17 +44,6 @@ export const GoalDetailsSheet = forwardRef<
         snapPoints={snapPoints}
         enableDynamicSizing={enableDynamicSizing}
         onDismiss={onDismiss}
-        actionButton={
-          timer
-            ? undefined
-            : onDelete
-              ? {
-                  label: "Delete Goal",
-                  onPress: () => onDelete(goal),
-                  variant: "danger",
-                }
-              : undefined
-        }
       >
         {goal.hasDurationVerification ? (
           <View style={{ marginBottom: spacing.xl }}>
@@ -97,6 +90,37 @@ export const GoalDetailsSheet = forwardRef<
           <FormItem label="Due Start Time" value={goal.dueStartTime} />
           <FormItem label="Due End Time" value={goal.dueEndTime ?? ""} />
         </FormGroup>
+
+        {goal.group ? (
+          <FormGroup
+            title="Group"
+            backgroundStyle={{ backgroundColor: background }}
+          >
+            <FormItem label="Name" value={goal.group.name} />
+            <FormItem
+              label="Description"
+              value={goal.group.description ?? ""}
+            />
+          </FormGroup>
+        ) : null}
+
+        {!timer && !goal.group ? (
+          <Button
+            title="Delete Goal"
+            onPress={() =>
+              !isDeleting &&
+              deleteGoal(undefined, {
+                onSuccess: () => {
+                  onDelete?.(goal);
+                },
+              })
+            }
+            variant="danger"
+            loading={isDeleting}
+            accessibilityLabel="delete-goal"
+            testID="delete-goal"
+          />
+        ) : null}
       </DetailsSheet>
     );
   }
