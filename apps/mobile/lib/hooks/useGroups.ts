@@ -1,34 +1,48 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api";
 import { GroupsListResponseSchema } from "@commit/types";
-import { calculateTimeLeft, formatDate, formatTime } from "../utils";
+import { formatDate, formatTime } from "../utils";
+import { useGoalsComputed } from "./useGoalsComputed";
+import { useMemo } from "react";
 
 export function useGroups() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["groups"],
     queryFn: async () => {
       const summaries = await apiFetch("/groups", {}, GroupsListResponseSchema);
       return summaries.map((group) => ({
         ...group,
-        createdAt: formatDate(group.createdAt),
-        updatedAt: formatDate(group.updatedAt),
+        createdAtFormatted: formatDate(group.createdAt),
+        updatedAtFormatted: formatDate(group.updatedAt),
         totalStake: (group.goal.stakeCents ?? 0) * (group.memberCount ?? 1),
         isOwner: group.isOwner,
         members: group.members,
         goal: {
           ...group.goal,
-          startDate: formatDate(group.goal.startDate),
-          endDate: formatDate(group.goal.endDate),
-          dueStartTime: formatTime(group.goal.dueStartTime),
-          dueEndTime: formatTime(group.goal.dueEndTime),
-          createdAt: formatDate(group.goal.createdAt),
-          updatedAt: formatDate(group.goal.updatedAt),
-          timeLeft: calculateTimeLeft(
-            group.goal.startDate,
-            group.goal.dueStartTime
-          ),
+          startDateFormatted: formatDate(group.goal.startDate),
+          endDateFormatted: formatDate(group.goal.endDate),
+          dueStartTimeFormatted: formatTime(group.goal.dueStartTime),
+          dueEndTimeFormatted: formatTime(group.goal.dueEndTime),
+          createdAtFormatted: formatDate(group.goal.createdAt),
+          updatedAtFormatted: formatDate(group.goal.updatedAt),
         },
       }));
     },
   });
+
+  const goalsForComputed = useMemo(
+    () => query.data?.map((g) => g.goal) ?? [],
+    [query.data]
+  );
+  const computed = useGoalsComputed(goalsForComputed);
+  const data = (query.data ?? []).map((g) => ({
+    ...g,
+    goal: {
+      ...g.goal,
+      timeLeft: computed.timeLeft[g.goal.id],
+      showTimer: computed.showTimer[g.goal.id],
+    },
+  }));
+
+  return { ...query, data } as typeof query & { data: typeof data };
 }

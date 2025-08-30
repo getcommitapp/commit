@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useMemo } from "react";
 import { View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FormGroup, FormItem } from "@/components/ui/form";
@@ -7,7 +7,6 @@ import { useGoalTimer, useStartGoalTimer } from "@/lib/hooks/useGoalTimer";
 import { spacing, useThemeColor } from "@/components/Themed";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { Button } from "@/components/ui/Button";
-import { isNowWithinGoalWindow } from "@/lib/utils";
 import { useGoals } from "@/lib/hooks/useGoals";
 import { useDeleteGoal } from "@/lib/hooks/useDeleteGoal";
 import { GoalDetails } from "@/components/goals/GoalDetails";
@@ -38,6 +37,11 @@ export const GoalDetailsSheet = forwardRef<
       goal.id
     );
 
+    const hasDurationVerification = useMemo(
+      () => goal.verificationMethod?.durationSeconds != null,
+      [goal.verificationMethod?.durationSeconds]
+    );
+
     return (
       <DetailsSheet
         ref={ref}
@@ -47,7 +51,7 @@ export const GoalDetailsSheet = forwardRef<
         enableDynamicSizing={enableDynamicSizing}
         onDismiss={onDismiss}
       >
-        {goal.hasDurationVerification ? (
+        {hasDurationVerification && (timer || goal.showTimer) ? (
           <View style={{ marginBottom: spacing.xl }}>
             <FormGroup
               title="Progress"
@@ -66,12 +70,7 @@ export const GoalDetailsSheet = forwardRef<
               )}
             </FormGroup>
 
-            {!timer &&
-            isNowWithinGoalWindow(
-              goal._raw.startDate,
-              goal._raw.dueStartTime,
-              goal._raw.dueEndTime
-            ) ? (
+            {!timer && goal.showTimer ? (
               <Button
                 title="Start Timer"
                 onPress={() => !isPending && startTimer()}

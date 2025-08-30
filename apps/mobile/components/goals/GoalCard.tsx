@@ -12,7 +12,7 @@ import { useGoalTimer } from "@/lib/hooks/useGoalTimer";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
-import { formatStake, isNowWithinGoalWindow } from "@/lib/utils";
+import { formatStake } from "@/lib/utils";
 import IonIcons from "@expo/vector-icons/Ionicons";
 
 interface GoalCardProps {
@@ -65,12 +65,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
         </Text>
       </View>
 
-      {hasDurationVerification &&
-      isNowWithinGoalWindow(
-        goal._raw?.startDate ?? null,
-        goal._raw?.dueStartTime ?? null,
-        goal._raw?.dueEndTime ?? null
-      ) ? (
+      {hasDurationVerification && goal.showTimer ? (
         <GoalTimerRow goalId={goal.id} />
       ) : null}
     </View>
