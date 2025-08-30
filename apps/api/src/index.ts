@@ -27,6 +27,7 @@ import { GroupsCreate } from "./endpoints/groupsCreate";
 import { GroupsInvite } from "./endpoints/groupsInvite";
 import { GroupsInviteVerify } from "./endpoints/groupsInviteVerify";
 import { GroupsLeave } from "./endpoints/groupsLeave";
+import { GroupsDelete } from "./endpoints/groupsDelete";
 import { HonoContext } from "./types";
 import { GroupsJoin } from "./endpoints/groupsJoin";
 import { PaymentsSetupIntent } from "./endpoints/paymentsSetupIntent";
@@ -161,6 +162,7 @@ openapi.post("/api/groups", GroupsCreate);
 openapi.get("/api/groups/:id/invite", GroupsInvite);
 openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
 openapi.post("/api/groups/:id/leave", GroupsLeave);
+openapi.delete("/api/groups/:id", GroupsDelete);
 openapi.post("/api/groups/join", GroupsJoin);
 
 // Payments

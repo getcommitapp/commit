@@ -8,6 +8,7 @@ import PeopleCircle from "@/assets/icons/people-circle.svg";
 import { useGroups } from "@/lib/hooks/useGroups";
 import { formatStake } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { useLeaveOrDeleteGroup } from "@/lib/hooks/useLeaveOrDeleteGroup";
 
 interface GroupDetailsSheetProps {
   group: NonNullable<ReturnType<typeof useGroups>["data"]>[number];
@@ -24,9 +25,12 @@ export const GroupDetailsSheet = forwardRef<
   const primary = useThemeColor({}, "primary");
   const background = useThemeColor({}, "background");
 
+  const { mutate: leaveOrDelete, isPending } = useLeaveOrDeleteGroup({
+    isOwner: group.isOwner,
+  });
+
   const handleLeaveGroup = () => {
-    // TODO: integrate with API to leave the group
-    console.log("Leaving group", group.id);
+    leaveOrDelete(group.id);
   };
 
   return (
@@ -55,7 +59,7 @@ export const GroupDetailsSheet = forwardRef<
         </Text>
       </View>
       <FormGroup
-        title="Group Details"
+        title="Details"
         backgroundStyle={{ backgroundColor: background }}
       >
         <FormItem
@@ -69,6 +73,25 @@ export const GroupDetailsSheet = forwardRef<
           }
         />
         <FormItem label="Invitation Code" value={group.inviteCode} />
+      </FormGroup>
+
+      <FormGroup
+        title="Members"
+        backgroundStyle={{ backgroundColor: background }}
+      >
+        {group.members && group.members.length > 0 ? (
+          group.members.map((m, idx) => (
+            <FormItem
+              key={idx}
+              label={
+                m.isOwner ? (group.isOwner ? "Owner (You)" : "Owner") : "Member"
+              }
+              value={m.name}
+            />
+          ))
+        ) : (
+          <FormItem label="Members" value="—" />
+        )}
       </FormGroup>
 
       <FormGroup title="Goal" backgroundStyle={{ backgroundColor: background }}>
@@ -105,11 +128,12 @@ export const GroupDetailsSheet = forwardRef<
       </FormGroup>
 
       <Button
-        title="Leave group"
+        title={group.isOwner ? "Delete group" : "Leave group"}
         onPress={handleLeaveGroup}
-        variant="accent"
-        accessibilityLabel="leave-group"
-        testID="leave-group"
+        variant="danger"
+        accessibilityLabel={group.isOwner ? "delete-group" : "leave-group"}
+        testID={group.isOwner ? "delete-group" : "leave-group"}
+        loading={isPending}
       />
     </DetailsSheet>
   );

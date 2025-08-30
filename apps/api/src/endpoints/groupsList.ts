@@ -23,7 +23,7 @@ export class GroupsList extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB, { schema });
-    const userId = c.var.user.id;
+    const userId = c.var.user!.id;
 
     const groups = await db.query.Group.findMany({
       with: {
@@ -32,7 +32,12 @@ export class GroupsList extends OpenAPIRoute {
             verificationMethods: true,
           },
         },
-        participants: true,
+        creator: true,
+        participants: {
+          with: {
+            user: true,
+          },
+        },
       },
       where: or(
         eq(schema.Group.creatorId, userId),
@@ -50,10 +55,27 @@ export class GroupsList extends OpenAPIRoute {
       ),
     });
 
-    const response = groups.map((g) => ({
-      ...g,
-      memberCount: g.participants.length ?? 0,
-    }));
+    const response = groups.map((g) => {
+      const baseMembers = [
+        { name: g.creator?.name || "Unknown", isOwner: true },
+        ...g.participants
+          .filter((p) => p.userId !== g.creatorId)
+          .map((p) => ({ name: p.user?.name || "Unknown", isOwner: false })),
+      ];
+
+      const selfName = c.var.user.name;
+      const hasSelf = baseMembers.some((m) => m.name === selfName);
+      const members = hasSelf
+        ? baseMembers
+        : [...baseMembers, { name: selfName, isOwner: g.creatorId === userId }];
+
+      return {
+        ...g,
+        memberCount: g.participants.length ?? 0,
+        isOwner: g.creatorId === userId,
+        members,
+      };
+    });
 
     return c.json(response);
   }

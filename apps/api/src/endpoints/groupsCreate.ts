@@ -32,7 +32,7 @@ export class GroupsCreate extends OpenAPIRoute {
     const data = await this.getValidatedData<typeof this.schema>();
     const { name, description, goal } = data.body;
     const db = drizzle(c.env.DB, { schema });
-    const userId = c.var.user.id;
+    const userId = c.var.user!.id;
 
     const id = crypto.randomUUID();
     const inviteCode = Math.random().toString(36).slice(2, 8).toUpperCase();

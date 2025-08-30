@@ -25,6 +25,8 @@ export const GroupMemberSchema = z.object({
 export const GroupListItemSchema = GroupBaseSchema.extend({
   memberCount: z.number(),
   goal: GoalDetailsSchema,
+  isOwner: z.boolean(),
+  members: z.array(z.object({ name: z.string(), isOwner: z.boolean() })),
 });
 
 export const GroupsListResponseSchema = z.array(GroupListItemSchema);
@@ -68,6 +70,10 @@ export const GroupJoinRequestSchema = z.object({ code: z.string() });
 
 export const GroupJoinResponseSchema = GroupBaseSchema;
 
+export const GroupDeleteResponseSchema = z.object({
+  message: z.string(), // "Group deleted successfully."
+});
+
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 
 export type GroupBase = z.infer<typeof GroupBaseSchema>;
@@ -108,3 +114,5 @@ export type GroupLeaveResponse = z.infer<typeof GroupLeaveResponseSchema>;
 export type GroupJoinRequest = z.infer<typeof GroupJoinRequestSchema>;
 
 export type GroupJoinResponse = z.infer<typeof GroupJoinResponseSchema>;
+
+export type GroupDeleteResponse = z.infer<typeof GroupDeleteResponseSchema>;
