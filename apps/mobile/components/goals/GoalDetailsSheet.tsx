@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { useGoals } from "@/lib/hooks/useGoals";
 import { useDeleteGoal } from "@/lib/hooks/useDeleteGoal";
 import { GoalDetails } from "@/components/goals/GoalDetails";
+import { useGoalCheckin } from "@/lib/hooks/useCheckin";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
 
@@ -32,15 +33,15 @@ export const GoalDetailsSheet = forwardRef<
     const background = useThemeColor({}, "background");
     const { data: timer } = useGoalTimer(goal.id);
     const { mutate: startTimer, isPending } = useStartGoalTimer(goal.id);
+    const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(
+      goal.id
+    );
     const { elapsedLabel } = useElapsedTimer(timer?.startedAt);
     const { mutate: deleteGoal, isPending: isDeleting } = useDeleteGoal(
       goal.id
     );
 
-    const hasDurationVerification = useMemo(
-      () => goal.verificationMethod?.durationSeconds != null,
-      [goal.verificationMethod?.durationSeconds]
-    );
+    const isDurationBased = goal.isDurationBased;
 
     return (
       <DetailsSheet
@@ -51,7 +52,7 @@ export const GoalDetailsSheet = forwardRef<
         enableDynamicSizing={enableDynamicSizing}
         onDismiss={onDismiss}
       >
-        {hasDurationVerification && (timer || goal.showTimer) ? (
+        {isDurationBased && (timer || goal.showTimer) ? (
           <View style={{ marginBottom: spacing.xl }}>
             <FormGroup
               title="Progress"
@@ -79,6 +80,18 @@ export const GoalDetailsSheet = forwardRef<
                 accessibilityLabel="start-goal-timer"
               />
             ) : null}
+          </View>
+        ) : null}
+
+        {!isDurationBased && goal.showCheckinButton ? (
+          <View style={{ marginBottom: spacing.xl }}>
+            <Button
+              title="Check-in"
+              onPress={() => !isCheckingIn && checkin()}
+              loading={isCheckingIn}
+              testID="checkin-goal"
+              accessibilityLabel="checkin-goal"
+            />
           </View>
         ) : null}
 

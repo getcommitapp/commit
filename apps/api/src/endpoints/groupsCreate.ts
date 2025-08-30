@@ -77,7 +77,6 @@ export class GroupsCreate extends OpenAPIRoute {
           longitude: vm.longitude ?? null,
           radiusM: vm.radiusM ?? null,
           durationSeconds: vm.durationSeconds ?? null,
-          graceTime: vm.graceTime ? new Date(vm.graceTime) : null,
           createdAt: now,
           updatedAt: now,
         });

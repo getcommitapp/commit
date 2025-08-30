@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
 import { type AppContext } from "../types";
 import { PaymentsSetupIntentResponseSchema } from "@commit/types";
-import { StripeService } from "../services/stripe";
+import { StripeService } from "../services/stripeService";
 
 export class PaymentsSetupIntent extends OpenAPIRoute {
   schema = {

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "a4098fc2-1b79-4086-a2ef-73d8aa6deea6",
+  "id": "55e8587c-ab3f-49ea-933f-4037f3738d5d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -546,12 +546,13 @@
           "notNull": false,
           "autoincrement": false
         },
-        "graceTime": {
-          "name": "graceTime",
+        "graceTimeSeconds": {
+          "name": "graceTimeSeconds",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": 60
         },
         "createdAt": {
           "name": "createdAt",

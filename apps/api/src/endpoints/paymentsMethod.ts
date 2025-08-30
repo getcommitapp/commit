@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { type AppContext } from "../types";
-import { StripeService } from "../services/stripe";
+import { StripeService } from "../services/stripeService";
 import { PaymentsMethodResponseSchema } from "@commit/types";
 
 export class PaymentsMethod extends OpenAPIRoute {

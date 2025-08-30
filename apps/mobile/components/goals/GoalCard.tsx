@@ -14,6 +14,10 @@ import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
 import { formatStake } from "@/lib/utils";
 import IonIcons from "@expo/vector-icons/Ionicons";
+import { Button } from "@/components/ui/Button";
+import { useGoalCheckin } from "@/lib/hooks/useCheckin";
+import { useEffect } from "react";
+import { useRouter } from "expo-router";
 
 interface GoalCardProps {
   goal: NonNullable<ReturnType<typeof useGoals>["data"]>[number];
@@ -25,6 +29,18 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   const mutedForeground = useThemeColor({}, "mutedForeground");
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { dismissAll } = useBottomSheetModal();
+  const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(goal.id);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (goal.showCheckinModal) {
+      // Navigate to dedicated modal screen; cannot be dismissed except via check-in
+      router.push({
+        pathname: "/(tabs)/goals/checkin/[id]",
+        params: { id: goal.id },
+      });
+    }
+  }, [goal.showCheckinModal]);
 
   const openDetails = useCallback(() => {
     // Ensure only one bottom sheet is visible at a time
@@ -32,9 +48,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
     bottomSheetRef.current?.present();
   }, [dismissAll]);
 
-  const hasDurationVerification = useMemo(() => {
-    return goal.verificationMethod?.durationSeconds != null;
-  }, [goal.verificationMethod?.durationSeconds]);
+  const isDurationBased = goal.isDurationBased;
 
   const leftNode = (
     <View style={{ gap: 2 }}>
@@ -65,8 +79,20 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
         </Text>
       </View>
 
-      {hasDurationVerification && goal.showTimer ? (
+      {isDurationBased && goal.showTimer ? (
         <GoalTimerRow goalId={goal.id} />
+      ) : null}
+      {!isDurationBased && goal.showCheckinButton ? (
+        <View style={{ marginTop: 4 }}>
+          <Button
+            title="Check-in"
+            size="sm"
+            onPress={() => !isCheckingIn && checkin()}
+            loading={isCheckingIn}
+            accessibilityLabel={`checkin-${goal.id}`}
+            testID={`checkin-${goal.id}`}
+          />
+        </View>
       ) : null}
     </View>
   );

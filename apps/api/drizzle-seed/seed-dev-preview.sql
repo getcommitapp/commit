@@ -182,7 +182,7 @@ ON CONFLICT(id) DO UPDATE SET
   updatedAt=excluded.updatedAt;
 
 -- Insert goal verification methods
-INSERT OR IGNORE INTO goal_verifications_method (id, goalId, method, latitude, longitude, radiusM, durationSeconds, graceTime, createdAt, updatedAt)
+INSERT OR IGNORE INTO goal_verifications_method (id, goalId, method, latitude, longitude, radiusM, durationSeconds, graceTimeSeconds, createdAt, updatedAt)
 VALUES 
   ('00000000-0000-4000-8000-0000000000m1', '00000000-0000-4000-8000-0000000000g1', 'location', 46.5197, 6.6323, 100, 1800, strftime('%s','now', '+5 minutes'), strftime('%s','now'), strftime('%s','now')),
   ('00000000-0000-4000-8000-0000000000m2', '00000000-0000-4000-8000-0000000000g2', 'photo', NULL, NULL, NULL, NULL, strftime('%s','now', '+5 minutes'), strftime('%s','now'), strftime('%s','now')),

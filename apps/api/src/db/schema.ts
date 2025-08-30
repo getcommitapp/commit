@@ -129,7 +129,7 @@ export const GoalVerificationsMethod = sqliteTable(
     longitude: real("longitude"),
     radiusM: integer("radiusM"),
     durationSeconds: integer("durationSeconds"),
-    graceTime: integer("graceTime", { mode: "timestamp" }),
+    graceTimeSeconds: integer("graceTimeSeconds").default(60),
 
     createdAt: createCreatedAt(),
     updatedAt: createUpdatedAt(),

@@ -1,6 +1,6 @@
 import { OpenAPIRoute, contentJson } from "chanfana";
 import { type AppContext } from "../types";
-import { StripeService } from "../services/stripe";
+import { StripeService } from "../services/stripeService";
 import {
   PaymentsRefundRequestSchema,
   PaymentsRefundResponseSchema,

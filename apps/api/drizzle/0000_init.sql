@@ -80,7 +80,7 @@ CREATE TABLE `goal_verifications_method` (
 	`longitude` real,
 	`radiusM` integer,
 	`durationSeconds` integer,
-	`graceTime` integer,
+	`graceTimeSeconds` integer DEFAULT 60,
 	`createdAt` integer DEFAULT (current_timestamp),
 	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade

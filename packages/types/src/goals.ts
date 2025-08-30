@@ -9,7 +9,7 @@ export const GoalVerificationMethodSchema = z.object({
   longitude: z.number().nullable().optional(),
   radiusM: z.number().int().nullable().optional(),
   durationSeconds: z.number().int().nullable().optional(),
-  graceTime: z.string().datetime().nullable().optional(),
+  graceTimeSeconds: z.number().int().nullable().optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
@@ -66,7 +66,6 @@ export const GoalCreateRequestSchema = z.object({
       latitude: z.number().nullable().optional(),
       longitude: z.number().nullable().optional(),
       radiusM: z.number().int().nullable().optional(),
-      graceTime: z.string().datetime().nullable().optional(),
     })
     .optional(),
 });

@@ -41,8 +41,13 @@ export function useGroups() {
       ...g.goal,
       timeLeft: computed.timeLeft[g.goal.id],
       showTimer: computed.showTimer[g.goal.id],
+      showCheckinModal: computed.showCheckinModal[g.goal.id],
+      showCheckinButton: computed.showCheckinButton[g.goal.id],
     },
   }));
 
-  return { ...query, data } as typeof query & { data: typeof data };
+  // Replace the `data` property type from useQuery with our augmented shape
+  return { ...query, data } as Omit<typeof query, "data"> & {
+    data: typeof data;
+  };
 }

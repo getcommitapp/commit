@@ -2,7 +2,7 @@ import app from "../index";
 import { env } from "cloudflare:test";
 import { describe, expect, it, vi } from "vitest";
 import type { PaymentsMethodResponse } from "@commit/types";
-import { StripeService } from "../services/stripe";
+import { StripeService } from "../services/stripeService";
 
 describe("GET /api/payments/method", () => {
   it("returns inactive when no default card exists", async () => {
