@@ -81,6 +81,11 @@ export const GoalVerificationInputSchema = z.object({
   photoUrl: z.string().nullable().optional(),
   photoDescription: z.string().nullable().optional(),
   startTime: z.string().datetime().nullable().optional(),
+  occurrenceDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional(),
 });
 
 export const GoalVerifyRequestSchema = z.array(GoalVerificationInputSchema);

@@ -196,27 +196,28 @@ VALUES
   ('00000000-0000-4000-8000-0000000000m4', '00000000-0000-4000-8000-0000000000g4', 'photo', NULL, NULL, NULL, NULL, strftime('%s','now', '+5 minutes'), strftime('%s','now'), strftime('%s','now'));
 
 -- Insert some verification logs (completed verifications)
-INSERT OR IGNORE INTO goal_verifications_log (id, goalId, userId, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
+INSERT OR IGNORE INTO goal_verifications_log (id, goalId, userId, occurrenceDate, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
 VALUES 
-  ('00000000-0000-4000-8000-0000000000v1', '00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', strftime('%s','now', '-1 day'), 'approved', strftime('%s','now', '-1 day', '-30 minutes'), NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000v2', '00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', strftime('%s','now', '-2 days'), 'approved', strftime('%s','now', '-2 days', '-30 minutes'), NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000v3', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', strftime('%s','now', '-1 day'), 'approved', strftime('%s','now', '-1 day', '-1 hour'), 'Reading page 15 of my book', 'https://example.com/photo1.jpg', strftime('%s','now'), strftime('%s','now'));
+  ('00000000-0000-4000-8000-0000000000v1', '00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','-1 day','localtime'), strftime('%s','now', '-1 day'), 'approved', strftime('%s','now', '-1 day', '-30 minutes'), NULL, NULL, strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000v2', '00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','-2 days','localtime'), strftime('%s','now', '-2 days'), 'approved', strftime('%s','now', '-2 days', '-30 minutes'), NULL, NULL, strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000v3', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','-1 day','localtime'), strftime('%s','now', '-1 day'), 'approved', strftime('%s','now', '-1 day', '-1 hour'), 'Reading page 15 of my book', 'https://example.com/photo1.jpg', strftime('%s','now'), strftime('%s','now'));
 
 -- Insert/Update some pending photo verifications for reviewer to approve
-INSERT OR IGNORE INTO goal_verifications_log (id, goalId, userId, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
+INSERT OR IGNORE INTO goal_verifications_log (id, goalId, userId, occurrenceDate, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
 VALUES 
   -- Test User's photo goal (g2): pending
-  ('00000000-0000-4000-8000-0000000000p1', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', NULL, 'pending', strftime('%s','now', '-2 hours'), 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000p1', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','localtime'), NULL, 'pending', strftime('%s','now', '-2 hours'), 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', strftime('%s','now'), strftime('%s','now')),
   -- Bob's photo goal (g4): pending
-  ('00000000-0000-4000-8000-0000000000p2', '00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', NULL, 'pending', strftime('%s','now', '-3 hours'), 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', strftime('%s','now'), strftime('%s','now'));
+  ('00000000-0000-4000-8000-0000000000p2', '00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', strftime('%Y-%m-%d','now','localtime'), NULL, 'pending', strftime('%s','now', '-3 hours'), 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', strftime('%s','now'), strftime('%s','now'));
 
-INSERT INTO goal_verifications_log (id, goalId, userId, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
+INSERT INTO goal_verifications_log (id, goalId, userId, occurrenceDate, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
 VALUES 
-  ('00000000-0000-4000-8000-0000000000p1', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', NULL, 'pending', strftime('%s','now', '-2 hours'), 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000p2', '00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', NULL, 'pending', strftime('%s','now', '-3 hours'), 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', strftime('%s','now'), strftime('%s','now'))
+  ('00000000-0000-4000-8000-0000000000p1', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','localtime'), NULL, 'pending', strftime('%s','now', '-2 hours'), 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000p2', '00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', strftime('%Y-%m-%d','now','localtime'), NULL, 'pending', strftime('%s','now', '-3 hours'), 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', strftime('%s','now'), strftime('%s','now'))
 ON CONFLICT(id) DO UPDATE SET
   goalId=excluded.goalId,
   userId=excluded.userId,
+  occurrenceDate=excluded.occurrenceDate,
   verifiedAt=excluded.verifiedAt,
   approvalStatus=excluded.approvalStatus,
   startTime=excluded.startTime,

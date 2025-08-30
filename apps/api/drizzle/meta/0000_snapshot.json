@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0cc9cdbc-d297-4325-ad01-26978e4169ae",
+  "id": "43050591-4d42-4ca8-8cf2-5e9bc1157827",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -414,6 +414,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "occurrenceDate": {
+          "name": "occurrenceDate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "verifiedAt": {
