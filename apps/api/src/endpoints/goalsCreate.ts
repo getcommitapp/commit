@@ -63,10 +63,6 @@ export class GoalsCreate extends OpenAPIRoute {
 
     // Optional single verification method (only allow specific methods)
     if (goalToCreate.verificationMethod) {
-      const allowed = new Set(["location", "movement", "photo", "checkin"]);
-      if (!allowed.has(goalToCreate.verificationMethod.method)) {
-        return c.json({ message: "Unsupported verification method" }, 400);
-      }
       try {
         const vm = goalToCreate.verificationMethod;
         await db.insert(schema.GoalVerificationsMethod).values({

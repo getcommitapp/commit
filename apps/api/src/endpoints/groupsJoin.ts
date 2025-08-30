@@ -56,15 +56,12 @@ export class GroupsJoin extends OpenAPIRoute {
     if (existing) return new Response("Already a member", { status: 409 });
 
     const now = new Date();
-    await db
-      .insert(GroupParticipants)
-      .values({
-        groupId: g.id,
-        userId,
-        joinedAt: now,
-        updatedAt: now,
-      })
-      .run?.();
+    await db.insert(GroupParticipants).values({
+      groupId: g.id,
+      userId,
+      joinedAt: now,
+      updatedAt: now,
+    });
 
     return c.json({
       id: g.id,

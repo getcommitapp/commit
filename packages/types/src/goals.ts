@@ -77,7 +77,6 @@ export const GoalDeleteResponseSchema = z.object({
 });
 
 export const GoalVerificationInputSchema = z.object({
-  type: z.string(),
   photoUrl: z.string().nullable().optional(),
   photoDescription: z.string().nullable().optional(),
   startTime: z.string().datetime().nullable().optional(),

@@ -67,28 +67,22 @@ export class GroupsCreate extends OpenAPIRoute {
 
     // Optional verification method
     if (goal.verificationMethod) {
-      const allowed = new Set(["location", "movement", "photo", "checkin"]);
-      if (allowed.has(goal.verificationMethod.method)) {
-        try {
-          const vm = goal.verificationMethod;
-          await db.insert(schema.GoalVerificationsMethod).values({
-            id: uuid(),
-            goalId: createdGoal.id,
-            method: vm.method,
-            latitude: vm.latitude ?? null,
-            longitude: vm.longitude ?? null,
-            radiusM: vm.radiusM ?? null,
-            durationSeconds: vm.durationSeconds ?? null,
-            graceTime: vm.graceTime ? new Date(vm.graceTime) : null,
-            createdAt: now,
-            updatedAt: now,
-          });
-        } catch (e) {
-          console.error(
-            "[GroupsCreate] Failed to insert verification method",
-            e
-          );
-        }
+      try {
+        const vm = goal.verificationMethod;
+        await db.insert(schema.GoalVerificationsMethod).values({
+          id: uuid(),
+          goalId: createdGoal.id,
+          method: vm.method,
+          latitude: vm.latitude ?? null,
+          longitude: vm.longitude ?? null,
+          radiusM: vm.radiusM ?? null,
+          durationSeconds: vm.durationSeconds ?? null,
+          graceTime: vm.graceTime ? new Date(vm.graceTime) : null,
+          createdAt: now,
+          updatedAt: now,
+        });
+      } catch (e) {
+        console.error("[GroupsCreate] Failed to insert verification method", e);
       }
     }
 

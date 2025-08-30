@@ -9,6 +9,7 @@ import {
 
 export const GroupBaseSchema = z.object({
   id: z.string(),
+  goalId: z.string(),
   name: z.string(),
   description: z.string().nullable(),
   inviteCode: z.string(),

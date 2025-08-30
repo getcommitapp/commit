@@ -63,7 +63,67 @@ describe("DELETE /api/groups/:id (delete)", () => {
     );
     expect(res.status).toBe(200);
     const json: GroupDeleteResponse = await res.json();
-    expect(json.message).toBe("Group deleted.");
+    expect(json.message).toBe("Group and associated goal deleted.");
+  });
+
+  it("deletes both group and associated goal", async () => {
+    // Create a group (which creates a goal internally)
+    const createRes = await app.request(
+      "/api/groups",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Group to Delete",
+          description: "A test group to be deleted",
+          goal: {
+            name: "Test Goal for Deletion",
+            description: "A test goal to be deleted",
+            startDate: new Date().toISOString(),
+            dueStartTime: new Date().toISOString(),
+            dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+            stakeCents: 1000,
+            currency: "USD",
+            destinationType: "charity",
+          },
+        }),
+        headers: new Headers({ "Content-Type": "application/json" }),
+      },
+      env
+    );
+    const group = await createRes.json<GroupCreateResponse>();
+
+    // Get the goal ID from the group's goalId field
+    const goalId = group.goalId;
+
+    // Verify both goal and group exist before deletion
+    const goalCheckRes = await app.request(`/api/goals/${goalId}`, {}, env);
+    expect(goalCheckRes.status).toBe(200);
+
+    const groupCheckRes = await app.request(`/api/groups/${group.id}`, {}, env);
+    expect(groupCheckRes.status).toBe(200);
+
+    // Delete the group
+    const deleteRes = await app.request(
+      `/api/groups/${group.id}`,
+      { method: "DELETE" },
+      env
+    );
+    expect(deleteRes.status).toBe(200);
+
+    // Verify both goal and group are deleted
+    const goalAfterDeleteRes = await app.request(
+      `/api/goals/${goalId}`,
+      {},
+      env
+    );
+    expect(goalAfterDeleteRes.status).toBe(404);
+
+    const groupAfterDeleteRes = await app.request(
+      `/api/groups/${group.id}`,
+      {},
+      env
+    );
+    expect(groupAfterDeleteRes.status).toBe(404);
   });
 
   it("non-creator cannot delete a group", async () => {

@@ -20,6 +20,7 @@ import { GoalsTimerGet } from "./endpoints/goalsTimerGet";
 import { GoalsTimerStart } from "./endpoints/goalsTimerStart";
 import { GoalsReviewList } from "./endpoints/goalsReviewList";
 import { GoalsReviewUpdate } from "./endpoints/goalsReviewUpdate";
+import { GoalsFetch } from "./endpoints/goalsFetch";
 
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
@@ -28,14 +29,16 @@ import { GroupsInvite } from "./endpoints/groupsInvite";
 import { GroupsInviteVerify } from "./endpoints/groupsInviteVerify";
 import { GroupsLeave } from "./endpoints/groupsLeave";
 import { GroupsDelete } from "./endpoints/groupsDelete";
+import { GroupsFetch } from "./endpoints/groupsFetch";
 import { HonoContext } from "./types";
 import { GroupsJoin } from "./endpoints/groupsJoin";
+
+// Payments
 import { PaymentsSetupIntent } from "./endpoints/paymentsSetupIntent";
 import { PaymentsCharge as PaymentsDebit } from "./endpoints/paymentsDebit";
 import { PaymentsRefund } from "./endpoints/paymentsRefund";
 import { PaymentsCredit } from "./endpoints/paymentsCredit";
 import { PaymentsMethod } from "./endpoints/paymentsMethod";
-// (removed) test debit/credit endpoints
 
 // Start a Hono app
 const app = new Hono<HonoContext>();
@@ -150,6 +153,7 @@ openapi.delete("/api/users", UsersDelete);
 openapi.get("/api/goals", GoalsList);
 openapi.post("/api/goals", GoalsCreate);
 openapi.get("/api/goals/review", GoalsReviewList);
+openapi.get("/api/goals/:id", GoalsFetch);
 openapi.delete("/api/goals/:id", GoalsDelete);
 openapi.post("/api/goals/:id/verify", GoalsVerify);
 openapi.get("/api/goals/:id/timer", GoalsTimerGet);
@@ -159,11 +163,12 @@ openapi.put("/api/goals/:id/review", GoalsReviewUpdate);
 // Groups
 openapi.get("/api/groups", GroupsList);
 openapi.post("/api/groups", GroupsCreate);
+openapi.post("/api/groups/join", GroupsJoin);
+openapi.get("/api/groups/:id", GroupsFetch);
+openapi.delete("/api/groups/:id", GroupsDelete);
+openapi.post("/api/groups/:id/leave", GroupsLeave);
 openapi.get("/api/groups/:id/invite", GroupsInvite);
 openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
-openapi.post("/api/groups/:id/leave", GroupsLeave);
-openapi.delete("/api/groups/:id", GroupsDelete);
-openapi.post("/api/groups/join", GroupsJoin);
 
 // Payments
 openapi.post("/api/payments/setup-intent", PaymentsSetupIntent);

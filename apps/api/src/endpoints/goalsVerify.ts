@@ -75,7 +75,6 @@ export class GoalsVerify extends OpenAPIRoute {
         id: uuid(),
         goalId: goalId,
         userId: user.id,
-        type: verification.type,
         verifiedAt: null,
         approvalStatus: "pending",
         approvedBy: null,

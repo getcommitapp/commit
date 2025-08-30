@@ -59,7 +59,6 @@ CREATE TABLE `goal_verifications_log` (
 	`id` text PRIMARY KEY NOT NULL,
 	`goalId` text NOT NULL,
 	`userId` text NOT NULL,
-	`type` text NOT NULL,
 	`verifiedAt` integer,
 	`approvalStatus` text NOT NULL,
 	`approvedBy` text,

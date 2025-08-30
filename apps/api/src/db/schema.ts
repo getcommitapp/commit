@@ -146,7 +146,6 @@ export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
     .notNull()
     .references(() => User.id, { onDelete: "cascade" }),
 
-  type: text("type").notNull(),
   verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
   approvalStatus: text("approvalStatus", {
     enum: ["pending", "approved", "rejected"],

@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GoalReviewListResponseSchema } from "@commit/types";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export class GoalsReviewList extends OpenAPIRoute {
   schema = {
@@ -47,7 +47,7 @@ export class GoalsReviewList extends OpenAPIRoute {
       .where(
         and(
           eq(schema.GoalVerificationsLog.approvalStatus, "pending"),
-          eq(schema.GoalVerificationsLog.type, "photo")
+          sql`${schema.GoalVerificationsLog.photoUrl} IS NOT NULL`
         )
       );
 

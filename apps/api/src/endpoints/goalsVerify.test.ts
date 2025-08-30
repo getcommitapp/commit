@@ -48,7 +48,6 @@ describe("POST /api/goals/:id/verify (verify)", () => {
 
     const inputs = [
       {
-        type: "photo",
         photoUrl: "https://example.com/p.jpg",
         photoDescription: "evidence",
         startTime: new Date().toISOString(),
