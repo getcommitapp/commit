@@ -4,6 +4,7 @@ import { Goal } from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { GoalBaseSchema } from "@commit/types";
+import { evaluateGoalStatus } from "../services/goalStatusService";
 
 export class GoalsFetch extends OpenAPIRoute {
   schema = {
@@ -30,6 +31,8 @@ export class GoalsFetch extends OpenAPIRoute {
     const goal = await db.select().from(Goal).where(eq(Goal.id, id)).get();
     if (!goal) return new Response("Not Found", { status: 404 });
 
-    return c.json(goal);
+    const user = c.var.user!;
+    const status = evaluateGoalStatus(goal, user);
+    return c.json({ ...goal, status: status.status });
   }
 }

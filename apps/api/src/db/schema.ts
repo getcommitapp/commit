@@ -101,7 +101,7 @@ export const Goal = sqliteTable("goal", {
   localDueStart: text("localDueStart"), // HH:mm
   localDueEnd: text("localDueEnd"), // HH:mm
 
-  recurrence: text("recurrence"),
+  recurrence: text("recurrence", { mode: "json" }),
 
   stakeCents: integer("stakeCents").notNull(),
   currency: text("currency").notNull(),
@@ -127,7 +127,9 @@ export const GoalVerificationsMethod = sqliteTable(
       .notNull()
       .references(() => Goal.id, { onDelete: "cascade" }),
 
-    method: text("method").notNull(),
+    method: text("method", {
+      enum: ["location", "photo", "checkin", "movement"],
+    }).notNull(),
 
     latitude: real("latitude"),
     longitude: real("longitude"),
@@ -155,7 +157,7 @@ export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
   verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
   approvalStatus: text("approvalStatus", {
     enum: ["pending", "approved", "rejected"],
-  }).notNull(),
+  }),
   approvedBy: text("approvedBy").references(() => User.id, {
     onDelete: "cascade",
   }),
@@ -178,6 +180,28 @@ export const GoalTimer = sqliteTable("goal_timer", {
     .references(() => User.id, { onDelete: "cascade" }),
   startedAt: integer("startedAt", { mode: "timestamp" }),
   createdAt: createCreatedAt(),
+});
+
+// Ledger to ensure idempotent processing of per-occurrence actions (e.g., debits)
+export const GoalOccurrenceAction = sqliteTable("goal_occurrence_action", {
+  id: text("id").primaryKey(),
+  goalId: text("goalId")
+    .notNull()
+    .references(() => Goal.id, { onDelete: "cascade" }),
+  userId: text("userId")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  occurrenceDate: text("occurrenceDate").notNull(), // YYYY-MM-DD in user's local TZ
+  action: text("action").notNull(), // e.g., 'debit'
+  status: text("status", {
+    enum: ["pending", "succeeded", "failed"],
+  }).notNull(),
+  idempotencyKey: text("idempotencyKey").notNull().unique(),
+  processedAt: integer("processedAt", { mode: "timestamp" }),
+  errorMessage: text("errorMessage"),
+
+  createdAt: createCreatedAt(),
+  updatedAt: createUpdatedAt(),
 });
 
 export const Group = sqliteTable("group", {
@@ -301,3 +325,8 @@ export type GroupParticipantsInsert = typeof GroupParticipants.$inferInsert;
 
 export type GoalTimerSelect = typeof GoalTimer.$inferSelect;
 export type GoalTimerInsert = typeof GoalTimer.$inferInsert;
+
+export type GoalOccurrenceActionSelect =
+  typeof GoalOccurrenceAction.$inferSelect;
+export type GoalOccurrenceActionInsert =
+  typeof GoalOccurrenceAction.$inferInsert;

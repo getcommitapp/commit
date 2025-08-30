@@ -27,11 +27,7 @@ export class GroupsList extends OpenAPIRoute {
 
     const groups = await db.query.Group.findMany({
       with: {
-        goal: {
-          with: {
-            verificationMethods: true,
-          },
-        },
+        goal: true,
         creator: true,
         participants: {
           with: {
@@ -69,18 +65,11 @@ export class GroupsList extends OpenAPIRoute {
         ? baseMembers
         : [...baseMembers, { name: selfName, isOwner: g.creatorId === userId }];
 
-      const firstMethod = g.goal?.verificationMethods?.[0] ?? null;
-      delete g.goal.verificationMethods;
-
       return {
         ...g,
         memberCount: g.participants.length ?? 0,
         isOwner: g.creatorId === userId,
         members,
-        goal: {
-          ...g.goal,
-          verificationMethod: firstMethod,
-        },
       };
     });
 

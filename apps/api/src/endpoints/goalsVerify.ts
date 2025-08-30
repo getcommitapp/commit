@@ -70,13 +70,22 @@ export class GoalsVerify extends OpenAPIRoute {
 
     // Create verification log entries
     const now = new Date();
+    // Load goal's first verification method
+    const dbWithSchema = drizzle(c.env.DB, { schema });
+    const goalWithMethod = await dbWithSchema.query.Goal.findFirst({
+      where: eq(schema.Goal.id, goalId),
+      with: { verificationMethods: true },
+    });
+    const firstMethod = goalWithMethod?.verificationMethods?.[0] ?? null;
+    const isPhoto = (firstMethod?.method ?? null) === "photo";
     for (const verification of verificationInputs) {
       await db.insert(schema.GoalVerificationsLog).values({
         id: uuid(),
         goalId: goalId,
         userId: user.id,
+        occurrenceDate: verification.occurrenceDate ?? null,
         verifiedAt: null,
-        approvalStatus: "pending",
+        approvalStatus: isPhoto ? "pending" : null,
         approvedBy: null,
         startTime: verification.startTime
           ? new Date(verification.startTime)

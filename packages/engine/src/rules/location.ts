@@ -9,7 +9,11 @@ export function evaluateLocation(input: EngineInputs): EngineOutputs {
   const out: EngineOutputs = {
     ...baseOutput("scheduled"),
     windows: {
-      currentWindow: { kind: "location", start: occ.dueStart, end: occ.dueEnd },
+      currentWindow: {
+        kind: "location",
+        start: occ.dueStart,
+        end: occ.dueEnd ?? undefined,
+      },
     },
     labels: { timeLeft: "" },
   };

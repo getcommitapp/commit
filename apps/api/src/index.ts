@@ -6,7 +6,7 @@ import { drizzle } from "drizzle-orm/d1";
 import * as schema from "./db/schema";
 import { eq } from "drizzle-orm";
 
-// user
+// User
 import { UsersFetch } from "./endpoints/usersFetch";
 import { UsersUpdate } from "./endpoints/usersUpdate";
 import { UsersDelete } from "./endpoints/usersDelete";
@@ -176,6 +176,5 @@ openapi.post("/api/payments/debit", PaymentsDebit);
 openapi.post("/api/payments/credit", PaymentsCredit);
 openapi.post("/api/payments/refund", PaymentsRefund);
 openapi.get("/api/payments/method", PaymentsMethod);
-// test payment endpoints removed
 
 export default app;

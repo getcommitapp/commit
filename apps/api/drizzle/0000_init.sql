@@ -47,6 +47,23 @@ CREATE TABLE `goal` (
 	FOREIGN KEY (`destinationCharityId`) REFERENCES `charity`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE TABLE `goal_occurrence_action` (
+	`id` text PRIMARY KEY NOT NULL,
+	`goalId` text NOT NULL,
+	`userId` text NOT NULL,
+	`occurrenceDate` text NOT NULL,
+	`action` text NOT NULL,
+	`status` text NOT NULL,
+	`idempotencyKey` text NOT NULL,
+	`processedAt` integer,
+	`errorMessage` text,
+	`createdAt` integer DEFAULT (current_timestamp),
+	`updatedAt` integer NOT NULL,
+	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `goal_occurrence_action_idempotencyKey_unique` ON `goal_occurrence_action` (`idempotencyKey`);--> statement-breakpoint
 CREATE TABLE `goal_timer` (
 	`id` text PRIMARY KEY NOT NULL,
 	`goalId` text NOT NULL,
@@ -63,7 +80,7 @@ CREATE TABLE `goal_verifications_log` (
 	`userId` text NOT NULL,
 	`occurrenceDate` text,
 	`verifiedAt` integer,
-	`approvalStatus` text NOT NULL,
+	`approvalStatus` text,
 	`approvedBy` text,
 	`startTime` integer,
 	`photoDescription` text,

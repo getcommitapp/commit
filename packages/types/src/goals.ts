@@ -33,18 +33,14 @@ export const GoalBaseSchema = z.object({
   destinationCharityId: z.string().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+  status: z
+    .enum(["scheduled", "window_open", "ongoing", "missed", "failed", "passed"])
+    .optional(),
 });
 
 export const GoalsListItemSchema = GoalBaseSchema.extend({
   verificationMethod: GoalVerificationMethodSchema.nullable().optional(),
-  group: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      description: z.string().nullable().optional(),
-    })
-    .nullable()
-    .optional(),
+  groupId: z.string().nullable().optional(),
 });
 
 export const GoalsListResponseSchema = z.array(GoalsListItemSchema);
