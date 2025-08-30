@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Pressable } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { CardList } from "@/components/ui/CardList";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
@@ -14,6 +14,7 @@ import { SmallText } from "@/components/ui/SmallText";
 
 export default function GoalCreateChoiceScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const muted = useThemeColor({}, "muted");
 
   return (
@@ -22,7 +23,12 @@ export default function GoalCreateChoiceScreen() {
 
       <CardList>
         <Pressable
-          onPress={() => router.push("/(tabs)/goals/create/custom")}
+          onPress={() =>
+            router.push({
+              pathname: "/(tabs)/goals/create/custom",
+              params,
+            })
+          }
           accessibilityLabel="choose-custom-goal"
           testID="choose-custom-goal"
         >
@@ -65,7 +71,9 @@ export default function GoalCreateChoiceScreen() {
 
       <CardList>
         <Pressable
-          onPress={() => router.push("/(tabs)/goals/create/new")}
+          onPress={() =>
+            router.push({ pathname: "/(tabs)/goals/create/new", params })
+          }
           accessibilityLabel="choose-wake-up-goal"
           testID="choose-wake-up-goal"
         >
@@ -101,7 +109,9 @@ export default function GoalCreateChoiceScreen() {
           />
         </Pressable>
         <Pressable
-          onPress={() => router.push("/(tabs)/goals/create/new")}
+          onPress={() =>
+            router.push({ pathname: "/(tabs)/goals/create/new", params })
+          }
           accessibilityLabel="choose-no-phone-goal"
           testID="choose-no-phone-goal"
         >

@@ -13,19 +13,17 @@ export default function CreateGroupScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const { mutate, isPending, isError, error } = useCreateGroup();
+  const { isPending, isError, error } = useCreateGroup();
 
   const canCreate = name.trim().length > 0; // description optional
 
-  const handleCreate = () => {
-    mutate(
-      { name: name.trim(), description: description.trim() || undefined },
-      {
-        onSuccess: () => {
-          router.back();
-        },
-      }
-    );
+  const handleNext = () => {
+    const params = new URLSearchParams({
+      forGroup: "1",
+      groupName: name.trim(),
+      groupDescription: description.trim() || "",
+    });
+    router.push(`/(tabs)/goals/create?${params.toString()}`);
   };
 
   return (
@@ -75,10 +73,11 @@ export default function CreateGroupScreen() {
         <View style={{ flex: 1 }} />
 
         <Button
-          title={isPending ? "Creating..." : "Create Group"}
+          title="Next"
           size="lg"
-          onPress={handleCreate}
+          onPress={handleNext}
           disabled={!canCreate || isPending}
+          loading={isPending}
           style={{}}
         />
       </ScrollView>

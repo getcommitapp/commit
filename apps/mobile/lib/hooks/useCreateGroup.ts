@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-import { GroupCreateResponseSchema } from "@commit/types";
+import { GroupCreateResponseSchema, GoalCreateRequest } from "@commit/types";
 import { z } from "zod";
 
 const CreateInputSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  goalId: z.string(),
+  goal: z.custom<GoalCreateRequest>(),
 });
 export type CreateGroupInput = z.infer<typeof CreateInputSchema>;
 
@@ -23,7 +23,7 @@ export function useCreateGroup() {
           body: JSON.stringify({
             name: parsed.name,
             description: parsed.description ?? null,
-            goalId: parsed.goalId,
+            goal: parsed.goal,
           }),
         },
         GroupCreateResponseSchema

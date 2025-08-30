@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Platform, Pressable } from "react-native";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { useThemeColor } from "@/components/Themed";
@@ -8,6 +8,7 @@ export default function GoalsStackLayout() {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const router = useRouter();
+  const params = useLocalSearchParams();
 
   return (
     <Stack
@@ -42,7 +43,20 @@ export default function GoalsStackLayout() {
           presentation: "modal",
           headerLargeTitle: false,
           headerBackVisible: false,
-          headerLeft: () => <CancelButton onPress={() => router.back()} />,
+          headerLeft: () => (
+            <CancelButton
+              onPress={() => {
+                const forGroup =
+                  params.forGroup === "1" || params.forGroup === "true";
+                if (forGroup) {
+                  router.dismissAll();
+                  router.replace("/(tabs)/groups/create");
+                } else {
+                  router.back();
+                }
+              }}
+            />
+          ),
         }}
       />
       <Stack.Screen
@@ -55,7 +69,7 @@ export default function GoalsStackLayout() {
           presentation: "modal",
           headerLargeTitle: false,
           headerBackVisible: false,
-          headerLeft: () => <CancelButton onPress={() => router.back()} />,
+          headerLeft: () => <CancelButton />,
         }}
       />
       <Stack.Screen
@@ -68,7 +82,7 @@ export default function GoalsStackLayout() {
           presentation: "modal",
           headerLargeTitle: false,
           headerBackVisible: false,
-          headerLeft: () => <CancelButton onPress={() => router.back()} />,
+          headerLeft: () => <CancelButton />,
         }}
       />
     </Stack>

@@ -1,7 +1,11 @@
 import app from "../index";
 import { env, env as testEnv } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type { GroupInviteGetResponse, GroupSummary } from "@commit/types";
+import type {
+  GroupInviteGetResponse,
+  GoalCreateResponse,
+  GroupCreateResponse,
+} from "@commit/types";
 // no drizzle insert here; use raw SQL for table named "group"
 
 describe("GET /api/groups/:id/invite (invite)", () => {
@@ -25,7 +29,7 @@ describe("GET /api/groups/:id/invite (invite)", () => {
       },
       env
     );
-    const goal = await goalRes.json();
+    const goal = await goalRes.json<GoalCreateResponse>();
 
     const createRes = await app.request(
       "/api/groups",
@@ -40,7 +44,7 @@ describe("GET /api/groups/:id/invite (invite)", () => {
       },
       env
     );
-    const group: GroupSummary = await createRes.json();
+    const group = await createRes.json<GroupCreateResponse>();
 
     const res = await app.request(`/api/groups/${group.id}/invite`, {}, env);
     expect(res.status).toBe(200);
@@ -68,7 +72,7 @@ describe("GET /api/groups/:id/invite (invite)", () => {
       },
       env
     );
-    const goal = await goalRes.json();
+    const goal = await goalRes.json<GoalCreateResponse>();
 
     // Create a group with a different creator directly via Drizzle
     const groupId = crypto.randomUUID();

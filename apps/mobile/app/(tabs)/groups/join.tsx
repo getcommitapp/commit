@@ -58,9 +58,10 @@ export default function JoinGroupScreen() {
         </FormGroup>
         <View style={{ flex: 1 }} />
         <Button
-          title={isPending ? "Joining..." : "Join Group"}
+          title="Join Group"
           size="lg"
           disabled={!canJoin || isPending}
+          loading={isPending}
           onPress={handleJoin}
           style={{}}
         />

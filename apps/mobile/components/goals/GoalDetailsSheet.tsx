@@ -73,7 +73,7 @@ export const GoalDetailsSheet = forwardRef<
 
             {!timer ? (
               <Button
-                title={isPending ? "Starting…" : "Start Timer"}
+                title="Start Timer"
                 onPress={() => !isPending && startTimer()}
                 loading={isPending}
                 testID="start-goal-timer"

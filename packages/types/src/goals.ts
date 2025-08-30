@@ -57,7 +57,7 @@ export const GoalCreateRequestSchema = z.object({
   destinationCharityId: z.string().nullable().optional(),
   verificationMethod: z
     .object({
-      method: z.enum(["location", "movement"]),
+      method: z.enum(["location", "movement", "photo", "checkin"]),
       durationSeconds: z.number().int().nullable().optional(),
       latitude: z.number().nullable().optional(),
       longitude: z.number().nullable().optional(),

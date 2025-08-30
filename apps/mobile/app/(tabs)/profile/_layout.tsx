@@ -1,11 +1,11 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import { Platform } from "react-native";
 import { useThemeColor } from "@/components/Themed";
 import { CancelButton } from "@/components/navigation/CancelButton";
 
 export default function ProfileStackLayout() {
   const backgroundColor = useThemeColor({}, "background");
-  const router = useRouter();
+
   return (
     <Stack
       screenOptions={{
@@ -26,7 +26,7 @@ export default function ProfileStackLayout() {
           presentation: "modal",
           headerLargeTitle: false,
           headerBackVisible: false,
-          headerLeft: () => <CancelButton onPress={() => router.back()} />,
+          headerLeft: () => <CancelButton />,
           gestureEnabled: true,
         }}
       />

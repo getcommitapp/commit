@@ -1,7 +1,7 @@
 import app from "../index";
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type { GroupSummary } from "@commit/types";
+import type { GoalCreateResponse, GroupsListResponse } from "@commit/types";
 
 describe("GET /api/groups (list)", () => {
   it("returns empty list initially", async () => {
@@ -31,7 +31,7 @@ describe("GET /api/groups (list)", () => {
       },
       env
     );
-    const goal1 = await goal1Res.json();
+    const goal1 = await goal1Res.json<GoalCreateResponse>();
 
     const goal2Res = await app.request(
       "/api/goals",
@@ -51,7 +51,7 @@ describe("GET /api/groups (list)", () => {
       },
       env
     );
-    const goal2 = await goal2Res.json();
+    const goal2 = await goal2Res.json<GoalCreateResponse>();
 
     const create = async (name: string, goalId: string) =>
       app.request(
@@ -73,7 +73,7 @@ describe("GET /api/groups (list)", () => {
 
     const res = await app.request("/api/groups", {}, env);
     expect(res.status).toBe(200);
-    const items: GroupSummary[] = await res.json();
+    const items = await res.json<GroupsListResponse>();
     expect(items.length).toBe(2);
     expect(items.map((g) => g.name).sort()).toEqual(["A", "B"]);
   });
