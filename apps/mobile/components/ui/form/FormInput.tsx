@@ -18,6 +18,7 @@ interface FormInputProps {
   autoCorrect?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
+  maxLength?: number;
 }
 
 export function FormInput({
@@ -36,6 +37,7 @@ export function FormInput({
   autoCorrect,
   multiline,
   numberOfLines,
+  maxLength,
 }: FormInputProps) {
   const text = useThemeColor({}, "text");
   const mutedForeground = useThemeColor({}, "mutedForeground");
@@ -88,6 +90,7 @@ export function FormInput({
           autoCorrect={autoCorrect}
           multiline={multiline}
           numberOfLines={numberOfLines}
+          maxLength={maxLength}
           style={{
             ...textVariants.body,
             color: text,
