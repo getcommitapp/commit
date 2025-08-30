@@ -1,6 +1,6 @@
 import { useThemeColor } from "@/components/Themed";
 import { FormGroup, FormItem } from "@/components/ui/form";
-import { formatDurationSeconds, formatStake } from "@/lib/utils";
+import { capitalize, formatDurationSeconds, formatStake } from "@/lib/utils";
 import { useGoals } from "@/lib/hooks/useGoals";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
@@ -21,16 +21,14 @@ export function GoalDetails({ goal, title = "Details" }: GoalDetailsProps) {
             label="Stake"
             value={formatStake(goal.currency, goal.stakeCents ?? 0)}
           />
-          {goal.verificationMethod?.durationSeconds ? (
-            <FormItem
-              label="Duration"
-              value={
-                formatDurationSeconds(
-                  goal.verificationMethod.durationSeconds
-                ) || "—"
-              }
-            />
-          ) : null}
+          <FormItem
+            label="Verification Method"
+            value={
+              goal.verificationMethod?.method
+                ? capitalize(goal.verificationMethod.method)
+                : "—"
+            }
+          />
           <FormItem label="Time Left" value={goal?.timeLeft ?? "—"} />
           <FormItem label="Start Date" value={goal.startDateFormatted ?? "—"} />
           <FormItem label="End Date" value={goal.endDateFormatted ?? "—"} />
@@ -42,6 +40,16 @@ export function GoalDetails({ goal, title = "Details" }: GoalDetailsProps) {
             label="Due End Time"
             value={goal.dueEndTimeFormatted ?? "—"}
           />
+          {goal.verificationMethod?.durationSeconds ? (
+            <FormItem
+              label="Duration"
+              value={
+                formatDurationSeconds(
+                  goal.verificationMethod.durationSeconds
+                ) || "—"
+              }
+            />
+          ) : null}
         </>
       ) : (
         <FormItem label="Status" value="No goal linked" />

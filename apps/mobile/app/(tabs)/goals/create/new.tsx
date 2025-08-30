@@ -56,7 +56,15 @@ export default function GoalNewScreen() {
     if (!method)
       return undefined as
         | undefined
-        | { method: "location" | "movement"; durationSeconds?: number };
+        | {
+            method: "location" | "movement" | "checkin" | "photo";
+            durationSeconds?: number;
+          };
+
+    if (method === "checkin" || method === "photo") {
+      return { method: method as "checkin" | "photo" };
+    }
+
     const minutes = computeDurationMinutes(method, duration);
     return {
       method: method as "location" | "movement",

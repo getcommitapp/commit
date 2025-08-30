@@ -72,7 +72,10 @@ export default function GoalCreateChoiceScreen() {
       <CardList>
         <Pressable
           onPress={() =>
-            router.push({ pathname: "/(tabs)/goals/create/new", params })
+            router.push({
+              pathname: "/(tabs)/goals/create/new",
+              params: { ...params, method: "checkin" },
+            })
           }
           accessibilityLabel="choose-wake-up-goal"
           testID="choose-wake-up-goal"
@@ -110,7 +113,10 @@ export default function GoalCreateChoiceScreen() {
         </Pressable>
         <Pressable
           onPress={() =>
-            router.push({ pathname: "/(tabs)/goals/create/new", params })
+            router.push({
+              pathname: "/(tabs)/goals/create/new",
+              params: { ...params, method: "movement" },
+            })
           }
           accessibilityLabel="choose-no-phone-goal"
           testID="choose-no-phone-goal"
