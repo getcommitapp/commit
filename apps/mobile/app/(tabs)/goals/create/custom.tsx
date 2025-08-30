@@ -11,7 +11,7 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import { SmallText } from "@/components/ui/SmallText";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 type OptionKey = "location" | "photo" | "checkin" | "movement";
 
@@ -38,6 +38,7 @@ const optionMeta: Record<OptionKey, { title: string; description: string }> = {
 
 export default function CustomGoalValidationScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const muted = useThemeColor({}, "muted");
   const border = useThemeColor({}, "border");
   const primary = useThemeColor({}, "primary");
@@ -122,7 +123,7 @@ export default function CustomGoalValidationScreen() {
         onPress={() =>
           router.push({
             pathname: "/(tabs)/goals/create/new",
-            params: { method: selected ?? undefined },
+            params: { ...params, method: selected ?? undefined },
           })
         }
         disabled={!selected}

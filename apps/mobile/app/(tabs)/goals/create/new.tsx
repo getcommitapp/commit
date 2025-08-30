@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
 import { useCreateGoal } from "@/lib/hooks/useCreateGoal";
+import { useCreateGroup } from "@/lib/hooks/useCreateGroup";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import {
   AndroidNativeProps,
@@ -27,9 +28,15 @@ export default function GoalNewScreen() {
   const [endTime, setEndTime] = useState<Date | null>(null);
 
   const createGoal = useCreateGoal();
+  const createGroup = useCreateGroup();
   const router = useRouter();
   const params = useLocalSearchParams();
   const method = typeof params.method === "string" ? params.method : undefined;
+  const forGroup = params.forGroup === "1" || params.forGroup === "true";
+  const groupName =
+    typeof params.groupName === "string" ? params.groupName : "";
+  const groupDescription =
+    typeof params.groupDescription === "string" ? params.groupDescription : "";
   const [duration, setDuration] = useState<Date | null>(null);
 
   const onChangeStart: NonNullable<
@@ -115,9 +122,9 @@ export default function GoalNewScreen() {
 
       {/** Button section */}
       <Button
-        title={createGoal.isPending ? "Creating..." : "Create Goal"}
+        title={forGroup ? "Create Group" : "Create Goal"}
         size="lg"
-        onPress={() => {
+        onPress={async () => {
           if (!startAt) return;
           const stakeCents =
             stake != null && Number.isFinite(stake)
@@ -132,8 +139,36 @@ export default function GoalNewScreen() {
             duration
               ? duration.getHours() * 60 + duration.getMinutes()
               : undefined;
-          createGoal.mutate(
-            {
+
+          if (forGroup) {
+            await createGroup.mutateAsync({
+              name: groupName || title,
+              description: groupDescription || undefined,
+              goal: {
+                name: title,
+                description: description || null,
+                stakeCents,
+                startDate: startAt.toISOString(),
+                endDate: null,
+                dueStartTime: (startTime ?? startAt).toISOString(),
+                dueEndTime: endTime ? endTime.toISOString() : null,
+                destinationType: "burn",
+                verificationMethod: method
+                  ? {
+                      method: method as "location" | "movement",
+                      durationSeconds: computedDurationMinutes
+                        ? computedDurationMinutes * 60
+                        : undefined,
+                    }
+                  : undefined,
+              },
+            });
+            router.dismissAll();
+            router.replace("/(tabs)/goals");
+            router.replace("/(tabs)/groups/create");
+            router.dismissAll();
+          } else {
+            await createGoal.mutateAsync({
               name: title,
               description: description || null,
               stakeCents,
@@ -150,25 +185,23 @@ export default function GoalNewScreen() {
                       : undefined,
                   }
                 : undefined,
-            },
-            {
-              onSuccess: () => {
-                router.dismissAll();
-                router.replace("/(tabs)/goals");
-              },
-            }
-          );
+            });
+            router.dismissAll();
+            router.replace("/(tabs)/goals");
+          }
         }}
         disabled={
           !title ||
           !startAt ||
           createGoal.isPending ||
+          createGroup.isPending ||
           !(
             stake != null &&
             Number.isFinite(stake) &&
             Math.round(stake * 100) >= 100
           )
         }
+        loading={createGoal.isPending || createGroup.isPending}
       />
 
       {createGoal.error && <FormSpacer size="md" />}

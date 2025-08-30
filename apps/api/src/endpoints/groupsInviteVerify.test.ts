@@ -2,7 +2,6 @@ import app from "../index";
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import type {
-  GoalCreateResponse,
   GroupInviteVerifyResponse,
   GroupCreateResponse,
 } from "@commit/types";
@@ -20,27 +19,6 @@ describe("GET /api/groups/:id/invite/verify (verify)", () => {
   });
 
   it("returns valid=true for existing group's code", async () => {
-    // First create a goal
-    const goalRes = await app.request(
-      "/api/goals",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: "Test Goal",
-          description: "A test goal",
-          startDate: new Date().toISOString(),
-          dueStartTime: new Date().toISOString(),
-          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
-          stakeCents: 1000,
-          currency: "USD",
-          destinationType: "charity",
-        }),
-        headers: new Headers({ "Content-Type": "application/json" }),
-      },
-      env
-    );
-    const goal = await goalRes.json<GoalCreateResponse>();
-
     const createRes = await app.request(
       "/api/groups",
       {
@@ -48,7 +26,16 @@ describe("GET /api/groups/:id/invite/verify (verify)", () => {
         body: JSON.stringify({
           name: "Code",
           description: null,
-          goalId: goal.id,
+          goal: {
+            name: "Test Goal",
+            description: "A test goal",
+            startDate: new Date().toISOString(),
+            dueStartTime: new Date().toISOString(),
+            dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+            stakeCents: 1000,
+            currency: "USD",
+            destinationType: "charity",
+          },
         }),
         headers: new Headers({ "Content-Type": "application/json" }),
       },

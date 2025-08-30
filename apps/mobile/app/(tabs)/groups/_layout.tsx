@@ -73,7 +73,7 @@ export default function GroupsStackLayout() {
           presentation: "modal",
           headerLargeTitle: false,
           headerBackVisible: false,
-          headerLeft: () => <CancelButton onPress={() => router.back()} />,
+          headerLeft: () => <CancelButton />,
           gestureEnabled: true,
         }}
       />
@@ -87,7 +87,7 @@ export default function GroupsStackLayout() {
           presentation: "modal",
           headerLargeTitle: false,
           headerBackVisible: false,
-          headerLeft: () => <CancelButton onPress={() => router.back()} />,
+          headerLeft: () => <CancelButton />,
           gestureEnabled: true,
         }}
       />

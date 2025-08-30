@@ -1,32 +1,15 @@
 import app from "../index";
 import { env, env as testEnv } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type { GroupInviteGetResponse, GroupSummary } from "@commit/types";
+import type {
+  GroupInviteGetResponse,
+  GroupCreateResponse,
+  GoalCreateResponse,
+} from "@commit/types";
 // no drizzle insert here; use raw SQL for table named "group"
 
 describe("GET /api/groups/:id/invite (invite)", () => {
   it("returns invite code for group creator", async () => {
-    // First create a goal
-    const goalRes = await app.request(
-      "/api/goals",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: "Test Goal",
-          description: "A test goal",
-          startDate: new Date().toISOString(),
-          dueStartTime: new Date().toISOString(),
-          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
-          stakeCents: 1000,
-          currency: "USD",
-          destinationType: "charity",
-        }),
-        headers: new Headers({ "Content-Type": "application/json" }),
-      },
-      env
-    );
-    const goal = await goalRes.json();
-
     const createRes = await app.request(
       "/api/groups",
       {
@@ -34,13 +17,22 @@ describe("GET /api/groups/:id/invite (invite)", () => {
         body: JSON.stringify({
           name: "Chess",
           description: null,
-          goalId: goal.id,
+          goal: {
+            name: "Test Goal",
+            description: "A test goal",
+            startDate: new Date().toISOString(),
+            dueStartTime: new Date().toISOString(),
+            dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+            stakeCents: 1000,
+            currency: "USD",
+            destinationType: "charity",
+          },
         }),
         headers: new Headers({ "Content-Type": "application/json" }),
       },
       env
     );
-    const group: GroupSummary = await createRes.json();
+    const group = await createRes.json<GroupCreateResponse>();
 
     const res = await app.request(`/api/groups/${group.id}/invite`, {}, env);
     expect(res.status).toBe(200);
@@ -49,13 +41,13 @@ describe("GET /api/groups/:id/invite (invite)", () => {
   });
 
   it("returns 403 when requester is not the creator", async () => {
-    // Create a goal first
+    // First create a goal for FK
     const goalRes = await app.request(
       "/api/goals",
       {
         method: "POST",
         body: JSON.stringify({
-          name: "Test Goal",
+          name: "Other's Goal",
           description: "A test goal",
           startDate: new Date().toISOString(),
           dueStartTime: new Date().toISOString(),
@@ -68,7 +60,7 @@ describe("GET /api/groups/:id/invite (invite)", () => {
       },
       env
     );
-    const goal = await goalRes.json();
+    const goal = await goalRes.json<GoalCreateResponse>();
 
     // Create a group with a different creator directly via Drizzle
     const groupId = crypto.randomUUID();

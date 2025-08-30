@@ -23,8 +23,7 @@ export class GroupsInvite extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB);
-    const userId = c.get("user")?.id as string | undefined;
-    if (!userId) return new Response("Unauthorized", { status: 401 });
+    const userId = c.var.user.id;
 
     const { id } = c.req.param();
     if (!id) return new Response("Bad Request", { status: 400 });

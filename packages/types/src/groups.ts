@@ -1,5 +1,9 @@
 import * as z from "zod";
-import { GoalDetailsSchema, GoalVerificationInputSchema } from "./goals";
+import {
+  GoalCreateRequestSchema,
+  GoalDetailsSchema,
+  GoalVerificationInputSchema,
+} from "./goals";
 
 // ---------------- Zod Schemas ----------------
 
@@ -28,7 +32,7 @@ export const GroupsListResponseSchema = z.array(GroupListItemSchema);
 export const GroupCreateRequestSchema = z.object({
   name: z.string(),
   description: z.string().nullable().optional(),
-  goalId: z.string(),
+  goal: GoalCreateRequestSchema,
 });
 
 // Optimistic UI: return created group
