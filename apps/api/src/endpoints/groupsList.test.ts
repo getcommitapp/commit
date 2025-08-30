@@ -41,7 +41,7 @@ describe("GET /api/groups (list)", () => {
 
     const res = await app.request("/api/groups", {}, env);
     expect(res.status).toBe(200);
-    const items = await res.json<GroupsListResponse>();
+    const items = (await res.json()) as GroupsListResponse;
     expect(items.length).toBe(2);
     expect(items.map((g) => g.name).sort()).toEqual(["A", "B"]);
   });

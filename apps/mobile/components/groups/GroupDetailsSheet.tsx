@@ -9,6 +9,7 @@ import { useGroups } from "@/lib/hooks/useGroups";
 import { formatStake } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { useLeaveOrDeleteGroup } from "@/lib/hooks/useLeaveOrDeleteGroup";
+import { GoalDetails } from "@/components/goals/GoalDetails";
 
 interface GroupDetailsSheetProps {
   group: NonNullable<ReturnType<typeof useGroups>["data"]>[number];
@@ -94,38 +95,7 @@ export const GroupDetailsSheet = forwardRef<
         )}
       </FormGroup>
 
-      <FormGroup title="Goal" backgroundStyle={{ backgroundColor: background }}>
-        {group.goal ? (
-          <>
-            <FormItem label="Title" value={group.goal.name} />
-            <FormItem
-              label="Stake"
-              value={formatStake(
-                group.goal.currency,
-                group.goal.stakeCents ?? 0
-              )}
-            />
-            <FormItem label="Time Left" value={group.goal.timeLeft ?? "—"} />
-            <FormItem label="Start Date" value={group.goal.startDate ?? "—"} />
-            <FormItem label="End Date" value={group.goal.endDate ?? "—"} />
-            <FormItem
-              label="Due Start Time"
-              value={group.goal.dueStartTime ?? "—"}
-            />
-            <FormItem
-              label="Due End Time"
-              value={group.goal.dueEndTime ?? "—"}
-            />
-            {/* {group.goal.streak !== undefined ? (
-              <FormItem label="Streak" value={group.goal.streak.toString()} />
-            ) : (
-              <FormItem label="Streak" value="—" />
-            )} */}
-          </>
-        ) : (
-          <FormItem label="Status" value="No goal linked" />
-        )}
-      </FormGroup>
+      <GoalDetails goal={group.goal ?? null} title="Goal" />
 
       <Button
         title={group.isOwner ? "Delete group" : "Leave group"}

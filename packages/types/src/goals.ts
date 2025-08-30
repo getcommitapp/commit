@@ -33,12 +33,8 @@ export const GoalBaseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
-export const GoalDetailsSchema = GoalBaseSchema.extend({
-  verificationMethods: z.array(GoalVerificationMethodSchema),
-});
-
 export const GoalsListItemSchema = GoalBaseSchema.extend({
-  hasDurationVerification: z.boolean(),
+  verificationMethod: GoalVerificationMethodSchema.nullable().optional(),
   group: z
     .object({
       id: z.string(),
@@ -76,7 +72,6 @@ export const GoalCreateRequestSchema = z.object({
 });
 
 export const GoalCreateResponseSchema = GoalBaseSchema;
-export const GoalGetResponseSchema = GoalDetailsSchema;
 export const GoalDeleteResponseSchema = z.object({
   message: z.string(), // "Goal deleted successfully."
 });
@@ -131,15 +126,12 @@ export type GoalVerificationMethod = z.infer<
 >;
 
 export type GoalBase = z.infer<typeof GoalBaseSchema>;
-export type GoalDetails = z.infer<typeof GoalDetailsSchema>;
 
 export type GoalsListItem = z.infer<typeof GoalsListItemSchema>;
 export type GoalsListResponse = z.infer<typeof GoalsListResponseSchema>;
 
 export type GoalCreateRequest = z.infer<typeof GoalCreateRequestSchema>;
 export type GoalCreateResponse = z.infer<typeof GoalCreateResponseSchema>;
-
-export type GoalGetResponse = z.infer<typeof GoalGetResponseSchema>;
 
 export type GoalDeleteResponse = z.infer<typeof GoalDeleteResponseSchema>;
 

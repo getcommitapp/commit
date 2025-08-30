@@ -23,7 +23,10 @@ export function useGroups() {
           dueEndTime: formatTime(group.goal.dueEndTime),
           createdAt: formatDate(group.goal.createdAt),
           updatedAt: formatDate(group.goal.updatedAt),
-          timeLeft: calculateTimeLeft(group.goal.endDate),
+          timeLeft: calculateTimeLeft(
+            group.goal.startDate,
+            group.goal.dueStartTime
+          ),
         },
       }));
     },

@@ -228,8 +228,12 @@ export const GroupRelations = relations(Group, ({ one, many }) => ({
   participants: many(GroupParticipants),
 }));
 
-export const GoalRelations = relations(Goal, ({ many }) => ({
+export const GoalRelations = relations(Goal, ({ one, many }) => ({
   verificationMethods: many(GoalVerificationsMethod),
+  group: one(Group, {
+    fields: [Goal.id],
+    references: [Group.goalId],
+  }),
 }));
 
 export const GoalVerificationsMethodRelations = relations(

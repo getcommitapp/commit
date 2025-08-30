@@ -3,14 +3,13 @@ import { Platform, Pressable, View } from "react-native";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { useThemeColor, ThemedText } from "@/components/Themed";
 import { CancelButton } from "@/components/navigation/CancelButton";
-import React from "react";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 
 export default function GroupsStackLayout() {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const router = useRouter();
-
-  // Removed dropdown; showing direct actions instead
+  const { dismissAll } = useBottomSheetModal();
 
   return (
     <Stack
@@ -38,7 +37,10 @@ export default function GroupsStackLayout() {
                   borderRadius: 20,
                   backgroundColor: textColor + "15",
                 }}
-                onPress={() => router.push("/(tabs)/groups/create")}
+                onPress={() => {
+                  dismissAll();
+                  router.push("/(tabs)/groups/create");
+                }}
               >
                 <IonIcons name="create-outline" size={18} color={textColor} />
                 <ThemedText style={{ fontSize: 14 }}>Create</ThemedText>
@@ -54,7 +56,10 @@ export default function GroupsStackLayout() {
                   borderRadius: 20,
                   backgroundColor: textColor + "15",
                 }}
-                onPress={() => router.push("/(tabs)/groups/join")}
+                onPress={() => {
+                  dismissAll();
+                  router.push("/(tabs)/groups/join");
+                }}
               >
                 <IonIcons name="enter-outline" size={18} color={textColor} />
                 <ThemedText style={{ fontSize: 14 }}>Join</ThemedText>

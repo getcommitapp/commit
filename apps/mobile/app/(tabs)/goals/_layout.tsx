@@ -3,12 +3,14 @@ import { Platform, Pressable } from "react-native";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { useThemeColor } from "@/components/Themed";
 import { CancelButton } from "@/components/navigation/CancelButton";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 
 export default function GoalsStackLayout() {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { dismissAll } = useBottomSheetModal();
 
   return (
     <Stack
@@ -26,7 +28,10 @@ export default function GoalsStackLayout() {
           headerRight: () => (
             <Pressable
               hitSlop={10}
-              onPress={() => router.push("/(tabs)/goals/create" as any)}
+              onPress={() => {
+                dismissAll();
+                router.push("/(tabs)/goals/create");
+              }}
             >
               <IonIcons name="add" size={28} color={textColor} />
             </Pressable>

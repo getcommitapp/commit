@@ -35,7 +35,13 @@ export class GoalsTimerStart extends OpenAPIRoute {
 
     // Ensure goal exists and belongs to user
     const [goal] = await db
-      .select({ id: schema.Goal.id, ownerId: schema.Goal.ownerId })
+      .select({
+        id: schema.Goal.id,
+        ownerId: schema.Goal.ownerId,
+        startDate: schema.Goal.startDate,
+        dueStartTime: schema.Goal.dueStartTime,
+        dueEndTime: schema.Goal.dueEndTime,
+      })
       .from(schema.Goal)
       .where(eq(schema.Goal.id, goalId))
       .limit(1);
@@ -66,6 +72,25 @@ export class GoalsTimerStart extends OpenAPIRoute {
     }
 
     const now = new Date();
+
+    // Prevent starting outside allowed window
+    if (!goal.startDate || !goal.dueStartTime || !goal.dueEndTime) {
+      return c.json({ error: "Timer not allowed: schedule incomplete" }, 400);
+    }
+    const start = new Date(goal.startDate);
+    const dueStart = new Date(goal.dueStartTime);
+    const dueEnd = new Date(goal.dueEndTime);
+    const sameDate =
+      now.getUTCFullYear() === start.getUTCFullYear() &&
+      now.getUTCMonth() === start.getUTCMonth() &&
+      now.getUTCDate() === start.getUTCDate();
+    const withinWindow = sameDate && now >= dueStart && now <= dueEnd;
+    if (!withinWindow) {
+      return c.json(
+        { error: "Timer not allowed: outside allowed window" },
+        400
+      );
+    }
 
     // Upsert style: if an existing timer exists, return it, else create
     const [existing] = await db

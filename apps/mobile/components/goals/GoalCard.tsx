@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useMemo } from "react";
 import { Text, View, Pressable } from "react-native";
 import { Card } from "@/components/ui/Card";
 import {
@@ -12,7 +12,7 @@ import { useGoalTimer } from "@/lib/hooks/useGoalTimer";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
-import { formatStake } from "@/lib/utils";
+import { formatStake, isNowWithinGoalWindow } from "@/lib/utils";
 import IonIcons from "@expo/vector-icons/Ionicons";
 
 interface GoalCardProps {
@@ -23,7 +23,6 @@ interface GoalCardProps {
 
 export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   const mutedForeground = useThemeColor({}, "mutedForeground");
-
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { dismissAll } = useBottomSheetModal();
 
@@ -32,6 +31,10 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
     dismissAll();
     bottomSheetRef.current?.present();
   }, [dismissAll]);
+
+  const hasDurationVerification = useMemo(() => {
+    return goal.verificationMethod?.durationSeconds != null;
+  }, [goal.verificationMethod?.durationSeconds]);
 
   const leftNode = (
     <View style={{ gap: 2 }}>
@@ -62,7 +65,14 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
         </Text>
       </View>
 
-      {goal.hasDurationVerification ? <GoalTimerRow goalId={goal.id} /> : null}
+      {hasDurationVerification &&
+      isNowWithinGoalWindow(
+        goal._raw?.startDate ?? null,
+        goal._raw?.dueStartTime ?? null,
+        goal._raw?.dueEndTime ?? null
+      ) ? (
+        <GoalTimerRow goalId={goal.id} />
+      ) : null}
     </View>
   );
 

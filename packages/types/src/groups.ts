@@ -1,7 +1,7 @@
 import * as z from "zod";
 import {
   GoalCreateRequestSchema,
-  GoalDetailsSchema,
+  GoalsListItemSchema,
   GoalVerificationInputSchema,
 } from "./goals";
 
@@ -24,7 +24,7 @@ export const GroupMemberSchema = z.object({
 
 export const GroupListItemSchema = GroupBaseSchema.extend({
   memberCount: z.number(),
-  goal: GoalDetailsSchema,
+  goal: GoalsListItemSchema.omit({ group: true }),
   isOwner: z.boolean(),
   members: z.array(z.object({ name: z.string(), isOwner: z.boolean() })),
 });
@@ -51,8 +51,6 @@ export const GroupInviteVerifyRequestQuerySchema = z.object({
 export const GroupInviteVerifyResponseSchema = z.object({
   valid: z.boolean(),
 });
-
-export const GroupGoalGetResponseSchema = GoalDetailsSchema;
 
 export const GroupGoalVerifyRequestSchema = z.array(
   GoalVerificationInputSchema
@@ -98,8 +96,6 @@ export type GroupInviteVerifyRequestQuery = z.infer<
 export type GroupInviteVerifyResponse = z.infer<
   typeof GroupInviteVerifyResponseSchema
 >;
-
-export type GroupGoalGetResponse = z.infer<typeof GroupGoalGetResponseSchema>;
 
 export type GroupGoalVerifyRequest = z.infer<
   typeof GroupGoalVerifyRequestSchema

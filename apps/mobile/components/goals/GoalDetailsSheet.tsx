@@ -7,8 +7,10 @@ import { useGoalTimer, useStartGoalTimer } from "@/lib/hooks/useGoalTimer";
 import { spacing, useThemeColor } from "@/components/Themed";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { Button } from "@/components/ui/Button";
+import { isNowWithinGoalWindow } from "@/lib/utils";
 import { useGoals } from "@/lib/hooks/useGoals";
 import { useDeleteGoal } from "@/lib/hooks/useDeleteGoal";
+import { GoalDetails } from "@/components/goals/GoalDetails";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
 
@@ -64,7 +66,12 @@ export const GoalDetailsSheet = forwardRef<
               )}
             </FormGroup>
 
-            {!timer ? (
+            {!timer &&
+            isNowWithinGoalWindow(
+              goal._raw.startDate,
+              goal._raw.dueStartTime,
+              goal._raw.dueEndTime
+            ) ? (
               <Button
                 title="Start Timer"
                 onPress={() => !isPending && startTimer()}
@@ -76,20 +83,7 @@ export const GoalDetailsSheet = forwardRef<
           </View>
         ) : null}
 
-        <FormGroup
-          title="Details"
-          backgroundStyle={{ backgroundColor: background }}
-        >
-          <FormItem
-            label="Stake"
-            value={`${goal.currency} ${(goal.stakeCents / 100).toFixed(2)}`}
-          />
-          <FormItem label="Time Left" value={goal.timeLeft} />
-          <FormItem label="Start Date" value={goal.startDate} />
-          <FormItem label="End Date" value={goal.endDate ?? ""} />
-          <FormItem label="Due Start Time" value={goal.dueStartTime} />
-          <FormItem label="Due End Time" value={goal.dueEndTime ?? ""} />
-        </FormGroup>
+        <GoalDetails goal={goal} />
 
         {goal.group ? (
           <FormGroup

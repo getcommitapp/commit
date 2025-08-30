@@ -11,13 +11,19 @@ export function useGoals() {
       const goals = await apiFetch("/goals", {}, GoalsListResponseSchema);
       return goals.map((goal) => ({
         ...goal,
+        // Keep raw timestamps alongside formatted ones for logic checks
+        _raw: {
+          startDate: goal.startDate,
+          dueStartTime: goal.dueStartTime,
+          dueEndTime: goal.dueEndTime,
+        },
         startDate: formatDate(goal.startDate),
         endDate: formatDate(goal.endDate),
         dueStartTime: formatTime(goal.dueStartTime),
         dueEndTime: formatTime(goal.dueEndTime),
         createdAt: formatDate(goal.createdAt),
         updatedAt: formatDate(goal.updatedAt),
-        timeLeft: calculateTimeLeft(goal.endDate),
+        timeLeft: calculateTimeLeft(goal.startDate, goal.dueStartTime),
       }));
     },
   });
