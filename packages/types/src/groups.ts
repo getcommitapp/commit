@@ -1,9 +1,5 @@
 import * as z from "zod";
-import {
-  GoalBaseSchema,
-  GoalCreateRequestSchema,
-  GoalVerificationInputSchema,
-} from "./goals";
+import { GoalBaseSchema, GoalCreateRequestSchema } from "./goals";
 
 // ---------------- Zod Schemas ----------------
 
@@ -53,14 +49,6 @@ export const GroupInviteVerifyResponseSchema = z.object({
   valid: z.boolean(),
 });
 
-export const GroupGoalVerifyRequestSchema = z.array(
-  GoalVerificationInputSchema
-);
-
-export const GroupGoalVerifyResponseSchema = z.object({
-  message: z.string(), // "Verification log submitted."
-});
-
 export const GroupLeaveResponseSchema = z.object({
   message: z.string(), // "Left group successfully."
 });
@@ -96,14 +84,6 @@ export type GroupInviteVerifyRequestQuery = z.infer<
 
 export type GroupInviteVerifyResponse = z.infer<
   typeof GroupInviteVerifyResponseSchema
->;
-
-export type GroupGoalVerifyRequest = z.infer<
-  typeof GroupGoalVerifyRequestSchema
->;
-
-export type GroupGoalVerifyResponse = z.infer<
-  typeof GroupGoalVerifyResponseSchema
 >;
 
 export type GroupLeaveResponse = z.infer<typeof GroupLeaveResponseSchema>;

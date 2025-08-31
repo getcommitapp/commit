@@ -13,7 +13,7 @@ import type {
 
 export function todayLocal(tz: string) {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: tz,
+    timeZone: tz || "UTC",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -39,7 +39,7 @@ export function toEngineInputs(
     ? { type: "weekly", daysOfWeek: days }
     : null;
   return {
-    tz: user.timezone,
+    tz: user.timezone || "UTC",
     goal: {
       id: goal.id,
       startDate: goal.startDate ? new Date(goal.startDate).toISOString() : null,

@@ -49,14 +49,14 @@ export class GoalsReviewUpdate extends OpenAPIRoute {
     }
 
     const updated = await db
-      .update(schema.GoalVerificationsLog)
+      .update(schema.GoalOccurrence)
       .set({
-        approvalStatus: approvalStatus,
+        status: approvalStatus,
         verifiedAt: now,
         updatedAt: now,
         approvedBy: user.id,
       })
-      .where(eq(schema.GoalVerificationsLog.goalId, goalId))
+      .where(eq(schema.GoalOccurrence.goalId, goalId))
       .returning();
 
     return c.json(updated[0]);

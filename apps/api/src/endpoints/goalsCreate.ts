@@ -35,7 +35,7 @@ export class GoalsCreate extends OpenAPIRoute {
     const db = drizzle(c.env.DB, { schema });
     const id = uuid();
 
-    // Create the goal in the db
+    // Create the goal in the db (flattened schema)
     const now = new Date();
     const [created] = await db
       .insert(schema.Goal)
@@ -46,41 +46,30 @@ export class GoalsCreate extends OpenAPIRoute {
         description: goalToCreate.description ?? null,
         startDate: new Date(goalToCreate.startDate),
         endDate: goalToCreate.endDate ? new Date(goalToCreate.endDate) : null,
-        dueStartTime: new Date(goalToCreate.dueStartTime),
+        dueStartTime: goalToCreate.dueStartTime
+          ? new Date(goalToCreate.dueStartTime)
+          : new Date(goalToCreate.startDate),
         dueEndTime: goalToCreate.dueEndTime
           ? new Date(goalToCreate.dueEndTime)
           : null,
-        recurrence: goalToCreate.recurrence ?? null,
+        localDueStart: goalToCreate.localDueStart ?? null,
+        localDueEnd: goalToCreate.localDueEnd ?? null,
+        recDaysMask: goalToCreate.recDaysMask ?? null,
         stakeCents: goalToCreate.stakeCents,
         currency: "CHF",
         destinationType: goalToCreate.destinationType,
         destinationUserId: goalToCreate.destinationUserId ?? null,
         destinationCharityId: goalToCreate.destinationCharityId ?? null,
+        method: goalToCreate.method,
+        graceTimeSeconds: goalToCreate.graceTimeSeconds ?? null,
+        durationSeconds: goalToCreate.durationSeconds ?? null,
+        geoLat: goalToCreate.geoLat ?? null,
+        geoLng: goalToCreate.geoLng ?? null,
+        geoRadiusM: goalToCreate.geoRadiusM ?? null,
         createdAt: now,
         updatedAt: now,
       })
       .returning();
-
-    // Optional single verification method (only allow specific methods)
-    if (goalToCreate.verificationMethod) {
-      try {
-        const vm = goalToCreate.verificationMethod;
-        await db.insert(schema.GoalVerificationsMethod).values({
-          id: uuid(),
-          goalId: created.id,
-          method: vm.method,
-          latitude: vm.latitude ?? null,
-          longitude: vm.longitude ?? null,
-          radiusM: vm.radiusM ?? null,
-          durationSeconds: vm.durationSeconds ?? null,
-          createdAt: now,
-          updatedAt: now,
-        });
-        // Insert succeeded; verification not included in response payload
-      } catch (e) {
-        console.error("[GoalsCreate] Failed to insert verification method", e);
-      }
-    }
 
     return c.json(created, 200);
   }

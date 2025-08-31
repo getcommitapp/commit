@@ -29,6 +29,8 @@ describe("GET /api/groups (list)", () => {
               stakeCents: 1000,
               currency: "USD",
               destinationType: "charity",
+              method: "checkin",
+              graceTimeSeconds: 60,
             },
           }),
           headers: new Headers({ "Content-Type": "application/json" }),

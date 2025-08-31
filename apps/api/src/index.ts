@@ -123,6 +123,7 @@ app.use("*", async (c, next) => {
       stripeCustomerId: user.stripeCustomerId,
       emailVerified: user.emailVerified,
       role: user.role,
+      timezone: user.timezone,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
