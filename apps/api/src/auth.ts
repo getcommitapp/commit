@@ -28,6 +28,12 @@ export function createAuth(env: Env) {
           input: false,
           output: true,
         },
+        timezone: {
+          type: "string",
+          input: true,
+          output: true,
+          defaultValue: "UTC",
+        },
       },
     },
     database: drizzleAdapter(db, {

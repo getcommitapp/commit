@@ -11,7 +11,7 @@ import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
 import { GroupDetailsSheet } from "./GroupDetailsSheet";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { useGroups } from "@/lib/hooks/useGroups";
-import { formatStake } from "@/lib/utils";
+import { formatStake, formatRelativeTimeLeft } from "@/lib/utils";
 
 interface GroupCardProps {
   group: NonNullable<ReturnType<typeof useGroups>["data"]>[number];
@@ -53,7 +53,8 @@ export function GroupCard({
             {formatStake(group.goal.currency, group.totalStake)}
           </ThemedText>
         ) : null}
-        {group.totalStake && group.goal.timeLeft ? (
+        {group.totalStake &&
+        formatRelativeTimeLeft(group.goal.nextTransitionAt) ? (
           <Text
             style={{
               ...textVariants.subheadline,
@@ -64,9 +65,9 @@ export function GroupCard({
             &middot;
           </Text>
         ) : null}
-        {group.goal.timeLeft ? (
+        {formatRelativeTimeLeft(group.goal.nextTransitionAt) ? (
           <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
-            {group.goal.timeLeft}
+            {formatRelativeTimeLeft(group.goal.nextTransitionAt)}
           </Text>
         ) : null}
       </View>
@@ -115,7 +116,9 @@ export function GroupCard({
               (group.memberCount !== undefined
                 ? `, ${group.memberCount} members`
                 : "") +
-              (group.goal.timeLeft ? `, ${group.goal.timeLeft}` : "")
+              (formatRelativeTimeLeft(group.goal.nextTransitionAt)
+                ? `, ${formatRelativeTimeLeft(group.goal.nextTransitionAt)}`
+                : "")
           }
           testID={testID}
         />

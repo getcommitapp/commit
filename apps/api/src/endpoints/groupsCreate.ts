@@ -49,14 +49,24 @@ export class GroupsCreate extends OpenAPIRoute {
         description: goal.description ?? null,
         startDate: new Date(goal.startDate),
         endDate: goal.endDate ? new Date(goal.endDate) : null,
-        dueStartTime: new Date(goal.dueStartTime),
+        dueStartTime: goal.dueStartTime
+          ? new Date(goal.dueStartTime)
+          : new Date(goal.startDate),
         dueEndTime: goal.dueEndTime ? new Date(goal.dueEndTime) : null,
-        recurrence: goal.recurrence ?? null,
+        localDueStart: goal.localDueStart ?? null,
+        localDueEnd: goal.localDueEnd ?? null,
+        recDaysMask: goal.recDaysMask ?? null,
         stakeCents: goal.stakeCents,
         currency: "CHF",
         destinationType: goal.destinationType,
         destinationUserId: goal.destinationUserId ?? null,
         destinationCharityId: goal.destinationCharityId ?? null,
+        method: goal.method,
+        graceTimeSeconds: goal.graceTimeSeconds ?? null,
+        durationSeconds: goal.durationSeconds ?? null,
+        geoLat: goal.geoLat ?? null,
+        geoLng: goal.geoLng ?? null,
+        geoRadiusM: goal.geoRadiusM ?? null,
         createdAt: now,
         updatedAt: now,
       })
@@ -65,32 +75,7 @@ export class GroupsCreate extends OpenAPIRoute {
     if (!createdGoal)
       return new Response("Failed to create goal", { status: 500 });
 
-    // Optional verification method
-    if (goal.verificationMethod) {
-      const allowed = new Set(["location", "movement", "photo", "checkin"]);
-      if (allowed.has(goal.verificationMethod.method)) {
-        try {
-          const vm = goal.verificationMethod;
-          await db.insert(schema.GoalVerificationsMethod).values({
-            id: uuid(),
-            goalId: createdGoal.id,
-            method: vm.method,
-            latitude: vm.latitude ?? null,
-            longitude: vm.longitude ?? null,
-            radiusM: vm.radiusM ?? null,
-            durationSeconds: vm.durationSeconds ?? null,
-            graceTime: vm.graceTime ? new Date(vm.graceTime) : null,
-            createdAt: now,
-            updatedAt: now,
-          });
-        } catch (e) {
-          console.error(
-            "[GroupsCreate] Failed to insert verification method",
-            e
-          );
-        }
-      }
-    }
+    // Verification method is inline on goal in new model
 
     const [created] = await db
       .insert(schema.Group)
@@ -107,7 +92,7 @@ export class GroupsCreate extends OpenAPIRoute {
       .returning();
 
     // Add creator as participant
-    await db.insert(schema.GroupParticipants).values({
+    await db.insert(schema.GroupMember).values({
       groupId: id,
       userId,
       joinedAt: now,

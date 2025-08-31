@@ -23,6 +23,7 @@ export const User = sqliteTable("user", {
     .notNull()
     .default("user"),
   stripeCustomerId: text("stripeCustomerId"),
+  timezone: text("timezone").default("UTC"),
 
   createdAt: createCreatedAt(),
   updatedAt: createUpdatedAt(),
@@ -96,8 +97,10 @@ export const Goal = sqliteTable("goal", {
   endDate: integer("endDate", { mode: "timestamp" }),
   dueStartTime: integer("dueStartTime", { mode: "timestamp" }).notNull(),
   dueEndTime: integer("dueEndTime", { mode: "timestamp" }),
-
-  recurrence: text("recurrence"),
+  // For recurring weekly goals: local time-of-day strings + weekday mask
+  localDueStart: text("localDueStart"), // HH:mm
+  localDueEnd: text("localDueEnd"), // HH:mm
+  recDaysMask: integer("recDaysMask"), // bitmask Mon=1<<0 ... Sun=1<<6
 
   stakeCents: integer("stakeCents").notNull(),
   currency: text("currency").notNull(),
@@ -111,69 +114,57 @@ export const Goal = sqliteTable("goal", {
     { onDelete: "cascade" }
   ),
 
+  // Flattened verification method configuration (one method per goal)
+  method: text("method", {
+    enum: ["location", "photo", "checkin", "movement"],
+  }).notNull(),
+  graceTimeSeconds: integer("graceTimeSeconds"), // photo/checkin without end
+  durationSeconds: integer("durationSeconds"), // movement
+  geoLat: real("geoLat"),
+  geoLng: real("geoLng"),
+  geoRadiusM: integer("geoRadiusM"),
+
   createdAt: createCreatedAt(),
   updatedAt: createUpdatedAt(),
 });
 
-export const GoalVerificationsMethod = sqliteTable(
-  "goal_verifications_method",
+// One row per user per local occurrence (YYYY-MM-DD in user's timezone)
+export const GoalOccurrence = sqliteTable(
+  "goal_occurrence",
   {
-    id: text("id").primaryKey(),
     goalId: text("goalId")
       .notNull()
       .references(() => Goal.id, { onDelete: "cascade" }),
+    userId: text("userId")
+      .notNull()
+      .references(() => User.id, { onDelete: "cascade" }),
+    occurrenceDate: text("occurrenceDate").notNull(), // YYYY-MM-DD local
 
-    method: text("method").notNull(),
+    // Verification lifecycle
+    status: text("status", { enum: ["pending", "approved", "rejected"] })
+      .notNull()
+      .default("pending"),
+    verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
 
-    latitude: real("latitude"),
-    longitude: real("longitude"),
-    radiusM: integer("radiusM"),
-    durationSeconds: integer("durationSeconds"),
-    graceTime: integer("graceTime", { mode: "timestamp" }),
+    // Optional fields for photo/checkin
+    photoUrl: text("photoUrl"),
+    photoDescription: text("photoDescription"),
+
+    // Movement timing
+    timerStartedAt: integer("timerStartedAt", { mode: "timestamp" }),
+    timerEndedAt: integer("timerEndedAt", { mode: "timestamp" }),
+    violated: integer("violated", { mode: "boolean" }),
+
+    // Reviewer
+    approvedBy: text("approvedBy").references(() => User.id, {
+      onDelete: "cascade",
+    }),
 
     createdAt: createCreatedAt(),
     updatedAt: createUpdatedAt(),
-  }
+  },
+  (t) => [primaryKey({ columns: [t.goalId, t.userId, t.occurrenceDate] })]
 );
-
-export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
-  id: text("id").primaryKey(), // uuid stored as text
-  goalId: text("goalId")
-    .notNull()
-    .references(() => Goal.id, { onDelete: "cascade" }),
-
-  userId: text("userId")
-    .notNull()
-    .references(() => User.id, { onDelete: "cascade" }),
-
-  type: text("type").notNull(),
-  verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
-  approvalStatus: text("approvalStatus", {
-    enum: ["pending", "approved", "rejected"],
-  }).notNull(),
-  approvedBy: text("approvedBy").references(() => User.id, {
-    onDelete: "cascade",
-  }),
-
-  startTime: integer("startTime", { mode: "timestamp" }),
-  photoDescription: text("photoDescription"),
-  photoUrl: text("photoUrl"),
-
-  createdAt: createCreatedAt(),
-  updatedAt: createUpdatedAt(),
-});
-
-export const GoalTimer = sqliteTable("goal_timer", {
-  id: text("id").primaryKey(),
-  goalId: text("goalId")
-    .notNull()
-    .references(() => Goal.id, { onDelete: "cascade" }),
-  userId: text("userId")
-    .notNull()
-    .references(() => User.id, { onDelete: "cascade" }),
-  startedAt: integer("startedAt", { mode: "timestamp" }),
-  createdAt: createCreatedAt(),
-});
 
 export const Group = sqliteTable("group", {
   id: text("id").primaryKey(),
@@ -194,8 +185,8 @@ export const Group = sqliteTable("group", {
   updatedAt: createUpdatedAt(),
 });
 
-export const GroupParticipants = sqliteTable(
-  "group_participants",
+export const GroupMember = sqliteTable(
+  "group_member",
   {
     groupId: text("groupId")
       .notNull()
@@ -210,9 +201,7 @@ export const GroupParticipants = sqliteTable(
     createdAt: createCreatedAt(),
     updatedAt: createUpdatedAt(),
   },
-  (t) => ({
-    pk: primaryKey({ columns: [t.groupId, t.userId] }),
-  })
+  (t) => [primaryKey({ columns: [t.groupId, t.userId] })]
 );
 
 // ---------- Relations ----------
@@ -225,36 +214,27 @@ export const GroupRelations = relations(Group, ({ one, many }) => ({
     fields: [Group.creatorId],
     references: [User.id],
   }),
-  participants: many(GroupParticipants),
+  participants: many(GroupMember),
 }));
 
-export const GoalRelations = relations(Goal, ({ many }) => ({
-  verificationMethods: many(GoalVerificationsMethod),
+export const GoalRelations = relations(Goal, ({ one, many }) => ({
+  group: one(Group, {
+    fields: [Goal.id],
+    references: [Group.goalId],
+  }),
+  occurrences: many(GoalOccurrence),
 }));
 
-export const GoalVerificationsMethodRelations = relations(
-  GoalVerificationsMethod,
-  ({ one }) => ({
-    goal: one(Goal, {
-      fields: [GoalVerificationsMethod.goalId],
-      references: [Goal.id],
-    }),
-  })
-);
-
-export const GroupParticipantsRelations = relations(
-  GroupParticipants,
-  ({ one }) => ({
-    group: one(Group, {
-      fields: [GroupParticipants.groupId],
-      references: [Group.id],
-    }),
-    user: one(User, {
-      fields: [GroupParticipants.userId],
-      references: [User.id],
-    }),
-  })
-);
+export const GroupMemberRelations = relations(GroupMember, ({ one }) => ({
+  group: one(Group, {
+    fields: [GroupMember.groupId],
+    references: [Group.id],
+  }),
+  user: one(User, {
+    fields: [GroupMember.userId],
+    references: [User.id],
+  }),
+}));
 
 export type UserSelect = typeof User.$inferSelect;
 export type UserInsert = typeof User.$inferInsert;
@@ -274,21 +254,11 @@ export type CharityInsert = typeof Charity.$inferInsert;
 export type GoalSelect = typeof Goal.$inferSelect;
 export type GoalInsert = typeof Goal.$inferInsert;
 
-export type GoalVerificationsMethodSelect =
-  typeof GoalVerificationsMethod.$inferSelect;
-export type GoalVerificationsMethodInsert =
-  typeof GoalVerificationsMethod.$inferInsert;
-
-export type GoalVerificationsLogSelect =
-  typeof GoalVerificationsLog.$inferSelect;
-export type GoalVerificationsLogInsert =
-  typeof GoalVerificationsLog.$inferInsert;
+export type GoalOccurrenceSelect = typeof GoalOccurrence.$inferSelect;
+export type GoalOccurrenceInsert = typeof GoalOccurrence.$inferInsert;
 
 export type GroupSelect = typeof Group.$inferSelect;
 export type GroupInsert = typeof Group.$inferInsert;
 
-export type GroupParticipantsSelect = typeof GroupParticipants.$inferSelect;
-export type GroupParticipantsInsert = typeof GroupParticipants.$inferInsert;
-
-export type GoalTimerSelect = typeof GoalTimer.$inferSelect;
-export type GoalTimerInsert = typeof GoalTimer.$inferInsert;
+export type GroupMemberSelect = typeof GroupMember.$inferSelect;
+export type GroupMemberInsert = typeof GroupMember.$inferInsert;

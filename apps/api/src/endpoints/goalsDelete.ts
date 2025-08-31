@@ -45,13 +45,10 @@ export class GoalsDelete extends OpenAPIRoute {
       .where(eq(schema.Goal.id, goalId))
       .limit(1);
 
-    if (!existingGoal) {
-      return c.json({ error: "Goal not found" }, 404);
-    }
+    if (!existingGoal) return new Response("Not Found", { status: 404 });
 
-    if (existingGoal.ownerId !== user.id) {
-      return c.json({ error: "Unauthorized to delete this goal" }, 403);
-    }
+    if (existingGoal.ownerId !== user.id)
+      return new Response("Forbidden", { status: 403 });
 
     // Prevent delete if goal is linked to a group
     const [group] = await db
@@ -60,9 +57,7 @@ export class GoalsDelete extends OpenAPIRoute {
       .where(eq(schema.Group.goalId, goalId))
       .limit(1);
 
-    if (group) {
-      return c.json({ error: "Cannot delete goal linked to a group" }, 409);
-    }
+    if (group) return new Response("Conflict", { status: 409 });
 
     // Delete the goal
     await db.delete(schema.Goal).where(eq(schema.Goal.id, goalId));

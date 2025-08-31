@@ -1,7 +1,7 @@
 import app from "../index";
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type { GoalGetResponse } from "@commit/types";
+import type { GoalsListResponse } from "@commit/types";
 
 describe("GET /api/goals (list)", () => {
   it("returns empty list initially", async () => {
@@ -22,11 +22,12 @@ describe("GET /api/goals (list)", () => {
             description: null,
             stakeCents: 100,
             currency: "CHF",
-            recurrence: null,
             startDate: new Date().toISOString(),
             endDate: null,
             dueStartTime: new Date().toISOString(),
             dueEndTime: null,
+            method: "checkin",
+            graceTimeSeconds: 60,
             destinationType: "user",
             destinationUserId: null,
             destinationCharityId: null,
@@ -41,11 +42,8 @@ describe("GET /api/goals (list)", () => {
 
     const res = await app.request("/api/goals", {}, env);
     expect(res.status).toBe(200);
-    const items: GoalGetResponse[] = await res.json();
+    const items = (await res.json()) as GoalsListResponse;
     expect(items.length).toBe(2);
-    expect(items.map((g: GoalGetResponse) => g.name).sort()).toEqual([
-      "A",
-      "B",
-    ]);
+    expect(items.map((g) => g.name).sort()).toEqual(["A", "B"]);
   });
 });

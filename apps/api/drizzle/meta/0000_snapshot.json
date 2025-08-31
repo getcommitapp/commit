@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "61b92316-d841-40f4-b0af-fa653e34e63d",
+  "id": "fd564271-7fe0-464b-bf3a-d458937af12e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -221,9 +221,23 @@
           "notNull": false,
           "autoincrement": false
         },
-        "recurrence": {
-          "name": "recurrence",
+        "localDueStart": {
+          "name": "localDueStart",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "localDueEnd": {
+          "name": "localDueEnd",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recDaysMask": {
+          "name": "recDaysMask",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -259,6 +273,48 @@
         "destinationCharityId": {
           "name": "destinationCharityId",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "method": {
+          "name": "method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "graceTimeSeconds": {
+          "name": "graceTimeSeconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "durationSeconds": {
+          "name": "durationSeconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "geoLat": {
+          "name": "geoLat",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "geoLng": {
+          "name": "geoLng",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "geoRadiusM": {
+          "name": "geoRadiusM",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -313,16 +369,9 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "goal_timer": {
-      "name": "goal_timer",
+    "goal_occurrence": {
+      "name": "goal_occurrence",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
         "goalId": {
           "name": "goalId",
           "type": "text",
@@ -337,109 +386,24 @@
           "notNull": true,
           "autoincrement": false
         },
-        "startedAt": {
-          "name": "startedAt",
-          "type": "integer",
+        "occurrenceDate": {
+          "name": "occurrenceDate",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "integer",
+        "status": {
+          "name": "status",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
-          "default": "(current_timestamp)"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "goal_timer_goalId_goal_id_fk": {
-          "name": "goal_timer_goalId_goal_id_fk",
-          "tableFrom": "goal_timer",
-          "tableTo": "goal",
-          "columnsFrom": ["goalId"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "goal_timer_userId_user_id_fk": {
-          "name": "goal_timer_userId_user_id_fk",
-          "tableFrom": "goal_timer",
-          "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "goal_verifications_log": {
-      "name": "goal_verifications_log",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "goalId": {
-          "name": "goalId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "default": "'pending'"
         },
         "verifiedAt": {
           "name": "verifiedAt",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "approvalStatus": {
-          "name": "approvalStatus",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "approvedBy": {
-          "name": "approvedBy",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "startTime": {
-          "name": "startTime",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "photoDescription": {
-          "name": "photoDescription",
-          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -451,6 +415,41 @@
           "notNull": false,
           "autoincrement": false
         },
+        "photoDescription": {
+          "name": "photoDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "timerStartedAt": {
+          "name": "timerStartedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "timerEndedAt": {
+          "name": "timerEndedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "violated": {
+          "name": "violated",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "approvedBy": {
+          "name": "approvedBy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "integer",
@@ -469,27 +468,27 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "goal_verifications_log_goalId_goal_id_fk": {
-          "name": "goal_verifications_log_goalId_goal_id_fk",
-          "tableFrom": "goal_verifications_log",
+        "goal_occurrence_goalId_goal_id_fk": {
+          "name": "goal_occurrence_goalId_goal_id_fk",
+          "tableFrom": "goal_occurrence",
           "tableTo": "goal",
           "columnsFrom": ["goalId"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "goal_verifications_log_userId_user_id_fk": {
-          "name": "goal_verifications_log_userId_user_id_fk",
-          "tableFrom": "goal_verifications_log",
+        "goal_occurrence_userId_user_id_fk": {
+          "name": "goal_occurrence_userId_user_id_fk",
+          "tableFrom": "goal_occurrence",
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "goal_verifications_log_approvedBy_user_id_fk": {
-          "name": "goal_verifications_log_approvedBy_user_id_fk",
-          "tableFrom": "goal_verifications_log",
+        "goal_occurrence_approvedBy_user_id_fk": {
+          "name": "goal_occurrence_approvedBy_user_id_fk",
+          "tableFrom": "goal_occurrence",
           "tableTo": "user",
           "columnsFrom": ["approvedBy"],
           "columnsTo": ["id"],
@@ -497,98 +496,12 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "goal_verifications_method": {
-      "name": "goal_verifications_method",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "goalId": {
-          "name": "goalId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "method": {
-          "name": "method",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "latitude": {
-          "name": "latitude",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "longitude": {
-          "name": "longitude",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "radiusM": {
-          "name": "radiusM",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "durationSeconds": {
-          "name": "durationSeconds",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "graceTime": {
-          "name": "graceTime",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "(current_timestamp)"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+      "compositePrimaryKeys": {
+        "goal_occurrence_goalId_userId_occurrenceDate_pk": {
+          "columns": ["goalId", "userId", "occurrenceDate"],
+          "name": "goal_occurrence_goalId_userId_occurrenceDate_pk"
         }
       },
-      "indexes": {},
-      "foreignKeys": {
-        "goal_verifications_method_goalId_goal_id_fk": {
-          "name": "goal_verifications_method_goalId_goal_id_fk",
-          "tableFrom": "goal_verifications_method",
-          "tableTo": "goal",
-          "columnsFrom": ["goalId"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
@@ -684,8 +597,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "group_participants": {
-      "name": "group_participants",
+    "group_member": {
+      "name": "group_member",
       "columns": {
         "groupId": {
           "name": "groupId",
@@ -733,18 +646,18 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "group_participants_groupId_group_id_fk": {
-          "name": "group_participants_groupId_group_id_fk",
-          "tableFrom": "group_participants",
+        "group_member_groupId_group_id_fk": {
+          "name": "group_member_groupId_group_id_fk",
+          "tableFrom": "group_member",
           "tableTo": "group",
           "columnsFrom": ["groupId"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "group_participants_userId_user_id_fk": {
-          "name": "group_participants_userId_user_id_fk",
-          "tableFrom": "group_participants",
+        "group_member_userId_user_id_fk": {
+          "name": "group_member_userId_user_id_fk",
+          "tableFrom": "group_member",
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
@@ -753,9 +666,9 @@
         }
       },
       "compositePrimaryKeys": {
-        "group_participants_groupId_userId_pk": {
+        "group_member_groupId_userId_pk": {
           "columns": ["groupId", "userId"],
-          "name": "group_participants_groupId_userId_pk"
+          "name": "group_member_groupId_userId_pk"
         }
       },
       "uniqueConstraints": {},
@@ -896,6 +809,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'UTC'"
         },
         "createdAt": {
           "name": "createdAt",

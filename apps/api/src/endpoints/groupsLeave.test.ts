@@ -25,6 +25,8 @@ describe("POST /api/groups/:id/leave (leave)", () => {
             stakeCents: 1000,
             currency: "USD",
             destinationType: "charity",
+            method: "checkin",
+            graceTimeSeconds: 60,
           },
         }),
         headers: new Headers({ "Content-Type": "application/json" }),
@@ -56,6 +58,8 @@ describe("POST /api/groups/:id/leave (leave)", () => {
           stakeCents: 1000,
           currency: "USD",
           destinationType: "charity",
+          method: "checkin",
+          graceTimeSeconds: 60,
         }),
         headers: new Headers({ "Content-Type": "application/json" }),
       },
@@ -71,7 +75,7 @@ describe("POST /api/groups/:id/leave (leave)", () => {
       `INSERT INTO "group" (id, creatorId, goalId, name, inviteCode, updatedAt) VALUES ('${groupId}', 'user_2', '${goal.id}', 'Their Group', 'INV123', strftime('%s','now'));`
     );
     await testEnv.DB.exec(
-      `INSERT INTO group_participants (groupId, userId, joinedAt, status, updatedAt) VALUES ('${groupId}', 'user_1', strftime('%s','now'), NULL, strftime('%s','now'));`
+      `INSERT INTO group_member (groupId, userId, joinedAt, status, updatedAt) VALUES ('${groupId}', 'user_1', strftime('%s','now'), NULL, strftime('%s','now'));`
     );
 
     const res = await app.request(

@@ -14,6 +14,8 @@ describe("POST /api/groups (create)", () => {
       stakeCents: 1000,
       currency: "USD",
       destinationType: "charity",
+      method: "checkin",
+      graceTimeSeconds: 60,
     };
 
     const body = {

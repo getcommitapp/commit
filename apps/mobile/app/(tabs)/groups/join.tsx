@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/Button";
@@ -13,7 +13,7 @@ export default function JoinGroupScreen() {
   const insets = useSafeAreaInsets();
   const { mutate, isPending, isError, error } = useJoinGroup();
 
-  const canJoin = code.trim().length >= 4;
+  const canJoin = useMemo(() => code.trim().length === 6, [code]);
 
   const handleJoin = () => {
     mutate(code.trim().toUpperCase(), {
@@ -49,6 +49,7 @@ export default function JoinGroupScreen() {
             onChangeText={(t) => setCode(t.toUpperCase())}
             autoCapitalize="characters"
             returnKeyType="done"
+            maxLength={6}
           />
           {isError && (
             <ThemedText style={{ ...textVariants.subheadline, color: "red" }}>

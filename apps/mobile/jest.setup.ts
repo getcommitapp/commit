@@ -81,3 +81,13 @@ jest.mock("@/lib/hooks/useAuth", () => {
     }),
   };
 });
+
+// Mock auth-client to avoid BetterAuth initialization in tests
+jest.mock("@/lib/auth-client", () => ({
+  authClient: {
+    signOut: jest.fn(),
+    signIn: {
+      social: jest.fn(),
+    },
+  },
+}));

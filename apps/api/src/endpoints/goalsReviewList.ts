@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GoalReviewListResponseSchema } from "@commit/types";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export class GoalsReviewList extends OpenAPIRoute {
   schema = {
@@ -34,20 +34,17 @@ export class GoalsReviewList extends OpenAPIRoute {
 
     const verificationLogs = await db
       .select({
-        goalId: schema.GoalVerificationsLog.goalId,
+        goalId: schema.GoalOccurrence.goalId,
         goalName: schema.Goal.name,
-        photoUrl: schema.GoalVerificationsLog.photoUrl,
-        photoDescription: schema.GoalVerificationsLog.photoDescription,
+        photoUrl: schema.GoalOccurrence.photoUrl,
+        photoDescription: schema.GoalOccurrence.photoDescription,
       })
-      .from(schema.GoalVerificationsLog)
-      .innerJoin(
-        schema.Goal,
-        eq(schema.GoalVerificationsLog.goalId, schema.Goal.id)
-      )
+      .from(schema.GoalOccurrence)
+      .innerJoin(schema.Goal, eq(schema.GoalOccurrence.goalId, schema.Goal.id))
       .where(
         and(
-          eq(schema.GoalVerificationsLog.approvalStatus, "pending"),
-          eq(schema.GoalVerificationsLog.type, "photo")
+          eq(schema.GoalOccurrence.status, "pending"),
+          sql`${schema.GoalOccurrence.photoUrl} IS NOT NULL`
         )
       );
 

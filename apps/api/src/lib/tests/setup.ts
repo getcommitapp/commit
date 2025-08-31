@@ -76,16 +76,15 @@ vi.mock("stripe", () => {
 async function resetDb() {
   // Truncate data in dependency-safe order (children before parents)
   const tablesInDeleteOrder = [
-    "goal_verifications_log",
-    "goal_verifications_method",
-    "goal_timer",
-    "group_participants",
-    "group",
-    "account",
-    "session",
+    "d1_migrations",
     "verification",
+    "goal_occurrence",
+    "group_member",
+    "group",
     "goal",
     "charity",
+    "session",
+    "account",
     "user",
   ];
 

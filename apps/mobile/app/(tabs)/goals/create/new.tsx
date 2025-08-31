@@ -16,6 +16,7 @@ import {
   AndroidNativeProps,
   IOSNativeProps,
 } from "@react-native-community/datetimepicker";
+import { computeDurationMinutes, computeStakeCents } from "@/lib/utils";
 
 export default function GoalNewScreen() {
   const [title, setTitle] = useState("");
@@ -50,6 +51,65 @@ export default function GoalNewScreen() {
   // > = (_event, date) => {
   //   if (date) setEndAt(date);
   // };
+
+  const computeMethodAndDuration = () => {
+    if (!method)
+      return {
+        method: "checkin" as "location" | "movement" | "checkin" | "photo",
+        durationSeconds: undefined as number | undefined,
+      };
+    if (method === "checkin" || method === "photo")
+      return {
+        method: method as "checkin" | "photo",
+        durationSeconds: undefined,
+      };
+    const minutes = computeDurationMinutes(method, duration);
+    return {
+      method: method as "location" | "movement",
+      durationSeconds: minutes ? minutes * 60 : undefined,
+    };
+  };
+
+  const buildGoalPayload = (stakeCents: number) => {
+    const { method: m, durationSeconds } = computeMethodAndDuration();
+    return {
+      name: title,
+      description: description || null,
+      stakeCents,
+      startDate: startAt?.toISOString() as string,
+      endDate: null as null,
+      dueStartTime: (startTime ?? startAt)!.toISOString(),
+      dueEndTime: endTime ? endTime.toISOString() : null,
+      destinationType: "burn" as const,
+      method: m,
+      durationSeconds,
+    } as const;
+  };
+
+  const handleCreate = async () => {
+    if (!startAt) return;
+    const stakeCents = computeStakeCents(stake);
+    if (stakeCents < 100) return;
+
+    const goalPayload = buildGoalPayload(stakeCents);
+
+    if (forGroup) {
+      await createGroup.mutateAsync({
+        name: groupName || title,
+        description: groupDescription || undefined,
+        goal: goalPayload,
+      });
+      router.dismissAll();
+      router.replace("/(tabs)/goals");
+      router.replace("/(tabs)/groups/create");
+      router.dismissAll();
+      return;
+    }
+
+    await createGoal.mutateAsync(goalPayload);
+    router.dismissAll();
+    router.replace("/(tabs)/goals");
+  };
 
   return (
     <ScreenLayout keyboardShouldPersistTaps="handled">
@@ -124,72 +184,7 @@ export default function GoalNewScreen() {
       <Button
         title={forGroup ? "Create Group" : "Create Goal"}
         size="lg"
-        onPress={async () => {
-          if (!startAt) return;
-          const stakeCents =
-            stake != null && Number.isFinite(stake)
-              ? Math.round(stake * 100)
-              : 0;
-          if (stakeCents < 100) {
-            return;
-          }
-          const computedDurationMinutes =
-            method &&
-            (method === "location" || method === "movement") &&
-            duration
-              ? duration.getHours() * 60 + duration.getMinutes()
-              : undefined;
-
-          if (forGroup) {
-            await createGroup.mutateAsync({
-              name: groupName || title,
-              description: groupDescription || undefined,
-              goal: {
-                name: title,
-                description: description || null,
-                stakeCents,
-                startDate: startAt.toISOString(),
-                endDate: null,
-                dueStartTime: (startTime ?? startAt).toISOString(),
-                dueEndTime: endTime ? endTime.toISOString() : null,
-                destinationType: "burn",
-                verificationMethod: method
-                  ? {
-                      method: method as "location" | "movement",
-                      durationSeconds: computedDurationMinutes
-                        ? computedDurationMinutes * 60
-                        : undefined,
-                    }
-                  : undefined,
-              },
-            });
-            router.dismissAll();
-            router.replace("/(tabs)/goals");
-            router.replace("/(tabs)/groups/create");
-            router.dismissAll();
-          } else {
-            await createGoal.mutateAsync({
-              name: title,
-              description: description || null,
-              stakeCents,
-              startDate: startAt.toISOString(),
-              endDate: null,
-              dueStartTime: (startTime ?? startAt).toISOString(),
-              dueEndTime: endTime ? endTime.toISOString() : null,
-              destinationType: "burn",
-              verificationMethod: method
-                ? {
-                    method: method as "location" | "movement",
-                    durationSeconds: computedDurationMinutes
-                      ? computedDurationMinutes * 60
-                      : undefined,
-                  }
-                : undefined,
-            });
-            router.dismissAll();
-            router.replace("/(tabs)/goals");
-          }
-        }}
+        onPress={handleCreate}
         disabled={
           !title ||
           !startAt ||

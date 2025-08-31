@@ -5,7 +5,11 @@ import RootLayout from "@/app/_layout";
 
 // Config used in layout
 jest.mock("@/config", () => ({
-  config: { devResetOnboardingOnReload: false, devDefaultPage: undefined },
+  config: {
+    devResetOnboardingOnReload: false,
+    devDefaultPage: undefined,
+    devAutoAuthAsTestUser: false,
+  },
 }));
 
 // Colors, theme, and color scheme used in layout
@@ -40,6 +44,17 @@ jest.mock("@/components/useColorScheme", () => ({
 
 // Reanimated is globally mocked in jest.setup.ts
 
+// Mock hooks used in RootLayoutNav
+jest.mock("@/lib/hooks/useGoals", () => ({
+  useGoals: () => ({ data: [] }),
+}));
+
+// Mock expo-image to avoid async prefetching
+jest.mock("expo-image", () => ({
+  Image: ({ children }: any) => children,
+  prefetch: jest.fn().mockResolvedValue(undefined),
+}));
+
 // Router: mock Stack to expose initialRouteName via a testID node
 jest.mock("expo-router", () => {
   const React = require("react");
@@ -52,6 +67,7 @@ jest.mock("expo-router", () => {
     useRouter: () => ({ replace: jest.fn() }),
     ErrorBoundary: ({ children }: any) => children,
     Stack,
+    usePathname: () => "/",
   };
 });
 

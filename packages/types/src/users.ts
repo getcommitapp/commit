@@ -9,6 +9,7 @@ export const UserSchema = z.object({
   emailVerified: z.boolean(),
   image: z.string().nullable(),
   role: z.enum(["user", "admin", "reviewer"]),
+  timezone: z.string().default("UTC").optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });

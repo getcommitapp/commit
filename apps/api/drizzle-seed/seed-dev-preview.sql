@@ -7,7 +7,7 @@
 -- session token: 11111111-1111-4111-8111-111111111111
 
 -- Insert user if not exists
-INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, createdAt, updatedAt)
+INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES (
   '00000000-0000-4000-8000-000000000001',
   'Test User',
@@ -15,12 +15,13 @@ VALUES (
   1,
   NULL,
   NULL,
+  'Europe/Zurich',
   strftime('%s','now'),
   strftime('%s','now')
 );
 
 -- Ensure user data is up to date
-INSERT INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, createdAt, updatedAt)
+INSERT INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES (
   '00000000-0000-4000-8000-000000000001',
   'Test User',
@@ -28,6 +29,7 @@ VALUES (
   1,
   NULL,
   NULL,
+  'Europe/Zurich',
   strftime('%s','now'),
   strftime('%s','now')
 )
@@ -37,10 +39,11 @@ ON CONFLICT(id) DO UPDATE SET
   emailVerified=excluded.emailVerified,
   image=excluded.image,
   stripeCustomerId=excluded.stripeCustomerId,
+  timezone=excluded.timezone,
   updatedAt=excluded.updatedAt;
 
 -- Insert reviewer test user (role: reviewer)
-INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, createdAt, updatedAt)
+INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES (
   '00000000-0000-4000-8000-000000000006',
   'Reviewer User',
@@ -49,11 +52,12 @@ VALUES (
   NULL,
   'reviewer',
   NULL,
+  'Europe/Zurich',
   strftime('%s','now'),
   strftime('%s','now')
 );
 
-INSERT INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, createdAt, updatedAt)
+INSERT INTO "user" (id, name, email, emailVerified, image, role, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES (
   '00000000-0000-4000-8000-000000000006',
   'Reviewer User',
@@ -62,6 +66,7 @@ VALUES (
   NULL,
   'reviewer',
   NULL,
+  'Europe/Zurich',
   strftime('%s','now'),
   strftime('%s','now')
 )
@@ -72,6 +77,7 @@ ON CONFLICT(id) DO UPDATE SET
   image=excluded.image,
   role=excluded.role,
   stripeCustomerId=excluded.stripeCustomerId,
+  timezone=excluded.timezone,
   updatedAt=excluded.updatedAt;
 
 -- Insert/update a fixed mock session for the test user
@@ -139,12 +145,12 @@ ON CONFLICT(id) DO UPDATE SET
   updatedAt=excluded.updatedAt;
 
 -- Additional test users (no sessions needed)
-INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, createdAt, updatedAt)
+INSERT OR IGNORE INTO "user" (id, name, email, emailVerified, image, stripeCustomerId, timezone, createdAt, updatedAt)
 VALUES 
-  ('00000000-0000-4000-8000-000000000002', 'Alice Johnson', 'alice@commit.local', 1, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-000000000003', 'Bob Smith', 'bob@commit.local', 1, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-000000000004', 'Carol Davis', 'carol@commit.local', 1, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-000000000005', 'David Wilson', 'david@commit.local', 1, NULL, NULL, strftime('%s','now'), strftime('%s','now'));
+  ('00000000-0000-4000-8000-000000000002', 'Alice Johnson', 'alice@commit.local', 1, NULL, NULL, 'Europe/Zurich', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-000000000003', 'Bob Smith', 'bob@commit.local', 1, NULL, NULL, 'Europe/Zurich', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-000000000004', 'Carol Davis', 'carol@commit.local', 1, NULL, NULL, 'Europe/Zurich', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-000000000005', 'David Wilson', 'david@commit.local', 1, NULL, NULL, 'Europe/Zurich', strftime('%s','now'), strftime('%s','now'));
 
 -- Insert charities for goal destinations
 INSERT OR IGNORE INTO charity (id, name, url, createdAt, updatedAt)
@@ -153,18 +159,138 @@ VALUES
   ('00000000-0000-4000-8000-0000000000c2', 'UNICEF', 'https://www.unicef.org', strftime('%s','now'), strftime('%s','now')),
   ('00000000-0000-4000-8000-0000000000c3', 'Doctors Without Borders', 'https://www.msf.org', strftime('%s','now'), strftime('%s','now'));
 
--- Insert/Update test goals (upsert)
-INSERT INTO goal (id, ownerId, name, description, startDate, endDate, dueStartTime, dueEndTime, recurrence, stakeCents, currency, destinationType, destinationCharityId, createdAt, updatedAt)
+-- Insert/Update test goals (upsert) - new flattened schema
+INSERT INTO goal (
+  id,
+  ownerId,
+  name,
+  description,
+  startDate,
+  endDate,
+  dueStartTime,
+  dueEndTime,
+  localDueStart,
+  localDueEnd,
+  recDaysMask,
+  stakeCents,
+  currency,
+  destinationType,
+  destinationCharityId,
+  method,
+  graceTimeSeconds,
+  durationSeconds,
+  geoLat,
+  geoLng,
+  geoRadiusM,
+  createdAt,
+  updatedAt
+)
 VALUES 
   -- Test User's goals
-  ('00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', 'Daily Exercise', 'Work out for 30 minutes every day', strftime('%s','now'), strftime('%s','now', '+30 days'), strftime('%s','now', '+6 hours'), strftime('%s','now', '+8 hours'), 'daily', 5000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'Read Books', 'Read 20 pages daily', strftime('%s','now'), strftime('%s','now', '+60 days'), strftime('%s','now', '+20 hours'), strftime('%s','now', '+22 hours'), 'daily', 3000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c2', strftime('%s','now'), strftime('%s','now')),
+  (
+    '00000000-0000-4000-8000-0000000000g1',
+    '00000000-0000-4000-8000-000000000001',
+    'Daily Exercise',
+    'Work out for 30 minutes every day',
+    strftime('%s','now'),
+    strftime('%s','now', '+30 days'),
+    strftime('%s','now', '+6 hours'),
+    NULL,
+    '07:00',
+    '08:00',
+    127,
+    5000,
+    'CHF',
+    'charity',
+    '00000000-0000-4000-8000-0000000000c1',
+    'movement',
+    NULL,
+    1800,
+    NULL,
+    NULL,
+    NULL,
+    strftime('%s','now'),
+    strftime('%s','now')
+  ),
+  (
+    '00000000-0000-4000-8000-0000000000g2',
+    '00000000-0000-4000-8000-000000000001',
+    'Read Books',
+    'Read 20 pages daily',
+    strftime('%s','now'),
+    strftime('%s','now', '+60 days'),
+    strftime('%s','now', '+20 hours'),
+    NULL,
+    '20:00',
+    '22:00',
+    127,
+    3000,
+    'CHF',
+    'charity',
+    '00000000-0000-4000-8000-0000000000c2',
+    'photo',
+    300,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    strftime('%s','now'),
+    strftime('%s','now')
+  ),
   
-  -- Alice's goals
-  ('00000000-0000-4000-8000-0000000000g3', '00000000-0000-4000-8000-000000000002', 'Learn Guitar', 'Practice guitar for 1 hour daily', strftime('%s','now'), strftime('%s','now', '+90 days'), strftime('%s','now', '+18 hours'), strftime('%s','now', '+19 hours'), 'daily', 2000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c3', strftime('%s','now'), strftime('%s','now')),
+  -- Alice's goal (weekly checkin)
+  (
+    '00000000-0000-4000-8000-0000000000g3',
+    '00000000-0000-4000-8000-000000000002',
+    'Learn Guitar',
+    'Practice guitar daily',
+    strftime('%s','now'),
+    strftime('%s','now', '+90 days'),
+    strftime('%s','now', '+18 hours'),
+    NULL,
+    '18:00',
+    '19:00',
+    127,
+    2000,
+    'CHF',
+    'charity',
+    '00000000-0000-4000-8000-0000000000c3',
+    'checkin',
+    60,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    strftime('%s','now'),
+    strftime('%s','now')
+  ),
   
-  -- Bob's goals
-  ('00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'Meditation', 'Meditate for 15 minutes every morning', strftime('%s','now'), strftime('%s','now', '+45 days'), strftime('%s','now', '+7 hours'), strftime('%s','now', '+7.25 hours'), 'daily', 1500, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now'))
+  -- Bob's goal (single location window today)
+  (
+    '00000000-0000-4000-8000-0000000000g4',
+    '00000000-0000-4000-8000-000000000003',
+    'Meditation',
+    'Meditate for 15 minutes this morning',
+    strftime('%s','now'),
+    strftime('%s','now', '+45 days'),
+    strftime('%s','now', '+7 hours'),
+    strftime('%s','now', '+7.25 hours'),
+    NULL,
+    NULL,
+    NULL,
+    1500,
+    'CHF',
+    'charity',
+    '00000000-0000-4000-8000-0000000000c1',
+    'location',
+    NULL,
+    NULL,
+    46.5197,
+    6.6323,
+    100,
+    strftime('%s','now'),
+    strftime('%s','now')
+  )
 ON CONFLICT(id) DO UPDATE SET
   ownerId=excluded.ownerId,
   name=excluded.name,
@@ -173,51 +299,32 @@ ON CONFLICT(id) DO UPDATE SET
   endDate=excluded.endDate,
   dueStartTime=excluded.dueStartTime,
   dueEndTime=excluded.dueEndTime,
-  recurrence=excluded.recurrence,
+  localDueStart=excluded.localDueStart,
+  localDueEnd=excluded.localDueEnd,
+  recDaysMask=excluded.recDaysMask,
   stakeCents=excluded.stakeCents,
   currency=excluded.currency,
   destinationType=excluded.destinationType,
   destinationUserId=excluded.destinationUserId,
   destinationCharityId=excluded.destinationCharityId,
+  method=excluded.method,
+  graceTimeSeconds=excluded.graceTimeSeconds,
+  durationSeconds=excluded.durationSeconds,
+  geoLat=excluded.geoLat,
+  geoLng=excluded.geoLng,
+  geoRadiusM=excluded.geoRadiusM,
   updatedAt=excluded.updatedAt;
 
--- Insert goal verification methods
-INSERT OR IGNORE INTO goal_verifications_method (id, goalId, method, latitude, longitude, radiusM, durationSeconds, graceTime, createdAt, updatedAt)
-VALUES 
-  ('00000000-0000-4000-8000-0000000000m1', '00000000-0000-4000-8000-0000000000g1', 'location', 46.5197, 6.6323, 100, 1800, strftime('%s','now', '+5 minutes'), strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000m2', '00000000-0000-4000-8000-0000000000g2', 'photo', NULL, NULL, NULL, NULL, strftime('%s','now', '+5 minutes'), strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000m3', '00000000-0000-4000-8000-0000000000g3', 'duration', NULL, NULL, NULL, 3600, strftime('%s','now', '+5 minutes'), strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000m4', '00000000-0000-4000-8000-0000000000g4', 'photo', NULL, NULL, NULL, NULL, strftime('%s','now', '+5 minutes'), strftime('%s','now'), strftime('%s','now'));
-
--- Insert some verification logs (completed verifications)
-INSERT OR IGNORE INTO goal_verifications_log (id, goalId, userId, type, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
-VALUES 
-  ('00000000-0000-4000-8000-0000000000v1', '00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', 'location', strftime('%s','now', '-1 day'), 'approved', strftime('%s','now', '-1 day', '-30 minutes'), NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000v2', '00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', 'location', strftime('%s','now', '-2 days'), 'approved', strftime('%s','now', '-2 days', '-30 minutes'), NULL, NULL, strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000v3', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'photo', strftime('%s','now', '-1 day'), 'approved', strftime('%s','now', '-1 day', '-1 hour'), 'Reading page 15 of my book', 'https://example.com/photo1.jpg', strftime('%s','now'), strftime('%s','now'));
-
--- Insert/Update some pending photo verifications for reviewer to approve
-INSERT OR IGNORE INTO goal_verifications_log (id, goalId, userId, type, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
-VALUES 
-  -- Test User's photo goal (g2): pending
-  ('00000000-0000-4000-8000-0000000000p1', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'photo', NULL, 'pending', strftime('%s','now', '-2 hours'), 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', strftime('%s','now'), strftime('%s','now')),
-  -- Bob's photo goal (g4): pending
-  ('00000000-0000-4000-8000-0000000000p2', '00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'photo', NULL, 'pending', strftime('%s','now', '-3 hours'), 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', strftime('%s','now'), strftime('%s','now'));
-
-INSERT INTO goal_verifications_log (id, goalId, userId, type, verifiedAt, approvalStatus, startTime, photoDescription, photoUrl, createdAt, updatedAt)
-VALUES 
-  ('00000000-0000-4000-8000-0000000000p1', '00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'photo', NULL, 'pending', strftime('%s','now', '-2 hours'), 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000p2', '00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'photo', NULL, 'pending', strftime('%s','now', '-3 hours'), 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', strftime('%s','now'), strftime('%s','now'))
-ON CONFLICT(id) DO UPDATE SET
-  goalId=excluded.goalId,
-  userId=excluded.userId,
-  type=excluded.type,
-  verifiedAt=excluded.verifiedAt,
-  approvalStatus=excluded.approvalStatus,
-  startTime=excluded.startTime,
-  photoDescription=excluded.photoDescription,
-  photoUrl=excluded.photoUrl,
-  updatedAt=excluded.updatedAt;
+-- Insert some occurrences with statuses
+INSERT OR IGNORE INTO goal_occurrence (
+  goalId, userId, occurrenceDate, status, verifiedAt, photoDescription, photoUrl, timerStartedAt, timerEndedAt, violated, approvedBy, createdAt, updatedAt
+) VALUES
+  -- Yesterday approved for movement goal g1
+  ('00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','-1 day','localtime'), 'approved', strftime('%s','now','-1 day'), NULL, NULL, NULL, NULL, 0, NULL, strftime('%s','now'), strftime('%s','now')),
+  -- Today pending photo for g2
+  ('00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','localtime'), 'pending', NULL, 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', NULL, NULL, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
+  -- Bob pending photo yesterday
+  ('00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', strftime('%Y-%m-%d','now','-1 day','localtime'), 'pending', NULL, 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', NULL, NULL, NULL, NULL, strftime('%s','now'), strftime('%s','now'));
 
 -- Sanity cleanup: remove orphan groups referencing non-existent goals
 DELETE FROM "group"
@@ -238,7 +345,7 @@ ON CONFLICT(id) DO UPDATE SET
   updatedAt=excluded.updatedAt;
 
 -- Insert group participants
-INSERT OR IGNORE INTO group_participants (groupId, userId, joinedAt, status, createdAt, updatedAt)
+INSERT OR IGNORE INTO group_member (groupId, userId, joinedAt, status, createdAt, updatedAt)
 VALUES 
   -- Fitness Buddies group
   ('00000000-0000-4000-8000-0000000000gr1', '00000000-0000-4000-8000-000000000001', strftime('%s','now', '-7 days'), 'active', strftime('%s','now'), strftime('%s','now')),

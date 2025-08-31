@@ -1,14 +1,11 @@
 import * as z from "zod";
-import {
-  GoalCreateRequestSchema,
-  GoalDetailsSchema,
-  GoalVerificationInputSchema,
-} from "./goals";
+import { GoalBaseSchema, GoalCreateRequestSchema } from "./goals";
 
 // ---------------- Zod Schemas ----------------
 
 export const GroupBaseSchema = z.object({
   id: z.string(),
+  goalId: z.string(),
   name: z.string(),
   description: z.string().nullable(),
   inviteCode: z.string(),
@@ -24,9 +21,9 @@ export const GroupMemberSchema = z.object({
 
 export const GroupListItemSchema = GroupBaseSchema.extend({
   memberCount: z.number(),
-  goal: GoalDetailsSchema,
   isOwner: z.boolean(),
   members: z.array(z.object({ name: z.string(), isOwner: z.boolean() })),
+  goal: GoalBaseSchema,
 });
 
 export const GroupsListResponseSchema = z.array(GroupListItemSchema);
@@ -50,16 +47,6 @@ export const GroupInviteVerifyRequestQuerySchema = z.object({
 
 export const GroupInviteVerifyResponseSchema = z.object({
   valid: z.boolean(),
-});
-
-export const GroupGoalGetResponseSchema = GoalDetailsSchema;
-
-export const GroupGoalVerifyRequestSchema = z.array(
-  GoalVerificationInputSchema
-);
-
-export const GroupGoalVerifyResponseSchema = z.object({
-  message: z.string(), // "Verification log submitted."
 });
 
 export const GroupLeaveResponseSchema = z.object({
@@ -97,16 +84,6 @@ export type GroupInviteVerifyRequestQuery = z.infer<
 
 export type GroupInviteVerifyResponse = z.infer<
   typeof GroupInviteVerifyResponseSchema
->;
-
-export type GroupGoalGetResponse = z.infer<typeof GroupGoalGetResponseSchema>;
-
-export type GroupGoalVerifyRequest = z.infer<
-  typeof GroupGoalVerifyRequestSchema
->;
-
-export type GroupGoalVerifyResponse = z.infer<
-  typeof GroupGoalVerifyResponseSchema
 >;
 
 export type GroupLeaveResponse = z.infer<typeof GroupLeaveResponseSchema>;

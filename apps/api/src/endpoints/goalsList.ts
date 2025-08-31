@@ -3,7 +3,8 @@ import type { AppContext } from "../types";
 import { GoalsListResponseSchema } from "@commit/types";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
-import { and, eq, exists, isNotNull } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { todayLocal, computeState } from "../services/goalService";
 
 export class GoalsList extends OpenAPIRoute {
   schema = {
@@ -25,56 +26,34 @@ export class GoalsList extends OpenAPIRoute {
     const user = c.var.user!;
     const db = drizzle(c.env.DB, { schema });
 
-    // Single query using correlated exists for hasDurationVerification and left-join group for group info
-    const rows = await db
-      .select({
-        id: schema.Goal.id,
-        ownerId: schema.Goal.ownerId,
-        name: schema.Goal.name,
-        description: schema.Goal.description,
-        startDate: schema.Goal.startDate,
-        endDate: schema.Goal.endDate,
-        dueStartTime: schema.Goal.dueStartTime,
-        dueEndTime: schema.Goal.dueEndTime,
-        recurrence: schema.Goal.recurrence,
-        stakeCents: schema.Goal.stakeCents,
-        currency: schema.Goal.currency,
-        destinationType: schema.Goal.destinationType,
-        destinationUserId: schema.Goal.destinationUserId,
-        destinationCharityId: schema.Goal.destinationCharityId,
-        createdAt: schema.Goal.createdAt,
-        updatedAt: schema.Goal.updatedAt,
-        hasDurationVerification: exists(
-          db
-            .select({ one: schema.GoalVerificationsMethod.id })
-            .from(schema.GoalVerificationsMethod)
-            .where(
-              and(
-                eq(schema.GoalVerificationsMethod.goalId, schema.Goal.id),
-                isNotNull(schema.GoalVerificationsMethod.durationSeconds)
-              )
-            )
-        ),
-        groupId: schema.Group.id,
-        groupName: schema.Group.name,
-        groupDescription: schema.Group.description,
-      })
-      .from(schema.Goal)
-      .leftJoin(schema.Group, eq(schema.Group.goalId, schema.Goal.id))
-      .where(eq(schema.Goal.ownerId, user.id));
+    const rows = await db.query.Goal.findMany({
+      where: eq(schema.Goal.ownerId, user.id),
+    });
 
-    const response = rows.map((r) => ({
-      ...r,
-      hasDurationVerification: Boolean(r.hasDurationVerification),
-      group: r.groupId
-        ? {
-            id: r.groupId,
-            name: r.groupName!,
-            description: r.groupDescription ?? undefined,
-          }
-        : null,
-    }));
+    const localDate = todayLocal(user.timezone);
 
-    return c.json(response, 200);
+    // Load today's occurrences for this user
+    const occs = await db.query.GoalOccurrence.findMany({
+      where: and(
+        eq(schema.GoalOccurrence.userId, user.id),
+        eq(schema.GoalOccurrence.occurrenceDate, localDate)
+      ),
+    });
+    const occIndex = new Map(occs.map((o) => [o.goalId, o]));
+
+    const results = rows.map((g) => {
+      const occ = occIndex.get(g.id) || null;
+      const cs = computeState(g, user, occ);
+      return {
+        ...g,
+        state: cs.state,
+        occurrence: cs.occurrence ?? null,
+        actions: cs.actions,
+        nextTransitionAt: cs.nextTransitionAt ?? null,
+        groupId: null,
+      };
+    });
+
+    return c.json(results, 200);
   }
 }

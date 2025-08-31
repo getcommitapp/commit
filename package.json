@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "build": "pnpm --filter '@commit/engine' run build",
     "format": "prettier --write ./docs ./README.md && pnpm --parallel run format",
     "lint": "prettier --check ./docs ./README.md && pnpm --parallel run lint",
+    "pretest": "pnpm build",
     "test": "pnpm --parallel --filter '@commit/api' --filter '@commit/mobile' run test"
   },
   "keywords": [],

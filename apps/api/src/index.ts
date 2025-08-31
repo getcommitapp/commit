@@ -6,7 +6,7 @@ import { drizzle } from "drizzle-orm/d1";
 import * as schema from "./db/schema";
 import { eq } from "drizzle-orm";
 
-// user
+// User
 import { UsersFetch } from "./endpoints/usersFetch";
 import { UsersUpdate } from "./endpoints/usersUpdate";
 import { UsersDelete } from "./endpoints/usersDelete";
@@ -15,11 +15,15 @@ import { UsersDelete } from "./endpoints/usersDelete";
 import { GoalsList } from "./endpoints/goalsList";
 import { GoalsCreate } from "./endpoints/goalsCreate";
 import { GoalsDelete } from "./endpoints/goalsDelete";
-import { GoalsVerify } from "./endpoints/goalsVerify";
-import { GoalsTimerGet } from "./endpoints/goalsTimerGet";
-import { GoalsTimerStart } from "./endpoints/goalsTimerStart";
 import { GoalsReviewList } from "./endpoints/goalsReviewList";
 import { GoalsReviewUpdate } from "./endpoints/goalsReviewUpdate";
+import { GoalsFetch } from "./endpoints/goalsFetch";
+import { GoalsActionCheckin } from "./endpoints/goalsActionCheckin";
+import { GoalsActionPhoto } from "./endpoints/goalsActionPhoto";
+import {
+  GoalsActionMovementStart,
+  GoalsActionMovementStop,
+} from "./endpoints/goalsActionMovement";
 
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
@@ -28,14 +32,16 @@ import { GroupsInvite } from "./endpoints/groupsInvite";
 import { GroupsInviteVerify } from "./endpoints/groupsInviteVerify";
 import { GroupsLeave } from "./endpoints/groupsLeave";
 import { GroupsDelete } from "./endpoints/groupsDelete";
+import { GroupsFetch } from "./endpoints/groupsFetch";
 import { HonoContext } from "./types";
 import { GroupsJoin } from "./endpoints/groupsJoin";
+
+// Payments
 import { PaymentsSetupIntent } from "./endpoints/paymentsSetupIntent";
 import { PaymentsCharge as PaymentsDebit } from "./endpoints/paymentsDebit";
 import { PaymentsRefund } from "./endpoints/paymentsRefund";
 import { PaymentsCredit } from "./endpoints/paymentsCredit";
 import { PaymentsMethod } from "./endpoints/paymentsMethod";
-// (removed) test debit/credit endpoints
 
 // Start a Hono app
 const app = new Hono<HonoContext>();
@@ -117,6 +123,7 @@ app.use("*", async (c, next) => {
       stripeCustomerId: user.stripeCustomerId,
       emailVerified: user.emailVerified,
       role: user.role,
+      timezone: user.timezone,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
@@ -150,20 +157,23 @@ openapi.delete("/api/users", UsersDelete);
 openapi.get("/api/goals", GoalsList);
 openapi.post("/api/goals", GoalsCreate);
 openapi.get("/api/goals/review", GoalsReviewList);
+openapi.get("/api/goals/:id", GoalsFetch);
 openapi.delete("/api/goals/:id", GoalsDelete);
-openapi.post("/api/goals/:id/verify", GoalsVerify);
-openapi.get("/api/goals/:id/timer", GoalsTimerGet);
-openapi.post("/api/goals/:id/timer/start", GoalsTimerStart);
 openapi.put("/api/goals/:id/review", GoalsReviewUpdate);
+openapi.post("/api/goals/:id/checkin", GoalsActionCheckin);
+openapi.post("/api/goals/:id/photo", GoalsActionPhoto);
+openapi.post("/api/goals/:id/movement/start", GoalsActionMovementStart);
+openapi.post("/api/goals/:id/movement/stop", GoalsActionMovementStop);
 
 // Groups
 openapi.get("/api/groups", GroupsList);
 openapi.post("/api/groups", GroupsCreate);
+openapi.post("/api/groups/join", GroupsJoin);
+openapi.get("/api/groups/:id", GroupsFetch);
+openapi.delete("/api/groups/:id", GroupsDelete);
+openapi.post("/api/groups/:id/leave", GroupsLeave);
 openapi.get("/api/groups/:id/invite", GroupsInvite);
 openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
-openapi.post("/api/groups/:id/leave", GroupsLeave);
-openapi.delete("/api/groups/:id", GroupsDelete);
-openapi.post("/api/groups/join", GroupsJoin);
 
 // Payments
 openapi.post("/api/payments/setup-intent", PaymentsSetupIntent);
@@ -171,6 +181,5 @@ openapi.post("/api/payments/debit", PaymentsDebit);
 openapi.post("/api/payments/credit", PaymentsCredit);
 openapi.post("/api/payments/refund", PaymentsRefund);
 openapi.get("/api/payments/method", PaymentsMethod);
-// test payment endpoints removed
 
 export default app;
