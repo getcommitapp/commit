@@ -34,12 +34,18 @@ CREATE TABLE `goal` (
 	`dueEndTime` integer,
 	`localDueStart` text,
 	`localDueEnd` text,
-	`recurrence` text,
+	`recDaysMask` integer,
 	`stakeCents` integer NOT NULL,
 	`currency` text NOT NULL,
 	`destinationType` text NOT NULL,
 	`destinationUserId` text,
 	`destinationCharityId` text,
+	`method` text NOT NULL,
+	`graceTimeSeconds` integer,
+	`durationSeconds` integer,
+	`geoLat` real,
+	`geoLng` real,
+	`geoRadiusM` integer,
 	`createdAt` integer DEFAULT (current_timestamp),
 	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`ownerId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
@@ -47,63 +53,24 @@ CREATE TABLE `goal` (
 	FOREIGN KEY (`destinationCharityId`) REFERENCES `charity`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `goal_occurrence_action` (
-	`id` text PRIMARY KEY NOT NULL,
+CREATE TABLE `goal_occurrence` (
 	`goalId` text NOT NULL,
 	`userId` text NOT NULL,
 	`occurrenceDate` text NOT NULL,
-	`action` text NOT NULL,
-	`status` text NOT NULL,
-	`idempotencyKey` text NOT NULL,
-	`processedAt` integer,
-	`errorMessage` text,
-	`createdAt` integer DEFAULT (current_timestamp),
-	`updatedAt` integer NOT NULL,
-	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE UNIQUE INDEX `goal_occurrence_action_idempotencyKey_unique` ON `goal_occurrence_action` (`idempotencyKey`);--> statement-breakpoint
-CREATE TABLE `goal_timer` (
-	`id` text PRIMARY KEY NOT NULL,
-	`goalId` text NOT NULL,
-	`userId` text NOT NULL,
-	`startedAt` integer,
-	`createdAt` integer DEFAULT (current_timestamp),
-	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE TABLE `goal_verifications_log` (
-	`id` text PRIMARY KEY NOT NULL,
-	`goalId` text NOT NULL,
-	`userId` text NOT NULL,
-	`occurrenceDate` text,
+	`status` text DEFAULT 'pending' NOT NULL,
 	`verifiedAt` integer,
-	`approvalStatus` text DEFAULT 'pending',
-	`approvedBy` text,
-	`startTime` integer,
-	`photoDescription` text,
 	`photoUrl` text,
+	`photoDescription` text,
+	`timerStartedAt` integer,
+	`timerEndedAt` integer,
+	`violated` integer,
+	`approvedBy` text,
 	`createdAt` integer DEFAULT (current_timestamp),
 	`updatedAt` integer NOT NULL,
+	PRIMARY KEY(`goalId`, `userId`, `occurrenceDate`),
 	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`approvedBy`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE TABLE `goal_verifications_method` (
-	`id` text PRIMARY KEY NOT NULL,
-	`goalId` text NOT NULL,
-	`method` text NOT NULL,
-	`latitude` real,
-	`longitude` real,
-	`radiusM` integer,
-	`durationSeconds` integer,
-	`graceTimeSeconds` integer DEFAULT 60,
-	`createdAt` integer DEFAULT (current_timestamp),
-	`updatedAt` integer NOT NULL,
-	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `group` (

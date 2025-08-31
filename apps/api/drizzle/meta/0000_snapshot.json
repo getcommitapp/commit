@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "a6b77ea7-d538-4251-8557-9d926029717d",
+  "id": "15c78a10-ee4a-44b6-921d-ff52d9e071b2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -235,9 +235,9 @@
           "notNull": false,
           "autoincrement": false
         },
-        "recurrence": {
-          "name": "recurrence",
-          "type": "text",
+        "recDaysMask": {
+          "name": "recDaysMask",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -273,6 +273,48 @@
         "destinationCharityId": {
           "name": "destinationCharityId",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "method": {
+          "name": "method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "graceTimeSeconds": {
+          "name": "graceTimeSeconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "durationSeconds": {
+          "name": "durationSeconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "geoLat": {
+          "name": "geoLat",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "geoLng": {
+          "name": "geoLng",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "geoRadiusM": {
+          "name": "geoRadiusM",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -327,16 +369,9 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "goal_occurrence_action": {
-      "name": "goal_occurrence_action",
+    "goal_occurrence": {
+      "name": "goal_occurrence",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
         "goalId": {
           "name": "goalId",
           "type": "text",
@@ -353,13 +388,6 @@
         },
         "occurrenceDate": {
           "name": "occurrenceDate",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "action": {
-          "name": "action",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -370,204 +398,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "idempotencyKey": {
-          "name": "idempotencyKey",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "processedAt": {
-          "name": "processedAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "errorMessage": {
-          "name": "errorMessage",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "goal_occurrence_action_idempotencyKey_unique": {
-          "name": "goal_occurrence_action_idempotencyKey_unique",
-          "columns": ["idempotencyKey"],
-          "isUnique": true
-        }
-      },
-      "foreignKeys": {
-        "goal_occurrence_action_goalId_goal_id_fk": {
-          "name": "goal_occurrence_action_goalId_goal_id_fk",
-          "tableFrom": "goal_occurrence_action",
-          "tableTo": "goal",
-          "columnsFrom": ["goalId"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "goal_occurrence_action_userId_user_id_fk": {
-          "name": "goal_occurrence_action_userId_user_id_fk",
-          "tableFrom": "goal_occurrence_action",
-          "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "goal_timer": {
-      "name": "goal_timer",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "goalId": {
-          "name": "goalId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "startedAt": {
-          "name": "startedAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "(current_timestamp)"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "goal_timer_goalId_goal_id_fk": {
-          "name": "goal_timer_goalId_goal_id_fk",
-          "tableFrom": "goal_timer",
-          "tableTo": "goal",
-          "columnsFrom": ["goalId"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "goal_timer_userId_user_id_fk": {
-          "name": "goal_timer_userId_user_id_fk",
-          "tableFrom": "goal_timer",
-          "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "goal_verifications_log": {
-      "name": "goal_verifications_log",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "goalId": {
-          "name": "goalId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "occurrenceDate": {
-          "name": "occurrenceDate",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "default": "'pending'"
         },
         "verifiedAt": {
           "name": "verifiedAt",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "approvalStatus": {
-          "name": "approvalStatus",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "'pending'"
-        },
-        "approvedBy": {
-          "name": "approvedBy",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "startTime": {
-          "name": "startTime",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "photoDescription": {
-          "name": "photoDescription",
-          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -579,6 +415,41 @@
           "notNull": false,
           "autoincrement": false
         },
+        "photoDescription": {
+          "name": "photoDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "timerStartedAt": {
+          "name": "timerStartedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "timerEndedAt": {
+          "name": "timerEndedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "violated": {
+          "name": "violated",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "approvedBy": {
+          "name": "approvedBy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "integer",
@@ -597,27 +468,27 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "goal_verifications_log_goalId_goal_id_fk": {
-          "name": "goal_verifications_log_goalId_goal_id_fk",
-          "tableFrom": "goal_verifications_log",
+        "goal_occurrence_goalId_goal_id_fk": {
+          "name": "goal_occurrence_goalId_goal_id_fk",
+          "tableFrom": "goal_occurrence",
           "tableTo": "goal",
           "columnsFrom": ["goalId"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "goal_verifications_log_userId_user_id_fk": {
-          "name": "goal_verifications_log_userId_user_id_fk",
-          "tableFrom": "goal_verifications_log",
+        "goal_occurrence_userId_user_id_fk": {
+          "name": "goal_occurrence_userId_user_id_fk",
+          "tableFrom": "goal_occurrence",
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "goal_verifications_log_approvedBy_user_id_fk": {
-          "name": "goal_verifications_log_approvedBy_user_id_fk",
-          "tableFrom": "goal_verifications_log",
+        "goal_occurrence_approvedBy_user_id_fk": {
+          "name": "goal_occurrence_approvedBy_user_id_fk",
+          "tableFrom": "goal_occurrence",
           "tableTo": "user",
           "columnsFrom": ["approvedBy"],
           "columnsTo": ["id"],
@@ -625,99 +496,12 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "goal_verifications_method": {
-      "name": "goal_verifications_method",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "goalId": {
-          "name": "goalId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "method": {
-          "name": "method",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "latitude": {
-          "name": "latitude",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "longitude": {
-          "name": "longitude",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "radiusM": {
-          "name": "radiusM",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "durationSeconds": {
-          "name": "durationSeconds",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "graceTimeSeconds": {
-          "name": "graceTimeSeconds",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": 60
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "(current_timestamp)"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+      "compositePrimaryKeys": {
+        "goal_occurrence_goalId_userId_occurrenceDate_pk": {
+          "columns": ["goalId", "userId", "occurrenceDate"],
+          "name": "goal_occurrence_goalId_userId_occurrenceDate_pk"
         }
       },
-      "indexes": {},
-      "foreignKeys": {
-        "goal_verifications_method_goalId_goal_id_fk": {
-          "name": "goal_verifications_method_goalId_goal_id_fk",
-          "tableFrom": "goal_verifications_method",
-          "tableTo": "goal",
-          "columnsFrom": ["goalId"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
     },

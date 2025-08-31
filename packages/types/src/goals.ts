@@ -2,18 +2,6 @@ import * as z from "zod";
 
 // ---------------- Zod Schemas ----------------
 
-export const GoalVerificationMethodSchema = z.object({
-  id: z.string(),
-  method: z.string(),
-  latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional(),
-  radiusM: z.number().int().nullable().optional(),
-  durationSeconds: z.number().int().nullable().optional(),
-  graceTimeSeconds: z.number().int().nullable().optional(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
-});
-
 export const GoalBaseSchema = z.object({
   id: z.string(),
   ownerId: z.string(),
@@ -23,22 +11,30 @@ export const GoalBaseSchema = z.object({
   endDate: z.string().datetime().nullable(),
   dueStartTime: z.string().datetime(),
   dueEndTime: z.string().datetime().nullable(),
-  localDueStart: z.string().nullable().optional(), // HH:mm for recurring
-  localDueEnd: z.string().nullable().optional(),
-  recurrence: z
-    .object({
-      type: z.string(),
-      daysOfWeek: z.array(z.number()).optional(),
-    })
-    .nullable()
-    .optional(),
+  // Recurring weekly window using local wall times + bitmask
+  localDueStart: z.string().nullable().optional(), // HH:mm
+  localDueEnd: z.string().nullable().optional(), // HH:mm
+  recDaysMask: z.number().int().nullable().optional(),
+
+  // One method per goal with inline configuration
+  method: z.enum(["location", "movement", "photo", "checkin"]),
+  graceTimeSeconds: z.number().int().nullable().optional(),
+  durationSeconds: z.number().int().nullable().optional(),
+  geoLat: z.number().nullable().optional(),
+  geoLng: z.number().nullable().optional(),
+  geoRadiusM: z.number().int().nullable().optional(),
+
+  // Stake is required (no default at type level)
   stakeCents: z.number().int(),
   currency: z.string(),
   destinationType: z.string(),
   destinationUserId: z.string().nullable(),
   destinationCharityId: z.string().nullable(),
+
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+
+  // Computed fields on read
   state: z
     .enum([
       "scheduled",
@@ -63,7 +59,6 @@ export const GoalBaseSchema = z.object({
 });
 
 export const GoalsListItemSchema = GoalBaseSchema.extend({
-  verificationMethod: GoalVerificationMethodSchema.nullable().optional(),
   groupId: z.string().nullable().optional(),
 });
 
@@ -73,23 +68,26 @@ export const GoalCreateRequestSchema = z.object({
   name: z.string(),
   description: z.string().nullable().optional(),
   stakeCents: z.number().int().min(100),
-  recurrence: z.string().nullable().optional(),
   startDate: z.string().datetime(),
   endDate: z.string().datetime().nullable().optional(),
-  dueStartTime: z.string().datetime(),
+  // Single-window instants (optional when using weekly recurrence)
+  dueStartTime: z.string().datetime().optional(),
   dueEndTime: z.string().datetime().nullable().optional(),
+  // Weekly recurrence (optional): local times + bitmask
+  localDueStart: z.string().nullable().optional(),
+  localDueEnd: z.string().nullable().optional(),
+  recDaysMask: z.number().int().nullable().optional(),
+  // Method configuration inline
+  method: z.enum(["location", "movement", "photo", "checkin"]),
+  graceTimeSeconds: z.number().int().nullable().optional(),
+  durationSeconds: z.number().int().nullable().optional(),
+  geoLat: z.number().nullable().optional(),
+  geoLng: z.number().nullable().optional(),
+  geoRadiusM: z.number().int().nullable().optional(),
+  // Destination
   destinationType: z.string(),
   destinationUserId: z.string().nullable().optional(),
   destinationCharityId: z.string().nullable().optional(),
-  verificationMethod: z
-    .object({
-      method: z.enum(["location", "movement", "photo", "checkin"]),
-      durationSeconds: z.number().int().nullable().optional(),
-      latitude: z.number().nullable().optional(),
-      longitude: z.number().nullable().optional(),
-      radiusM: z.number().int().nullable().optional(),
-    })
-    .optional(),
 });
 
 export const GoalCreateResponseSchema = GoalBaseSchema;
@@ -97,38 +95,18 @@ export const GoalDeleteResponseSchema = z.object({
   message: z.string(), // "Goal deleted successfully."
 });
 
-export const GoalVerificationInputSchema = z.object({
-  photoUrl: z.string().nullable().optional(),
-  photoDescription: z.string().nullable().optional(),
-  startTime: z.string().datetime().nullable().optional(),
-  occurrenceDate: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .nullable()
-    .optional(),
-});
-
-export const GoalVerifyRequestSchema = z.array(GoalVerificationInputSchema);
-
-export const GoalVerifyResponseSchema = z.object({
-  message: z.string(), // "Verification log submitted."
-});
-
-// ---------------- Goal Timer Schemas ----------------
-
-export const GoalTimerSchema = z.object({
+export const GoalOccurrenceSchema = z.object({
   goalId: z.string(),
   userId: z.string(),
-  startedAt: z.string().datetime().nullable(),
-});
-
-export const GoalTimerGetResponseSchema = z.object({
-  timer: GoalTimerSchema.nullable(),
-});
-
-export const GoalTimerStartResponseSchema = z.object({
-  timer: GoalTimerSchema,
-  created: z.boolean(),
+  occurrenceDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  status: z.enum(["pending", "approved", "rejected"]),
+  verifiedAt: z.string().datetime().nullable().optional(),
+  photoUrl: z.string().nullable().optional(),
+  photoDescription: z.string().nullable().optional(),
+  timerStartedAt: z.string().datetime().nullable().optional(),
+  timerEndedAt: z.string().datetime().nullable().optional(),
+  violated: z.boolean().nullable().optional(),
+  approvedBy: z.string().nullable().optional(),
 });
 
 export const GoalReviewDetails = z.object({
@@ -146,10 +124,6 @@ export const GoalReviewUpdateRequestSchema = z.object({
 
 // ---------------- Inferred Types (backwards-compatible names) ----------------
 
-export type GoalVerificationMethod = z.infer<
-  typeof GoalVerificationMethodSchema
->;
-
 export type GoalBase = z.infer<typeof GoalBaseSchema>;
 
 export type GoalsListItem = z.infer<typeof GoalsListItemSchema>;
@@ -160,15 +134,7 @@ export type GoalCreateResponse = z.infer<typeof GoalCreateResponseSchema>;
 
 export type GoalDeleteResponse = z.infer<typeof GoalDeleteResponseSchema>;
 
-export type GoalVerificationInput = z.infer<typeof GoalVerificationInputSchema>;
-export type GoalVerifyRequest = z.infer<typeof GoalVerifyRequestSchema>;
-export type GoalVerifyResponse = z.infer<typeof GoalVerifyResponseSchema>;
-
-export type GoalTimer = z.infer<typeof GoalTimerSchema>;
-export type GoalTimerGetResponse = z.infer<typeof GoalTimerGetResponseSchema>;
-export type GoalTimerStartResponse = z.infer<
-  typeof GoalTimerStartResponseSchema
->;
+export type GoalOccurrence = z.infer<typeof GoalOccurrenceSchema>;
 
 export type GoalReviewListResponse = z.infer<
   typeof GoalReviewListResponseSchema
