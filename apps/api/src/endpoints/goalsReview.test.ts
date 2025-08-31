@@ -1,7 +1,7 @@
 import app from "../index";
 import { env, env as testEnv } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import { v7 as uuid } from "uuid";
+import { GoalCreateResponse, GoalOccurrence } from "@commit/types";
 
 describe("Goals review endpoints", () => {
   it("rejects review list for non-reviewer", async () => {
@@ -10,17 +10,6 @@ describe("Goals review endpoints", () => {
   });
 
   it("allows reviewer to list pending verifications and update status", async () => {
-    // Seed reviewer user and session for dev auto-auth
-    const reviewerId = "reviewer_1";
-    const reviewerEmail = "reviewer@example.com";
-    await testEnv.DB.exec(
-      `INSERT INTO user (id, name, email, emailVerified, image, role, updatedAt) VALUES ('${reviewerId}','Reviewer','${reviewerEmail}',1,NULL,'reviewer',strftime('%s','now'));`
-    );
-    const sessionId = uuid();
-    const token = uuid();
-    await testEnv.DB.exec(
-      `INSERT INTO session (id, expiresAt, token, updatedAt, userId, createdAt) VALUES ('${sessionId}', strftime('%s','now', '+1 day'), '${token}', strftime('%s','now'), '${reviewerId}', strftime('%s','now'));`
-    );
     // Create a goal for user_1
     const createRes = await app.request(
       "/api/goals",
@@ -45,7 +34,7 @@ describe("Goals review endpoints", () => {
       },
       env
     );
-    const created = await createRes.json();
+    const created = await createRes.json<GoalCreateResponse>();
 
     // Create a pending occurrence with a photo by calling photo endpoint
     const photoRes = await app.request(
@@ -62,14 +51,13 @@ describe("Goals review endpoints", () => {
     );
     expect(photoRes.status).toBe(200);
 
-    // Reviewer lists pending verifications
-    const listRes = await app.request(
-      "/api/goals/review",
-      {
-        headers: new Headers({ "X-Commit-Dev-Auto-Auth": reviewerEmail }),
-      },
-      env
+    // Elevate default test user to reviewer role (auth mock reads this)
+    await testEnv.DB.exec(
+      `UPDATE user SET role = 'reviewer' WHERE id = 'user_1';`
     );
+
+    // Reviewer lists pending verifications
+    const listRes = await app.request("/api/goals/review", {}, env);
     expect(listRes.status).toBe(200);
     const items = (await listRes.json()) as Array<{
       goalId: string;
@@ -86,13 +74,12 @@ describe("Goals review endpoints", () => {
         body: JSON.stringify({ approvalStatus: "approved" }),
         headers: new Headers({
           "Content-Type": "application/json",
-          "X-Commit-Dev-Auto-Auth": reviewerEmail,
         }),
       },
       env
     );
     expect(updRes.status).toBe(200);
-    const updated = await updRes.json();
+    const updated = await updRes.json<GoalOccurrence>();
     expect(updated.status).toBe("approved");
   });
 });

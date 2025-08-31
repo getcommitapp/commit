@@ -24,8 +24,16 @@ export class GoalsReviewUpdate extends OpenAPIRoute {
       body: contentJson(GoalReviewUpdateRequestSchema),
     },
     responses: {
+      "200": {
+        description: "Goal validation log updated",
+        content: {
+          "application/json": {
+            schema: GoalReviewUpdateRequestSchema,
+          },
+        },
+      },
       "404": {
-        description: "Verification log not found",
+        description: "Goal occurrence not found",
       },
       "403": {
         description: "Unauthorized - reviewer access required",

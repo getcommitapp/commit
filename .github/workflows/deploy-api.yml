@@ -30,7 +30,10 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm -w install --frozen-lockfile --filter '@commit/api' --filter '@commit/types'
+        run: pnpm -w install --frozen-lockfile --filter '@commit/api' --filter '@commit/types' --filter '@commit/engine'
+
+      - name: Build workspace
+        run: pnpm build
 
       - name: Lint API
         run: pnpm --filter '@commit/api' run lint
