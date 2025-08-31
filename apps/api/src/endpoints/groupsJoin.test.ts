@@ -100,7 +100,7 @@ describe("POST /api/groups/join (join)", () => {
 
     // Add user_1 as a participant
     await testEnv.DB.exec(
-      `INSERT INTO group_participants (groupId, userId, joinedAt, status, updatedAt) VALUES ('${groupId}', 'user_1', strftime('%s','now'), NULL, strftime('%s','now'));`
+      `INSERT INTO group_member (groupId, userId, joinedAt, status, updatedAt) VALUES ('${groupId}', 'user_1', strftime('%s','now'), NULL, strftime('%s','now'));`
     );
 
     // Try to join again

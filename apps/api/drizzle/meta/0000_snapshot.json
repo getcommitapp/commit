@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "15c78a10-ee4a-44b6-921d-ff52d9e071b2",
+  "id": "fd564271-7fe0-464b-bf3a-d458937af12e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -597,8 +597,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "group_participants": {
-      "name": "group_participants",
+    "group_member": {
+      "name": "group_member",
       "columns": {
         "groupId": {
           "name": "groupId",
@@ -646,18 +646,18 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "group_participants_groupId_group_id_fk": {
-          "name": "group_participants_groupId_group_id_fk",
-          "tableFrom": "group_participants",
+        "group_member_groupId_group_id_fk": {
+          "name": "group_member_groupId_group_id_fk",
+          "tableFrom": "group_member",
           "tableTo": "group",
           "columnsFrom": ["groupId"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "group_participants_userId_user_id_fk": {
-          "name": "group_participants_userId_user_id_fk",
-          "tableFrom": "group_participants",
+        "group_member_userId_user_id_fk": {
+          "name": "group_member_userId_user_id_fk",
+          "tableFrom": "group_member",
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
@@ -666,9 +666,9 @@
         }
       },
       "compositePrimaryKeys": {
-        "group_participants_groupId_userId_pk": {
+        "group_member_groupId_userId_pk": {
           "columns": ["groupId", "userId"],
-          "name": "group_participants_groupId_userId_pk"
+          "name": "group_member_groupId_userId_pk"
         }
       },
       "uniqueConstraints": {},

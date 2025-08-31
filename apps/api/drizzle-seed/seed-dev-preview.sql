@@ -345,7 +345,7 @@ ON CONFLICT(id) DO UPDATE SET
   updatedAt=excluded.updatedAt;
 
 -- Insert group participants
-INSERT OR IGNORE INTO group_participants (groupId, userId, joinedAt, status, createdAt, updatedAt)
+INSERT OR IGNORE INTO group_member (groupId, userId, joinedAt, status, createdAt, updatedAt)
 VALUES 
   -- Fitness Buddies group
   ('00000000-0000-4000-8000-0000000000gr1', '00000000-0000-4000-8000-000000000001', strftime('%s','now', '-7 days'), 'active', strftime('%s','now'), strftime('%s','now')),

@@ -87,7 +87,7 @@ CREATE TABLE `group` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `group_inviteCode_unique` ON `group` (`inviteCode`);--> statement-breakpoint
-CREATE TABLE `group_participants` (
+CREATE TABLE `group_member` (
 	`groupId` text NOT NULL,
 	`userId` text NOT NULL,
 	`joinedAt` integer NOT NULL,

@@ -40,12 +40,12 @@ export class GroupsList extends OpenAPIRoute {
         eq(schema.Group.creatorId, userId),
         exists(
           db
-            .select({ one: schema.GroupParticipants.userId })
-            .from(schema.GroupParticipants)
+            .select({ one: schema.GroupMember.userId })
+            .from(schema.GroupMember)
             .where(
               and(
-                eq(schema.GroupParticipants.groupId, schema.Group.id),
-                eq(schema.GroupParticipants.userId, userId)
+                eq(schema.GroupMember.groupId, schema.Group.id),
+                eq(schema.GroupMember.userId, userId)
               )
             )
         )

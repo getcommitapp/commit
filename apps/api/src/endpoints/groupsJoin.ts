@@ -2,7 +2,7 @@ import { OpenAPIRoute, contentJson } from "chanfana";
 import { drizzle } from "drizzle-orm/d1";
 import { eq, and } from "drizzle-orm";
 import type { AppContext } from "../types";
-import { Group, GroupParticipants } from "../db/schema";
+import { Group, GroupMember } from "../db/schema";
 import { GroupJoinRequestSchema, GroupJoinResponseSchema } from "@commit/types";
 
 export class GroupsJoin extends OpenAPIRoute {
@@ -45,18 +45,13 @@ export class GroupsJoin extends OpenAPIRoute {
     // Already member?
     const existing = await db
       .select()
-      .from(GroupParticipants)
-      .where(
-        and(
-          eq(GroupParticipants.groupId, g.id),
-          eq(GroupParticipants.userId, userId)
-        )
-      )
+      .from(GroupMember)
+      .where(and(eq(GroupMember.groupId, g.id), eq(GroupMember.userId, userId)))
       .get();
     if (existing) return new Response("Already a member", { status: 409 });
 
     const now = new Date();
-    await db.insert(GroupParticipants).values({
+    await db.insert(GroupMember).values({
       groupId: g.id,
       userId,
       joinedAt: now,

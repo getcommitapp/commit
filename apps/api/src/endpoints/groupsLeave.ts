@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GroupLeaveResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import { and, eq } from "drizzle-orm";
-import { Group, GroupParticipants } from "../db/schema";
+import { Group, GroupMember } from "../db/schema";
 
 export class GroupsLeave extends OpenAPIRoute {
   schema = {
@@ -36,13 +36,8 @@ export class GroupsLeave extends OpenAPIRoute {
       });
 
     await db
-      .delete(GroupParticipants)
-      .where(
-        and(
-          eq(GroupParticipants.groupId, id),
-          eq(GroupParticipants.userId, userId)
-        )
-      );
+      .delete(GroupMember)
+      .where(and(eq(GroupMember.groupId, id), eq(GroupMember.userId, userId)));
 
     return c.json({ message: "Left group successfully." });
   }

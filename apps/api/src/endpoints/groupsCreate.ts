@@ -65,25 +65,7 @@ export class GroupsCreate extends OpenAPIRoute {
     if (!createdGoal)
       return new Response("Failed to create goal", { status: 500 });
 
-    // Optional verification method
-    if (goal.verificationMethod) {
-      try {
-        const vm = goal.verificationMethod;
-        await db.insert(schema.GoalVerificationsMethod).values({
-          id: uuid(),
-          goalId: createdGoal.id,
-          method: vm.method,
-          latitude: vm.latitude ?? null,
-          longitude: vm.longitude ?? null,
-          radiusM: vm.radiusM ?? null,
-          durationSeconds: vm.durationSeconds ?? null,
-          createdAt: now,
-          updatedAt: now,
-        });
-      } catch (e) {
-        console.error("[GroupsCreate] Failed to insert verification method", e);
-      }
-    }
+    // Verification method is inline on goal in new model
 
     const [created] = await db
       .insert(schema.Group)
@@ -100,7 +82,7 @@ export class GroupsCreate extends OpenAPIRoute {
       .returning();
 
     // Add creator as participant
-    await db.insert(schema.GroupParticipants).values({
+    await db.insert(schema.GroupMember).values({
       groupId: id,
       userId,
       joinedAt: now,

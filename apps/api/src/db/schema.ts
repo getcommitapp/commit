@@ -163,9 +163,7 @@ export const GoalOccurrence = sqliteTable(
     createdAt: createCreatedAt(),
     updatedAt: createUpdatedAt(),
   },
-  (t) => ({
-    pk: primaryKey({ columns: [t.goalId, t.userId, t.occurrenceDate] }),
-  })
+  (t) => [primaryKey({ columns: [t.goalId, t.userId, t.occurrenceDate] })]
 );
 
 export const Group = sqliteTable("group", {
@@ -187,8 +185,8 @@ export const Group = sqliteTable("group", {
   updatedAt: createUpdatedAt(),
 });
 
-export const GroupParticipants = sqliteTable(
-  "group_participants",
+export const GroupMember = sqliteTable(
+  "group_member",
   {
     groupId: text("groupId")
       .notNull()
@@ -203,9 +201,7 @@ export const GroupParticipants = sqliteTable(
     createdAt: createCreatedAt(),
     updatedAt: createUpdatedAt(),
   },
-  (t) => ({
-    pk: primaryKey({ columns: [t.groupId, t.userId] }),
-  })
+  (t) => [primaryKey({ columns: [t.groupId, t.userId] })]
 );
 
 // ---------- Relations ----------
@@ -218,7 +214,7 @@ export const GroupRelations = relations(Group, ({ one, many }) => ({
     fields: [Group.creatorId],
     references: [User.id],
   }),
-  participants: many(GroupParticipants),
+  participants: many(GroupMember),
 }));
 
 export const GoalRelations = relations(Goal, ({ one, many }) => ({
@@ -229,19 +225,16 @@ export const GoalRelations = relations(Goal, ({ one, many }) => ({
   occurrences: many(GoalOccurrence),
 }));
 
-export const GroupParticipantsRelations = relations(
-  GroupParticipants,
-  ({ one }) => ({
-    group: one(Group, {
-      fields: [GroupParticipants.groupId],
-      references: [Group.id],
-    }),
-    user: one(User, {
-      fields: [GroupParticipants.userId],
-      references: [User.id],
-    }),
-  })
-);
+export const GroupMemberRelations = relations(GroupMember, ({ one }) => ({
+  group: one(Group, {
+    fields: [GroupMember.groupId],
+    references: [Group.id],
+  }),
+  user: one(User, {
+    fields: [GroupMember.userId],
+    references: [User.id],
+  }),
+}));
 
 export type UserSelect = typeof User.$inferSelect;
 export type UserInsert = typeof User.$inferInsert;
@@ -267,5 +260,5 @@ export type GoalOccurrenceInsert = typeof GoalOccurrence.$inferInsert;
 export type GroupSelect = typeof Group.$inferSelect;
 export type GroupInsert = typeof Group.$inferInsert;
 
-export type GroupParticipantsSelect = typeof GroupParticipants.$inferSelect;
-export type GroupParticipantsInsert = typeof GroupParticipants.$inferInsert;
+export type GroupMemberSelect = typeof GroupMember.$inferSelect;
+export type GroupMemberInsert = typeof GroupMember.$inferInsert;

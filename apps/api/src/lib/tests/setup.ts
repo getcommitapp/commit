@@ -79,7 +79,7 @@ async function resetDb() {
     "d1_migrations",
     "verification",
     "goal_occurrence",
-    "group_participants",
+    "group_member",
     "group",
     "goal",
     "charity",
