@@ -15,12 +15,15 @@ import { UsersDelete } from "./endpoints/usersDelete";
 import { GoalsList } from "./endpoints/goalsList";
 import { GoalsCreate } from "./endpoints/goalsCreate";
 import { GoalsDelete } from "./endpoints/goalsDelete";
-import { GoalsVerify } from "./endpoints/goalsVerify";
-import { GoalsTimerGet } from "./endpoints/goalsTimerGet";
-import { GoalsTimerStart } from "./endpoints/goalsTimerStart";
 import { GoalsReviewList } from "./endpoints/goalsReviewList";
 import { GoalsReviewUpdate } from "./endpoints/goalsReviewUpdate";
 import { GoalsFetch } from "./endpoints/goalsFetch";
+import { GoalsActionCheckin } from "./endpoints/goalsActionCheckin";
+import { GoalsActionPhoto } from "./endpoints/goalsActionPhoto";
+import {
+  GoalsActionMovementStart,
+  GoalsActionMovementStop,
+} from "./endpoints/goalsActionMovement";
 
 // Groups
 import { GroupsList } from "./endpoints/groupsList";
@@ -155,10 +158,11 @@ openapi.post("/api/goals", GoalsCreate);
 openapi.get("/api/goals/review", GoalsReviewList);
 openapi.get("/api/goals/:id", GoalsFetch);
 openapi.delete("/api/goals/:id", GoalsDelete);
-openapi.post("/api/goals/:id/verify", GoalsVerify);
-openapi.get("/api/goals/:id/timer", GoalsTimerGet);
-openapi.post("/api/goals/:id/timer/start", GoalsTimerStart);
 openapi.put("/api/goals/:id/review", GoalsReviewUpdate);
+openapi.post("/api/goals/:id/checkin", GoalsActionCheckin);
+openapi.post("/api/goals/:id/photo", GoalsActionPhoto);
+openapi.post("/api/goals/:id/movement/start", GoalsActionMovementStart);
+openapi.post("/api/goals/:id/movement/stop", GoalsActionMovementStop);
 
 // Groups
 openapi.get("/api/groups", GroupsList);

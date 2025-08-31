@@ -109,6 +109,62 @@ export const GoalOccurrenceSchema = z.object({
   approvedBy: z.string().nullable().optional(),
 });
 
+// -------- Action Endpoints (new model) --------
+
+export const GoalCheckinRequestSchema = z.object({
+  occurrenceDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional(),
+});
+
+export const GoalPhotoRequestSchema = z.object({
+  photoUrl: z.string(),
+  photoDescription: z.string().nullable().optional(),
+  occurrenceDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional(),
+});
+
+export const GoalMovementStartRequestSchema = z.object({
+  occurrenceDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional(),
+});
+
+export const GoalMovementStopRequestSchema = z.object({
+  occurrenceDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional(),
+});
+
+export const GoalActionResponseSchema = z.object({
+  state: z.enum([
+    "scheduled",
+    "window_open",
+    "ongoing",
+    "awaiting_verification",
+    "missed",
+    "failed",
+    "passed",
+    "expired",
+  ]),
+  engineFlags: z.object({
+    showTimer: z.boolean().optional(),
+    showCheckinModal: z.boolean().optional(),
+    showCheckinButton: z.boolean().optional(),
+    isDurationBased: z.boolean().optional(),
+  }),
+  timeLeft: z.string().nullable().optional(),
+});
+
 export const GoalReviewDetails = z.object({
   goalId: z.string(),
   goalName: z.string(),
@@ -135,6 +191,16 @@ export type GoalCreateResponse = z.infer<typeof GoalCreateResponseSchema>;
 export type GoalDeleteResponse = z.infer<typeof GoalDeleteResponseSchema>;
 
 export type GoalOccurrence = z.infer<typeof GoalOccurrenceSchema>;
+
+export type GoalCheckinRequest = z.infer<typeof GoalCheckinRequestSchema>;
+export type GoalPhotoRequest = z.infer<typeof GoalPhotoRequestSchema>;
+export type GoalMovementStartRequest = z.infer<
+  typeof GoalMovementStartRequestSchema
+>;
+export type GoalMovementStopRequest = z.infer<
+  typeof GoalMovementStopRequestSchema
+>;
+export type GoalActionResponse = z.infer<typeof GoalActionResponseSchema>;
 
 export type GoalReviewListResponse = z.infer<
   typeof GoalReviewListResponseSchema

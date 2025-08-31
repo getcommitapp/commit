@@ -3,6 +3,7 @@ import {
   EngineOutputs,
   GoalState,
   Recurrence,
+  VerificationMethod,
 } from "@commit/engine";
 import type {
   GoalOccurrenceSelect,
@@ -52,7 +53,7 @@ export function toEngineInputs(
       localDueStart: goal.localDueStart ?? null,
       localDueEnd: goal.localDueEnd ?? null,
       recurrence,
-      verificationMethod: ((): any => {
+      verificationMethod: ((): VerificationMethod => {
         switch (goal.method) {
           case "movement":
             return {
