@@ -5,7 +5,6 @@ import { FormGroup, FormItem } from "@/components/ui/form";
 import { DetailsSheet } from "@/components/ui/DetailsSheet";
 import {
   useMovementStart,
-  useMovementStop,
   useLocalMovementTimer,
 } from "@/lib/hooks/useMovement";
 import { spacing, useThemeColor } from "@/components/Themed";
@@ -38,13 +37,16 @@ export const GoalDetailsSheet = forwardRef<
     const background = useThemeColor({}, "background");
     const { data: localTimer } = useLocalMovementTimer(goal.id);
     const { mutate: startTimer, isPending } = useMovementStart(goal.id);
-    const { mutate: stopTimer, isPending: isStopping } = useMovementStop(
-      goal.id
-    );
     const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(
       goal.id
     );
-    const { elapsedLabel } = useElapsedTimer(localTimer?.startedAt ?? null);
+    const { remainingLabel, remainingMs } = useElapsedTimer(
+      localTimer?.startedAt ?? null,
+      {
+        durationMs: goal.durationSeconds ? goal.durationSeconds * 1000 : null,
+        onComplete: undefined,
+      }
+    );
     const { mutate: submitPhoto, isPending: isSubmittingPhoto } = useGoalPhoto(
       goal.id
     );
@@ -70,17 +72,10 @@ export const GoalDetailsSheet = forwardRef<
               style={{ marginBottom: spacing.sm }}
               backgroundStyle={{ backgroundColor: background }}
             >
-              {localTimer?.startedAt ? (
+              {localTimer?.startedAt && remainingMs !== 0 ? (
                 <>
                   <FormItem label="Status" value="Running" />
-                  <FormItem label="Elapsed" value={elapsedLabel ?? "–"} />
-                  <Button
-                    title="Stop Timer"
-                    onPress={() => !isStopping && stopTimer()}
-                    loading={isStopping}
-                    testID="stop-goal-timer"
-                    accessibilityLabel="stop-goal-timer"
-                  />
+                  <FormItem label="Remaining" value={remainingLabel ?? "–"} />
                 </>
               ) : (
                 <>

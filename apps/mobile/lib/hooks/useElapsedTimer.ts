@@ -2,12 +2,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 export interface UseElapsedTimerOptions {
   intervalMs?: number;
+  durationMs?: number | null; // when provided, exposes countdown helpers
+  onComplete?: () => void; // called once when remaining reaches 0
 }
 
 export interface UseElapsedTimerResult {
   elapsedLabel: string | null;
   elapsedMs: number | null;
   isRunning: boolean;
+  remainingMs: number | null;
+  remainingLabel: string | null;
 }
 
 function formatHms(milliseconds: number): string {
@@ -23,7 +27,7 @@ export function useElapsedTimer(
   startedAt: string | number | Date | null | undefined,
   options?: UseElapsedTimerOptions
 ): UseElapsedTimerResult {
-  const { intervalMs = 1000 } = options ?? {};
+  const { intervalMs = 1000, durationMs = null, onComplete } = options ?? {};
 
   const startTimeMs = useMemo(() => {
     if (!startedAt) return null;
@@ -33,6 +37,7 @@ export function useElapsedTimer(
 
   const [nowMs, setNowMs] = useState<number>(() => Date.now());
   const timerIdRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const completedRef = useRef(false);
 
   const isRunning = startTimeMs != null;
 
@@ -60,5 +65,27 @@ export function useElapsedTimer(
     return formatHms(elapsedMs);
   }, [elapsedMs]);
 
-  return { elapsedLabel, elapsedMs, isRunning };
+  const remainingMs = useMemo(() => {
+    if (!isRunning || startTimeMs == null || durationMs == null) return null;
+    return Math.max(0, durationMs - (nowMs - startTimeMs));
+  }, [isRunning, startTimeMs, nowMs, durationMs]);
+
+  const remainingLabel = useMemo(() => {
+    if (remainingMs == null) return null;
+    return formatHms(remainingMs);
+  }, [remainingMs]);
+
+  useEffect(() => {
+    if (remainingMs == null || durationMs == null) return;
+    if (remainingMs === 0 && !completedRef.current) {
+      completedRef.current = true;
+      if (timerIdRef.current) {
+        clearInterval(timerIdRef.current);
+        timerIdRef.current = null;
+      }
+      onComplete?.();
+    }
+  }, [remainingMs, durationMs, onComplete]);
+
+  return { elapsedLabel, elapsedMs, isRunning, remainingMs, remainingLabel };
 }

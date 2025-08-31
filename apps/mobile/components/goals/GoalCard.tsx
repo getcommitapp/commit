@@ -92,7 +92,10 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
       </View>
 
       {isDurationBased && goal.showTimer ? (
-        <GoalTimerRow goalId={goal.id} />
+        <GoalTimerRow
+          goalId={goal.id}
+          durationSeconds={goal.durationSeconds ?? 0}
+        />
       ) : null}
       {!isDurationBased && goal.showCheckinButton ? (
         <View style={{ marginTop: 4 }}>
@@ -139,15 +142,27 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   );
 }
 
-function GoalTimerRow({ goalId }: { goalId: string }) {
+function GoalTimerRow({
+  goalId,
+  durationSeconds,
+}: {
+  goalId: string;
+  durationSeconds: number;
+}) {
   const mutedForeground = useThemeColor({}, "mutedForeground");
   const { data: localTimer } = useLocalMovementTimer(goalId);
-  const { elapsedLabel } = useElapsedTimer(localTimer?.startedAt ?? null);
-  if (!localTimer?.startedAt) return null;
+  const { remainingLabel, remainingMs } = useElapsedTimer(
+    localTimer?.startedAt ?? null,
+    {
+      durationMs: durationSeconds ? durationSeconds * 1000 : null,
+      onComplete: undefined,
+    }
+  );
+  if (!localTimer?.startedAt || remainingMs === 0) return null;
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
       <Text style={{ ...textVariants.footnote, color: mutedForeground }}>
-        Timer: {elapsedLabel ?? "–"}
+        Timer: {remainingLabel ?? "–"}
       </Text>
     </View>
   );

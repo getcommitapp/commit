@@ -40,26 +40,4 @@ export function useMovementStart(goalId: string) {
   });
 }
 
-export function useMovementStop(goalId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async () => {
-      const body = {};
-      GoalMovementStopRequestSchema.parse(body);
-      return apiFetch(
-        `/goals/${goalId}/movement/stop`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(body),
-        },
-        GoalActionResponseSchema
-      );
-    },
-    onSuccess: () => {
-      qc.setQueryData(["movement-timer", goalId], { startedAt: null });
-      qc.invalidateQueries({ queryKey: ["goals"] });
-      qc.invalidateQueries({ queryKey: ["groups"] });
-    },
-  });
-}
+// App no longer exposes stop; cancellation is handled programmatically by motion detection
