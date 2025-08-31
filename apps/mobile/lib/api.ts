@@ -53,3 +53,18 @@ export async function apiFetch(
 }
 
 export type ApiSuccess<T> = { success: true } & T;
+
+export async function createApiImageSource(url: string) {
+  const headers: Record<string, string> = {};
+  // Dev/preview impersonation header
+  if (config.devAutoAuthAsTestUser) {
+    headers["X-Commit-Dev-Auto-Auth"] = config.devAutoAuthAsTestUser;
+  }
+  // Real session token (if any)
+  const session = await authClient.getSession();
+  const token = session?.data?.session?.token;
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return { uri: url, headers } as const;
+}

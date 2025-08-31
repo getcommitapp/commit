@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { apiFetch } from "../api";
-
-type UploadResponse = { url: string; key: string };
+import { FilesUploadResponse } from "@commit/types";
 
 export function useUploadFile() {
   return useMutation({
@@ -21,7 +20,7 @@ export function useUploadFile() {
         method: "POST",
         body: form,
       });
-      return res as UploadResponse;
+      return res as FilesUploadResponse;
     },
   });
 }

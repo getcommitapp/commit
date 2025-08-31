@@ -16,13 +16,21 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import { useReviews } from "@/lib/hooks/useReviews";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image } from "expo-image";
 import { useReviewUpdate } from "@/lib/hooks/useReviewUpdate";
+import { createApiImageSource } from "@/lib/api";
 
 export default function ReviewsScreen() {
   const { data: reviews, isLoading, error, refetch } = useReviews();
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+  const [imageSource, setImageSource] = useState<{
+    uri: string;
+    headers: any;
+  } | null>(null);
 
   const failColor = useThemeColor({}, "danger");
   const successColor = useThemeColor({}, "success");
@@ -34,6 +42,44 @@ export default function ReviewsScreen() {
   const imageHeight = screenHeight * 0.5;
 
   const reviewUpdate = useReviewUpdate();
+
+  // Reset index if reviews list changes significantly
+  useEffect(() => {
+    if (!reviews || reviews.length === 0) {
+      setCurrentIndex(0);
+      return;
+    }
+    if (currentIndex >= reviews.length) {
+      setCurrentIndex(0);
+    }
+  }, [reviews, currentIndex]);
+
+  // Build image source with auth headers when photoUrl changes
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const url = reviews?.[currentIndex]?.photoUrl;
+      if (!url) {
+        if (mounted) setImageSource(null);
+        return;
+      }
+      try {
+        const src = await createApiImageSource(url);
+        if (mounted) setImageSource(src as any);
+      } catch {
+        if (mounted) setImageSource(null);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [reviews, currentIndex]);
+
+  // Reset image loading state when the current image changes
+  useEffect(() => {
+    setIsImageLoading(true);
+    setImageError(false);
+  }, [currentIndex, reviews]);
 
   const handleApprove = async () => {
     if (!reviews) return;
@@ -116,6 +162,18 @@ export default function ReviewsScreen() {
         {currentReview.goalName}
       </ThemedText>
 
+      {!!currentReview.goalDescription && (
+        <ThemedText
+          style={{
+            ...textVariants.body,
+            color: mutedForeground,
+            marginBottom: spacing.sm,
+          }}
+        >
+          {currentReview.goalDescription}
+        </ThemedText>
+      )}
+
       <View
         style={[
           styles.imagePlaceholder,
@@ -126,13 +184,32 @@ export default function ReviewsScreen() {
           },
         ]}
       >
-        {currentReview.photoUrl ? (
-          <Image
-            source={currentReview.photoUrl}
-            style={{ width: "100%", height: "100%", borderRadius: 8 }}
-            contentFit="cover" // similar to resizeMode="cover"
-            transition={1000} // optional: smooth fade-in
-          />
+        {currentReview.photoUrl && !imageError && imageSource ? (
+          <>
+            {isImageLoading && (
+              <View
+                style={[
+                  styles.skeleton,
+                  { backgroundColor: placeholderBorder },
+                ]}
+              />
+            )}
+            <Image
+              source={imageSource}
+              style={{ width: "100%", height: "100%", borderRadius: 8 }}
+              contentFit="cover"
+              transition={400}
+              cachePolicy="memory-disk"
+              allowDownscaling
+              onLoadStart={() => setIsImageLoading(true)}
+              onLoadEnd={() => setIsImageLoading(false)}
+              onError={(e) => {
+                console.error("Error loading image", e);
+                setIsImageLoading(false);
+                setImageError(true);
+              }}
+            />
+          </>
         ) : (
           <Text style={[styles.placeholderText, { color: mutedForeground }]}>
             No Image Provided
@@ -149,16 +226,24 @@ export default function ReviewsScreen() {
         Review {currentIndex + 1} of {reviews.length}
       </ThemedText>
 
-      {/* Action buttons - keeping your exact layout */}
+      {/* Action buttons */}
       <View style={styles.buttons}>
-        <Pressable style={styles.iconButton} onPress={handleReject}>
+        <Pressable
+          style={styles.iconButton}
+          onPress={handleReject}
+          disabled={reviewUpdate.isPending}
+        >
           <MaterialCommunityIcons
             name="close-circle-outline"
             size={60}
             color={failColor}
           />
         </Pressable>
-        <Pressable style={styles.iconButton} onPress={handleApprove}>
+        <Pressable
+          style={styles.iconButton}
+          onPress={handleApprove}
+          disabled={reviewUpdate.isPending}
+        >
           <MaterialCommunityIcons
             name="check-circle-outline"
             size={60}
@@ -183,6 +268,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: spacing.md,
+    borderRadius: spacing.sm,
+    position: "relative",
+  },
+  skeleton: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     borderRadius: spacing.sm,
   },
   placeholderText: {

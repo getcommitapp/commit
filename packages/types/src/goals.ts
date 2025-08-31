@@ -212,6 +212,7 @@ export const GoalActionResponseSchema = z.object({
 export const GoalReviewDetails = z.object({
   goalId: z.string(),
   goalName: z.string(),
+  goalDescription: z.string().nullable().optional(),
   photoUrl: z.string().nullable().optional(),
 });
 
