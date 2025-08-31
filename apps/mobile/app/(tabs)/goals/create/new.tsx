@@ -52,19 +52,17 @@ export default function GoalNewScreen() {
   //   if (date) setEndAt(date);
   // };
 
-  const buildVerificationMethod = () => {
+  const computeMethodAndDuration = () => {
     if (!method)
-      return undefined as
-        | undefined
-        | {
-            method: "location" | "movement" | "checkin" | "photo";
-            durationSeconds?: number;
-          };
-
-    if (method === "checkin" || method === "photo") {
-      return { method: method as "checkin" | "photo" };
-    }
-
+      return {
+        method: "checkin" as "location" | "movement" | "checkin" | "photo",
+        durationSeconds: undefined as number | undefined,
+      };
+    if (method === "checkin" || method === "photo")
+      return {
+        method: method as "checkin" | "photo",
+        durationSeconds: undefined,
+      };
     const minutes = computeDurationMinutes(method, duration);
     return {
       method: method as "location" | "movement",
@@ -73,6 +71,7 @@ export default function GoalNewScreen() {
   };
 
   const buildGoalPayload = (stakeCents: number) => {
+    const { method: m, durationSeconds } = computeMethodAndDuration();
     return {
       name: title,
       description: description || null,
@@ -82,8 +81,9 @@ export default function GoalNewScreen() {
       dueStartTime: (startTime ?? startAt)!.toISOString(),
       dueEndTime: endTime ? endTime.toISOString() : null,
       destinationType: "burn" as const,
-      verificationMethod: buildVerificationMethod(),
-    };
+      method: m,
+      durationSeconds,
+    } as const;
   };
 
   const handleCreate = async () => {

@@ -20,6 +20,9 @@ export function useGroups() {
             showCheckinModal: !!group.goal.engineFlags?.showCheckinModal,
             showCheckinButton: !!group.goal.engineFlags?.showCheckinButton,
             isDurationBased: !!group.goal.engineFlags?.isDurationBased,
+            method: group.goal.method,
+            durationSeconds: group.goal.durationSeconds ?? null,
+            graceTimeSeconds: group.goal.graceTimeSeconds ?? null,
             startDateFormatted: formatDate(group.goal.startDate) ?? "",
             endDateFormatted: group.goal.endDate
               ? (formatDate(group.goal.endDate) ?? null)

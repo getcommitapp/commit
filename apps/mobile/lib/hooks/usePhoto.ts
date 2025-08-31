@@ -2,17 +2,23 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../api";
 import {
   GoalActionResponseSchema,
-  GoalCheckinRequestSchema,
+  GoalPhotoRequestSchema,
 } from "@commit/types";
 
-export function useGoalCheckin(goalId: string) {
+export function useGoalPhoto(goalId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async () => {
-      const body = {};
-      GoalCheckinRequestSchema.parse(body);
+    mutationFn: async (input: {
+      photoUrl: string;
+      photoDescription?: string | null;
+    }) => {
+      const body = {
+        photoUrl: input.photoUrl,
+        photoDescription: input.photoDescription ?? null,
+      };
+      GoalPhotoRequestSchema.parse(body);
       const res = await apiFetch(
-        `/goals/${goalId}/checkin`,
+        `/goals/${goalId}/photo`,
         {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -23,16 +29,6 @@ export function useGoalCheckin(goalId: string) {
       return res;
     },
     onSuccess: () => {
-      // Optimistically clear any modal flags to avoid immediate re-open
-      qc.setQueriesData<
-        { id: string; showCheckinModal?: boolean }[] | undefined
-      >({ queryKey: ["goals"] }, (old) =>
-        old
-          ? old.map((g) =>
-              g.id === goalId ? { ...g, showCheckinModal: false } : g
-            )
-          : old
-      );
       qc.invalidateQueries({ queryKey: ["goals"] });
       qc.invalidateQueries({ queryKey: ["groups"] });
     },

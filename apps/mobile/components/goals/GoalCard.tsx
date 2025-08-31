@@ -8,7 +8,7 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
-import { useGoalTimer } from "@/lib/hooks/useGoalTimer";
+import { useLocalMovementTimer } from "@/lib/hooks/useMovement";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
@@ -141,9 +141,9 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
 
 function GoalTimerRow({ goalId }: { goalId: string }) {
   const mutedForeground = useThemeColor({}, "mutedForeground");
-  const { data: timer } = useGoalTimer(goalId);
-  const { elapsedLabel } = useElapsedTimer(timer?.startedAt);
-  if (!timer) return null;
+  const { data: localTimer } = useLocalMovementTimer(goalId);
+  const { elapsedLabel } = useElapsedTimer(localTimer?.startedAt ?? null);
+  if (!localTimer?.startedAt) return null;
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
       <Text style={{ ...textVariants.footnote, color: mutedForeground }}>

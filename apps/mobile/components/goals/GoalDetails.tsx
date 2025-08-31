@@ -27,14 +27,7 @@ export function GoalDetails({ goal, title = "Details" }: GoalDetailsProps) {
             label="Stake"
             value={formatStake(goal.currency, goal.stakeCents ?? 0)}
           />
-          <FormItem
-            label="Verification Method"
-            value={
-              goal.verificationMethod?.method
-                ? capitalize(goal.verificationMethod.method)
-                : "—"
-            }
-          />
+          <FormItem label="Method" value={capitalize(goal.method)} />
           <FormItem label="Time Left" value={goal?.timeLeft ?? "—"} />
           <FormItem label="Start Date" value={goal.startDateFormatted ?? "—"} />
           <FormItem label="End Date" value={goal.endDateFormatted ?? "—"} />
@@ -46,14 +39,10 @@ export function GoalDetails({ goal, title = "Details" }: GoalDetailsProps) {
             label="Due End Time"
             value={goal.dueEndTimeFormatted ?? "—"}
           />
-          {goal.verificationMethod?.durationSeconds ? (
+          {goal.durationSeconds ? (
             <FormItem
               label="Duration"
-              value={
-                formatDurationSeconds(
-                  goal.verificationMethod.durationSeconds
-                ) || "—"
-              }
+              value={formatDurationSeconds(goal.durationSeconds) || "—"}
             />
           ) : null}
         </>

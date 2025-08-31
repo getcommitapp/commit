@@ -3,7 +3,11 @@ import { View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FormGroup, FormItem } from "@/components/ui/form";
 import { DetailsSheet } from "@/components/ui/DetailsSheet";
-import { useGoalTimer, useStartGoalTimer } from "@/lib/hooks/useGoalTimer";
+import {
+  useMovementStart,
+  useMovementStop,
+  useLocalMovementTimer,
+} from "@/lib/hooks/useMovement";
 import { spacing, useThemeColor } from "@/components/Themed";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { Button } from "@/components/ui/Button";
@@ -11,6 +15,7 @@ import { useGoals } from "@/lib/hooks/useGoals";
 import { useDeleteGoal } from "@/lib/hooks/useDeleteGoal";
 import { GoalDetails } from "@/components/goals/GoalDetails";
 import { useGoalCheckin } from "@/lib/hooks/useCheckin";
+import { useGoalPhoto } from "@/lib/hooks/usePhoto";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
 
@@ -31,12 +36,18 @@ export const GoalDetailsSheet = forwardRef<
     ref
   ) => {
     const background = useThemeColor({}, "background");
-    const { data: timer } = useGoalTimer(goal.id);
-    const { mutate: startTimer, isPending } = useStartGoalTimer(goal.id);
+    const { data: localTimer } = useLocalMovementTimer(goal.id);
+    const { mutate: startTimer, isPending } = useMovementStart(goal.id);
+    const { mutate: stopTimer, isPending: isStopping } = useMovementStop(
+      goal.id
+    );
     const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(
       goal.id
     );
-    const { elapsedLabel } = useElapsedTimer(timer?.startedAt);
+    const { elapsedLabel } = useElapsedTimer(localTimer?.startedAt ?? null);
+    const { mutate: submitPhoto, isPending: isSubmittingPhoto } = useGoalPhoto(
+      goal.id
+    );
     const { mutate: deleteGoal, isPending: isDeleting } = useDeleteGoal(
       goal.id
     );
@@ -52,17 +63,24 @@ export const GoalDetailsSheet = forwardRef<
         enableDynamicSizing={enableDynamicSizing}
         onDismiss={onDismiss}
       >
-        {isDurationBased && (timer || goal.showTimer) ? (
+        {isDurationBased && (localTimer?.startedAt || goal.showTimer) ? (
           <View style={{ marginBottom: spacing.xl }}>
             <FormGroup
               title="Progress"
               style={{ marginBottom: spacing.sm }}
               backgroundStyle={{ backgroundColor: background }}
             >
-              {timer ? (
+              {localTimer?.startedAt ? (
                 <>
                   <FormItem label="Status" value="Running" />
                   <FormItem label="Elapsed" value={elapsedLabel ?? "–"} />
+                  <Button
+                    title="Stop Timer"
+                    onPress={() => !isStopping && stopTimer()}
+                    loading={isStopping}
+                    testID="stop-goal-timer"
+                    accessibilityLabel="stop-goal-timer"
+                  />
                 </>
               ) : (
                 <>
@@ -71,7 +89,7 @@ export const GoalDetailsSheet = forwardRef<
               )}
             </FormGroup>
 
-            {!timer && goal.showTimer ? (
+            {!localTimer?.startedAt && goal.showTimer ? (
               <Button
                 title="Start Timer"
                 onPress={() => !isPending && startTimer()}
@@ -83,7 +101,9 @@ export const GoalDetailsSheet = forwardRef<
           </View>
         ) : null}
 
-        {!isDurationBased && goal.showCheckinButton ? (
+        {!isDurationBased &&
+        goal.method === "checkin" &&
+        goal.showCheckinButton ? (
           <View style={{ marginBottom: spacing.xl }}>
             <Button
               title="Check-in"
@@ -95,22 +115,29 @@ export const GoalDetailsSheet = forwardRef<
           </View>
         ) : null}
 
-        <GoalDetails goal={goal} />
-
-        {goal.group ? (
-          <FormGroup
-            title="Group"
-            backgroundStyle={{ backgroundColor: background }}
-          >
-            <FormItem label="Name" value={goal.group.name} />
-            <FormItem
-              label="Description"
-              value={goal.group.description ?? ""}
+        {!isDurationBased &&
+        goal.method === "photo" &&
+        goal.showCheckinButton ? (
+          <View style={{ marginBottom: spacing.xl }}>
+            <Button
+              title="Submit Photo"
+              onPress={() =>
+                !isSubmittingPhoto &&
+                submitPhoto({
+                  photoUrl: "https://picsum.photos/seed/mobile/800/600",
+                  photoDescription: "Mobile submission",
+                })
+              }
+              loading={isSubmittingPhoto}
+              testID="submit-photo-goal"
+              accessibilityLabel="submit-photo-goal"
             />
-          </FormGroup>
+          </View>
         ) : null}
 
-        {!timer && !goal.group ? (
+        <GoalDetails goal={goal} />
+
+        {!localTimer?.startedAt && !goal.groupId ? (
           <Button
             title="Delete Goal"
             onPress={() =>
