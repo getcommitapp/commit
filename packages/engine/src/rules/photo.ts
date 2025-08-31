@@ -1,5 +1,5 @@
 import { EngineInputs, EngineOutputs } from "../types";
-import { baseOutput, computeTimeLeftLabel, ensureOccurrence } from "./common";
+import { baseOutput, ensureOccurrence } from "./common";
 
 export function evaluatePhoto(input: EngineInputs): EngineOutputs {
   const { goal, now = new Date() } = input;
@@ -16,24 +16,31 @@ export function evaluatePhoto(input: EngineInputs): EngineOutputs {
 
   const out: EngineOutputs = {
     ...baseOutput("scheduled"),
-    windows: {
-      currentWindow: { kind: "photo", start: windowStart, end: windowEnd },
+    occurrence: {
+      start: windowStart,
+      end: windowEnd,
+      graceUntil: inWindowNoEnd ? windowEnd : undefined,
     },
-    labels: { timeLeft: "" },
+    actions: [
+      {
+        kind: "upload_photo",
+        presentation: inWindowNoEnd ? "modal" : "button",
+        visibleFrom: windowStart,
+        visibleUntil: windowEnd,
+        enabled: now >= windowStart && now <= windowEnd,
+        label: "Upload photo",
+      },
+    ],
   };
 
   if (now < windowStart) {
     out.state = "scheduled";
-    out.labels.timeLeft = computeTimeLeftLabel(now, windowStart);
-    out.labels.nextMilestone = "until_window";
     out.nextTransitionAt = windowStart;
     return out;
   }
 
   if (now >= windowStart && now <= windowEnd) {
     out.state = "window_open";
-    out.labels.timeLeft = computeTimeLeftLabel(now, windowEnd);
-    out.labels.nextMilestone = "until_due_end";
     out.nextTransitionAt = windowEnd;
     return out;
   }
@@ -44,7 +51,5 @@ export function evaluatePhoto(input: EngineInputs): EngineOutputs {
   } else {
     out.state = "missed";
   }
-  out.labels.timeLeft = "";
-  out.labels.nextMilestone = "none";
   return out;
 }

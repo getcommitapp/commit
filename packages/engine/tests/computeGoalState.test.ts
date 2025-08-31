@@ -23,7 +23,7 @@ describe("computeGoalState - basic", () => {
       now: new Date("2025-01-01T07:00:30.000Z"),
     });
     expect(inGrace.state).toBe("window_open");
-    expect(inGrace.flags.showCheckinModal).toBe(true);
+    expect(inGrace.actions[0].presentation).toBe("modal");
   });
 
   it("movement with end exposes latestStart and timer visibility", () => {
@@ -38,7 +38,7 @@ describe("computeGoalState - basic", () => {
       },
     } as const;
     const res = computeGoalState(input);
-    expect(res.flags.showTimer).toBe(true);
-    expect(res.windows.latestStart).toBeInstanceOf(Date);
+    expect(res.actions[0].kind).toBe("movement_start");
+    expect(res.occurrence?.latestStart).toBeInstanceOf(Date);
   });
 });

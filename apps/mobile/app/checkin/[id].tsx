@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { useLocalSearchParams, Stack, useRouter } from "expo-router";
 import {
   spacing,
@@ -14,6 +14,7 @@ export default function GoalCheckinModalScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const background = useThemeColor({}, "background");
+  const mutedForeground = useThemeColor({}, "mutedForeground");
   const { mutate: checkin, isPending } = useGoalCheckin(String(id));
 
   return (
@@ -31,10 +32,16 @@ export default function GoalCheckinModalScreen() {
         <ThemedText style={{ ...textVariants.title2, textAlign: "center" }}>
           Ready to check-in?
         </ThemedText>
-        <ThemedText style={{ ...textVariants.body, textAlign: "center" }}>
+        <Text
+          style={{
+            ...textVariants.body,
+            textAlign: "center",
+            color: mutedForeground,
+          }}
+        >
           Please confirm your check-in now. If you miss this window, the goal
           will be marked as failed.
-        </ThemedText>
+        </Text>
         <View style={{ gap: spacing.md }}>
           <Button
             title="Check-in"

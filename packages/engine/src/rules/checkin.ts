@@ -1,12 +1,11 @@
 import { EngineInputs, EngineOutputs } from "../types";
-import { baseOutput, computeTimeLeftLabel, ensureOccurrence } from "./common";
+import { baseOutput, ensureOccurrence } from "./common";
 
 export function evaluateCheckin(input: EngineInputs): EngineOutputs {
   const { goal, now = new Date() } = input;
   if (input.occurrenceVerification?.status === "approved") {
     return {
       ...baseOutput("passed"),
-      labels: { timeLeft: "" },
     };
   }
   const occ = ensureOccurrence(input);
@@ -21,37 +20,35 @@ export function evaluateCheckin(input: EngineInputs): EngineOutputs {
 
   const out: EngineOutputs = {
     ...baseOutput("scheduled"),
-    windows: {
-      currentWindow: { kind: "checkin", start: windowStart, end: windowEnd },
+    occurrence: {
+      start: windowStart,
+      end: windowEnd,
+      graceUntil: inWindowNoEnd ? windowEnd : undefined,
     },
-    labels: { timeLeft: "" },
+    actions: [
+      {
+        kind: "checkin",
+        presentation: inWindowNoEnd ? "modal" : "button",
+        visibleFrom: windowStart,
+        visibleUntil: windowEnd,
+        enabled: now >= windowStart && now <= windowEnd,
+        label: "Check-in",
+      },
+    ],
   };
 
   if (now < windowStart) {
     out.state = "scheduled";
-    out.labels.timeLeft = computeTimeLeftLabel(now, windowStart);
-    out.labels.nextMilestone = "until_window";
     out.nextTransitionAt = windowStart;
-    out.flags.showCheckinModal = false;
-    out.flags.showCheckinButton = false;
     return out;
   }
 
   if (now >= windowStart && now <= windowEnd) {
     out.state = "window_open";
-    out.labels.timeLeft = computeTimeLeftLabel(now, windowEnd);
-    out.labels.nextMilestone = "until_due_end";
     out.nextTransitionAt = windowEnd;
-    if (inWindowNoEnd) {
-      out.flags.showCheckinModal = true;
-    } else {
-      out.flags.showCheckinButton = true;
-    }
     return out;
   }
 
   out.state = "missed";
-  out.labels.timeLeft = "";
-  out.labels.nextMilestone = "none";
   return out;
 }

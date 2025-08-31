@@ -17,7 +17,7 @@ describe("checkin method", () => {
       goal,
     });
     expect(before.state).toBe("scheduled");
-    expect(before.flags.showCheckinModal).toBe(false);
+    expect(before.actions.length).toBe(1);
 
     const during = computeGoalState({
       tz,
@@ -25,7 +25,7 @@ describe("checkin method", () => {
       goal,
     });
     expect(during.state).toBe("window_open");
-    expect(during.flags.showCheckinModal).toBe(true);
+    expect(during.actions[0].presentation).toBe("modal");
 
     const after = computeGoalState({
       tz,
@@ -33,7 +33,7 @@ describe("checkin method", () => {
       goal,
     });
     expect(after.state).toBe("missed");
-    expect(after.flags.showCheckinModal).toBe(false);
+    expect(after.actions.length).toBe(1);
   });
 
   it("with end: scheduled before, button during window, missed after end", () => {
@@ -50,7 +50,7 @@ describe("checkin method", () => {
       goal,
     });
     expect(before.state).toBe("scheduled");
-    expect(before.flags.showCheckinButton).toBe(false);
+    expect(before.actions[0].enabled).toBe(false);
 
     const during = computeGoalState({
       tz,
@@ -58,7 +58,7 @@ describe("checkin method", () => {
       goal,
     });
     expect(during.state).toBe("window_open");
-    expect(during.flags.showCheckinButton).toBe(true);
+    expect(during.actions[0].enabled).toBe(true);
 
     const after = computeGoalState({
       tz,
@@ -66,7 +66,7 @@ describe("checkin method", () => {
       goal,
     });
     expect(after.state).toBe("missed");
-    expect(after.flags.showCheckinButton).toBe(false);
+    expect(after.actions[0].enabled).toBe(false);
   });
 
   it("approved -> passed immediately for checkin", () => {

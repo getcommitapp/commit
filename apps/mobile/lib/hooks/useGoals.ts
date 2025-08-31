@@ -10,11 +10,9 @@ export function useGoals() {
       const goals = await apiFetch("/goals", {}, GoalsListResponseSchema);
       return goals.map((g) => ({
         ...g,
-        timeLeft: g.timeLeft ?? "",
-        showTimer: !!g.engineFlags?.showTimer,
-        showCheckinModal: !!g.engineFlags?.showCheckinModal,
-        showCheckinButton: !!g.engineFlags?.showCheckinButton,
-        isDurationBased: !!g.engineFlags?.isDurationBased,
+        occurrence: g.occurrence ?? null,
+        actions: g.actions ?? [],
+        nextTransitionAt: g.nextTransitionAt ?? null,
         method: g.method,
         durationSeconds: g.durationSeconds ?? null,
         graceTimeSeconds: g.graceTimeSeconds ?? null,

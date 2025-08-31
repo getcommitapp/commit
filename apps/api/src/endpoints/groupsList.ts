@@ -94,8 +94,9 @@ export class GroupsList extends OpenAPIRoute {
           goal: {
             ...g.goal,
             state: status.state,
-            engineFlags: status.engineFlags ?? undefined,
-            timeLeft: status.timeLeft ?? undefined,
+            occurrence: status.occurrence ?? null,
+            actions: status.actions,
+            nextTransitionAt: status.nextTransitionAt ?? null,
           },
         };
       })

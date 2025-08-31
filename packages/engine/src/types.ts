@@ -77,32 +77,14 @@ export type GoalState =
 
 export interface EngineOutputs {
   state: GoalState;
-  flags: {
-    showTimer: boolean;
-    showCheckinModal: boolean;
-    showCheckinButton: boolean;
-    isDurationBased: boolean;
-  };
-  labels: {
-    timeLeft: string;
-    nextMilestone?:
-      | "until_start"
-      | "until_window"
-      | "until_latest_start"
-      | "until_due_end"
-      | "none";
-  };
-  windows: {
-    currentWindow?: {
-      kind: "duration" | "checkin" | "photo" | "location";
-      start: Date;
-      end?: Date;
-    };
+  occurrence?: {
+    start: Date;
+    end?: Date;
     latestStart?: Date;
     graceUntil?: Date;
   };
+  actions: Action[];
   nextTransitionAt?: Date;
-  engineVersion: string;
   reasons?: string[];
 }
 
@@ -110,4 +92,20 @@ export interface Occurrence {
   date: string; // YYYY-MM-DD in local tz
   dueStart: Date; // instant
   dueEnd?: Date | null; // instant
+}
+
+export type ActionKind =
+  | "checkin"
+  | "upload_photo"
+  | "movement_start"
+  | "open_location";
+
+export interface Action {
+  kind: ActionKind;
+  presentation: "button" | "modal";
+  visibleFrom: Date;
+  visibleUntil?: Date;
+  enabled: boolean;
+  reasonDisabled?: string;
+  label?: string;
 }

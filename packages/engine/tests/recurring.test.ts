@@ -21,7 +21,7 @@ describe("recurring weekly goals", () => {
     });
     // Should target Thu occurrence window (window likely after now)
     expect(["scheduled", "window_open", "missed"]).toContain(resWed.state);
-    expect(resWed.windows.currentWindow?.start).toBeInstanceOf(Date);
+    expect(resWed.occurrence?.start).toBeInstanceOf(Date);
   });
 
   it("today allowed: scheduled before local start, window_open during", () => {

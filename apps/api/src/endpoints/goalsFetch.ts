@@ -47,8 +47,9 @@ export class GoalsFetch extends OpenAPIRoute {
     return c.json({
       ...goal,
       state: cs.state,
-      engineFlags: cs.engineFlags,
-      timeLeft: cs.timeLeft,
+      occurrence: cs.occurrence ?? null,
+      actions: cs.actions,
+      nextTransitionAt: cs.nextTransitionAt ?? null,
     });
   }
 }

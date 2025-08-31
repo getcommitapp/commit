@@ -1,6 +1,11 @@
 import { useThemeColor } from "@/components/Themed";
 import { FormGroup, FormItem } from "@/components/ui/form";
-import { capitalize, formatDurationSeconds, formatStake } from "@/lib/utils";
+import {
+  capitalize,
+  formatDurationSeconds,
+  formatStake,
+  formatRelativeTimeLeft,
+} from "@/lib/utils";
 import { useGoals } from "@/lib/hooks/useGoals";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
@@ -28,7 +33,10 @@ export function GoalDetails({ goal, title = "Details" }: GoalDetailsProps) {
             value={formatStake(goal.currency, goal.stakeCents ?? 0)}
           />
           <FormItem label="Method" value={capitalize(goal.method)} />
-          <FormItem label="Time Left" value={goal?.timeLeft ?? "—"} />
+          <FormItem
+            label="Next Transition"
+            value={formatRelativeTimeLeft(goal.nextTransitionAt) || "—"}
+          />
           <FormItem label="Start Date" value={goal.startDateFormatted ?? "—"} />
           <FormItem label="End Date" value={goal.endDateFormatted ?? "—"} />
           <FormItem

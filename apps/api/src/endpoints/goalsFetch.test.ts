@@ -39,12 +39,25 @@ describe("GET /api/goals/:id (fetch)", () => {
     expect(res.status).toBe(200);
     const body = (await res.json()) as GoalBase & {
       state: string;
-      engineFlags: string[];
-      timeLeft: number | null;
+      occurrence?: {
+        start: string;
+        end?: string | null;
+        latestStart?: string | null;
+        graceUntil?: string | null;
+      } | null;
+      actions?: Array<{
+        kind: string;
+        presentation: string;
+        visibleFrom: string;
+        visibleUntil?: string | null;
+        enabled: boolean;
+        label?: string;
+      }>;
+      nextTransitionAt?: string | null;
     };
     expect(body.id).toBe(created.id);
     expect(body.name).toBe("Daily pushups");
     expect(body.state).toBeTruthy();
-    expect(body.engineFlags).toBeDefined();
+    expect(body.actions).toBeDefined();
   });
 });

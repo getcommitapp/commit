@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useMemo } from "react";
 import { Text, View, Pressable } from "react-native";
 import { Card } from "@/components/ui/Card";
 import {
@@ -8,11 +8,14 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
-import { useLocalMovementTimer } from "@/lib/hooks/useMovement";
+import {
+  useLocalMovementTimer,
+  useMovementStart,
+} from "@/lib/hooks/useMovement";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
-import { formatStake, capitalize } from "@/lib/utils";
+import { formatStake, capitalize, formatRelativeTimeLeft } from "@/lib/utils";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { Button } from "@/components/ui/Button";
 import { useGoalCheckin } from "@/lib/hooks/useCheckin";
@@ -28,6 +31,9 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { dismissAll } = useBottomSheetModal();
   const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(goal.id);
+  const { mutate: startMovement, isPending: isStarting } = useMovementStart(
+    goal.id
+  );
   // Global check-in modal presentation is handled at RootLayout level.
 
   const openDetails = useCallback(() => {
@@ -36,7 +42,11 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
     bottomSheetRef.current?.present();
   }, [dismissAll]);
 
-  const isDurationBased = goal.isDurationBased;
+  const isOngoing = goal.state === "ongoing";
+  const nextLabel = useMemo(
+    () => formatRelativeTimeLeft(goal.nextTransitionAt),
+    [goal.nextTransitionAt]
+  );
 
   const leftNode = (
     <View style={{ gap: 2 }}>
@@ -71,7 +81,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
             </Text>
           </>
         ) : null}
-        {goal.timeLeft ? (
+        {nextLabel ? (
           <>
             <Text
               style={{
@@ -85,29 +95,25 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
             <Text
               style={{ ...textVariants.subheadline, color: mutedForeground }}
             >
-              {goal.timeLeft}
+              {nextLabel}
             </Text>
           </>
         ) : null}
       </View>
 
-      {isDurationBased && goal.showTimer ? (
+      {isOngoing ? (
         <GoalTimerRow
           goalId={goal.id}
           durationSeconds={goal.durationSeconds ?? 0}
         />
       ) : null}
-      {!isDurationBased && goal.showCheckinButton ? (
-        <View style={{ marginTop: 4 }}>
-          <Button
-            title="Check-in"
-            size="sm"
-            onPress={() => !isCheckingIn && checkin()}
-            loading={isCheckingIn}
-            accessibilityLabel={`checkin-${goal.id}`}
-            testID={`checkin-${goal.id}`}
-          />
-        </View>
+      {!isOngoing ? (
+        <GoalPrimaryAction
+          goalId={goal.id}
+          actions={goal.actions ?? []}
+          onCheckin={() => !isCheckingIn && checkin()}
+          onMovementStart={() => !isStarting && startMovement()}
+        />
       ) : null}
     </View>
   );
@@ -131,7 +137,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
           right={rightNode}
           accessibilityLabel={
             accessibilityLabel ??
-            `Goal ${goal.name}, ${formatStake(goal.currency, goal.stakeCents)}, ${goal.timeLeft}`
+            `Goal ${goal.name}, ${formatStake(goal.currency, goal.stakeCents)}`
           }
           testID={testID}
         />
@@ -140,6 +146,64 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
       <GoalDetailsSheet ref={bottomSheetRef} goal={goal} />
     </>
   );
+}
+
+function GoalPrimaryAction({
+  goalId,
+  actions,
+  onCheckin,
+  onMovementStart,
+}: {
+  goalId: string;
+  actions: {
+    kind: "checkin" | "upload_photo" | "movement_start" | "open_location";
+    presentation: "button" | "modal";
+    visibleFrom: string;
+    visibleUntil?: string | null;
+    enabled: boolean;
+    label?: string;
+  }[];
+  onCheckin?: () => void;
+  onMovementStart?: () => void;
+}) {
+  const now = new Date();
+  const visible = actions.filter((a) => {
+    const from = new Date(a.visibleFrom);
+    const until = a.visibleUntil ? new Date(a.visibleUntil) : null;
+    return now >= from && (!until || now <= until);
+  });
+  const primary = visible[0];
+  if (!primary) return null;
+  switch (primary.kind) {
+    case "checkin":
+      return (
+        <View style={{ marginTop: 4 }}>
+          <Button
+            title={primary.label ?? "Check-in"}
+            size="sm"
+            onPress={onCheckin}
+            accessibilityLabel={`checkin-${goalId}`}
+            testID={`checkin-${goalId}`}
+            disabled={!primary.enabled}
+          />
+        </View>
+      );
+    case "movement_start":
+      return (
+        <View style={{ marginTop: 4 }}>
+          <Button
+            title={primary.label ?? "Start timer"}
+            size="sm"
+            onPress={onMovementStart}
+            accessibilityLabel={`movement-start-${goalId}`}
+            testID={`movement-start-${goalId}`}
+            disabled={!primary.enabled}
+          />
+        </View>
+      );
+    default:
+      return null;
+  }
 }
 
 function GoalTimerRow({

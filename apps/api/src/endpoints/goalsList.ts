@@ -47,8 +47,9 @@ export class GoalsList extends OpenAPIRoute {
       return {
         ...g,
         state: cs.state,
-        engineFlags: cs.engineFlags,
-        timeLeft: cs.timeLeft,
+        occurrence: cs.occurrence ?? null,
+        actions: cs.actions,
+        nextTransitionAt: cs.nextTransitionAt ?? null,
         groupId: null,
       };
     });

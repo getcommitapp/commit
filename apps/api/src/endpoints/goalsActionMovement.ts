@@ -85,8 +85,9 @@ export class GoalsActionMovementStart extends OpenAPIRoute {
     const cs = computeState(goal, user, occ);
     return c.json({
       state: cs.state,
-      engineFlags: cs.engineFlags,
-      timeLeft: cs.timeLeft ?? null,
+      occurrence: cs.occurrence ?? null,
+      actions: cs.actions,
+      nextTransitionAt: cs.nextTransitionAt ?? null,
     });
   }
 }
@@ -145,8 +146,9 @@ export class GoalsActionMovementStop extends OpenAPIRoute {
     const cs = computeState(goal, user, occ);
     return c.json({
       state: cs.state,
-      engineFlags: cs.engineFlags,
-      timeLeft: cs.timeLeft ?? null,
+      occurrence: cs.occurrence ?? null,
+      actions: cs.actions,
+      nextTransitionAt: cs.nextTransitionAt ?? null,
     });
   }
 }

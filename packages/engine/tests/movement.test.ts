@@ -24,7 +24,7 @@ describe("movement method", () => {
       goal,
     });
     expect(during.state).toBe("ongoing");
-    expect(during.flags.isDurationBased).toBe(true);
+    expect(during.state).toBe("ongoing");
 
     const after = computeGoalState({
       tz,
@@ -48,7 +48,7 @@ describe("movement method", () => {
       goal,
     });
     expect(before.state).toBe("scheduled");
-    expect(before.flags.showTimer).toBe(true);
+    expect(before.actions[0].kind).toBe("movement_start");
 
     const windowOpen = computeGoalState({
       tz,
@@ -56,17 +56,17 @@ describe("movement method", () => {
       goal,
     });
     expect(windowOpen.state).toBe("window_open");
-    expect(windowOpen.flags.showTimer).toBe(true);
-    expect(windowOpen.windows.latestStart).toBeInstanceOf(Date);
+    expect(windowOpen.actions[0].kind).toBe("movement_start");
+    expect(windowOpen.occurrence?.latestStart).toBeInstanceOf(Date);
 
     // After latestStart but before end: cannot start anymore -> missed
-    const latestStart = windowOpen.windows.latestStart as Date;
+    const latestStart = windowOpen.occurrence?.latestStart as Date;
     const afterLatest = computeGoalState({
       tz,
       now: new Date(latestStart.getTime() + 1000),
       goal,
     });
     expect(afterLatest.state).toBe("missed");
-    expect(afterLatest.flags.showTimer).toBe(false);
+    expect(afterLatest.actions[0].enabled).toBe(false);
   });
 });

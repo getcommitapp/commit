@@ -1,6 +1,5 @@
 import {
   computeGoalState,
-  EngineOutputs,
   GoalState,
   Recurrence,
   VerificationMethod,
@@ -84,8 +83,22 @@ export function toEngineInputs(
 
 export interface ComputedGoalState {
   state: GoalState;
-  engineFlags: EngineOutputs["flags"];
-  timeLeft?: string;
+  occurrence?: {
+    start: string;
+    end?: string | null;
+    latestStart?: string | null;
+    graceUntil?: string | null;
+  } | null;
+  actions: {
+    kind: "checkin" | "upload_photo" | "movement_start" | "open_location";
+    presentation: "button" | "modal";
+    visibleFrom: string;
+    visibleUntil?: string | null;
+    enabled: boolean;
+    reasonDisabled?: string;
+    label?: string;
+  }[];
+  nextTransitionAt?: string;
 }
 
 export function computeState(
@@ -97,7 +110,19 @@ export function computeState(
   const engine = computeGoalState(input);
   return {
     state: engine.state,
-    engineFlags: engine.flags,
-    timeLeft: engine.labels?.timeLeft ?? undefined,
+    occurrence: engine.occurrence
+      ? {
+          start: engine.occurrence.start.toISOString(),
+          end: engine.occurrence.end?.toISOString() ?? null,
+          latestStart: engine.occurrence.latestStart?.toISOString() ?? null,
+          graceUntil: engine.occurrence.graceUntil?.toISOString() ?? null,
+        }
+      : null,
+    actions: (engine.actions || []).map((a) => ({
+      ...a,
+      visibleFrom: a.visibleFrom.toISOString(),
+      visibleUntil: a.visibleUntil ? a.visibleUntil.toISOString() : null,
+    })),
+    nextTransitionAt: engine.nextTransitionAt?.toISOString(),
   };
 }

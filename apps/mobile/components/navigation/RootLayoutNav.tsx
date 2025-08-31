@@ -65,7 +65,10 @@ export function RootLayoutNav({ initialRouteName }: RootLayoutNavProps) {
     if (!goals || goals.length === 0) return;
     // Do not stack multiple check-in modals; present the first pending one not yet shown.
     const pending = goals.find(
-      (g) => g.showCheckinModal && !presentedGoalIdsRef.current.has(g.id)
+      (g) =>
+        (g.actions || []).some(
+          (a) => a.kind === "checkin" && a.presentation === "modal" && a.enabled
+        ) && !presentedGoalIdsRef.current.has(g.id)
     );
     if (!pending) return;
 

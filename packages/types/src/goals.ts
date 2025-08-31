@@ -47,15 +47,34 @@ export const GoalBaseSchema = z.object({
       "expired",
     ])
     .optional(),
-  engineFlags: z
+  occurrence: z
     .object({
-      showTimer: z.boolean().optional(),
-      showCheckinModal: z.boolean().optional(),
-      showCheckinButton: z.boolean().optional(),
-      isDurationBased: z.boolean().optional(),
+      start: z.string().datetime(),
+      end: z.string().datetime().nullable().optional(),
+      latestStart: z.string().datetime().nullable().optional(),
+      graceUntil: z.string().datetime().nullable().optional(),
     })
+    .nullable()
     .optional(),
-  timeLeft: z.string().optional(),
+  actions: z
+    .array(
+      z.object({
+        kind: z.enum([
+          "checkin",
+          "upload_photo",
+          "movement_start",
+          "open_location",
+        ]),
+        presentation: z.enum(["button", "modal"]),
+        visibleFrom: z.string().datetime(),
+        visibleUntil: z.string().datetime().nullable().optional(),
+        enabled: z.boolean(),
+        reasonDisabled: z.string().optional(),
+        label: z.string().optional(),
+      })
+    )
+    .optional(),
+  nextTransitionAt: z.string().datetime().nullable().optional(),
 });
 
 export const GoalsListItemSchema = GoalBaseSchema.extend({
@@ -156,13 +175,34 @@ export const GoalActionResponseSchema = z.object({
     "passed",
     "expired",
   ]),
-  engineFlags: z.object({
-    showTimer: z.boolean().optional(),
-    showCheckinModal: z.boolean().optional(),
-    showCheckinButton: z.boolean().optional(),
-    isDurationBased: z.boolean().optional(),
-  }),
-  timeLeft: z.string().nullable().optional(),
+  occurrence: z
+    .object({
+      start: z.string().datetime(),
+      end: z.string().datetime().nullable().optional(),
+      latestStart: z.string().datetime().nullable().optional(),
+      graceUntil: z.string().datetime().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
+  actions: z
+    .array(
+      z.object({
+        kind: z.enum([
+          "checkin",
+          "upload_photo",
+          "movement_start",
+          "open_location",
+        ]),
+        presentation: z.enum(["button", "modal"]),
+        visibleFrom: z.string().datetime(),
+        visibleUntil: z.string().datetime().nullable().optional(),
+        enabled: z.boolean(),
+        reasonDisabled: z.string().optional(),
+        label: z.string().optional(),
+      })
+    )
+    .optional(),
+  nextTransitionAt: z.string().datetime().nullable().optional(),
 });
 
 export const GoalReviewDetails = z.object({

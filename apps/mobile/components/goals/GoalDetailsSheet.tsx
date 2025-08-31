@@ -3,10 +3,7 @@ import { View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FormGroup, FormItem } from "@/components/ui/form";
 import { DetailsSheet } from "@/components/ui/DetailsSheet";
-import {
-  useMovementStart,
-  useLocalMovementTimer,
-} from "@/lib/hooks/useMovement";
+import { useLocalMovementTimer } from "@/lib/hooks/useMovement";
 import { spacing, useThemeColor } from "@/components/Themed";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { Button } from "@/components/ui/Button";
@@ -36,7 +33,6 @@ export const GoalDetailsSheet = forwardRef<
   ) => {
     const background = useThemeColor({}, "background");
     const { data: localTimer } = useLocalMovementTimer(goal.id);
-    const { mutate: startTimer, isPending } = useMovementStart(goal.id);
     const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(
       goal.id
     );
@@ -54,7 +50,7 @@ export const GoalDetailsSheet = forwardRef<
       goal.id
     );
 
-    const isDurationBased = goal.isDurationBased;
+    const isOngoing = goal.state === "ongoing";
 
     return (
       <DetailsSheet
@@ -65,7 +61,7 @@ export const GoalDetailsSheet = forwardRef<
         enableDynamicSizing={enableDynamicSizing}
         onDismiss={onDismiss}
       >
-        {isDurationBased && (localTimer?.startedAt || goal.showTimer) ? (
+        {isOngoing && localTimer?.startedAt ? (
           <View style={{ marginBottom: spacing.xl }}>
             <FormGroup
               title="Progress"
@@ -83,22 +79,10 @@ export const GoalDetailsSheet = forwardRef<
                 </>
               )}
             </FormGroup>
-
-            {!localTimer?.startedAt && goal.showTimer ? (
-              <Button
-                title="Start Timer"
-                onPress={() => !isPending && startTimer()}
-                loading={isPending}
-                testID="start-goal-timer"
-                accessibilityLabel="start-goal-timer"
-              />
-            ) : null}
           </View>
         ) : null}
 
-        {!isDurationBased &&
-        goal.method === "checkin" &&
-        goal.showCheckinButton ? (
+        {!isOngoing && goal.method === "checkin" ? (
           <View style={{ marginBottom: spacing.xl }}>
             <Button
               title="Check-in"
@@ -110,9 +94,7 @@ export const GoalDetailsSheet = forwardRef<
           </View>
         ) : null}
 
-        {!isDurationBased &&
-        goal.method === "photo" &&
-        goal.showCheckinButton ? (
+        {!isOngoing && goal.method === "photo" ? (
           <View style={{ marginBottom: spacing.xl }}>
             <Button
               title="Submit Photo"

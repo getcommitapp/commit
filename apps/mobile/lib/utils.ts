@@ -53,3 +53,16 @@ export function formatDurationSeconds(seconds: number | null | undefined) {
   }
   return `${minutes}m`;
 }
+
+export function formatRelativeTimeLeft(
+  nextTransitionAt?: string | null
+): string {
+  if (!nextTransitionAt) return "";
+  const target = new Date(nextTransitionAt);
+  const diff = target.getTime() - Date.now();
+  if (diff <= 0) return "";
+  const minutes = Math.max(0, Math.floor(diff / 60000));
+  if (minutes >= 60 * 24) return `${Math.floor(minutes / (60 * 24))}d left`;
+  if (minutes >= 60) return `${Math.floor(minutes / 60)}h left`;
+  return `${minutes}m left`;
+}
