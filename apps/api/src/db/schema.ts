@@ -157,7 +157,7 @@ export const GoalVerificationsLog = sqliteTable("goal_verifications_log", {
   verifiedAt: integer("verifiedAt", { mode: "timestamp" }),
   approvalStatus: text("approvalStatus", {
     enum: ["pending", "approved", "rejected"],
-  }),
+  }).default("pending"),
   approvedBy: text("approvedBy").references(() => User.id, {
     onDelete: "cascade",
   }),
@@ -263,6 +263,7 @@ export const GoalRelations = relations(Goal, ({ one, many }) => ({
     fields: [Goal.id],
     references: [Group.goalId],
   }),
+  verificationsLog: many(GoalVerificationsLog),
 }));
 
 export const GoalVerificationsMethodRelations = relations(
@@ -271,6 +272,24 @@ export const GoalVerificationsMethodRelations = relations(
     goal: one(Goal, {
       fields: [GoalVerificationsMethod.goalId],
       references: [Goal.id],
+    }),
+  })
+);
+
+export const GoalVerificationsLogRelations = relations(
+  GoalVerificationsLog,
+  ({ one }) => ({
+    goal: one(Goal, {
+      fields: [GoalVerificationsLog.goalId],
+      references: [Goal.id],
+    }),
+    user: one(User, {
+      fields: [GoalVerificationsLog.userId],
+      references: [User.id],
+    }),
+    approvedByUser: one(User, {
+      fields: [GoalVerificationsLog.approvedBy],
+      references: [User.id],
     }),
   })
 );

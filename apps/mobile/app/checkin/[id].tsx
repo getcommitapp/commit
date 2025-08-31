@@ -18,14 +18,7 @@ export default function GoalCheckinModalScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: "Check-in",
-          presentation: "modal",
-          headerShown: false,
-          gestureEnabled: false,
-        }}
-      />
+      <Stack.Screen options={{ title: `checkin/${id}` }} />
       <View
         style={{
           flex: 1,

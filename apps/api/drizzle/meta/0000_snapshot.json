@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "a360ea60-5cfe-4d2e-8122-48ad13e53d73",
+  "id": "a6b77ea7-d538-4251-8557-9d926029717d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -548,7 +548,8 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "'pending'"
         },
         "approvedBy": {
           "name": "approvedBy",

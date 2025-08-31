@@ -3,6 +3,12 @@ import { baseOutput, computeTimeLeftLabel, ensureOccurrence } from "./common";
 
 export function evaluateCheckin(input: EngineInputs): EngineOutputs {
   const { goal, now = new Date() } = input;
+  if (input.occurrenceVerification?.status === "approved") {
+    return {
+      ...baseOutput("passed"),
+      labels: { timeLeft: "" },
+    };
+  }
   const occ = ensureOccurrence(input);
   if (!occ) return baseOutput("scheduled");
 

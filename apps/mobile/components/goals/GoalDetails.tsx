@@ -18,6 +18,12 @@ export function GoalDetails({ goal, title = "Details" }: GoalDetailsProps) {
       {goal ? (
         <>
           <FormItem
+            label="State"
+            value={
+              goal.state ? capitalize(goal.state.replaceAll("_", " ")) : "—"
+            }
+          />
+          <FormItem
             label="Stake"
             value={formatStake(goal.currency, goal.stakeCents ?? 0)}
           />

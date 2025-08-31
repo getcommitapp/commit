@@ -62,4 +62,51 @@ describe("photo method", () => {
     });
     expect(after.state).toBe("missed");
   });
+
+  it("pending -> awaiting_verification during window", () => {
+    const goal = {
+      id: "g-photo-3",
+      dueStartTime: "2025-02-01T07:00:00.000Z",
+      dueEndTime: "2025-02-01T07:15:00.000Z",
+      verificationMethod: { method: "photo" },
+    } as const;
+    const res = computeGoalState({
+      tz,
+      now: new Date("2025-02-01T07:10:00.000Z"),
+      goal,
+      occurrenceVerification: { status: "pending" },
+    });
+    expect(res.state).toBe("awaiting_verification");
+  });
+
+  it("approved -> passed regardless of window", () => {
+    const goal = {
+      id: "g-photo-4",
+      dueStartTime: "2025-02-01T07:00:00.000Z",
+      verificationMethod: { method: "photo" },
+    } as const;
+    const res = computeGoalState({
+      tz,
+      now: new Date("2025-02-01T06:00:00.000Z"),
+      goal,
+      occurrenceVerification: { status: "approved" },
+    });
+    expect(res.state).toBe("passed");
+  });
+
+  it("rejected after window -> failed", () => {
+    const goal = {
+      id: "g-photo-5",
+      dueStartTime: "2025-02-01T07:00:00.000Z",
+      dueEndTime: "2025-02-01T07:15:00.000Z",
+      verificationMethod: { method: "photo" },
+    } as const;
+    const res = computeGoalState({
+      tz,
+      now: new Date("2025-02-01T07:20:00.000Z"),
+      goal,
+      occurrenceVerification: { status: "rejected" },
+    });
+    expect(res.state).toBe("failed");
+  });
 });

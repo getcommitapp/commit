@@ -76,15 +76,28 @@ export class GoalsVerify extends OpenAPIRoute {
       where: eq(schema.Goal.id, goalId),
       with: { verificationMethods: true },
     });
-    const firstMethod = goalWithMethod?.verificationMethods?.[0] ?? null;
+    const firstMethod = goalWithMethod.verificationMethods?.[0] ?? null;
     const isPhoto = (firstMethod?.method ?? null) === "photo";
+    // Compute default occurrenceDate in user's local tz if not provided
+    const tz = c.var.user?.timezone || "UTC";
+    const todayLocal = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+      .format(now)
+      .replace(/\//g, "-");
+
     for (const verification of verificationInputs) {
+      const occurrenceDate = verification.occurrenceDate ?? todayLocal;
+      const approvedAt = isPhoto ? null : now;
       await db.insert(schema.GoalVerificationsLog).values({
         id: uuid(),
         goalId: goalId,
         userId: user.id,
-        occurrenceDate: verification.occurrenceDate ?? null,
-        verifiedAt: null,
+        occurrenceDate,
+        verifiedAt: approvedAt,
         approvalStatus: isPhoto ? "pending" : "approved",
         approvedBy: null,
         startTime: verification.startTime

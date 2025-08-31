@@ -68,4 +68,19 @@ describe("checkin method", () => {
     expect(after.state).toBe("missed");
     expect(after.flags.showCheckinButton).toBe(false);
   });
+
+  it("approved -> passed immediately for checkin", () => {
+    const goal = {
+      id: "g-checkin-3",
+      dueStartTime: "2025-01-01T07:00:00.000Z",
+      verificationMethod: { method: "checkin", graceTimeSeconds: 60 },
+    } as const;
+    const res = computeGoalState({
+      tz,
+      now: new Date("2025-01-01T07:00:10.000Z"),
+      goal,
+      occurrenceVerification: { status: "approved" },
+    });
+    expect(res.state).toBe("passed");
+  });
 });

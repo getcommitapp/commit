@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from "react";
+import React, { useRef, useCallback } from "react";
 import { Text, View, Pressable } from "react-native";
 import { Card } from "@/components/ui/Card";
 import {
@@ -12,12 +12,10 @@ import { useGoalTimer } from "@/lib/hooks/useGoalTimer";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
-import { formatStake } from "@/lib/utils";
+import { formatStake, capitalize } from "@/lib/utils";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { Button } from "@/components/ui/Button";
 import { useGoalCheckin } from "@/lib/hooks/useCheckin";
-import { useEffect } from "react";
-import { useRouter } from "expo-router";
 
 interface GoalCardProps {
   goal: NonNullable<ReturnType<typeof useGoals>["data"]>[number];
@@ -30,17 +28,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { dismissAll } = useBottomSheetModal();
   const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(goal.id);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (goal.showCheckinModal) {
-      // Navigate to dedicated modal screen; cannot be dismissed except via check-in
-      router.push({
-        pathname: "/(tabs)/goals/checkin/[id]",
-        params: { id: goal.id },
-      });
-    }
-  }, [goal.showCheckinModal]);
+  // Global check-in modal presentation is handled at RootLayout level.
 
   const openDetails = useCallback(() => {
     // Ensure only one bottom sheet is visible at a time
@@ -65,18 +53,42 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
         <ThemedText style={{ ...textVariants.subheadline }}>
           {formatStake(goal.currency, goal.stakeCents)}
         </ThemedText>
-        <Text
-          style={{
-            ...textVariants.subheadline,
-            color: mutedForeground,
-            marginHorizontal: 4,
-          }}
-        >
-          &middot;
-        </Text>
-        <Text style={{ ...textVariants.subheadline, color: mutedForeground }}>
-          {goal.timeLeft}
-        </Text>
+        {goal.state ? (
+          <>
+            <Text
+              style={{
+                ...textVariants.subheadline,
+                color: mutedForeground,
+                marginHorizontal: 4,
+              }}
+            >
+              &middot;
+            </Text>
+            <Text
+              style={{ ...textVariants.subheadline, color: mutedForeground }}
+            >
+              {capitalize(goal.state.replaceAll("_", " "))}
+            </Text>
+          </>
+        ) : null}
+        {goal.timeLeft ? (
+          <>
+            <Text
+              style={{
+                ...textVariants.subheadline,
+                color: mutedForeground,
+                marginHorizontal: 4,
+              }}
+            >
+              &middot;
+            </Text>
+            <Text
+              style={{ ...textVariants.subheadline, color: mutedForeground }}
+            >
+              {goal.timeLeft}
+            </Text>
+          </>
+        ) : null}
       </View>
 
       {isDurationBased && goal.showTimer ? (
@@ -100,7 +112,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   const primary = useThemeColor({}, "primary");
   const rightNode = (
     <View style={{ alignItems: "flex-end", gap: 2, marginLeft: spacing.lg }}>
-      {goal.group ? (
+      {goal.groupId ? (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <IonIcons name="people" size={16} color={primary} />
         </View>

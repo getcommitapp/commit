@@ -80,7 +80,7 @@ CREATE TABLE `goal_verifications_log` (
 	`userId` text NOT NULL,
 	`occurrenceDate` text,
 	`verifiedAt` integer,
-	`approvalStatus` text,
+	`approvalStatus` text DEFAULT 'pending',
 	`approvedBy` text,
 	`startTime` integer,
 	`photoDescription` text,

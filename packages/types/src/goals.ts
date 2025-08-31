@@ -39,8 +39,17 @@ export const GoalBaseSchema = z.object({
   destinationCharityId: z.string().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  status: z
-    .enum(["scheduled", "window_open", "ongoing", "missed", "failed", "passed"])
+  state: z
+    .enum([
+      "scheduled",
+      "window_open",
+      "ongoing",
+      "awaiting_verification",
+      "missed",
+      "failed",
+      "passed",
+      "expired",
+    ])
     .optional(),
   engineFlags: z
     .object({

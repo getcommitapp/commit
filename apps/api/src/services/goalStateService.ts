@@ -1,4 +1,10 @@
-import { computeGoalState, EngineOutputs, Recurrence } from "@commit/engine";
+import {
+  computeGoalState,
+  EngineOutputs,
+  GoalState,
+  Recurrence,
+  VerificationMethod,
+} from "@commit/engine";
 import { GoalSelect, UserSelect } from "../db/schema";
 
 /*
@@ -10,26 +16,22 @@ import { GoalSelect, UserSelect } from "../db/schema";
   - Add a periodic cron sweeper to finalize missed occurrences and trigger debits using the same idempotent flow.
 */
 
-export type GoalStatus =
-  | "scheduled"
-  | "window_open"
-  | "ongoing"
-  | "missed"
-  | "failed"
-  | "passed";
-
-export interface StatusResult {
-  status: GoalStatus;
+export interface StateResult {
+  state: GoalState;
   occurrenceDate?: string | null;
   nextTransitionAt?: Date;
   engine: EngineOutputs;
 }
 
-export function evaluateGoalStatus(
-  goal: GoalSelect,
-  user: UserSelect
-): StatusResult {
+export function evaluateGoalState(
+  goal: GoalSelect & { verificationMethod?: VerificationMethod | null },
+  user: UserSelect,
+  occurrenceVerification: {
+    status: "pending" | "approved" | "rejected";
+  } | null
+): StateResult {
   const tz = user.timezone || "UTC";
+
   const engine = computeGoalState({
     tz,
     goal: {
@@ -42,36 +44,13 @@ export function evaluateGoalStatus(
         : null,
       localDueStart: goal.localDueStart ?? null,
       localDueEnd: goal.localDueEnd ?? null,
-      verificationMethod: null,
+      verificationMethod: goal.verificationMethod ?? null,
       recurrence: (goal.recurrence as Recurrence) ?? null,
     },
+    occurrenceVerification,
   });
-  // Map engine states to coarse-grained status used by backend policies
-  let status: GoalStatus = "scheduled";
-  switch (engine.state) {
-    case "scheduled":
-    case "awaiting_verification":
-      status = "scheduled";
-      break;
-    case "window_open":
-      status = "window_open";
-      break;
-    case "ongoing":
-      status = "ongoing";
-      break;
-    case "missed":
-      status = "missed";
-      break;
-    case "passed":
-      status = "passed";
-      break;
-    case "failed":
-      status = "failed";
-      break;
-  }
-  // occurrenceDate is derived on demand by clients when needed; backend can add later
   return {
-    status,
+    state: engine.state,
     nextTransitionAt: engine.nextTransitionAt,
     engine,
   };

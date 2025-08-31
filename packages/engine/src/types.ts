@@ -58,6 +58,11 @@ export interface EngineInputs {
   goal: GoalCore;
   tz: string; // IANA
   now?: Date;
+  // Verification state for the current occurrence (per-user context)
+  occurrenceVerification: {
+    status: "pending" | "approved" | "rejected";
+    submittedAt?: Date;
+  } | null;
 }
 
 export type GoalState =

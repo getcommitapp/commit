@@ -25,6 +25,16 @@ export function useGoalCheckin(goalId: string) {
       return res;
     },
     onSuccess: () => {
+      // Optimistically clear any modal flags to avoid immediate re-open
+      qc.setQueriesData<
+        { id: string; showCheckinModal?: boolean }[] | undefined
+      >({ queryKey: ["goals"] }, (old) =>
+        old
+          ? old.map((g) =>
+              g.id === goalId ? { ...g, showCheckinModal: false } : g
+            )
+          : old
+      );
       qc.invalidateQueries({ queryKey: ["goals"] });
       qc.invalidateQueries({ queryKey: ["groups"] });
     },

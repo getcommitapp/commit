@@ -3,6 +3,7 @@ import { baseOutput, computeTimeLeftLabel, ensureOccurrence } from "./common";
 
 export function evaluatePhoto(input: EngineInputs): EngineOutputs {
   const { goal, now = new Date() } = input;
+  // Approved/pending handled in public.ts
   const occ = ensureOccurrence(input);
   if (!occ) return baseOutput("scheduled");
 
@@ -37,7 +38,12 @@ export function evaluatePhoto(input: EngineInputs): EngineOutputs {
     return out;
   }
 
-  out.state = "missed";
+  // If explicitly rejected and window ended, mark failed; else missed
+  if (input.occurrenceVerification?.status === "rejected") {
+    out.state = "failed";
+  } else {
+    out.state = "missed";
+  }
   out.labels.timeLeft = "";
   out.labels.nextMilestone = "none";
   return out;
