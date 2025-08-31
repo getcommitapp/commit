@@ -1,24 +1,39 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
-import { FilesUploadResponseSchema } from "@commit/types";
 
 export class FilesUpload extends OpenAPIRoute {
   schema = {
     tags: ["Files"],
     summary: "Upload a file to R2 and return a URL",
-    request: {},
+    request: {
+      body: {
+        "multipart/form-data": {
+          schema: {
+            type: "object",
+            properties: {
+              file: { type: "string", format: "binary" },
+            },
+            required: ["file"],
+          },
+        },
+      },
+    },
     responses: {
       "200": {
         description: "Upload result",
         content: {
           "application/json": {
-            schema: FilesUploadResponseSchema,
+            schema: {
+              type: "object",
+              properties: { url: { type: "string" }, key: { type: "string" } },
+              required: ["url", "key"],
+            },
           },
         },
       },
       "400": { description: "Invalid request" },
     },
-  };
+  } as const;
 
   async handle(c: AppContext) {
     const user = c.var.user!;

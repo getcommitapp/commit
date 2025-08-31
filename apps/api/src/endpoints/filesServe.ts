@@ -10,17 +10,12 @@ export class FilesServe extends OpenAPIRoute {
       "200": { description: "The file contents" },
       "404": { description: "Not found" },
     },
-  };
+  } as const;
 
   async handle(c: AppContext) {
-    const user = c.var.user;
-    if (!user || user.role !== "reviewer") {
-      return c.json({ error: "Forbidden" }, 403);
-    }
     const { key } = c.req.param();
-    const decodedKey = decodeURIComponent(key);
     const bucket = c.env.R2;
-    const obj = await bucket.get(decodedKey);
+    const obj = await bucket.get(key);
     if (!obj) return new Response("Not Found", { status: 404 });
     const headers = new Headers();
     const type = obj.httpMetadata?.contentType || "application/octet-stream";
