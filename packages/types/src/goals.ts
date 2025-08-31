@@ -25,7 +25,13 @@ export const GoalBaseSchema = z.object({
   dueEndTime: z.string().datetime().nullable(),
   localDueStart: z.string().nullable().optional(), // HH:mm for recurring
   localDueEnd: z.string().nullable().optional(),
-  recurrence: z.string().nullable(),
+  recurrence: z
+    .object({
+      type: z.string(),
+      daysOfWeek: z.array(z.number()).optional(),
+    })
+    .nullable()
+    .optional(),
   stakeCents: z.number().int(),
   currency: z.string(),
   destinationType: z.string(),
@@ -36,6 +42,15 @@ export const GoalBaseSchema = z.object({
   status: z
     .enum(["scheduled", "window_open", "ongoing", "missed", "failed", "passed"])
     .optional(),
+  engineFlags: z
+    .object({
+      showTimer: z.boolean().optional(),
+      showCheckinModal: z.boolean().optional(),
+      showCheckinButton: z.boolean().optional(),
+      isDurationBased: z.boolean().optional(),
+    })
+    .optional(),
+  timeLeft: z.string().optional(),
 });
 
 export const GoalsListItemSchema = GoalBaseSchema.extend({

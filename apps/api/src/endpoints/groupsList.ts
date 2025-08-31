@@ -4,6 +4,7 @@ import { GroupsListResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import { and, eq, exists, or } from "drizzle-orm";
 import * as schema from "../db/schema";
+import { evaluateGoalStatus } from "../services/goalStatusService";
 
 export class GroupsList extends OpenAPIRoute {
   schema = {
@@ -65,11 +66,18 @@ export class GroupsList extends OpenAPIRoute {
         ? baseMembers
         : [...baseMembers, { name: selfName, isOwner: g.creatorId === userId }];
 
+      const status = evaluateGoalStatus(g.goal, c.var.user!);
       return {
         ...g,
         memberCount: g.participants.length ?? 0,
         isOwner: g.creatorId === userId,
         members,
+        goal: {
+          ...g.goal,
+          status: status.status,
+          engineFlags: status.engine.flags ?? undefined,
+          timeLeft: status.engine.labels?.timeLeft ?? undefined,
+        },
       };
     });
 

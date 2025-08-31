@@ -78,6 +78,7 @@ async function resetDb() {
   const tablesInDeleteOrder = [
     "goal_verifications_log",
     "goal_verifications_method",
+    "goal_occurrence_action",
     "goal_timer",
     "group_participants",
     "group",

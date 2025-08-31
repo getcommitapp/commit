@@ -85,7 +85,7 @@ export class GoalsVerify extends OpenAPIRoute {
         userId: user.id,
         occurrenceDate: verification.occurrenceDate ?? null,
         verifiedAt: null,
-        approvalStatus: isPhoto ? "pending" : null,
+        approvalStatus: isPhoto ? "pending" : "approved",
         approvedBy: null,
         startTime: verification.startTime
           ? new Date(verification.startTime)

@@ -81,15 +81,21 @@ export const GroupDetailsSheet = forwardRef<
         backgroundStyle={{ backgroundColor: background }}
       >
         {group.members && group.members.length > 0 ? (
-          group.members.map((m, idx) => (
-            <FormItem
-              key={idx}
-              label={
-                m.isOwner ? (group.isOwner ? "Owner (You)" : "Owner") : "Member"
-              }
-              value={m.name}
-            />
-          ))
+          group.members.map(
+            (m: { name: string; isOwner: boolean }, idx: number) => (
+              <FormItem
+                key={idx}
+                label={
+                  m.isOwner
+                    ? group.isOwner
+                      ? "Owner (You)"
+                      : "Owner"
+                    : "Member"
+                }
+                value={m.name}
+              />
+            )
+          )
         ) : (
           <FormItem label="Members" value="—" />
         )}

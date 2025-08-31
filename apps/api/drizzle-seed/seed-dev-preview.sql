@@ -163,14 +163,14 @@ VALUES
 INSERT INTO goal (id, ownerId, name, description, startDate, endDate, dueStartTime, dueEndTime, recurrence, stakeCents, currency, destinationType, destinationCharityId, createdAt, updatedAt)
 VALUES 
   -- Test User's goals
-  ('00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', 'Daily Exercise', 'Work out for 30 minutes every day', strftime('%s','now'), strftime('%s','now', '+30 days'), strftime('%s','now', '+6 hours'), strftime('%s','now', '+8 hours'), 'daily', 5000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now')),
-  ('00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'Read Books', 'Read 20 pages daily', strftime('%s','now'), strftime('%s','now', '+60 days'), strftime('%s','now', '+20 hours'), strftime('%s','now', '+22 hours'), 'daily', 3000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c2', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', 'Daily Exercise', 'Work out for 30 minutes every day', strftime('%s','now'), strftime('%s','now', '+30 days'), strftime('%s','now', '+6 hours'), strftime('%s','now', '+8 hours'), '{"type":"weekly","daysOfWeek":[1,2,3,4,5,6,7]}', 5000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', 'Read Books', 'Read 20 pages daily', strftime('%s','now'), strftime('%s','now', '+60 days'), strftime('%s','now', '+20 hours'), strftime('%s','now', '+22 hours'), '{"type":"weekly","daysOfWeek":[1,2,3,4,5,6,7]}', 3000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c2', strftime('%s','now'), strftime('%s','now')),
   
   -- Alice's goals
-  ('00000000-0000-4000-8000-0000000000g3', '00000000-0000-4000-8000-000000000002', 'Learn Guitar', 'Practice guitar for 1 hour daily', strftime('%s','now'), strftime('%s','now', '+90 days'), strftime('%s','now', '+18 hours'), strftime('%s','now', '+19 hours'), 'daily', 2000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c3', strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000g3', '00000000-0000-4000-8000-000000000002', 'Learn Guitar', 'Practice guitar for 1 hour daily', strftime('%s','now'), strftime('%s','now', '+90 days'), strftime('%s','now', '+18 hours'), strftime('%s','now', '+19 hours'), '{"type":"weekly","daysOfWeek":[1,2,3,4,5,6,7]}', 2000, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c3', strftime('%s','now'), strftime('%s','now')),
   
   -- Bob's goals
-  ('00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'Meditation', 'Meditate for 15 minutes every morning', strftime('%s','now'), strftime('%s','now', '+45 days'), strftime('%s','now', '+7 hours'), strftime('%s','now', '+7.25 hours'), 'daily', 1500, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now'))
+  ('00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', 'Meditation', 'Meditate for 15 minutes every morning', strftime('%s','now'), strftime('%s','now', '+45 days'), strftime('%s','now', '+7 hours'), strftime('%s','now', '+7.25 hours'), '{"type":"weekly","daysOfWeek":[1,2,3,4,5,6,7]}', 1500, 'CHF', 'charity', '00000000-0000-4000-8000-0000000000c1', strftime('%s','now'), strftime('%s','now'))
 ON CONFLICT(id) DO UPDATE SET
   ownerId=excluded.ownerId,
   name=excluded.name,

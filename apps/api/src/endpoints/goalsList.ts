@@ -40,7 +40,12 @@ export class GoalsList extends OpenAPIRoute {
         groupId: g.group?.id ?? null,
       };
       const status = evaluateGoalStatus(g, user);
-      return { ...base, status: status.status };
+      return {
+        ...base,
+        status: status.status,
+        engineFlags: status.engine.flags ?? undefined,
+        timeLeft: status.engine.labels?.timeLeft ?? undefined,
+      };
     });
 
     return c.json(response, 200);

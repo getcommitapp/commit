@@ -35,6 +35,7 @@ export function GroupCard({
     dismissAll();
     bottomSheetRef.current?.present();
   }, [dismissAll]);
+  console.log("group", JSON.stringify(group, null, 2));
 
   const leftNode = (
     <View style={{ gap: 2 }}>

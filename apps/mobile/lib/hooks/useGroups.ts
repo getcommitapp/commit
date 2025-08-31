@@ -1,53 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../api";
 import { GroupsListResponseSchema } from "@commit/types";
-import { formatDate, formatTime } from "../utils";
-import { useGoalsComputed } from "./useGoalsComputed";
-import { useMemo } from "react";
+import { formatDate } from "../utils";
 
 export function useGroups() {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["groups"],
     queryFn: async () => {
-      const summaries = await apiFetch("/groups", {}, GroupsListResponseSchema);
-      return summaries.map((group) => ({
-        ...group,
-        createdAtFormatted: formatDate(group.createdAt),
-        updatedAtFormatted: formatDate(group.updatedAt),
-        totalStake: (group.goal.stakeCents ?? 0) * (group.memberCount ?? 1),
-        isOwner: group.isOwner,
-        members: group.members,
-        goal: {
-          ...group.goal,
-          startDateFormatted: formatDate(group.goal.startDate),
-          endDateFormatted: formatDate(group.goal.endDate),
-          dueStartTimeFormatted: formatTime(group.goal.dueStartTime),
-          dueEndTimeFormatted: formatTime(group.goal.dueEndTime),
-          createdAtFormatted: formatDate(group.goal.createdAt),
-          updatedAtFormatted: formatDate(group.goal.updatedAt),
-        },
-      }));
+      const groups = await apiFetch("/groups", {}, GroupsListResponseSchema);
+      return groups.map((group) => {
+        return {
+          ...group,
+          createdAtFormatted: formatDate(group.createdAt),
+          updatedAtFormatted: formatDate(group.updatedAt),
+          goal: {
+            ...group.goal,
+            timeLeft: group.goal.timeLeft ?? "",
+          },
+          totalStake: (group.goal.stakeCents ?? 0) * (group.memberCount ?? 1),
+        };
+      });
     },
+    refetchInterval: 30_000,
   });
-
-  const goalsForComputed = useMemo(
-    () => query.data?.map((g) => g.goal) ?? [],
-    [query.data]
-  );
-  const computed = useGoalsComputed(goalsForComputed);
-  const data = (query.data ?? []).map((g) => ({
-    ...g,
-    goal: {
-      ...g.goal,
-      timeLeft: computed.timeLeft[g.goal.id],
-      showTimer: computed.showTimer[g.goal.id],
-      showCheckinModal: computed.showCheckinModal[g.goal.id],
-      showCheckinButton: computed.showCheckinButton[g.goal.id],
-    },
-  }));
-
-  // Replace the `data` property type from useQuery with our augmented shape
-  return { ...query, data } as Omit<typeof query, "data"> & {
-    data: typeof data;
-  };
 }
