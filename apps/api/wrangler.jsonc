@@ -21,6 +21,12 @@
       "migrations_dir": "drizzle"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "commit-photos"
+    }
+  ],
   "env": {
     "preview": {
       "name": "commit-api-preview",
@@ -30,6 +36,12 @@
           "database_name": "commit-api-db-preview",
           "database_id": "8d28a84a-6ba4-42c6-abb3-bb3bbfd7ebf9",
           "migrations_dir": "drizzle"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "R2",
+          "bucket_name": "commit-photos-preview"
         }
       ],
       "vars": {
@@ -44,6 +56,12 @@
           "database_name": "commit-api-db",
           "database_id": "77f0eae7-a326-4e0e-80a9-4954b1d41b55",
           "migrations_dir": "drizzle"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "R2",
+          "bucket_name": "commit-photos"
         }
       ],
       "vars": {

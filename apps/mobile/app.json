@@ -16,7 +16,10 @@
     "ios": {
       "bundleIdentifier": "com.getcommitapp.commit",
       "supportsTablet": true,
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow Commit to use the camera to take goal verification photos."
+      }
     },
     "android": {
       "package": "com.getcommitapp.commit",
@@ -24,14 +27,25 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": ["CAMERA"]
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-apple-authentication"],
+    "plugins": [
+      "expo-router",
+      "expo-apple-authentication",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Commit to save and access photos for goal verification.",
+          "cameraPermission": "Allow Commit to use the camera to take goal verification photos."
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     },

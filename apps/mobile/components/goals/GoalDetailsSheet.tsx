@@ -12,6 +12,8 @@ import { useDeleteGoal } from "@/lib/hooks/useDeleteGoal";
 import { GoalDetails } from "@/components/goals/GoalDetails";
 import { useGoalCheckin } from "@/lib/hooks/useCheckin";
 import { useGoalPhoto } from "@/lib/hooks/usePhoto";
+import { useUploadFile } from "@/lib/hooks/useUploadFile";
+import * as ImagePicker from "expo-image-picker";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
 
@@ -49,6 +51,7 @@ export const GoalDetailsSheet = forwardRef<
     const { mutate: submitPhoto, isPending: isSubmittingPhoto } = useGoalPhoto(
       goal.id
     );
+    const { mutateAsync: uploadFile, isPending: isUploading } = useUploadFile();
     const { mutate: deleteGoal, isPending: isDeleting } = useDeleteGoal(
       goal.id
     );
@@ -101,13 +104,29 @@ export const GoalDetailsSheet = forwardRef<
           <View style={{ marginBottom: spacing.xl }}>
             <Button
               title="Submit Photo"
-              onPress={() =>
-                !isSubmittingPhoto &&
-                submitPhoto({
-                  photoUrl: "https://picsum.photos/seed/mobile/800/600",
-                })
-              }
-              loading={isSubmittingPhoto}
+              onPress={async () => {
+                try {
+                  const res = await ImagePicker.launchCameraAsync({
+                    allowsEditing: false,
+                    quality: 0.8,
+                    cameraType: ImagePicker.CameraType.back,
+                    mediaTypes: "images",
+                  });
+                  if (!res.canceled) {
+                    const asset = res.assets[0];
+                    const { url } = await uploadFile({
+                      uri: asset.uri,
+                      type:
+                        asset.type === "image"
+                          ? (asset.mimeType ?? "image/jpeg")
+                          : "image/jpeg",
+                      name: asset.fileName ?? "photo.jpg",
+                    });
+                    submitPhoto({ photoUrl: url });
+                  }
+                } catch (_) {}
+              }}
+              loading={isSubmittingPhoto || isUploading}
               testID="submit-photo-goal"
               accessibilityLabel="submit-photo-goal"
             />

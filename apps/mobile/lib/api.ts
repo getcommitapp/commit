@@ -31,7 +31,10 @@ export async function apiFetch(
     headers.set("Authorization", `Bearer ${session.data.session.token}`);
   }
 
-  headers.set("Content-Type", "application/json");
+  // Set JSON content type by default unless caller overrides
+  if (!headers.has("Content-Type") && !(init.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
 
   const url = `${process.env.EXPO_PUBLIC_API_URL}/api${input}`;
 

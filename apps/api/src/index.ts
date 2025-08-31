@@ -42,6 +42,8 @@ import { PaymentsCharge as PaymentsDebit } from "./endpoints/paymentsDebit";
 import { PaymentsRefund } from "./endpoints/paymentsRefund";
 import { PaymentsCredit } from "./endpoints/paymentsCredit";
 import { PaymentsMethod } from "./endpoints/paymentsMethod";
+import { FilesUpload } from "./endpoints/filesUpload";
+import { FilesServe } from "./endpoints/filesServe";
 
 // Start a Hono app
 const app = new Hono<HonoContext>();
@@ -181,5 +183,9 @@ openapi.post("/api/payments/debit", PaymentsDebit);
 openapi.post("/api/payments/credit", PaymentsCredit);
 openapi.post("/api/payments/refund", PaymentsRefund);
 openapi.get("/api/payments/method", PaymentsMethod);
+
+// Files
+openapi.post("/api/files/upload", FilesUpload);
+openapi.get("/api/files/:key{.+}", FilesServe);
 
 export default app;

@@ -9,6 +9,7 @@ declare interface Env {
   AUTH_APPLE_CLIENT_SECRET?: string;
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
+  R2: R2Bucket;
 }
 
 declare module "cloudflare:test" {
