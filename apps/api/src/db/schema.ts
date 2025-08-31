@@ -148,7 +148,6 @@ export const GoalOccurrence = sqliteTable(
 
     // Optional fields for photo/checkin
     photoUrl: text("photoUrl"),
-    photoDescription: text("photoDescription"),
 
     // Movement timing
     timerStartedAt: integer("timerStartedAt", { mode: "timestamp" }),

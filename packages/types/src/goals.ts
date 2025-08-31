@@ -124,7 +124,6 @@ export const GoalOccurrenceSchema = z.object({
   status: z.enum(["pending", "approved", "rejected"]),
   verifiedAt: z.string().datetime().nullable().optional(),
   photoUrl: z.string().nullable().optional(),
-  photoDescription: z.string().nullable().optional(),
   timerStartedAt: z.string().datetime().nullable().optional(),
   timerEndedAt: z.string().datetime().nullable().optional(),
   violated: z.boolean().nullable().optional(),
@@ -143,7 +142,6 @@ export const GoalCheckinRequestSchema = z.object({
 
 export const GoalPhotoRequestSchema = z.object({
   photoUrl: z.string(),
-  photoDescription: z.string().nullable().optional(),
   occurrenceDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -215,7 +213,6 @@ export const GoalReviewDetails = z.object({
   goalId: z.string(),
   goalName: z.string(),
   photoUrl: z.string().nullable().optional(),
-  photoDescription: z.string().nullable().optional(),
 });
 
 export const GoalReviewListResponseSchema = z.array(GoalReviewDetails);

@@ -317,14 +317,14 @@ ON CONFLICT(id) DO UPDATE SET
 
 -- Insert some occurrences with statuses
 INSERT OR IGNORE INTO goal_occurrence (
-  goalId, userId, occurrenceDate, status, verifiedAt, photoDescription, photoUrl, timerStartedAt, timerEndedAt, violated, approvedBy, createdAt, updatedAt
+  goalId, userId, occurrenceDate, status, verifiedAt, photoUrl, timerStartedAt, timerEndedAt, violated, approvedBy, createdAt, updatedAt
 ) VALUES
   -- Yesterday approved for movement goal g1
-  ('00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','-1 day','localtime'), 'approved', strftime('%s','now','-1 day'), NULL, NULL, NULL, NULL, 0, NULL, strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000g1', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','-1 day','localtime'), 'approved', strftime('%s','now','-1 day'), NULL, NULL, NULL, 0, NULL, strftime('%s','now'), strftime('%s','now')),
   -- Today pending photo for g2
-  ('00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','localtime'), 'pending', NULL, 'Reading chapter 3 - daily pages', 'https://picsum.photos/seed/pending1/800/600', NULL, NULL, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
+  ('00000000-0000-4000-8000-0000000000g2', '00000000-0000-4000-8000-000000000001', strftime('%Y-%m-%d','now','localtime'), 'pending', NULL, 'https://picsum.photos/seed/pending1/800/600', NULL, NULL, NULL, NULL, strftime('%s','now'), strftime('%s','now')),
   -- Bob pending photo yesterday
-  ('00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', strftime('%Y-%m-%d','now','-1 day','localtime'), 'pending', NULL, 'Morning meditation spot', 'https://picsum.photos/seed/pending2/800/600', NULL, NULL, NULL, NULL, strftime('%s','now'), strftime('%s','now'));
+  ('00000000-0000-4000-8000-0000000000g4', '00000000-0000-4000-8000-000000000003', strftime('%Y-%m-%d','now','-1 day','localtime'), 'pending', NULL, 'https://picsum.photos/seed/pending2/800/600', NULL, NULL, NULL, NULL, strftime('%s','now'), strftime('%s','now'));
 
 -- Sanity cleanup: remove orphan groups referencing non-existent goals
 DELETE FROM "group"

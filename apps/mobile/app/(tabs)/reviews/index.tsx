@@ -141,7 +141,7 @@ export default function ReviewsScreen() {
       </View>
 
       <ThemedText style={[styles.description, { color: mutedForeground }]}>
-        {currentReview.photoDescription || "No description provided"}
+        Photo submission
       </ThemedText>
 
       {/* Review counter */}

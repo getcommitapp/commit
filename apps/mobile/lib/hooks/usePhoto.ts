@@ -8,13 +8,9 @@ import {
 export function useGoalPhoto(goalId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: {
-      photoUrl: string;
-      photoDescription?: string | null;
-    }) => {
+    mutationFn: async (input: { photoUrl: string }) => {
       const body = {
         photoUrl: input.photoUrl,
-        photoDescription: input.photoDescription ?? null,
       };
       GoalPhotoRequestSchema.parse(body);
       const res = await apiFetch(

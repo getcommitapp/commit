@@ -60,7 +60,6 @@ CREATE TABLE `goal_occurrence` (
 	`status` text DEFAULT 'pending' NOT NULL,
 	`verifiedAt` integer,
 	`photoUrl` text,
-	`photoDescription` text,
 	`timerStartedAt` integer,
 	`timerEndedAt` integer,
 	`violated` integer,

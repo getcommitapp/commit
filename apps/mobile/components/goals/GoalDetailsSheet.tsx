@@ -105,7 +105,6 @@ export const GoalDetailsSheet = forwardRef<
                 !isSubmittingPhoto &&
                 submitPhoto({
                   photoUrl: "https://picsum.photos/seed/mobile/800/600",
-                  photoDescription: "Mobile submission",
                 })
               }
               loading={isSubmittingPhoto}

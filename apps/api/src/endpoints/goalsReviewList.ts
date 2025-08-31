@@ -37,7 +37,6 @@ export class GoalsReviewList extends OpenAPIRoute {
         goalId: schema.GoalOccurrence.goalId,
         goalName: schema.Goal.name,
         photoUrl: schema.GoalOccurrence.photoUrl,
-        photoDescription: schema.GoalOccurrence.photoDescription,
       })
       .from(schema.GoalOccurrence)
       .innerJoin(schema.Goal, eq(schema.GoalOccurrence.goalId, schema.Goal.id))
