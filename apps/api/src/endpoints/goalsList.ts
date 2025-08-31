@@ -1,10 +1,10 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { GoalsListResponseSchema } from "@commit/types";
-import { evaluateGoalState } from "../services/goalStateService";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { todayLocal, computeState } from "../services/goalService";
 
 export class GoalsList extends OpenAPIRoute {
   schema = {
@@ -27,46 +27,31 @@ export class GoalsList extends OpenAPIRoute {
     const db = drizzle(c.env.DB, { schema });
 
     const rows = await db.query.Goal.findMany({
-      with: { verificationMethods: true, group: true, verificationsLog: true },
       where: eq(schema.Goal.ownerId, user.id),
     });
 
-    const results = await Promise.all(
-      rows.map(async (g) => {
-        const firstMethod = g.verificationMethods?.[0] ?? null;
-        delete g.verificationMethods;
-        const base = {
-          ...g,
-          verificationMethod: firstMethod,
-          groupId: g.group?.id ?? null,
-        };
-        const todayLocal = new Intl.DateTimeFormat("en-CA", {
-          timeZone: user.timezone || "UTC",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        })
-          .format(new Date())
-          .replace(/\//g, "-");
-        const todayLog = g.verificationsLog?.find(
-          (v) => v.userId === user.id && v.occurrenceDate === todayLocal
-        );
-        const occurrenceVerification = todayLog
-          ? ({ status: todayLog.approvalStatus } as const)
-          : null;
-        const status = evaluateGoalState(
-          { ...g, verificationMethod: firstMethod },
-          user,
-          occurrenceVerification
-        );
-        return {
-          ...base,
-          state: status.state,
-          engineFlags: status.engine.flags ?? undefined,
-          timeLeft: status.engine.labels?.timeLeft ?? undefined,
-        };
-      })
-    );
+    const localDate = todayLocal(user.timezone);
+
+    // Load today's occurrences for this user
+    const occs = await db.query.GoalOccurrence.findMany({
+      where: and(
+        eq(schema.GoalOccurrence.userId, user.id),
+        eq(schema.GoalOccurrence.occurrenceDate, localDate)
+      ),
+    });
+    const occIndex = new Map(occs.map((o) => [o.goalId, o]));
+
+    const results = rows.map((g) => {
+      const occ = occIndex.get(g.id) || null;
+      const cs = computeState(g, user, occ);
+      return {
+        ...g,
+        state: cs.state,
+        engineFlags: cs.engineFlags,
+        timeLeft: cs.timeLeft,
+        groupId: null,
+      };
+    });
 
     return c.json(results, 200);
   }

@@ -2,9 +2,9 @@ import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { GroupsListResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
-import { and, eq, exists, or } from "drizzle-orm";
+import { and, eq, exists, inArray, or } from "drizzle-orm";
 import * as schema from "../db/schema";
-import { evaluateGoalState } from "../services/goalStateService";
+import { todayLocal, computeState } from "../services/goalService";
 
 export class GroupsList extends OpenAPIRoute {
   schema = {
@@ -28,9 +28,7 @@ export class GroupsList extends OpenAPIRoute {
 
     const groups = await db.query.Group.findMany({
       with: {
-        goal: {
-          with: { verificationsLog: true, verificationMethods: true },
-        },
+        goal: true,
         creator: true,
         participants: {
           with: {
@@ -54,6 +52,20 @@ export class GroupsList extends OpenAPIRoute {
       ),
     });
 
+    const tz = c.var.user.timezone;
+    const localDate = todayLocal(tz);
+    const goalIds = groups.map((g) => g.goal.id);
+    const occs = goalIds.length
+      ? await db.query.GoalOccurrence.findMany({
+          where: and(
+            inArray(schema.GoalOccurrence.goalId, goalIds),
+            eq(schema.GoalOccurrence.userId, userId),
+            eq(schema.GoalOccurrence.occurrenceDate, localDate)
+          ),
+        })
+      : [];
+    const occIndex = new Map(occs.map((o) => [o.goalId, o]));
+
     const response = await Promise.all(
       groups.map(async (g) => {
         const baseMembers = [
@@ -72,27 +84,8 @@ export class GroupsList extends OpenAPIRoute {
               { name: selfName, isOwner: g.creatorId === userId },
             ];
 
-        const tz = c.var.user?.timezone || "UTC";
-        const todayLocal = new Intl.DateTimeFormat("en-CA", {
-          timeZone: tz,
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        })
-          .format(new Date())
-          .replace(/\//g, "-");
-        const todayLog = g.goal.verificationsLog?.find(
-          (v) => v.userId === userId && v.occurrenceDate === todayLocal
-        );
-        const occurrenceVerification = todayLog
-          ? ({ status: todayLog.approvalStatus } as const)
-          : null;
-        const firstMethod = g.goal.verificationMethods?.[0] ?? null;
-        const status = evaluateGoalState(
-          { ...g.goal, verificationMethod: firstMethod },
-          c.var.user!,
-          occurrenceVerification
-        );
+        const occ = occIndex.get(g.goal.id) || null;
+        const status = computeState(g.goal, c.var.user, occ);
         return {
           ...g,
           memberCount: g.participants.length ?? 0,
@@ -101,8 +94,8 @@ export class GroupsList extends OpenAPIRoute {
           goal: {
             ...g.goal,
             state: status.state,
-            engineFlags: status.engine.flags ?? undefined,
-            timeLeft: status.engine.labels?.timeLeft ?? undefined,
+            engineFlags: status.engineFlags ?? undefined,
+            timeLeft: status.timeLeft ?? undefined,
           },
         };
       })

@@ -2,9 +2,9 @@ import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { GoalBaseSchema } from "@commit/types";
-import { evaluateGoalState } from "../services/goalStateService";
+import { todayLocal, computeState } from "../services/goalService";
 
 export class GoalsFetch extends OpenAPIRoute {
   schema = {
@@ -30,24 +30,25 @@ export class GoalsFetch extends OpenAPIRoute {
 
     const goal = await db.query.Goal.findFirst({
       where: eq(schema.Goal.id, id),
-      with: { verificationMethods: true },
     });
     if (!goal) return new Response("Not Found", { status: 404 });
 
     const user = c.var.user!;
-    const firstMethod = goal.verificationMethods?.[0] ?? null;
-    const status = evaluateGoalState(
-      { ...goal, verificationMethod: firstMethod },
-      user,
-      null
-    );
-    const { verificationMethods, ...rest } = goal;
+    const localDate = todayLocal(user.timezone);
+    const occ = await db.query.GoalOccurrence.findFirst({
+      where: and(
+        eq(schema.GoalOccurrence.goalId, id),
+        eq(schema.GoalOccurrence.userId, user.id),
+        eq(schema.GoalOccurrence.occurrenceDate, localDate)
+      ),
+    });
+
+    const cs = computeState(goal, user, occ);
     return c.json({
-      ...rest,
-      verificationMethod: firstMethod,
-      state: status.state,
-      engineFlags: status.engine.flags ?? undefined,
-      timeLeft: status.engine.labels?.timeLeft ?? undefined,
+      ...goal,
+      state: cs.state,
+      engineFlags: cs.engineFlags,
+      timeLeft: cs.timeLeft,
     });
   }
 }
