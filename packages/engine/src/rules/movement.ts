@@ -13,6 +13,8 @@ export function evaluateMovement(input: EngineInputs): EngineOutputs {
     occurrence: {
       start: windowStart,
       end: occ.dueEnd ?? undefined,
+      timerStartedAt: input.occurrenceContext?.timerStartedAt ?? null,
+      timerEndedAt: input.occurrenceContext?.timerEndedAt ?? null,
     },
     actions: [],
   };

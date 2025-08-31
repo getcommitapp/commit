@@ -53,6 +53,9 @@ export const GoalBaseSchema = z.object({
       end: z.string().datetime().nullable().optional(),
       latestStart: z.string().datetime().nullable().optional(),
       graceUntil: z.string().datetime().nullable().optional(),
+      // Movement timer persistence
+      timerStartedAt: z.string().datetime().nullable().optional(),
+      timerEndedAt: z.string().datetime().nullable().optional(),
     })
     .nullable()
     .optional(),
@@ -181,6 +184,9 @@ export const GoalActionResponseSchema = z.object({
       end: z.string().datetime().nullable().optional(),
       latestStart: z.string().datetime().nullable().optional(),
       graceUntil: z.string().datetime().nullable().optional(),
+      // Movement timer persistence
+      timerStartedAt: z.string().datetime().nullable().optional(),
+      timerEndedAt: z.string().datetime().nullable().optional(),
     })
     .nullable()
     .optional(),

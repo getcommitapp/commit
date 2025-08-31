@@ -16,10 +16,28 @@ export function computeGoalState(input: EngineInputs): EngineOutputs {
     };
   }
   if (input.occurrenceVerification?.status === "pending") {
-    return {
+    // Surface any occurrence context (e.g., timer) so clients can render progress
+    const out: EngineOutputs = {
       state: "awaiting_verification",
       actions: [],
     } as const;
+    if (
+      input.occurrenceContext?.timerStartedAt ||
+      input.occurrenceContext?.timerEndedAt
+    ) {
+      out.occurrence = {
+        // Use dueStart/dueEnd when available to bound the UI window
+        start: input.goal.dueStartTime
+          ? new Date(input.goal.dueStartTime)
+          : new Date(),
+        end: input.goal.dueEndTime
+          ? new Date(input.goal.dueEndTime)
+          : undefined,
+        timerStartedAt: input.occurrenceContext?.timerStartedAt ?? null,
+        timerEndedAt: input.occurrenceContext?.timerEndedAt ?? null,
+      } as any;
+    }
+    return out;
   }
   switch (method) {
     case "checkin":

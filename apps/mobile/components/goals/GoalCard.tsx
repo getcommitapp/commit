@@ -42,7 +42,11 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
     bottomSheetRef.current?.present();
   }, [dismissAll]);
 
-  const isOngoing = goal.state === "ongoing";
+  const { data: localTimer } = useLocalMovementTimer(goal.id);
+  const persistedTimerStartedAt = goal.occurrence?.timerStartedAt ?? null;
+  const activeTimerStartedAt =
+    persistedTimerStartedAt || localTimer?.startedAt || null;
+  const hasActiveTimer = !!activeTimerStartedAt;
   const nextLabel = useMemo(
     () => formatRelativeTimeLeft(goal.nextTransitionAt),
     [goal.nextTransitionAt]
@@ -101,13 +105,13 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
         ) : null}
       </View>
 
-      {isOngoing ? (
+      {hasActiveTimer && goal.method === "movement" ? (
         <GoalTimerRow
-          goalId={goal.id}
           durationSeconds={goal.durationSeconds ?? 0}
+          startedAt={activeTimerStartedAt}
         />
       ) : null}
-      {!isOngoing ? (
+      {!hasActiveTimer ? (
         <GoalPrimaryAction
           goalId={goal.id}
           actions={goal.actions ?? []}
@@ -207,22 +211,18 @@ function GoalPrimaryAction({
 }
 
 function GoalTimerRow({
-  goalId,
   durationSeconds,
+  startedAt,
 }: {
-  goalId: string;
   durationSeconds: number;
+  startedAt: string | null;
 }) {
   const mutedForeground = useThemeColor({}, "mutedForeground");
-  const { data: localTimer } = useLocalMovementTimer(goalId);
-  const { remainingLabel, remainingMs } = useElapsedTimer(
-    localTimer?.startedAt ?? null,
-    {
-      durationMs: durationSeconds ? durationSeconds * 1000 : null,
-      onComplete: undefined,
-    }
-  );
-  if (!localTimer?.startedAt || remainingMs === 0) return null;
+  const { remainingLabel, remainingMs } = useElapsedTimer(startedAt, {
+    durationMs: durationSeconds ? durationSeconds * 1000 : null,
+    onComplete: undefined,
+  });
+  if (!startedAt || remainingMs === 0) return null;
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
       <Text style={{ ...textVariants.footnote, color: mutedForeground }}>

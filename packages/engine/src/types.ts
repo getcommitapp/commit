@@ -63,6 +63,11 @@ export interface EngineInputs {
     status: "pending" | "approved" | "rejected";
     submittedAt?: Date;
   } | null;
+  // Additional per-occurrence context that the engine can surface
+  occurrenceContext?: {
+    timerStartedAt?: Date | null;
+    timerEndedAt?: Date | null;
+  } | null;
 }
 
 export type GoalState =
@@ -82,6 +87,9 @@ export interface EngineOutputs {
     end?: Date;
     latestStart?: Date;
     graceUntil?: Date;
+    // surfaced context for duration-capable methods (e.g., movement/location)
+    timerStartedAt?: Date | null;
+    timerEndedAt?: Date | null;
   };
   actions: Action[];
   nextTransitionAt?: Date;

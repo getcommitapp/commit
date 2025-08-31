@@ -78,6 +78,16 @@ export function toEngineInputs(
     occurrenceVerification: occurrence
       ? ({ status: occurrence.status } as const)
       : null,
+    occurrenceContext: occurrence
+      ? {
+          timerStartedAt: occurrence.timerStartedAt
+            ? new Date(occurrence.timerStartedAt)
+            : null,
+          timerEndedAt: occurrence.timerEndedAt
+            ? new Date(occurrence.timerEndedAt)
+            : null,
+        }
+      : null,
   } as const;
 }
 
@@ -88,6 +98,8 @@ export interface ComputedGoalState {
     end?: string | null;
     latestStart?: string | null;
     graceUntil?: string | null;
+    timerStartedAt?: string | null;
+    timerEndedAt?: string | null;
   } | null;
   actions: {
     kind: "checkin" | "upload_photo" | "movement_start" | "open_location";
@@ -116,6 +128,13 @@ export function computeState(
           end: engine.occurrence.end?.toISOString() ?? null,
           latestStart: engine.occurrence.latestStart?.toISOString() ?? null,
           graceUntil: engine.occurrence.graceUntil?.toISOString() ?? null,
+          // Timer fields from DB occurrence context
+          timerStartedAt: occurrence?.timerStartedAt
+            ? new Date(occurrence.timerStartedAt).toISOString()
+            : null,
+          timerEndedAt: occurrence?.timerEndedAt
+            ? new Date(occurrence.timerEndedAt).toISOString()
+            : null,
         }
       : null,
     actions: (engine.actions || []).map((a) => ({

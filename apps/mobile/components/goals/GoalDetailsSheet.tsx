@@ -33,11 +33,14 @@ export const GoalDetailsSheet = forwardRef<
   ) => {
     const background = useThemeColor({}, "background");
     const { data: localTimer } = useLocalMovementTimer(goal.id);
+    const persistedTimerStartedAt = goal.occurrence?.timerStartedAt ?? null;
+    const activeTimerStartedAt =
+      persistedTimerStartedAt || localTimer?.startedAt || null;
     const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(
       goal.id
     );
     const { remainingLabel, remainingMs } = useElapsedTimer(
-      localTimer?.startedAt ?? null,
+      activeTimerStartedAt,
       {
         durationMs: goal.durationSeconds ? goal.durationSeconds * 1000 : null,
         onComplete: undefined,
@@ -50,7 +53,7 @@ export const GoalDetailsSheet = forwardRef<
       goal.id
     );
 
-    const isOngoing = goal.state === "ongoing";
+    const hasActiveTimer = !!activeTimerStartedAt;
 
     return (
       <DetailsSheet
@@ -61,14 +64,14 @@ export const GoalDetailsSheet = forwardRef<
         enableDynamicSizing={enableDynamicSizing}
         onDismiss={onDismiss}
       >
-        {isOngoing && localTimer?.startedAt ? (
+        {hasActiveTimer && goal.method === "movement" ? (
           <View style={{ marginBottom: spacing.xl }}>
             <FormGroup
               title="Progress"
               style={{ marginBottom: spacing.sm }}
               backgroundStyle={{ backgroundColor: background }}
             >
-              {localTimer?.startedAt && remainingMs !== 0 ? (
+              {activeTimerStartedAt && remainingMs !== 0 ? (
                 <>
                   <FormItem label="Status" value="Running" />
                   <FormItem label="Remaining" value={remainingLabel ?? "–"} />
@@ -82,7 +85,7 @@ export const GoalDetailsSheet = forwardRef<
           </View>
         ) : null}
 
-        {!isOngoing && goal.method === "checkin" ? (
+        {!hasActiveTimer && goal.method === "checkin" ? (
           <View style={{ marginBottom: spacing.xl }}>
             <Button
               title="Check-in"
@@ -94,7 +97,7 @@ export const GoalDetailsSheet = forwardRef<
           </View>
         ) : null}
 
-        {!isOngoing && goal.method === "photo" ? (
+        {!hasActiveTimer && goal.method === "photo" ? (
           <View style={{ marginBottom: spacing.xl }}>
             <Button
               title="Submit Photo"
