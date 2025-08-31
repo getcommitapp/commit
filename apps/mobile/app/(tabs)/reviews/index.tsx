@@ -276,80 +276,31 @@ export default function ReviewsScreen() {
           )}
         </View>
 
-        {/* Current card */}
-        <Animated.View
-          style={[
-            styles.cardContainer,
-            {
-              transform: [
-                { translateX: position.x },
-                { translateY: position.y },
-                { rotate },
-              ],
-            },
-          ]}
-          {...panResponder.panHandlers}
-        >
-          {currentReview.photoUrl && !imageError && imageSource ? (
-            <>
-              {isImageLoading && (
-                <View
-                  style={[
-                    styles.fullImage,
-                    { backgroundColor: placeholderBorder },
-                  ]}
-                />
-              )}
-              <Image
-                source={imageSource}
-                style={styles.fullImage}
-                contentFit="cover"
-                transition={200}
-                cachePolicy="memory-disk"
-                allowDownscaling
-                onLoadStart={() => setIsImageLoading(true)}
-                onLoadEnd={() => setIsImageLoading(false)}
-                onError={(e) => {
-                  console.error("Error loading image", e);
-                  setIsImageLoading(false);
-                  setImageError(true);
-                }}
-              />
-              {/* Overlays */}
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.overlay,
-                  { backgroundColor: "#16a34a", opacity: likeOpacity },
-                ]}
-              />
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.overlay,
-                  { backgroundColor: "#dc2626", opacity: nopeOpacity },
-                ]}
-              />
-            </>
-          ) : (
-            <View
-              style={[
-                styles.fullImage,
-                {
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: background,
-                },
-              ]}
-            >
-              <Text
-                style={[styles.placeholderText, { color: mutedForeground }]}
-              >
-                No Image Provided
-              </Text>
-            </View>
-          )}
-        </Animated.View>
+      <ThemedText style={[styles.description, { color: mutedForeground }]}>
+        Photo submission
+      </ThemedText>
+
+      {/* Review counter */}
+      <ThemedText style={[styles.counter, { color: mutedForeground }]}>
+        Review {currentIndex + 1} of {reviews.length}
+      </ThemedText>
+
+      {/* Action buttons - keeping your exact layout */}
+      <View style={styles.buttons}>
+        <Pressable style={styles.iconButton} onPress={handleReject}>
+          <MaterialCommunityIcons
+            name="close-circle-outline"
+            size={60}
+            color={failColor}
+          />
+        </Pressable>
+        <Pressable style={styles.iconButton} onPress={handleApprove}>
+          <MaterialCommunityIcons
+            name="check-circle-outline"
+            size={60}
+            color={successColor}
+          />
+        </Pressable>
       </View>
     </ScreenLayout>
   );

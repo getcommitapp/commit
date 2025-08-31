@@ -97,7 +97,18 @@ export const GoalDetailsSheet = forwardRef<
 
         {!hasActiveTimer ? (
           <View style={{ marginBottom: spacing.xl }}>
-            <GoalActions goal={goal} />
+            <Button
+              title="Submit Photo"
+              onPress={() =>
+                !isSubmittingPhoto &&
+                submitPhoto({
+                  photoUrl: "https://picsum.photos/seed/mobile/800/600",
+                })
+              }
+              loading={isSubmittingPhoto}
+              testID="submit-photo-goal"
+              accessibilityLabel="submit-photo-goal"
+            />
           </View>
         ) : null}
 
