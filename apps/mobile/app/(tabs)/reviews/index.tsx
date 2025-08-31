@@ -16,7 +16,7 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import { useReviews } from "@/lib/hooks/useReviews";
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Image } from "expo-image";
 import { useReviewUpdate } from "@/lib/hooks/useReviewUpdate";
 import { createApiImageSource } from "@/lib/api";
@@ -31,11 +31,9 @@ export default function ReviewsScreen() {
     uri: string;
     headers: any;
   } | null>(null);
-  const [nextImageSource, setNextImageSource] = useState<{
-    uri: string;
-    headers: any;
-  } | null>(null);
 
+  const failColor = useThemeColor({}, "danger");
+  const successColor = useThemeColor({}, "success");
   const mutedForeground = useThemeColor({}, "mutedForeground");
   const background = useThemeColor({}, "background");
   const placeholderBorder = useThemeColor({}, "border");
@@ -44,28 +42,45 @@ export default function ReviewsScreen() {
 
   const reviewUpdate = useReviewUpdate();
 
-  // Swipe gesture state
-  const position = useRef(new Animated.ValueXY()).current;
-  const swipeThreshold = useMemo(() => screenWidth * 0.25, [screenWidth]);
+  // Reset index if reviews list changes significantly
+  useEffect(() => {
+    if (!reviews || reviews.length === 0) {
+      setCurrentIndex(0);
+      return;
+    }
+    if (currentIndex >= reviews.length) {
+      setCurrentIndex(0);
+    }
+  }, [reviews, currentIndex]);
 
-  const rotate = position.x.interpolate({
-    inputRange: [-screenWidth, 0, screenWidth],
-    outputRange: ["-15deg", "0deg", "15deg"],
-  });
+  // Build image source with auth headers when photoUrl changes
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const url = reviews?.[currentIndex]?.photoUrl;
+      if (!url) {
+        if (mounted) setImageSource(null);
+        return;
+      }
+      try {
+        const src = await createApiImageSource(url);
+        if (mounted) setImageSource(src as any);
+      } catch {
+        if (mounted) setImageSource(null);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [reviews, currentIndex]);
 
-  const likeOpacity = position.x.interpolate({
-    inputRange: [0, swipeThreshold],
-    outputRange: [0, 0.35],
-    extrapolate: "clamp",
-  });
+  // Reset image loading state when the current image changes
+  useEffect(() => {
+    setIsImageLoading(true);
+    setImageError(false);
+  }, [currentIndex, reviews]);
 
-  const nopeOpacity = position.x.interpolate({
-    inputRange: [-swipeThreshold, 0],
-    outputRange: [0.35, 0],
-    extrapolate: "clamp",
-  });
-
-  const handleApprove = useCallback(() => {
+  const handleApprove = async () => {
     if (!reviews) return;
     const currentReview = reviews[currentIndex];
 
@@ -254,27 +269,61 @@ export default function ReviewsScreen() {
   const currentReview = reviews[currentIndex];
 
   return (
-    <ScreenLayout scrollable={false} style={{ flex: 1 }}>
+    <ScreenLayout largeTitle>
+      <ThemedText style={{ ...textVariants.title3 }}>
+        {currentReview.goalName}
+      </ThemedText>
+
+      {!!currentReview.goalDescription && (
+        <ThemedText
+          style={{
+            ...textVariants.body,
+            color: mutedForeground,
+            marginBottom: spacing.sm,
+          }}
+        >
+          {currentReview.goalDescription}
+        </ThemedText>
+      )}
+
       <View
         style={{
           flex: 1,
           position: "relative",
         }}
       >
-        {/* Next card underneath */}
-        <View style={styles.cardContainer} pointerEvents="none">
-          {nextImageSource ? (
+        {currentReview.photoUrl && !imageError && imageSource ? (
+          <>
+            {isImageLoading && (
+              <View
+                style={[
+                  styles.skeleton,
+                  { backgroundColor: placeholderBorder },
+                ]}
+              />
+            )}
             <Image
-              source={nextImageSource}
-              style={styles.fullImage}
+              source={imageSource}
+              style={{ width: "100%", height: "100%", borderRadius: 8 }}
               contentFit="cover"
+              transition={400}
               cachePolicy="memory-disk"
               allowDownscaling
+              onLoadStart={() => setIsImageLoading(true)}
+              onLoadEnd={() => setIsImageLoading(false)}
+              onError={(e) => {
+                console.error("Error loading image", e);
+                setIsImageLoading(false);
+                setImageError(true);
+              }}
             />
-          ) : (
-            <View style={[styles.fullImage, { backgroundColor: background }]} />
-          )}
-        </View>
+          </>
+        ) : (
+          <Text style={[styles.placeholderText, { color: mutedForeground }]}>
+            No Image Provided
+          </Text>
+        )}
+      </View>
 
       <ThemedText style={[styles.description, { color: mutedForeground }]}>
         Photo submission
@@ -285,16 +334,24 @@ export default function ReviewsScreen() {
         Review {currentIndex + 1} of {reviews.length}
       </ThemedText>
 
-      {/* Action buttons - keeping your exact layout */}
+      {/* Action buttons */}
       <View style={styles.buttons}>
-        <Pressable style={styles.iconButton} onPress={handleReject}>
+        <Pressable
+          style={styles.iconButton}
+          onPress={handleReject}
+          disabled={reviewUpdate.isPending}
+        >
           <MaterialCommunityIcons
             name="close-circle-outline"
             size={60}
             color={failColor}
           />
         </Pressable>
-        <Pressable style={styles.iconButton} onPress={handleApprove}>
+        <Pressable
+          style={styles.iconButton}
+          onPress={handleApprove}
+          disabled={reviewUpdate.isPending}
+        >
           <MaterialCommunityIcons
             name="check-circle-outline"
             size={60}
@@ -321,24 +378,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     borderRadius: spacing.sm,
     position: "relative",
-  },
-  cardContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 8,
-    overflow: "hidden",
-  },
-  fullImage: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: "100%",
-    height: "100%",
   },
   skeleton: {
     position: "absolute",
