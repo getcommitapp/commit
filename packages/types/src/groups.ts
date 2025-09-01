@@ -55,7 +55,14 @@ export const GroupLeaveResponseSchema = z.object({
 
 export const GroupJoinRequestSchema = z.object({ code: z.string() });
 
-export const GroupJoinResponseSchema = GroupBaseSchema;
+export const GroupJoinResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  inviteCode: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
 
 export const GroupDeleteResponseSchema = z.object({
   message: z.string(), // "Group deleted successfully."
