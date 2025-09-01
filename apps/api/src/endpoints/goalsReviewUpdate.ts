@@ -3,23 +3,12 @@ import { type AppContext } from "../types";
 import { GoalReviewUpdateRequestSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export class GoalsReviewUpdate extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Update a Goal validation log",
-    parameters: [
-      {
-        name: "id",
-        in: "path" as const,
-        required: true,
-        schema: {
-          type: "string" as const,
-        },
-        description: "Goal ID",
-      },
-    ],
     request: {
       body: contentJson(GoalReviewUpdateRequestSchema),
     },
@@ -42,12 +31,10 @@ export class GoalsReviewUpdate extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const goalId = c.req.param("id");
-
     const user = c.var.user!;
 
     const data = await this.getValidatedData<typeof this.schema>();
-    const { approvalStatus } = data.body;
+    const { goalId, userId, occurrenceDate, approvalStatus } = data.body;
 
     const db = drizzle(c.env.DB, { schema });
     const now = new Date();
@@ -64,8 +51,18 @@ export class GoalsReviewUpdate extends OpenAPIRoute {
         updatedAt: now,
         approvedBy: user.id,
       })
-      .where(eq(schema.GoalOccurrence.goalId, goalId))
+      .where(
+        and(
+          eq(schema.GoalOccurrence.goalId, goalId),
+          eq(schema.GoalOccurrence.userId, userId),
+          eq(schema.GoalOccurrence.occurrenceDate, occurrenceDate)
+        )
+      )
       .returning();
+
+    if (updated.length === 0) {
+      return c.json({ error: "Goal occurrence not found" }, 404);
+    }
 
     return c.json(updated[0]);
   }

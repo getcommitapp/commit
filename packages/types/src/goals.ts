@@ -211,6 +211,8 @@ export const GoalActionResponseSchema = z.object({
 
 export const GoalReviewDetails = z.object({
   goalId: z.string(),
+  userId: z.string(),
+  occurrenceDate: z.string(),
   goalName: z.string(),
   goalDescription: z.string().nullable().optional(),
   photoUrl: z.string().nullable().optional(),
@@ -219,6 +221,9 @@ export const GoalReviewDetails = z.object({
 export const GoalReviewListResponseSchema = z.array(GoalReviewDetails);
 
 export const GoalReviewUpdateRequestSchema = z.object({
+  goalId: z.string(),
+  userId: z.string(),
+  occurrenceDate: z.string(),
   approvalStatus: z.enum(["approved", "rejected"]),
 });
 

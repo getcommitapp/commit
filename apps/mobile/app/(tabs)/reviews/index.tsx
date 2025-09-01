@@ -68,6 +68,8 @@ export default function ReviewsScreen() {
     // Do not increment index on success; optimistic cache removal will shift the next item in place
     reviewUpdate.mutate({
       goalId: currentReview.goalId,
+      userId: currentReview.userId,
+      occurrenceDate: currentReview.occurrenceDate,
       approvalStatus: "approved",
     });
   }, [reviews, currentIndex, reviewUpdate]);
@@ -78,6 +80,8 @@ export default function ReviewsScreen() {
 
     reviewUpdate.mutate({
       goalId: currentReview.goalId,
+      userId: currentReview.userId,
+      occurrenceDate: currentReview.occurrenceDate,
       approvalStatus: "rejected",
     });
   }, [reviews, currentIndex, reviewUpdate]);
