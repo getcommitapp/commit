@@ -73,11 +73,11 @@ describe("Goals review endpoints", () => {
       `/api/goals/review`,
       {
         method: "PUT",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           goalId: created.id,
           userId: item!.userId,
           occurrenceDate: item!.occurrenceDate,
-          approvalStatus: "approved"
+          approvalStatus: "approved",
         }),
         headers: new Headers({
           "Content-Type": "application/json",

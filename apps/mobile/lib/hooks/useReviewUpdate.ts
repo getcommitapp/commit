@@ -18,7 +18,12 @@ export function useReviewUpdate() {
     }) => {
       return await apiFetch(`/goals/review`, {
         method: "PUT",
-        body: JSON.stringify({ goalId, userId, occurrenceDate, approvalStatus }),
+        body: JSON.stringify({
+          goalId,
+          userId,
+          occurrenceDate,
+          approvalStatus,
+        }),
       });
     },
     onMutate: async ({ goalId, userId, occurrenceDate }) => {
@@ -27,8 +32,13 @@ export function useReviewUpdate() {
       if (previous) {
         qc.setQueryData(
           ["reviews"],
-          previous.filter((r: any) => 
-            !(r.goalId === goalId && r.userId === userId && r.occurrenceDate === occurrenceDate)
+          previous.filter(
+            (r: any) =>
+              !(
+                r.goalId === goalId &&
+                r.userId === userId &&
+                r.occurrenceDate === occurrenceDate
+              )
           )
         );
       }
