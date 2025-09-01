@@ -120,4 +120,78 @@ describe("POST /api/goals/:id/checkin (action)", () => {
     const body2 = await res2.json<GoalActionResponse>();
     expect(body2.state).toBeDefined();
   });
+
+  it("allows group members to check-in", async () => {
+    // Create a goal owned by another user
+    const db = drizzle(testEnv.DB);
+    await testEnv.DB.exec(
+      `INSERT INTO user (id, name, email, emailVerified, image, updatedAt) VALUES ('group_creator','Creator','creator@example.com',1,NULL,strftime('%s','now'));`
+    );
+    
+    const goalId = uuid();
+    const now = new Date();
+    await db.insert(schema.Goal).values({
+      id: goalId,
+      ownerId: "group_creator",
+      name: "Group Goal",
+      description: null,
+      startDate: now,
+      endDate: null,
+      dueStartTime: now,
+      dueEndTime: null,
+      localDueStart: null,
+      localDueEnd: null,
+      recDaysMask: null,
+      stakeCents: 100,
+      currency: "CHF",
+      destinationType: "user",
+      destinationUserId: null,
+      destinationCharityId: null,
+      method: "checkin",
+      graceTimeSeconds: 60,
+      durationSeconds: null,
+      geoLat: null,
+      geoLng: null,
+      geoRadiusM: null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // Create a group with this goal
+    const groupId = uuid();
+    await db.insert(schema.Group).values({
+      id: groupId,
+      creatorId: "group_creator",
+      goalId: goalId,
+      name: "Test Group",
+      description: null,
+      inviteCode: "TEST123",
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // Add user_1 as a group member
+    await db.insert(schema.GroupMember).values({
+      groupId: groupId,
+      userId: "user_1",
+      joinedAt: now,
+      status: null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // Now user_1 should be able to check-in on the group goal
+    const res = await app.request(
+      `/api/goals/${goalId}/checkin`,
+      {
+        method: "POST",
+        body: JSON.stringify({}),
+        headers: new Headers({ "Content-Type": "application/json" }),
+      },
+      env
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json<GoalActionResponse>();
+    expect(body.state).toBeDefined();
+  });
 });

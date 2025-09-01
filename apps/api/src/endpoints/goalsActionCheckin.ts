@@ -35,8 +35,21 @@ export class GoalsActionCheckin extends OpenAPIRoute {
       where: eq(schema.Goal.id, id),
     });
     if (!goal) return new Response("Not Found", { status: 404 });
-    if (goal.ownerId !== user.id)
-      return new Response("Forbidden", { status: 403 });
+    
+    // Check if user can act on this goal (owner or group member)
+    let canAct = goal.ownerId === user.id;
+    if (!canAct) {
+      // Check if user is a member of any group that has this goal
+      const groupMemberships = await db.query.GroupMember.findMany({
+        where: eq(schema.GroupMember.userId, user.id),
+        with: {
+          group: true,
+        },
+      });
+      canAct = groupMemberships.some(membership => membership.group.goalId === id);
+    }
+    
+    if (!canAct) return new Response("Forbidden", { status: 403 });
     if (goal.method !== "checkin")
       return new Response("Bad Request", { status: 400 });
 
