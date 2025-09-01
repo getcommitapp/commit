@@ -34,80 +34,31 @@ export default function HomeScreen() {
       .join("  ");
   }, [goals]);
 
-  return (
-    <ScreenLayout
-      largeTitle
-      style={{
-        flex: 1,
-        gap: spacing.xl,
-        paddingTop: spacing.md,
-      }}
-      onRefresh={async () => {
-        await refetch();
-      }}
-    >
+  const WelcomeMessage = () => {
+    return (
       <View>
-        <ThemedText style={styles.title}>
-          Welcome back{" "}
-          <ThemedText style={{ fontSize: styles.title.fontSize }}>
-            👋
+        <View>
+          <ThemedText style={styles.title}>Welcome back 👋</ThemedText>
+        </View>
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          <ThemedText style={[textVariants.title1, { fontWeight: "700" }]}>
+            {hasGoals ? totalDisplay : "Nothing"}{" "}
           </ThemedText>
-        </ThemedText>
+          <ThemedText
+            style={[
+              textVariants.title1,
+              { color: mutedForeground, fontWeight: "400" },
+            ]}
+          >
+            {hasGoals ? "are at stake!" : "is at stake!"}
+          </ThemedText>
+        </View>
       </View>
-      {!hasGoals && (
-        <>
-          <StatusLayout
-            largeTitle={false}
-            status="empty"
-            title="No goals yet"
-            message="Create a goal or create/join a group to get started!"
-            onRefresh={refetch}
-          />
-        </>
-      )}
-      {hasGoals && (
-        <>
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            <ThemedText style={[textVariants.title1, { fontWeight: "700" }]}>
-              {totalDisplay || "–"}{" "}
-            </ThemedText>
-            <ThemedText
-              style={[
-                textVariants.title1,
-                { color: mutedForeground, fontWeight: "400" },
-              ]}
-            >
-              are at stake!
-            </ThemedText>
-          </View>
+    );
+  };
 
-          <View style={{ gap: spacing.md }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <ThemedText style={textVariants.title3}>Active Goals</ThemedText>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => router.push("/(tabs)/goals")}
-              >
-                <ThemedText style={[textVariants.subheadlineEmphasized]}>
-                  View All
-                </ThemedText>
-              </Pressable>
-            </View>
-
-            <CardList>
-              {goals.map((g) => (
-                <GoalCard key={g.id} goal={g} />
-              ))}
-            </CardList>
-          </View>
-        </>
-      )}
+  const ActionButtons = () => {
+    return (
       <View style={{ gap: spacing.sm }}>
         <Button
           title="New Goal"
@@ -135,6 +86,66 @@ export default function HomeScreen() {
             router.push("/(tabs)/groups/join");
           }}
         />
+      </View>
+    );
+  };
+
+  if (!hasGoals) {
+    return (
+      <>
+        <StatusLayout
+          largeTitle
+          style={{
+            gap: spacing.xl,
+            paddingTop: spacing.md,
+          }}
+          status="empty"
+          title="No goals yet"
+          message="Create a goal or create/join a group to get started!"
+          onRefresh={refetch}
+          preContent={<WelcomeMessage />}
+          postContent={<ActionButtons />}
+        ></StatusLayout>
+      </>
+    );
+  }
+
+  return (
+    <ScreenLayout
+      largeTitle
+      style={{
+        gap: spacing.xl,
+        paddingTop: spacing.md,
+      }}
+      onRefresh={refetch}
+    >
+      <WelcomeMessage />
+
+      <View style={{ gap: spacing.md }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <ThemedText style={textVariants.title3}>Active Goals</ThemedText>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push("/(tabs)/goals")}
+          >
+            <ThemedText style={[textVariants.subheadlineEmphasized]}>
+              View All
+            </ThemedText>
+          </Pressable>
+        </View>
+
+        <CardList>
+          {goals.map((g) => (
+            <GoalCard key={g.id} goal={g} />
+          ))}
+        </CardList>
+        <ActionButtons />
       </View>
     </ScreenLayout>
   );

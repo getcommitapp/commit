@@ -8,12 +8,19 @@ export default function GroupsScreen() {
   const { data: groups, isLoading, isError, refetch } = useGroups();
 
   if (isLoading) {
-    return <StatusLayout status="loading" title="Loading your groups..." />;
+    return (
+      <StatusLayout
+        largeTitle
+        status="loading"
+        title="Loading your groups..."
+      />
+    );
   }
 
   if (isError) {
     return (
       <StatusLayout
+        largeTitle
         status="error"
         title="Couldn't load groups"
         onRefresh={refetch}
@@ -24,6 +31,7 @@ export default function GroupsScreen() {
   if (!groups || groups.length === 0) {
     return (
       <StatusLayout
+        largeTitle
         status="empty"
         title="No groups yet"
         message="Join or create a group to get started."
@@ -33,12 +41,7 @@ export default function GroupsScreen() {
   }
 
   return (
-    <ScreenLayout
-      largeTitle
-      onRefresh={async () => {
-        await refetch();
-      }}
-    >
+    <ScreenLayout largeTitle onRefresh={refetch}>
       <CardList>
         {groups?.map((group) => (
           <GroupCard key={group.id} group={group} />

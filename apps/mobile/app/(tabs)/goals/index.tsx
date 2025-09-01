@@ -14,6 +14,7 @@ export default function GoalsScreen() {
   if (isError) {
     return (
       <StatusLayout
+        largeTitle
         status="error"
         title="Failed to load goals."
         onRefresh={refetch}
@@ -24,6 +25,7 @@ export default function GoalsScreen() {
   if (!goals || goals.length === 0) {
     return (
       <StatusLayout
+        largeTitle
         status="empty"
         title="No goals yet"
         message="Create your first goal to get started!"
@@ -33,12 +35,7 @@ export default function GoalsScreen() {
   }
 
   return (
-    <ScreenLayout
-      largeTitle
-      onRefresh={async () => {
-        await refetch();
-      }}
-    >
+    <ScreenLayout largeTitle onRefresh={refetch}>
       <CardList>
         {goals.map((goal) => (
           <GoalCard key={goal.id} goal={goal} />

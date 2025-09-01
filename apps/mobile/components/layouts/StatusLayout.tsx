@@ -1,6 +1,11 @@
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View, ViewStyle, Text } from "react-native";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
-import { textVariants, ThemedText } from "@/components/Themed";
+import {
+  textVariants,
+  ThemedText,
+  useThemeColor,
+  spacing,
+} from "@/components/Themed";
 
 type StatusType = "loading" | "error" | "empty";
 
@@ -12,17 +17,26 @@ interface StatusLayoutProps {
   onAction?: () => void;
   largeTitle?: boolean;
   scrollable?: boolean;
-  onRefresh?: () => void;
+  onRefresh?: (() => void) | (() => Promise<void>);
+  style?: ViewStyle;
+  preContent?: React.ReactNode;
+  postContent?: React.ReactNode;
 }
 
 export const StatusLayout = ({
   status,
   title,
   message,
-  largeTitle = true,
-  scrollable = false,
+  largeTitle = false,
+  scrollable = true,
   onRefresh,
+  style,
+  preContent,
+  postContent,
 }: StatusLayoutProps) => {
+  const danger = useThemeColor({}, "danger");
+  const mutedForeground = useThemeColor({}, "mutedForeground");
+
   return (
     <ScreenLayout
       largeTitle={largeTitle}
@@ -30,39 +44,59 @@ export const StatusLayout = ({
       onRefresh={onRefresh}
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        ...style,
       }}
     >
-      {status === "loading" && (
-        <>
-          <ActivityIndicator />
-          <ThemedText style={{ marginTop: 12 }}>{title}</ThemedText>
-        </>
-      )}
-
-      {status === "error" && (
-        <>
-          <ThemedText style={textVariants.bodyEmphasized}>{title}</ThemedText>
-          {message && (
-            <ThemedText
-              style={{
-                marginTop: 12,
-                textDecorationLine: "underline",
-              }}
-            ></ThemedText>
+      {preContent}
+      <View style={{ flex: 1, justifyContent: "center", gap: spacing.xxl }}>
+        <View style={{ alignItems: "center" }}>
+          {status === "loading" && (
+            <>
+              <ActivityIndicator />
+              <ThemedText style={{ marginTop: spacing.sm }}>{title}</ThemedText>
+            </>
           )}
-        </>
-      )}
 
-      {status === "empty" && (
-        <>
-          <ThemedText style={textVariants.bodyEmphasized}>{title}</ThemedText>
-          {message && (
-            <ThemedText style={{ textAlign: "center" }}>{message}</ThemedText>
+          {status === "error" && (
+            <>
+              <ThemedText style={textVariants.bodyEmphasized}>
+                {title}
+              </ThemedText>
+              {message && (
+                <Text
+                  style={{
+                    marginTop: spacing.sm,
+                    textDecorationLine: "underline",
+                    color: danger,
+                  }}
+                >
+                  {message}
+                </Text>
+              )}
+            </>
           )}
-        </>
-      )}
+
+          {status === "empty" && (
+            <>
+              <ThemedText style={textVariants.bodyEmphasized}>
+                {title}
+              </ThemedText>
+              {message && (
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: mutedForeground,
+                    marginTop: spacing.sm,
+                  }}
+                >
+                  {message}
+                </Text>
+              )}
+            </>
+          )}
+        </View>
+        {postContent}
+      </View>
     </ScreenLayout>
   );
 };

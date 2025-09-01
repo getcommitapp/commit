@@ -1,7 +1,5 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Platform, StyleSheet } from "react-native";
-import { BlurView } from "expo-blur";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
@@ -21,30 +19,9 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tabIconSelected,
         tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: "absolute",
-            backgroundColor: "#ffffffaa",
-            borderTopWidth: 1,
-          },
-          android: {
-            backgroundColor: Colors[colorScheme ?? "light"].card,
-            borderTopWidth: 1,
-          },
-          default: {
-            backgroundColor: Colors[colorScheme ?? "light"].card,
-            borderTopColor: Colors[colorScheme ?? "light"].border,
-            borderTopWidth: 1,
-          },
-        }),
-        tabBarBackground: () => (
-          <BlurView
-            tint={(colorScheme ?? "light") as "light" | "dark"}
-            intensity={50}
-            blurReductionFactor={Platform.OS === "android" ? 4 : undefined}
-            style={StyleSheet.absoluteFill}
-          />
-        ),
+        tabBarStyle: {
+          borderTopWidth: 1,
+        },
         sceneStyle: {
           backgroundColor: Colors[colorScheme ?? "light"].background,
         },

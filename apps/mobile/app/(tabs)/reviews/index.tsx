@@ -2,6 +2,7 @@ import {
   Animated,
   Dimensions,
   PanResponder,
+  Platform,
   StyleSheet,
   Text,
   View,
@@ -217,7 +218,11 @@ export default function ReviewsScreen() {
   return (
     <ScreenLayout
       scrollable={false}
-      style={{ flex: 1, paddingTop: 100 }}
+      style={{
+        flex: 1,
+        // TODO: find a better way to handle this
+        paddingTop: Platform.select({ ios: 0, android: 100 }),
+      }}
       onRefresh={async () => {
         await refetch();
       }}
