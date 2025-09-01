@@ -26,9 +26,59 @@ export class GoalsList extends OpenAPIRoute {
     const user = c.var.user!;
     const db = drizzle(c.env.DB, { schema });
 
-    const rows = await db.query.Goal.findMany({
+    // Get user's personal goals
+    const personalGoals = await db.query.Goal.findMany({
       where: eq(schema.Goal.ownerId, user.id),
     });
+
+    // Get groups that the user is a member of
+    const userGroups = await db.query.GroupMember.findMany({
+      where: eq(schema.GroupMember.userId, user.id),
+      with: {
+        group: {
+          with: {
+            goal: true,
+          },
+        },
+      },
+    });
+
+    // Extract group goals and create a map for groupId lookup
+    const groupGoals: Array<(typeof personalGoals)[0] & { groupId: string }> =
+      [];
+    const goalGroupMap = new Map<string, string>();
+
+    for (const membership of userGroups) {
+      if (membership.group.goal) {
+        groupGoals.push({
+          ...membership.group.goal,
+          groupId: membership.group.id,
+        });
+        goalGroupMap.set(membership.group.goal.id, membership.group.id);
+      }
+    }
+
+    // Combine all goals, avoiding duplicates (in case user owns a goal that's also in a group)
+    const allGoalIds = new Set<string>();
+    const allGoals: Array<
+      (typeof personalGoals)[0] & { groupId: string | null }
+    > = [];
+
+    // Add personal goals first
+    for (const goal of personalGoals) {
+      if (!allGoalIds.has(goal.id)) {
+        allGoals.push({ ...goal, groupId: goalGroupMap.get(goal.id) || null });
+        allGoalIds.add(goal.id);
+      }
+    }
+
+    // Add group goals that aren't already included
+    for (const groupGoal of groupGoals) {
+      if (!allGoalIds.has(groupGoal.id)) {
+        allGoals.push(groupGoal);
+        allGoalIds.add(groupGoal.id);
+      }
+    }
 
     const localDate = todayLocal(user.timezone);
 
@@ -41,7 +91,7 @@ export class GoalsList extends OpenAPIRoute {
     });
     const occIndex = new Map(occs.map((o) => [o.goalId, o]));
 
-    const results = rows.map((g) => {
+    const results = allGoals.map((g) => {
       const occ = occIndex.get(g.id) || null;
       const cs = computeState(g, user, occ);
       return {
@@ -50,7 +100,7 @@ export class GoalsList extends OpenAPIRoute {
         occurrence: cs.occurrence ?? null,
         actions: cs.actions,
         nextTransitionAt: cs.nextTransitionAt ?? null,
-        groupId: null,
+        groupId: g.groupId,
       };
     });
 
