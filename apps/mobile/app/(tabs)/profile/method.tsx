@@ -1,30 +1,18 @@
 import { View } from "react-native";
 import { spacing, useThemeColor } from "@/components/Themed";
 import { Button } from "@/components/ui/Button";
-import { CardField, useConfirmSetupIntent } from "@stripe/stripe-react-native";
-import { apiFetch } from "@/lib/api";
-import { PaymentsSetupIntentResponseSchema } from "@commit/types";
+import { CardField } from "@stripe/stripe-react-native";
+import { useSavePaymentMethod } from "@/lib/hooks/useSavePaymentMethod";
+import { router } from "expo-router";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 
 export default function PaymentMethodScreen() {
   const cardColor = useThemeColor({}, "card");
-  const { confirmSetupIntent, loading } = useConfirmSetupIntent();
+  const { mutateAsync, isPending } = useSavePaymentMethod();
 
   async function handleSaveCard() {
-    // 1) Create SetupIntent on API
-    const { clientSecret } = await apiFetch(
-      "/payments/setup-intent",
-      { method: "POST" },
-      PaymentsSetupIntentResponseSchema
-    );
-
-    // 2) Confirm on device with card details from CardField
-    const { error } = await confirmSetupIntent(clientSecret, {
-      paymentMethodType: "Card",
-    });
-    if (error) {
-      throw new Error(error.message);
-    }
+    await mutateAsync();
+    router.dismissAll();
   }
 
   return (
@@ -52,8 +40,8 @@ export default function PaymentMethodScreen() {
 
       <Button
         onPress={handleSaveCard}
-        disabled={loading}
-        loading={loading}
+        disabled={isPending}
+        loading={isPending}
         title="Update card"
         size="lg"
       />

@@ -60,10 +60,9 @@ export class GoalsReviewUpdate extends OpenAPIRoute {
       )
       .returning();
 
-    if (updated.length === 0) {
-      return c.json({ error: "Goal occurrence not found" }, 404);
-    }
+    const occ = updated[0];
+    if (!occ) return c.json({ error: "Goal occurrence not found" }, 404);
 
-    return c.json(updated[0]);
+    return c.json(occ);
   }
 }

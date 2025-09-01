@@ -1,4 +1,4 @@
-import app from "../index";
+import { app } from "../index";
 import { env } from "cloudflare:test";
 import type { GroupCreateResponse } from "@commit/types";
 import { describe, expect, it } from "vitest";

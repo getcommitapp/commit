@@ -27,6 +27,9 @@
       "bucket_name": "commit-photos"
     }
   ],
+  "triggers": {
+    "crons": ["*/15 * * * *"]
+  },
   "env": {
     "preview": {
       "name": "commit-api-preview",

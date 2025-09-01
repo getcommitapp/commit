@@ -34,13 +34,11 @@ import { GroupsLeave } from "./endpoints/groupsLeave";
 import { GroupsDelete } from "./endpoints/groupsDelete";
 import { GroupsFetch } from "./endpoints/groupsFetch";
 import { HonoContext } from "./types";
+import { runScheduledSettlements } from "./scheduler/settlement";
 import { GroupsJoin } from "./endpoints/groupsJoin";
 
 // Payments
 import { PaymentsSetupIntent } from "./endpoints/paymentsSetupIntent";
-import { PaymentsCharge as PaymentsDebit } from "./endpoints/paymentsDebit";
-import { PaymentsRefund } from "./endpoints/paymentsRefund";
-import { PaymentsCredit } from "./endpoints/paymentsCredit";
 import { PaymentsMethod } from "./endpoints/paymentsMethod";
 import { FilesUpload } from "./endpoints/filesUpload";
 import { FilesServe } from "./endpoints/filesServe";
@@ -179,13 +177,17 @@ openapi.get("/api/groups/:id/invite/verify", GroupsInviteVerify);
 
 // Payments
 openapi.post("/api/payments/setup-intent", PaymentsSetupIntent);
-openapi.post("/api/payments/debit", PaymentsDebit);
-openapi.post("/api/payments/credit", PaymentsCredit);
-openapi.post("/api/payments/refund", PaymentsRefund);
 openapi.get("/api/payments/method", PaymentsMethod);
 
 // Files
 openapi.post("/api/files/upload", FilesUpload);
 openapi.get("/api/files/:key{.+}", FilesServe);
 
-export default app;
+export { app };
+
+export default {
+  fetch: app.fetch,
+  scheduled: (async (_event, env, _ctx) => {
+    await runScheduledSettlements(env);
+  }) as ExportedHandlerScheduledHandler<Env>,
+};

@@ -1,4 +1,4 @@
-import app from "../index";
+import { app } from "../index";
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import type { UserDeleteResponse } from "@commit/types";
