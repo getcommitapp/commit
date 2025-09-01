@@ -1,7 +1,8 @@
-import { Platform, ScrollView, ViewStyle } from "react-native";
+import { Platform, RefreshControl, ScrollView, ViewStyle } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 
 import { spacing } from "@/components/Themed";
+import { useCallback, useState } from "react";
 
 interface Props {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ interface Props {
   largeTitle?: boolean;
   keyboardShouldPersistTaps?: "always" | "handled" | "never";
   scrollable?: boolean;
+  onRefresh?: () => Promise<void> | void;
 }
 
 export function ScreenLayout({
@@ -17,6 +19,7 @@ export function ScreenLayout({
   largeTitle = false,
   keyboardShouldPersistTaps = "handled",
   scrollable = true,
+  onRefresh,
 }: Props) {
   const tabBarHeight = Platform.select({ ios: 49, android: 0, default: 56 });
   const paddingTop = largeTitle
@@ -31,6 +34,19 @@ export function ScreenLayout({
       ? Platform.select({ ios: ["top", "bottom"], android: ["top"] })
       : Platform.select({ ios: ["bottom"], android: [] })
   ) as Edge[];
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    if (!onRefresh) return;
+    setRefreshing(true);
+    try {
+      await onRefresh();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [onRefresh]);
+
   return (
     <SafeAreaView
       style={{
@@ -48,6 +64,15 @@ export function ScreenLayout({
         }}
         contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+        refreshControl={
+          onRefresh ? (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              progressViewOffset={paddingTop}
+            />
+          ) : undefined
+        }
       >
         {children}
       </ScrollView>

@@ -1,28 +1,23 @@
 import {
-  ActivityIndicator,
+  Animated,
   Dimensions,
+  PanResponder,
   StyleSheet,
   Text,
   View,
-  Animated,
-  PanResponder,
 } from "react-native";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
+import { StatusLayout } from "@/components/layouts/StatusLayout";
 
-import {
-  spacing,
-  textVariants,
-  ThemedText,
-  useThemeColor,
-} from "@/components/Themed";
+import { spacing, useThemeColor } from "@/components/Themed";
 import { useReviews } from "@/lib/hooks/useReviews";
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image } from "expo-image";
 import { useReviewUpdate } from "@/lib/hooks/useReviewUpdate";
 import { createApiImageSource } from "@/lib/api";
 
 export default function ReviewsScreen() {
-  const { data: reviews, isLoading, error, refetch } = useReviews();
+  const { data: reviews, isLoading, isError, refetch } = useReviews();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [isImageLoading, setIsImageLoading] = useState(true);
@@ -192,46 +187,27 @@ export default function ReviewsScreen() {
   }, [currentIndex, reviews]);
 
   if (isLoading) {
-    return (
-      <ScreenLayout largeTitle>
-        <View style={{ padding: 24, alignItems: "center" }}>
-          <ActivityIndicator />
-          <ThemedText style={{ marginTop: 12 }}>
-            Loading your reviews...
-          </ThemedText>
-        </View>
-      </ScreenLayout>
-    );
+    return <StatusLayout status="loading" title="Loading your reviews..." />;
   }
 
-  if (error) {
+  if (isError) {
     return (
-      <ScreenLayout largeTitle>
-        <View style={{ padding: 24, alignItems: "center" }}>
-          <ThemedText style={textVariants.bodyEmphasized}>
-            Couldn&apos;t load reviews
-          </ThemedText>
-          <ThemedText
-            onPress={() => refetch()}
-            style={{ marginTop: 12, textDecorationLine: "underline" }}
-          >
-            Tap to retry
-          </ThemedText>
-        </View>
-      </ScreenLayout>
+      <StatusLayout
+        status="error"
+        title="Couldn't load reviews"
+        onRefresh={refetch}
+      />
     );
   }
 
   if (!reviews || reviews.length === 0 || currentIndex >= reviews.length) {
     return (
-      <ScreenLayout largeTitle>
-        <View style={{ padding: 24, gap: 8, alignItems: "center" }}>
-          <ThemedText style={textVariants.bodyEmphasized}>
-            All caught up
-          </ThemedText>
-          <ThemedText>No reviews pending at the moment.</ThemedText>
-        </View>
-      </ScreenLayout>
+      <StatusLayout
+        status="empty"
+        title="All caught up"
+        message="No reviews pending at the moment."
+        onRefresh={refetch}
+      />
     );
   }
 
@@ -239,7 +215,13 @@ export default function ReviewsScreen() {
   const currentReview = reviews[currentIndex];
 
   return (
-    <ScreenLayout scrollable={false} style={{ flex: 1 }}>
+    <ScreenLayout
+      scrollable={false}
+      style={{ flex: 1, paddingTop: 100 }}
+      onRefresh={async () => {
+        await refetch();
+      }}
+    >
       <View
         style={{
           flex: 1,

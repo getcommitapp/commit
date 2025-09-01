@@ -1,43 +1,42 @@
 import { useEffect, useState } from "react";
 import { authClient } from "../auth-client";
 import { apiFetch } from "../api";
-import { UserGetResponseSchema, type UserGetResponse } from "@commit/types";
+import { type UserGetResponse, UserGetResponseSchema } from "@commit/types";
 
 export function useAuth() {
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserGetResponse | null>(null);
 
+  const fetchUser = async () => {
+    setLoading(true);
+    try {
+      const session = await authClient.getSession();
+      const sessionToken = session?.data?.session?.token ?? null;
+      setToken(sessionToken);
+
+      const apiUser = await apiFetch("/users", {}, UserGetResponseSchema);
+      setUser(apiUser);
+    } catch (error) {
+      console.error("[useAuth] Error getting session:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    let mounted = true;
     (async () => {
-      try {
-        const session = await authClient.getSession();
-
-        if (!mounted) return;
-
-        const sessionToken = session?.data?.session?.token ?? null;
-        setToken(sessionToken);
-
-        // Always ask API for the current user; apiFetch will attach
-        // the appropriate headers (real session or dev header)
-        const apiUser = await apiFetch("/users", {}, UserGetResponseSchema);
-
-        setUser(apiUser);
-      } catch (error) {
-        console.error("[useAuth] Error getting session:", error);
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
+      await fetchUser();
     })();
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   const isReviewerOrAdmin = user?.role === "reviewer" || user?.role === "admin";
 
-  return { loading, token, user, isReviewerOrAdmin } as const;
+  return {
+    isLoading,
+    token,
+    user,
+    isReviewerOrAdmin,
+    refetch: fetchUser,
+  } as const;
 }

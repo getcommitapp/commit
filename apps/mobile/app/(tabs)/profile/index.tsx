@@ -3,8 +3,8 @@ import { View } from "react-native";
 import { FormGroup, FormItem } from "@/components/ui/form";
 import {
   spacing,
-  ThemedText,
   textVariants,
+  ThemedText,
   useThemeColor,
 } from "@/components/Themed";
 import CheckCircle from "@/assets/icons/check-circle.svg";
@@ -15,11 +15,16 @@ import { capitalize } from "@/lib/utils";
 
 export default function ProfileScreen() {
   const success = useThemeColor({}, "success");
-  const { user } = useAuth();
+  const { user, refetch } = useAuth();
   const { data: payment } = usePaymentMethod();
 
   return (
-    <ScreenLayout largeTitle>
+    <ScreenLayout
+      largeTitle
+      onRefresh={async () => {
+        await refetch();
+      }}
+    >
       <FormGroup title="Account">
         <FormItem label="Name" value={user?.name ?? "-"} />
         <FormItem label="Email" value={user?.email ?? "-"} />

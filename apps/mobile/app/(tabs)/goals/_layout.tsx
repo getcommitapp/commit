@@ -1,7 +1,7 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Platform, Pressable } from "react-native";
 import IonIcons from "@expo/vector-icons/Ionicons";
-import { useThemeColor } from "@/components/Themed";
+import { ThemedText, useThemeColor } from "@/components/Themed";
 import { CancelButton } from "@/components/navigation/CancelButton";
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 
@@ -27,13 +27,23 @@ export default function GoalsStackLayout() {
           title: "My Goals",
           headerRight: () => (
             <Pressable
-              hitSlop={10}
+              accessibilityRole="button"
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 4,
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 20,
+                backgroundColor: textColor + "15",
+              }}
               onPress={() => {
                 dismissAll();
                 router.push("/(tabs)/goals/create");
               }}
             >
-              <IonIcons name="add" size={28} color={textColor} />
+              <IonIcons name="create-outline" size={18} color={textColor} />
+              <ThemedText style={{ fontSize: 14 }}>Create</ThemedText>
             </Pressable>
           ),
         }}
