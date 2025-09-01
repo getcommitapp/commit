@@ -90,19 +90,28 @@ export default function HomeScreen() {
         <Button
           title="New Goal"
           size="lg"
-          onPress={() => router.push("/(tabs)/goals/create")}
+          onPress={async () => {
+            await router.push("/(tabs)/goals");
+            router.push("/(tabs)/goals/create");
+          }}
         />
         <Button
           title="New Group"
           variant="border"
           size="lg"
-          onPress={() => router.push("/(tabs)/groups/create")}
+          onPress={async () => {
+            await router.push("/(tabs)/groups");
+            router.push("/(tabs)/groups/create");
+          }}
         />
         <Button
           title="Join Group"
           variant="border"
           size="lg"
-          onPress={() => router.push("/(tabs)/groups/join")}
+          onPress={async () => {
+            await router.push("/(tabs)/groups");
+            router.push("/(tabs)/groups/join");
+          }}
         />
       </View>
     </ScreenLayout>
