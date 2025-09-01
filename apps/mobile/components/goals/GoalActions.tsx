@@ -33,8 +33,7 @@ export const GoalActions: React.FC<GoalActionsProps> = ({
   // Decide which type of action(s) should display
   const showCheckin = goal.method === "checkin";
   const showMovement = goal.method === "movement";
-  const showPhoto =
-    goal.method === "photo" && goal.state === "window_open";
+  const showPhoto = goal.method === "photo" && goal.state === "window_open";
 
   // If nothing to show, render nothing to avoid vertical gap in parent layout
   if (!showCheckin && !showMovement && !showPhoto) return null;
@@ -62,7 +61,7 @@ export const GoalActions: React.FC<GoalActionsProps> = ({
 
   return (
     <View style={{ gap: 8 }}>
-  {showCheckin ? (
+      {showCheckin ? (
         <Button
           title="Check-in"
           size={size}
@@ -73,7 +72,7 @@ export const GoalActions: React.FC<GoalActionsProps> = ({
         />
       ) : null}
 
-  {showMovement ? (
+      {showMovement ? (
         <Button
           title="Start timer"
           size={size}
