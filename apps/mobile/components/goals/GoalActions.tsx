@@ -30,9 +30,13 @@ export const GoalActions: React.FC<GoalActionsProps> = ({
 
   const loading =
     isCheckingIn || isStarting || isUploading || isSubmittingPhoto;
+  // Decide which type of action(s) should display
+  const showCheckin = goal.method === "checkin";
+  const showMovement = goal.method === "movement";
+  const showPhoto = goal.method === "photo" && goal.state === "window_open";
 
-  const showPhoto =
-    goal.method === "photo" && goal.state !== "awaiting_verification";
+  // If nothing to show, render nothing to avoid vertical gap in parent layout
+  if (!showCheckin && !showMovement && !showPhoto) return null;
 
   const handlePhoto = async () => {
     const res = await ImagePicker.launchCameraAsync({
@@ -57,7 +61,7 @@ export const GoalActions: React.FC<GoalActionsProps> = ({
 
   return (
     <View style={{ gap: 8 }}>
-      {goal.method === "checkin" ? (
+      {showCheckin ? (
         <Button
           title="Check-in"
           size={size}
@@ -68,7 +72,7 @@ export const GoalActions: React.FC<GoalActionsProps> = ({
         />
       ) : null}
 
-      {goal.method === "movement" ? (
+      {showMovement ? (
         <Button
           title="Start timer"
           size={size}
