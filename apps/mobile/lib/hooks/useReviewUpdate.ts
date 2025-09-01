@@ -17,11 +17,25 @@ export function useReviewUpdate() {
         body: JSON.stringify({ approvalStatus }),
       });
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["reviews"] });
+    onMutate: async ({ goalId }) => {
+      await qc.cancelQueries({ queryKey: ["reviews"] });
+      const previous = qc.getQueryData<any>(["reviews"]);
+      if (previous) {
+        qc.setQueryData(
+          ["reviews"],
+          previous.filter((r: any) => r.goalId !== goalId)
+        );
+      }
+      return { previous };
     },
-    onError: (error) => {
+    onError: (error, _vars, context) => {
+      if (context?.previous) {
+        qc.setQueryData(["reviews"], context.previous);
+      }
       console.error(error);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ["reviews"] });
     },
   });
 }

@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GoalReviewListResponseSchema } from "@commit/types";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
-import { and, eq, sql } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 
 export class GoalsReviewList extends OpenAPIRoute {
   schema = {
@@ -47,7 +47,8 @@ export class GoalsReviewList extends OpenAPIRoute {
           sql`${schema.GoalOccurrence.photoUrl} IS NOT NULL`,
           eq(schema.Goal.method, "photo")
         )
-      );
+      )
+      .orderBy(asc(schema.GoalOccurrence.occurrenceDate));
 
     // Resolve relative URLs to absolute using request origin
     const origin = new URL(c.req.url).origin;

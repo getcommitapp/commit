@@ -69,28 +69,21 @@ export default function ReviewsScreen() {
     if (!reviews) return;
     const currentReview = reviews[currentIndex];
 
-    reviewUpdate.mutate(
-      { goalId: currentReview.goalId, approvalStatus: "approved" },
-      {
-        onSuccess: () => {
-          setCurrentIndex((i) => i + 1);
-        },
-      }
-    );
+    // Do not increment index on success; optimistic cache removal will shift the next item in place
+    reviewUpdate.mutate({
+      goalId: currentReview.goalId,
+      approvalStatus: "approved",
+    });
   }, [reviews, currentIndex, reviewUpdate]);
 
   const handleReject = useCallback(() => {
     if (!reviews) return;
     const currentReview = reviews[currentIndex];
 
-    reviewUpdate.mutate(
-      { goalId: currentReview.goalId, approvalStatus: "rejected" },
-      {
-        onSuccess: () => {
-          setCurrentIndex((i) => i + 1);
-        },
-      }
-    );
+    reviewUpdate.mutate({
+      goalId: currentReview.goalId,
+      approvalStatus: "rejected",
+    });
   }, [reviews, currentIndex, reviewUpdate]);
 
   const panResponder = useMemo(
@@ -136,15 +129,7 @@ export default function ReviewsScreen() {
           }
         },
       }),
-    [
-      reviews,
-      currentIndex,
-      swipeThreshold,
-      screenWidth,
-      position,
-      handleApprove,
-      handleReject,
-    ]
+    [swipeThreshold, screenWidth, position, handleApprove, handleReject]
   );
 
   // Reset index if reviews list changes significantly
