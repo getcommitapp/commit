@@ -18,7 +18,7 @@ export default function GoalCreateChoiceScreen() {
   const muted = useThemeColor({}, "muted");
 
   return (
-    <ScreenLayout>
+    <ScreenLayout fullscreen>
       <SmallText>Custom Goal</SmallText>
 
       <CardList>

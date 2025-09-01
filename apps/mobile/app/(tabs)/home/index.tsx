@@ -65,7 +65,9 @@ export default function HomeScreen() {
           size="lg"
           onPress={async () => {
             router.push("/(tabs)/goals");
-            router.push("/(tabs)/goals/create");
+            setTimeout(() => {
+              router.push("/(tabs)/goals/create");
+            }, 25);
           }}
         />
         <Button
@@ -74,7 +76,9 @@ export default function HomeScreen() {
           size="lg"
           onPress={async () => {
             router.push("/(tabs)/groups");
-            router.push("/(tabs)/groups/create");
+            setTimeout(() => {
+              router.push("/(tabs)/groups/create");
+            }, 25);
           }}
         />
         <Button
@@ -83,7 +87,9 @@ export default function HomeScreen() {
           size="lg"
           onPress={async () => {
             router.push("/(tabs)/groups");
-            router.push("/(tabs)/groups/join");
+            setTimeout(() => {
+              router.push("/(tabs)/groups/join");
+            }, 25);
           }}
         />
       </View>

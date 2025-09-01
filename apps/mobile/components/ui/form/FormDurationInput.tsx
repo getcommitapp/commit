@@ -10,7 +10,6 @@ interface FormDurationInputProps {
   label: string;
   duration: Date | null;
   onChange: (date: Date) => void;
-  placeholder?: string;
   testID?: string;
 }
 
@@ -18,7 +17,6 @@ export function FormDurationInput({
   label,
   duration,
   onChange,
-  placeholder,
   testID,
 }: FormDurationInputProps) {
   const text = useThemeColor({}, "text");
@@ -68,15 +66,15 @@ export function FormDurationInput({
   }, [formEmitter, testID]);
 
   const valueLabel = useMemo(() => {
-    if (!duration) return placeholder ?? "Optional";
+    const base = duration ?? new Date(0, 0, 0, 0, 0, 0, 0);
     try {
-      const hours = duration.getHours().toString().padStart(2, "0");
-      const minutes = duration.getMinutes().toString().padStart(2, "0");
+      const hours = base.getHours().toString().padStart(2, "0");
+      const minutes = base.getMinutes().toString().padStart(2, "0");
       return `${hours}:${minutes}`;
     } catch {
-      return String(duration);
+      return String(base);
     }
-  }, [duration, placeholder]);
+  }, [duration]);
 
   return (
     <>
