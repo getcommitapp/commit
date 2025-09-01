@@ -33,7 +33,10 @@ export default function HomeScreen() {
   }, [goals]);
 
   return (
-    <ScreenLayout style={{ gap: spacing.xl }}>
+    <ScreenLayout
+      largeTitle
+      style={{ gap: spacing.xl, paddingTop: spacing.md }}
+    >
       <View>
         <ThemedText style={styles.title}>
           Welcome back{" "}

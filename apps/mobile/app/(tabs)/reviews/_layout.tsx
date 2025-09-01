@@ -6,8 +6,8 @@ export default function ReviewsStackLayout() {
   return (
     <Stack
       screenOptions={{
-        headerLargeTitle: true,
-        headerTransparent: true,
+        headerLargeTitle: false,
+        headerTransparent: false,
         headerShadowVisible: false,
         headerStyle: { backgroundColor },
       }}

@@ -1,5 +1,5 @@
 import { Platform, ScrollView, ViewStyle } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 
 import { spacing } from "@/components/Themed";
 
@@ -8,6 +8,7 @@ interface Props {
   style?: ViewStyle;
   largeTitle?: boolean;
   keyboardShouldPersistTaps?: "always" | "handled" | "never";
+  scrollable?: boolean;
 }
 
 export function ScreenLayout({
@@ -15,6 +16,7 @@ export function ScreenLayout({
   style,
   largeTitle = false,
   keyboardShouldPersistTaps = "handled",
+  scrollable = true,
 }: Props) {
   const tabBarHeight = Platform.select({ ios: 49, android: 0, default: 56 });
   const paddingTop = largeTitle
@@ -24,13 +26,24 @@ export function ScreenLayout({
         default: spacing.md,
       })
     : spacing.md;
+  const edges = (
+    largeTitle
+      ? Platform.select({ ios: ["top", "bottom"], android: ["top"] })
+      : Platform.select({ ios: ["bottom"], android: [] })
+  ) as Edge[];
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+      edges={edges}
+    >
       <ScrollView
+        scrollEnabled={scrollable}
         contentContainerStyle={{
-          paddingHorizontal: spacing.headerContentInset,
           paddingTop,
-          paddingBottom: spacing.md + tabBarHeight,
+          paddingHorizontal: spacing.headerContentInset,
+          paddingBottom: tabBarHeight + (scrollable ? 0 : spacing.md),
           ...style,
         }}
         contentInsetAdjustmentBehavior="automatic"

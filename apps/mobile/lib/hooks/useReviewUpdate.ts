@@ -20,5 +20,8 @@ export function useReviewUpdate() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["reviews"] });
     },
+    onError: (error) => {
+      console.error(error);
+    },
   });
 }
