@@ -120,19 +120,19 @@ describe("GET /api/goals (list)", () => {
     const res = await app.request("/api/goals", {}, env);
     expect(res.status).toBe(200);
     const items = (await res.json()) as GoalsListResponse;
-    
+
     // Should have both personal goal and group goal
     expect(items.length).toBe(2);
     const goalNames = items.map((g) => g.name).sort();
     expect(goalNames).toEqual(["Group Goal", "Personal Goal"]);
-    
+
     // Check that the group goal has the correct groupId
-    const groupGoal = items.find(g => g.name === "Group Goal");
+    const groupGoal = items.find((g) => g.name === "Group Goal");
     expect(groupGoal).toBeDefined();
     expect(groupGoal!.groupId).toBe(groupId);
-    
+
     // Check that the personal goal has no groupId
-    const personalGoal = items.find(g => g.name === "Personal Goal");
+    const personalGoal = items.find((g) => g.name === "Personal Goal");
     expect(personalGoal).toBeDefined();
     expect(personalGoal!.groupId).toBeNull();
   });

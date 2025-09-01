@@ -44,7 +44,8 @@ export class GoalsList extends OpenAPIRoute {
     });
 
     // Extract group goals and create a map for groupId lookup
-    const groupGoals: Array<typeof personalGoals[0] & { groupId: string }> = [];
+    const groupGoals: Array<(typeof personalGoals)[0] & { groupId: string }> =
+      [];
     const goalGroupMap = new Map<string, string>();
 
     for (const membership of userGroups) {
@@ -59,7 +60,9 @@ export class GoalsList extends OpenAPIRoute {
 
     // Combine all goals, avoiding duplicates (in case user owns a goal that's also in a group)
     const allGoalIds = new Set<string>();
-    const allGoals: Array<typeof personalGoals[0] & { groupId: string | null }> = [];
+    const allGoals: Array<
+      (typeof personalGoals)[0] & { groupId: string | null }
+    > = [];
 
     // Add personal goals first
     for (const goal of personalGoals) {
