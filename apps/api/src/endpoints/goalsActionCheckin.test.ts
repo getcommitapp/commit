@@ -127,7 +127,7 @@ describe("POST /api/goals/:id/checkin (action)", () => {
     await testEnv.DB.exec(
       `INSERT INTO user (id, name, email, emailVerified, image, updatedAt) VALUES ('group_creator','Creator','creator@example.com',1,NULL,strftime('%s','now'));`
     );
-    
+
     const goalId = uuid();
     const now = new Date();
     await db.insert(schema.Goal).values({
