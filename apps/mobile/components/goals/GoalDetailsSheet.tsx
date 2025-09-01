@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/Button";
 import { useGoals } from "@/lib/hooks/useGoals";
 import { useDeleteGoal } from "@/lib/hooks/useDeleteGoal";
 import { GoalDetails } from "@/components/goals/GoalDetails";
-import { useGoalCheckin } from "@/lib/hooks/useCheckin";
 import { GoalActions } from "@/components/goals/GoalActions";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
@@ -36,9 +35,6 @@ export const GoalDetailsSheet = forwardRef<
     const persistedTimerStartedAt = goal.occurrence?.timerStartedAt ?? null;
     const activeTimerStartedAt =
       persistedTimerStartedAt || localTimer?.startedAt || null;
-    const { mutate: checkin, isPending: isCheckingIn } = useGoalCheckin(
-      goal.id
-    );
     const { remainingLabel, remainingMs } = useElapsedTimer(
       activeTimerStartedAt,
       {
@@ -80,18 +76,6 @@ export const GoalDetailsSheet = forwardRef<
                 </>
               )}
             </FormGroup>
-          </View>
-        ) : null}
-
-        {!hasActiveTimer && goal.method === "checkin" ? (
-          <View style={{ marginBottom: spacing.xl }}>
-            <Button
-              title="Check-in"
-              onPress={() => !isCheckingIn && checkin()}
-              loading={isCheckingIn}
-              testID="checkin-goal"
-              accessibilityLabel="checkin-goal"
-            />
           </View>
         ) : null}
 

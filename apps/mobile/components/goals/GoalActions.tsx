@@ -31,7 +31,7 @@ export const GoalActions: React.FC<GoalActionsProps> = ({
   const loading =
     isCheckingIn || isStarting || isUploading || isSubmittingPhoto;
   // Decide which type of action(s) should display
-  const showCheckin = goal.method === "checkin";
+  const showCheckin = goal.method === "checkin" && goal.state === "window_open";
   const showMovement = goal.method === "movement";
   const showPhoto = goal.method === "photo" && goal.state === "window_open";
 
