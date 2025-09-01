@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, View, ScrollView } from "react-native";
+import { View } from "react-native";
 import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import { FormGroup, FormInput } from "@/components/ui/form";
-import { spacing, ThemedText, textVariants } from "@/components/Themed";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ThemedText, textVariants } from "@/components/Themed";
 import { useCreateGroup } from "@/lib/hooks/useCreateGroup";
+import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 
 export default function CreateGroupScreen() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   const { isPending, isError, error } = useCreateGroup();
 
@@ -27,60 +26,45 @@ export default function CreateGroupScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.select({ ios: "padding", default: undefined })}
-      style={{ flex: 1 }}
-      keyboardVerticalOffset={Platform.select({
-        ios: insets.top + 44,
-        default: 0,
-      })}
+    <ScreenLayout
+      style={{ flexGrow: 1 }}
+      fullscreen
+      keyboardShouldPersistTaps="handled"
     >
-      <ScrollView
-        keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingHorizontal: spacing.headerContentInset,
-          paddingTop: spacing.lg,
-          gap: spacing.lg,
-          paddingBottom: insets.bottom,
-        }}
-      >
-        <FormGroup title="Group">
-          <FormInput
-            label="Name"
-            placeholder="Enter a group name"
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="words"
-            returnKeyType="next"
-          />
-          <FormInput
-            label="Description"
-            placeholder="Describe your group"
-            value={description}
-            onChangeText={setDescription}
-            multiline
-            numberOfLines={4}
-          />
-          {isError && (
-            <ThemedText style={{ ...textVariants.subheadline, color: "red" }}>
-              {(error as Error)?.message || "Failed to create group"}
-            </ThemedText>
-          )}
-        </FormGroup>
-
-        <View style={{ flex: 1 }} />
-
-        <Button
-          title="Next"
-          size="lg"
-          onPress={handleNext}
-          disabled={!canCreate || isPending}
-          loading={isPending}
-          style={{}}
+      <FormGroup title="Group">
+        <FormInput
+          label="Name"
+          placeholder="Enter a group name"
+          value={name}
+          onChangeText={setName}
+          autoCapitalize="words"
+          returnKeyType="next"
+          autoFocus
         />
-      </ScrollView>
-    </KeyboardAvoidingView>
+        <FormInput
+          label="Description"
+          placeholder="Describe your group"
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          numberOfLines={4}
+        />
+        {isError && (
+          <ThemedText style={{ ...textVariants.subheadline, color: "red" }}>
+            {(error as Error)?.message || "Failed to create group"}
+          </ThemedText>
+        )}
+      </FormGroup>
+
+      <View style={{ flex: 1 }} />
+      <Button
+        title="Next"
+        size="lg"
+        onPress={handleNext}
+        disabled={!canCreate || isPending}
+        loading={isPending}
+        style={{}}
+      />
+    </ScreenLayout>
   );
 }

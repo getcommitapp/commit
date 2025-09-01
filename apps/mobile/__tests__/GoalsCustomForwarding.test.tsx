@@ -59,15 +59,14 @@ describe("Custom goal forwarding", () => {
     const user = userEvent.setup();
     render(<CustomGoalValidationScreen />);
 
-    // Select "location"
-    await user.press(screen.getByTestId("goal-option-location"));
+    await user.press(screen.getByTestId("goal-option-photo"));
 
     const next = screen.getByText("Next");
     await user.press(next);
 
     expect(mockPush).toHaveBeenCalledWith({
       pathname: "/(tabs)/goals/create/new",
-      params: { forGroup: "1", groupName: "G", method: "location" },
+      params: { forGroup: "1", groupName: "G", method: "photo" },
     });
   });
 });

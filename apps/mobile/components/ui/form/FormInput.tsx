@@ -19,6 +19,7 @@ interface FormInputProps {
   multiline?: boolean;
   numberOfLines?: number;
   maxLength?: number;
+  autoFocus?: boolean;
 }
 
 export function FormInput({
@@ -38,6 +39,7 @@ export function FormInput({
   multiline,
   numberOfLines,
   maxLength,
+  autoFocus,
 }: FormInputProps) {
   const text = useThemeColor({}, "text");
   const mutedForeground = useThemeColor({}, "mutedForeground");
@@ -91,6 +93,7 @@ export function FormInput({
           multiline={multiline}
           numberOfLines={numberOfLines}
           maxLength={maxLength}
+          autoFocus={autoFocus}
           style={{
             ...textVariants.body,
             color: text,

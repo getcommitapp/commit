@@ -13,15 +13,11 @@ import {
 import { SmallText } from "@/components/ui/SmallText";
 import { useRouter, useLocalSearchParams } from "expo-router";
 
-type OptionKey = "location" | "photo" | "checkin" | "movement";
+type OptionKey = "photo" | "checkin" | "movement";
 
-const optionOrder: OptionKey[] = ["location", "photo", "checkin", "movement"];
+const optionOrder: OptionKey[] = ["photo", "checkin", "movement"];
 
 const optionMeta: Record<OptionKey, { title: string; description: string }> = {
-  location: {
-    title: "Location",
-    description: "Verify you were at a specific place during a time window.",
-  },
   photo: {
     title: "Photo Validation",
     description: "Take a selfie or scene photo as proof at the due time.",
@@ -45,7 +41,11 @@ export default function CustomGoalValidationScreen() {
   const [selected, setSelected] = useState<OptionKey | null>(null);
 
   return (
-    <ScreenLayout style={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+    <ScreenLayout
+      style={{ flexGrow: 1 }}
+      fullscreen
+      keyboardShouldPersistTaps="handled"
+    >
       <SmallText>Validation Method</SmallText>
       <View style={{ gap: spacing.xs }}>
         {optionOrder.map((key) => {

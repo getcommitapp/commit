@@ -86,30 +86,76 @@ export const GoalsListItemSchema = GoalBaseSchema.extend({
 
 export const GoalsListResponseSchema = z.array(GoalsListItemSchema);
 
-export const GoalCreateRequestSchema = z.object({
-  name: z.string(),
-  description: z.string().nullable().optional(),
-  stakeCents: z.number().int().min(100),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime().nullable().optional(),
-  // Single-window instants (optional when using weekly recurrence)
-  dueStartTime: z.string().datetime().optional(),
-  dueEndTime: z.string().datetime().nullable().optional(),
-  // Weekly recurrence (optional): local times + bitmask
-  localDueStart: z.string().nullable().optional(),
-  localDueEnd: z.string().nullable().optional(),
-  recDaysMask: z.number().int().nullable().optional(),
-  // Method configuration inline
-  method: z.enum(["location", "movement", "photo", "checkin"]),
-  graceTimeSeconds: z.number().int().nullable().optional(),
-  durationSeconds: z.number().int().nullable().optional(),
-  geoLat: z.number().nullable().optional(),
-  geoLng: z.number().nullable().optional(),
-  geoRadiusM: z.number().int().nullable().optional(),
-  // Destination
-  destinationType: z.string(),
-  destinationUserId: z.string().nullable().optional(),
-  destinationCharityId: z.string().nullable().optional(),
+export const GoalCreateRequestSchema = z
+  .object({
+    name: z.string(),
+    description: z.string().nullable().optional(),
+    stakeCents: z.number().int().min(100),
+    startDate: z.string().datetime(),
+    endDate: z.string().datetime().nullable().optional(),
+    // Single-window instants (optional when using weekly recurrence)
+    dueStartTime: z.string().datetime().optional(),
+    dueEndTime: z.string().datetime().nullable().optional(),
+    // Weekly recurrence (optional): local times + bitmask
+    localDueStart: z.string().nullable().optional(),
+    localDueEnd: z.string().nullable().optional(),
+    recDaysMask: z.number().int().nullable().optional(),
+    // Method configuration inline
+    method: z.enum(["location", "movement", "photo", "checkin"]),
+    graceTimeSeconds: z.number().int().nullable().optional(),
+    durationSeconds: z.number().int().nullable().optional(),
+    geoLat: z.number().nullable().optional(),
+    geoLng: z.number().nullable().optional(),
+    geoRadiusM: z.number().int().nullable().optional(),
+    // Destination
+    destinationType: z.string(),
+    destinationUserId: z.string().nullable().optional(),
+    destinationCharityId: z.string().nullable().optional(),
+  })
+  .superRefine((val, ctx) => {
+    // Enforce startDate <= endDate when endDate provided
+    if (val.endDate) {
+      const start = new Date(val.startDate).getTime();
+      const end = new Date(val.endDate).getTime();
+      if (Number.isFinite(start) && Number.isFinite(end) && start > end) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "startDate must be before or equal to endDate",
+          path: ["startDate"],
+        });
+      }
+    }
+
+    // Enforce dueStartTime <= dueEndTime when both provided
+    if (val.dueStartTime && val.dueEndTime) {
+      const ds = new Date(val.dueStartTime).getTime();
+      const de = new Date(val.dueEndTime).getTime();
+      if (Number.isFinite(ds) && Number.isFinite(de) && ds > de) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "dueStartTime must be before or equal to dueEndTime",
+          path: ["dueStartTime"],
+        });
+      }
+    }
+  });
+
+// Require duration for movement goals
+GoalCreateRequestSchema.superRefine((val, ctx) => {
+  if (val.method === "movement") {
+    if (
+      val.durationSeconds == null ||
+      !Number.isFinite(val.durationSeconds) ||
+      val.durationSeconds <= 0
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "durationSeconds is required and must be > 0 for movement goals",
+        path: ["durationSeconds"],
+      });
+    }
+  }
 });
 
 export const GoalCreateResponseSchema = GoalBaseSchema;

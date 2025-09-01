@@ -1,5 +1,5 @@
 import { Platform, RefreshControl, ScrollView, ViewStyle } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 
 import { spacing } from "@/components/Themed";
 import { useCallback, useState } from "react";
@@ -8,6 +8,7 @@ interface Props {
   children: React.ReactNode;
   style?: ViewStyle;
   largeTitle?: boolean;
+  fullscreen?: boolean;
   keyboardShouldPersistTaps?: "always" | "handled" | "never";
   scrollable?: boolean;
   onRefresh?: (() => void) | (() => Promise<void>);
@@ -17,6 +18,7 @@ export function ScreenLayout({
   children,
   style,
   largeTitle = false,
+  fullscreen = false,
   keyboardShouldPersistTaps = "handled",
   scrollable = true,
   onRefresh,
@@ -44,10 +46,13 @@ export function ScreenLayout({
       style={{
         flex: 1,
       }}
-      edges={Platform.select({
-        ios: largeTitle ? ["top"] : [],
-        android: ["top"],
-      })}
+      edges={
+        Platform.select({
+          ios: largeTitle ? ["top"] : [],
+          android: ["top"],
+          default: ["top"],
+        }).concat(fullscreen ? ["bottom"] : []) as Edge[]
+      }
     >
       <ScrollView
         scrollEnabled={scrollable}

@@ -91,6 +91,11 @@ export default function GoalNewScreen() {
     const stakeCents = computeStakeCents(stake);
     if (stakeCents < 100) return;
 
+    // UI guard: prevent start time later than end time when both provided
+    if (startTime && endTime && startTime.getTime() > endTime.getTime()) {
+      return;
+    }
+
     const goalPayload = buildGoalPayload(stakeCents);
 
     if (forGroup) {
@@ -112,7 +117,7 @@ export default function GoalNewScreen() {
   };
 
   return (
-    <ScreenLayout keyboardShouldPersistTaps="handled">
+    <ScreenLayout fullscreen keyboardShouldPersistTaps="handled">
       <FormGroup title="Details">
         <FormInput label="Title" value={title} onChangeText={setTitle} />
         <FormInput
@@ -190,6 +195,13 @@ export default function GoalNewScreen() {
           !startAt ||
           createGoal.isPending ||
           createGroup.isPending ||
+          // Disable when invalid time window
+          (startTime != null &&
+            endTime != null &&
+            startTime.getTime() > endTime.getTime()) ||
+          // Require duration when method is movement
+          (method === "movement" &&
+            !computeDurationMinutes(method, duration)) ||
           !(
             stake != null &&
             Number.isFinite(stake) &&
