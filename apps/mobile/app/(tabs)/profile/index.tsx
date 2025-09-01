@@ -3,11 +3,11 @@ import { View } from "react-native";
 import { FormGroup, FormItem } from "@/components/ui/form";
 import {
   spacing,
-  ThemedText,
   textVariants,
+  ThemedText,
   useThemeColor,
 } from "@/components/Themed";
-import CheckCircle from "@/assets/icons/check-circle.svg";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { usePaymentMethod } from "@/lib/hooks/usePaymentMethod";
@@ -15,11 +15,12 @@ import { capitalize } from "@/lib/utils";
 
 export default function ProfileScreen() {
   const success = useThemeColor({}, "success");
-  const { user } = useAuth();
+  const mutedForeground = useThemeColor({}, "mutedForeground");
+  const { user, refetch } = useAuth();
   const { data: payment } = usePaymentMethod();
 
   return (
-    <ScreenLayout largeTitle>
+    <ScreenLayout largeTitle onRefresh={refetch}>
       <FormGroup title="Account">
         <FormItem label="Name" value={user?.name ?? "-"} />
         <FormItem label="Email" value={user?.email ?? "-"} />
@@ -36,11 +37,20 @@ export default function ProfileScreen() {
                 gap: spacing.xs,
               }}
             >
-              <CheckCircle width={18} height={18} color={success} />
+              {payment?.status === "active" ? (
+                <Ionicons name="checkmark-circle" size={18} color={success} />
+              ) : (
+                <Ionicons
+                  name="close-circle"
+                  size={18}
+                  color={mutedForeground}
+                />
+              )}
               <ThemedText
                 style={{
                   ...textVariants.bodyEmphasized,
-                  color: success,
+                  color:
+                    payment?.status === "active" ? success : mutedForeground,
                 }}
               >
                 {capitalize(payment?.status ?? "inactive")}

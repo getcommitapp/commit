@@ -1,23 +1,25 @@
-import { StyleSheet, Pressable, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { CardList } from "@/components/ui/CardList";
 import { GoalCard } from "@/components/goals/GoalCard";
 import { Button } from "@/components/ui/Button";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 
 import {
-  ThemedText,
   spacing,
   textVariants,
+  ThemedText,
   useThemeColor,
 } from "@/components/Themed";
 import { useRouter } from "expo-router";
 import { useGoals } from "@/lib/hooks/useGoals";
 import { useMemo } from "react";
+import { StatusLayout } from "@/components/layouts/StatusLayout";
 
 export default function HomeScreen() {
   const router = useRouter();
   const mutedForeground = useThemeColor({}, "mutedForeground");
-  const { data: goals } = useGoals();
+  const { data: goals, refetch } = useGoals();
+  const hasGoals = goals && goals.length > 0;
 
   const totalDisplay = useMemo(() => {
     const totalsByCurrency = (goals ?? []).reduce<Record<string, number>>(
@@ -32,26 +34,15 @@ export default function HomeScreen() {
       .join("  ");
   }, [goals]);
 
-  return (
-    <ScreenLayout
-      largeTitle
-      style={{ gap: spacing.xl, paddingTop: spacing.md }}
-    >
+  const WelcomeMessage = () => {
+    return (
       <View>
-        <ThemedText style={styles.title}>
-          Welcome back{" "}
-          <ThemedText style={{ fontSize: styles.title.fontSize }}>
-            👋
-          </ThemedText>
-        </ThemedText>
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-          }}
-        >
+        <View>
+          <ThemedText style={styles.title}>Welcome back 👋</ThemedText>
+        </View>
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           <ThemedText style={[textVariants.title1, { fontWeight: "700" }]}>
-            {totalDisplay || "–"}{" "}
+            {hasGoals ? totalDisplay : "Nothing"}{" "}
           </ThemedText>
           <ThemedText
             style={[
@@ -59,10 +50,76 @@ export default function HomeScreen() {
               { color: mutedForeground, fontWeight: "400" },
             ]}
           >
-            are at stake!
+            {hasGoals ? "are at stake!" : "is at stake!"}
           </ThemedText>
         </View>
       </View>
+    );
+  };
+
+  const ActionButtons = () => {
+    return (
+      <View style={{ gap: spacing.sm }}>
+        <Button
+          title="New Goal"
+          size="lg"
+          onPress={async () => {
+            router.push("/(tabs)/goals");
+            router.push("/(tabs)/goals/create");
+          }}
+        />
+        <Button
+          title="New Group"
+          variant="border"
+          size="lg"
+          onPress={async () => {
+            router.push("/(tabs)/groups");
+            router.push("/(tabs)/groups/create");
+          }}
+        />
+        <Button
+          title="Join Group"
+          variant="border"
+          size="lg"
+          onPress={async () => {
+            router.push("/(tabs)/groups");
+            router.push("/(tabs)/groups/join");
+          }}
+        />
+      </View>
+    );
+  };
+
+  if (!hasGoals) {
+    return (
+      <>
+        <StatusLayout
+          largeTitle
+          style={{
+            gap: spacing.xl,
+            paddingTop: spacing.md,
+          }}
+          status="empty"
+          title="No goals yet"
+          message="Create a goal or create/join a group to get started!"
+          onRefresh={refetch}
+          preContent={<WelcomeMessage />}
+          postContent={<ActionButtons />}
+        ></StatusLayout>
+      </>
+    );
+  }
+
+  return (
+    <ScreenLayout
+      largeTitle
+      style={{
+        gap: spacing.xl,
+        paddingTop: spacing.md,
+      }}
+      onRefresh={refetch}
+    >
+      <WelcomeMessage />
 
       <View style={{ gap: spacing.md }}>
         <View
@@ -84,38 +141,11 @@ export default function HomeScreen() {
         </View>
 
         <CardList>
-          {(goals ?? []).map((g) => (
+          {goals.map((g) => (
             <GoalCard key={g.id} goal={g} />
           ))}
         </CardList>
-      </View>
-      <View style={{ gap: spacing.sm }}>
-        <Button
-          title="New Goal"
-          size="lg"
-          onPress={async () => {
-            await router.push("/(tabs)/goals");
-            router.push("/(tabs)/goals/create");
-          }}
-        />
-        <Button
-          title="New Group"
-          variant="border"
-          size="lg"
-          onPress={async () => {
-            await router.push("/(tabs)/groups");
-            router.push("/(tabs)/groups/create");
-          }}
-        />
-        <Button
-          title="Join Group"
-          variant="border"
-          size="lg"
-          onPress={async () => {
-            await router.push("/(tabs)/groups");
-            router.push("/(tabs)/groups/join");
-          }}
-        />
+        <ActionButtons />
       </View>
     </ScreenLayout>
   );

@@ -2,47 +2,51 @@ import { CardList } from "@/components/ui/CardList";
 import { GroupCard } from "@/components/groups/GroupCard";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { useGroups } from "@/lib/hooks/useGroups";
-import { ThemedText, textVariants } from "@/components/Themed";
-import { ActivityIndicator, View } from "react-native";
+import { StatusLayout } from "@/components/layouts/StatusLayout";
 
 export default function GroupsScreen() {
   const { data: groups, isLoading, isError, refetch } = useGroups();
 
+  if (isLoading) {
+    return (
+      <StatusLayout
+        largeTitle
+        status="loading"
+        title="Loading your groups..."
+      />
+    );
+  }
+
+  if (isError) {
+    return (
+      <StatusLayout
+        largeTitle
+        status="error"
+        title="Couldn't load groups"
+        onRefresh={refetch}
+      />
+    );
+  }
+
+  if (!groups || groups.length === 0) {
+    return (
+      <StatusLayout
+        largeTitle
+        status="empty"
+        title="No groups yet"
+        message="Join or create a group to get started."
+        onRefresh={refetch}
+      />
+    );
+  }
+
   return (
-    <ScreenLayout largeTitle>
-      {isLoading ? (
-        <View style={{ padding: 24, alignItems: "center" }}>
-          <ActivityIndicator />
-          <ThemedText style={{ marginTop: 12 }}>
-            Loading your groups...
-          </ThemedText>
-        </View>
-      ) : isError ? (
-        <View style={{ padding: 24, alignItems: "center" }}>
-          <ThemedText style={textVariants.bodyEmphasized}>
-            Couldn&apos;t load groups
-          </ThemedText>
-          <ThemedText
-            onPress={() => refetch()}
-            style={{ marginTop: 12, textDecorationLine: "underline" }}
-          >
-            Tap to retry
-          </ThemedText>
-        </View>
-      ) : groups && groups.length === 0 ? (
-        <View style={{ padding: 24, gap: 8 }}>
-          <ThemedText style={textVariants.bodyEmphasized}>
-            No groups yet
-          </ThemedText>
-          <ThemedText>Join or create a group to get started.</ThemedText>
-        </View>
-      ) : (
-        <CardList>
-          {groups?.map((group) => (
-            <GroupCard key={group.id} group={group} />
-          ))}
-        </CardList>
-      )}
+    <ScreenLayout largeTitle onRefresh={refetch}>
+      <CardList>
+        {groups?.map((group) => (
+          <GroupCard key={group.id} group={group} />
+        ))}
+      </CardList>
     </ScreenLayout>
   );
 }
