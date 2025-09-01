@@ -36,18 +36,29 @@ export class GoalsReviewList extends OpenAPIRoute {
       .select({
         goalId: schema.GoalOccurrence.goalId,
         goalName: schema.Goal.name,
+        goalDescription: schema.Goal.description,
         photoUrl: schema.GoalOccurrence.photoUrl,
-        photoDescription: schema.GoalOccurrence.photoDescription,
       })
       .from(schema.GoalOccurrence)
       .innerJoin(schema.Goal, eq(schema.GoalOccurrence.goalId, schema.Goal.id))
       .where(
         and(
           eq(schema.GoalOccurrence.status, "pending"),
-          sql`${schema.GoalOccurrence.photoUrl} IS NOT NULL`
+          sql`${schema.GoalOccurrence.photoUrl} IS NOT NULL`,
+          eq(schema.Goal.method, "photo")
         )
       );
 
-    return c.json(verificationLogs, 200);
+    // Resolve relative URLs to absolute using request origin
+    const origin = new URL(c.req.url).origin;
+    const withAbsoluteUrls = verificationLogs.map((row) => ({
+      ...row,
+      photoUrl:
+        row.photoUrl && row.photoUrl.startsWith("/")
+          ? `${origin}${row.photoUrl}`
+          : row.photoUrl,
+    }));
+
+    return c.json(withAbsoluteUrls, 200);
   }
 }

@@ -244,7 +244,6 @@ Content-Type: application/json
   {
     "type": "<verification_type>",
     "photoUrl": "<photo_url|null>",
-    "photoDescription": "<description|null>",
     "startTime": "<start_time|null>"
   }
 ]
@@ -434,7 +433,6 @@ Content-Type: application/json
   {
     "type": "<verification_type>",
     "photoUrl": "<photo_url|null>",
-    "photoDescription": "<description|null>",
     "startTime": "<start_time|null>"
   }
 ]
@@ -539,7 +537,6 @@ Content-Type: application/json
   {
     "type": "photo",
     "photoUrl": "https://cdn.commit.app/uploads/run1.jpg",
-    "photoDescription": "Morning run selfie",
     "startTime": "2025-09-02T06:30:00Z"
   }
 ]

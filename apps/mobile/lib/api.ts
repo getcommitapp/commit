@@ -31,7 +31,10 @@ export async function apiFetch(
     headers.set("Authorization", `Bearer ${session.data.session.token}`);
   }
 
-  headers.set("Content-Type", "application/json");
+  // Set JSON content type by default unless caller overrides
+  if (!headers.has("Content-Type") && !(init.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
 
   const url = `${process.env.EXPO_PUBLIC_API_URL}/api${input}`;
 
@@ -50,3 +53,18 @@ export async function apiFetch(
 }
 
 export type ApiSuccess<T> = { success: true } & T;
+
+export async function createApiImageSource(url: string) {
+  const headers: Record<string, string> = {};
+  // Dev/preview impersonation header
+  if (config.devAutoAuthAsTestUser) {
+    headers["X-Commit-Dev-Auto-Auth"] = config.devAutoAuthAsTestUser;
+  }
+  // Real session token (if any)
+  const session = await authClient.getSession();
+  const token = session?.data?.session?.token;
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return { uri: url, headers } as const;
+}

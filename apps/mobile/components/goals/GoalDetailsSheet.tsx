@@ -11,7 +11,7 @@ import { useGoals } from "@/lib/hooks/useGoals";
 import { useDeleteGoal } from "@/lib/hooks/useDeleteGoal";
 import { GoalDetails } from "@/components/goals/GoalDetails";
 import { useGoalCheckin } from "@/lib/hooks/useCheckin";
-import { useGoalPhoto } from "@/lib/hooks/usePhoto";
+import { GoalActions } from "@/components/goals/GoalActions";
 
 type Goal = NonNullable<ReturnType<typeof useGoals>["data"]>[number];
 
@@ -46,9 +46,7 @@ export const GoalDetailsSheet = forwardRef<
         onComplete: undefined,
       }
     );
-    const { mutate: submitPhoto, isPending: isSubmittingPhoto } = useGoalPhoto(
-      goal.id
-    );
+
     const { mutate: deleteGoal, isPending: isDeleting } = useDeleteGoal(
       goal.id
     );
@@ -97,21 +95,9 @@ export const GoalDetailsSheet = forwardRef<
           </View>
         ) : null}
 
-        {!hasActiveTimer && goal.method === "photo" ? (
+        {!hasActiveTimer ? (
           <View style={{ marginBottom: spacing.xl }}>
-            <Button
-              title="Submit Photo"
-              onPress={() =>
-                !isSubmittingPhoto &&
-                submitPhoto({
-                  photoUrl: "https://picsum.photos/seed/mobile/800/600",
-                  photoDescription: "Mobile submission",
-                })
-              }
-              loading={isSubmittingPhoto}
-              testID="submit-photo-goal"
-              accessibilityLabel="submit-photo-goal"
-            />
+            <GoalActions goal={goal} />
           </View>
         ) : null}
 

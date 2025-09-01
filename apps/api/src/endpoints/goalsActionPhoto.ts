@@ -56,7 +56,6 @@ export class GoalsActionPhoto extends OpenAPIRoute {
         .set({
           status: "pending",
           photoUrl: body.photoUrl,
-          photoDescription: body.photoDescription ?? null,
           updatedAt: now,
         })
         .where(
@@ -74,7 +73,6 @@ export class GoalsActionPhoto extends OpenAPIRoute {
         status: "pending",
         verifiedAt: null,
         photoUrl: body.photoUrl,
-        photoDescription: body.photoDescription ?? null,
         createdAt: now,
         updatedAt: now,
       });

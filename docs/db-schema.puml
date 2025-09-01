@@ -126,7 +126,6 @@ entity "Goal_verifications_log" as goal_verifications_log {
   approvalStatus: text
   approvedBy: text [fk -> user.id] ' (nullable)
   startTime: integer [timestamp]
-  photoDescription: text
   photoUrl: text
   createdAt: integer [timestamp]
   updatedAt: integer [timestamp]
