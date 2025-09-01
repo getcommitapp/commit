@@ -83,18 +83,6 @@ export const GoalDetailsSheet = forwardRef<
           </View>
         ) : null}
 
-        {!hasActiveTimer && goal.method === "checkin" ? (
-          <View style={{ marginBottom: spacing.xl }}>
-            <Button
-              title="Check-in"
-              onPress={() => !isCheckingIn && checkin()}
-              loading={isCheckingIn}
-              testID="checkin-goal"
-              accessibilityLabel="checkin-goal"
-            />
-          </View>
-        ) : null}
-
         {!hasActiveTimer ? (
           <View style={{ marginBottom: spacing.xl }}>
             <GoalActions goal={goal} />
