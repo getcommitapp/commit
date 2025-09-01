@@ -35,6 +35,8 @@ export class GoalsReviewList extends OpenAPIRoute {
     const verificationLogs = await db
       .select({
         goalId: schema.GoalOccurrence.goalId,
+        userId: schema.GoalOccurrence.userId,
+        occurrenceDate: schema.GoalOccurrence.occurrenceDate,
         goalName: schema.Goal.name,
         goalDescription: schema.Goal.description,
         photoUrl: schema.GoalOccurrence.photoUrl,

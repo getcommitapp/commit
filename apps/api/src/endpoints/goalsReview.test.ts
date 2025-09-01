@@ -61,6 +61,8 @@ describe("Goals review endpoints", () => {
     expect(listRes.status).toBe(200);
     const items = (await listRes.json()) as Array<{
       goalId: string;
+      userId: string;
+      occurrenceDate: string;
       photoUrl: string | null;
     }>;
     const item = items.find((i) => i.goalId === created.id);
@@ -68,10 +70,15 @@ describe("Goals review endpoints", () => {
 
     // Reviewer approves the occurrence
     const updRes = await app.request(
-      `/api/goals/${created.id}/review`,
+      `/api/goals/review`,
       {
         method: "PUT",
-        body: JSON.stringify({ approvalStatus: "approved" }),
+        body: JSON.stringify({ 
+          goalId: created.id,
+          userId: item!.userId,
+          occurrenceDate: item!.occurrenceDate,
+          approvalStatus: "approved"
+        }),
         headers: new Headers({
           "Content-Type": "application/json",
         }),

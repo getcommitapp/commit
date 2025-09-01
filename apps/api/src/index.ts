@@ -161,7 +161,7 @@ openapi.post("/api/goals", GoalsCreate);
 openapi.get("/api/goals/review", GoalsReviewList);
 openapi.get("/api/goals/:id", GoalsFetch);
 openapi.delete("/api/goals/:id", GoalsDelete);
-openapi.put("/api/goals/:id/review", GoalsReviewUpdate);
+openapi.put("/api/goals/review", GoalsReviewUpdate);
 openapi.post("/api/goals/:id/checkin", GoalsActionCheckin);
 openapi.post("/api/goals/:id/photo", GoalsActionPhoto);
 openapi.post("/api/goals/:id/movement/start", GoalsActionMovementStart);
