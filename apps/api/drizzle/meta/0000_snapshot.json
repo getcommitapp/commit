@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8a172104-c3c9-45d6-85a0-15aacc62d980",
+  "id": "bde37ad9-d898-40ff-af53-745dfc3bac06",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -90,7 +90,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -146,7 +146,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -325,7 +325,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -449,7 +449,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -549,7 +549,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -627,7 +627,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -697,7 +697,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -817,7 +817,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -876,7 +876,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(current_timestamp)"
+          "default": "(unixepoch())"
         },
         "updatedAt": {
           "name": "updatedAt",
