@@ -4,7 +4,7 @@
 
 The Commit mobile app API allows clients (mobile apps) to manage accounts, goals, and groups. It is a RESTful API, where resources (users, goals, groups) are accessed via URLs, and actions are performed using HTTP methods (GET, POST, PUT, DELETE).
 
-Clients must authenticate using a Bearer token (except `/signup`) for all requests. Responses are JSON-formatted, and standard HTTP status codes are used to indicate success or failure.
+Clients must authenticate using a Bearer token (except `/api/auth/*`) for all requests. Responses are JSON-formatted, and standard HTTP status codes are used to indicate success or failure.
 
 > [!NOTE]
 > RESTful APIs are stateless: each request must include all authentication data.
@@ -26,10 +26,50 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
 > - `404 Not Found` - resource does not exist
 > - `500 Internal Server Error` - server error
 
+## Endpoint Index (summary)
+
+- Auth (Better-Auth/Hono)
+  - /api/auth/\*
+
+- Users
+  - GET /api/users
+  - PUT /api/users
+  - DELETE /api/users
+
+- Goals
+  - GET /api/goals
+  - POST /api/goals
+  - GET /api/goals/:id
+  - DELETE /api/goals/:id
+  - POST /api/goals/:id/checkin
+  - POST /api/goals/:id/photo
+  - POST /api/goals/:id/movement/start
+  - POST /api/goals/:id/movement/stop
+  - GET /api/goals/review (reviewer)
+  - PUT /api/goals/review (reviewer)
+
+- Groups
+  - GET /api/groups
+  - POST /api/groups
+  - GET /api/groups/:id
+  - DELETE /api/groups/:id
+  - POST /api/groups/:id/leave
+  - GET /api/groups/:id/invite (owner)
+  - GET /api/groups/:id/invite/verify?code=...
+  - POST /api/groups/join
+
+- Payments
+  - POST /api/payments/setup-intent
+  - GET /api/payments/method
+
+- Files
+  - POST /api/files/upload
+  - GET /api/files/:key
+
 ## Section 3 - Messages / Requests
 
 > [!NOTE]
-> Endpoint `/auth` has been created by Better-Auth/Hono
+> Auth endpoints are provided by Better-Auth/Hono at `/api/auth/*`.
 
 ### User
 
@@ -50,7 +90,11 @@ Response:
   "name": "<name>",
   "email": "<email>",
   "emailVerified": true|false,
-  "image": "<image_url|null>"
+  "image": "<image_url|null>",
+  "role": "user|reviewer|admin",
+  "timezone": "<IANA timezone>",
+  "createdAt": "<iso>",
+  "updatedAt": "<iso>"
 }
 ```
 
@@ -77,7 +121,15 @@ Response:
 
 ```txt
 {
-  "message": "User updated successfully."
+  "id": "<user_id>",
+  "name": "<name>",
+  "email": "<email>",
+  "emailVerified": true|false,
+  "image": "<image_url|null>",
+  "role": "user|reviewer|admin",
+  "timezone": "<IANA timezone>",
+  "createdAt": "<iso>",
+  "updatedAt": "<iso>"
 }
 ```
 
@@ -113,17 +165,24 @@ Content-Type: application/json
 
 {
   "name": "<goal_name>",
-  "description": "<goal_description>",
-  "stakeCents": <stake_cents>,
-  "currency": "<currency>",
-  "recurrence": "<recurrence_json>",
-  "startDate": "<start_date>",
-  "endDate": "<end_date>",
-  "dueStartTime": "<due_start_time>",
-  "dueEndTime": "<due_end_time>",
-  "destinationType": "dev|charity",
-  "destinationUserId": "<user_id|null>",
-  "destinationCharityId": "<charity_id|null>"
+  "description": "<string|null>",
+  "startDate": "<iso>",
+  "endDate": "<iso|null>",
+  "dueStartTime": "<iso|null>",
+  "dueEndTime": "<iso|null>",
+  "localDueStart": "<HH:MM|null>",
+  "localDueEnd": "<HH:MM|null>",
+  "recDaysMask": "<number|null>",
+  "stakeCents": <number>,
+  "destinationType": "none|user|charity",
+  "destinationUserId": "<uuid|null>",
+  "destinationCharityId": "<uuid|null>",
+  "method": "checkin|photo|movement",
+  "graceTimeSeconds": <number|null>,
+  "durationSeconds": <number|null>,
+  "geoLat": <number|null>,
+  "geoLng": <number|null>,
+  "geoRadiusM": <number|null>
 }
 ```
 
@@ -132,7 +191,12 @@ Response:
 ```txt
 {
   "id": "<goal_id>",
-  "message": "Goal created successfully."
+  "name": "...",
+  "method": "checkin|photo|movement",
+  "stakeCents": 1000,
+  "destinationType": "none|user|charity",
+  "createdAt": "<iso>",
+  "updatedAt": "<iso>"
 }
 ```
 
@@ -153,18 +217,12 @@ Response:
 [
   {
     "id": "<goal_id>",
-    "name": "<goal_name>",
-    "description": "<goal_description>",
-    "stakeCents": <stake_cents>,
-    "currency": "<currency>",
-    "recurrence": "<recurrence_json>",
-    "startDate": "<start_date>",
-    "endDate": "<end_date>",
-    "dueStartTime": "<due_start_time>",
-    "dueEndTime": "<due_end_time>",
-    "destinationType": "dev|charity",
-    "destinationUserId": "<user_id|null>",
-    "destinationCharityId": "<charity_id|null>"
+    "name": "...",
+    "groupId": "<group_id|null>",
+    "state": "<idle|due|completed|late>",
+    "occurrence": { ... } | null,
+    "actions": ["checkin"|"photo"|"movement:start"|"movement:stop", ...],
+    "nextTransitionAt": "<iso|null>"
   }
 ]
 ```
@@ -185,28 +243,11 @@ Response:
 ```txt
 {
   "id": "<goal_id>",
-  "name": "<goal_name>",
-  "description": "<goal_description>",
-  "stakeCents": <stake_cents>,
-  "currency": "<currency>",
-  "recurrence": "<recurrence_json>",
-  "startDate": "<start_date>",
-  "endDate": "<end_date>",
-  "dueStartTime": "<due_start_time>",
-  "dueEndTime": "<due_end_time>",
-  "destinationType": "dev|charity",
-  "destinationUserId": "<user_id|null>",
-  "destinationCharityId": "<charity_id|null>",
-  "verificationMethods": [
-    {
-      "method": "<method_type>",
-      "latitude": "<latitude|null>",
-      "longitude": "<longitude|null>",
-      "radiusM": "<radius|null>",
-      "durationSeconds": "<duration|null>",
-      "graceTime": "<grace_time|null>"
-    }
-  ]
+  "name": "...",
+  "state": "<idle|due|completed|late>",
+  "occurrence": { ... } | null,
+  "actions": [ ... ],
+  "nextTransitionAt": "<iso|null>"
 }
 ```
 
@@ -231,29 +272,81 @@ Response:
 
 ---
 
-#### Verify Goal Completion
+#### Goal Actions
+
+- Check-in (auto-approve)
 
 Request:
 
 ```txt
-POST /api/goals/<id>/verify
+POST /api/goals/<id>/checkin
 Authorization: Bearer <token>
 Content-Type: application/json
 
-[
-  {
-    "type": "<verification_type>",
-    "photoUrl": "<photo_url|null>",
-    "startTime": "<start_time|null>"
-  }
-]
+{
+  "occurrenceDate": "<YYYY-MM-DD|null>"
+}
 ```
 
-Response:
+Response: state summary (state, occurrence, actions, nextTransitionAt).
+
+- Submit Photo (pending review)
+
+Request:
 
 ```txt
+POST /api/goals/<id>/photo
+Authorization: Bearer <token>
+Content-Type: application/json
+
 {
-  "message": "Verification log submitted."
+  "photoUrl": "</api/files/...>",
+  "occurrenceDate": "<YYYY-MM-DD|null>"
+}
+```
+
+Response: state summary.
+
+- Movement Start / Stop
+
+```txt
+POST /api/goals/<id>/movement/start
+POST /api/goals/<id>/movement/stop
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "occurrenceDate": "<YYYY-MM-DD|null>"
+}
+```
+
+Response: state summary.
+
+---
+
+#### Review (reviewer only)
+
+- List pending photo validations
+
+```txt
+GET /api/goals/review
+Authorization: Bearer <token>
+```
+
+Returns logs to review with absolute photoUrl.
+
+- Update validation decision
+
+```txt
+PUT /api/goals/review
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "goalId": "<uuid>",
+  "userId": "<uuid>",
+  "occurrenceDate": "<YYYY-MM-DD>",
+  "approvalStatus": "approved|rejected"
 }
 ```
 
@@ -268,19 +361,7 @@ GET /api/groups
 Authorization: Bearer <token>
 ```
 
-Response:
-
-```txt
-[
-  {
-    "id": "<group_id>",
-    "name": "<group_name>",
-    "description": "<group_description>",
-    "goalId": "<goal_id|null>",
-    "inviteCode": "<invite_code>"
-  }
-]
-```
+Response: list of groups the user owns or joined, including computed goal state.
 
 ---
 
@@ -293,25 +374,7 @@ GET /api/groups/<id>
 Authorization: Bearer <token>
 ```
 
-Response:
-
-```txt
-{
-  "id": "<group_id>",
-  "name": "<group_name>",
-  "description": "<group_description>",
-  "creatorId": "<user_id>",
-  "goalId": "<goal_id|null>",
-  "inviteCode": "<invite_code>",
-  "members": [
-    {
-      "userId": "<user_id>",
-      "status": "<member_status>",
-      "joinedAt": "<joined_at>"
-    }
-  ]
-}
-```
+Response: base group fields.
 
 ---
 
@@ -326,7 +389,8 @@ Content-Type: application/json
 
 {
   "name": "<group_name>",
-  "description": "<group_description>"
+  "description": "<string|null>",
+  "goal": { /* same shape as Create Goal */ }
 }
 ```
 
@@ -335,7 +399,11 @@ Response:
 ```txt
 {
   "id": "<group_id>",
-  "inviteCode": "<invite_code>"
+  "name": "<group_name>",
+  "description": "<string|null>",
+  "inviteCode": "<invite_code>",
+  "createdAt": "<iso>",
+  "updatedAt": "<iso>"
 }
 ```
 
@@ -379,72 +447,19 @@ Response:
 
 ---
 
-#### View Goal
+#### Join Group by Code
 
 Request:
 
 ```txt
-GET /api/groups/<id>/goal
-Authorization: Bearer <token>
-```
-
-Response:
-
-```txt
-{
-  "id": "<goal_id>",
-  "name": "<goal_name>",
-  "description": "<goal_description>",
-  "stakeCents": <stake_cents>,
-  "currency": "<currency>",
-  "recurrence": "<recurrence_json>",
-  "startDate": "<start_date>",
-  "endDate": "<end_date>",
-  "dueStartTime": "<due_start_time>",
-  "dueEndTime": "<due_end_time>",
-  "destinationType": "dev|charity",
-  "destinationUserId": "<user_id|null>",
-  "destinationCharityId": "<charity_id|null>",
-  "verificationMethods": [
-    {
-      "method": "<method_type>",
-      "latitude": "<latitude|null>",
-      "longitude": "<longitude|null>",
-      "radiusM": "<radius|null>",
-      "durationSeconds": "<duration|null>",
-      "graceTime": "<grace_time|null>"
-    }
-  ]
-}
-```
-
----
-
-#### Verify Group Goal Completion
-
-Request:
-
-```txt
-POST /api/groups/<id>/goal/verify
+POST /api/groups/join
 Authorization: Bearer <token>
 Content-Type: application/json
 
-[
-  {
-    "type": "<verification_type>",
-    "photoUrl": "<photo_url|null>",
-    "startTime": "<start_time|null>"
-  }
-]
+{ "code": "<invite_code>" }
 ```
 
-Response:
-
-```txt
-{
-  "message": "Verification log submitted."
-}
-```
+Response: base group fields.
 
 ---
 
@@ -462,6 +477,25 @@ Response:
 ```txt
 {
   "message": "Left group successfully."
+}
+```
+
+---
+
+#### Delete Group (owner only)
+
+Request:
+
+```txt
+DELETE /api/groups/<id>
+Authorization: Bearer <token>
+```
+
+Response:
+
+```txt
+{
+  "message": "Group and associated goal deleted."
 }
 ```
 
@@ -488,7 +522,7 @@ Response (200 OK):
 }
 ```
 
-### 2. Create and Verify a Goal
+### 2. Create and Act on a Goal
 
 Request:
 
@@ -501,26 +535,23 @@ Content-Type: application/json
   "name": "Run 5km every morning",
   "description": "Daily accountability run",
   "stakeCents": 5000,
-  "currency": "CHF",
-  "recurrence": {
-    "freq": "DAILY",
-    "count": 30
-  },
   "startDate": "2025-09-01T06:00:00Z",
-  "endDate": "2025-09-30T06:00:00Z",
   "dueStartTime": "2025-09-01T06:00:00Z",
   "dueEndTime": "2025-09-01T09:00:00Z",
+  "method": "photo",
   "destinationType": "charity",
   "destinationCharityId": "charity_111"
 }
 ```
 
-Response (201 Created):
+Response (200 OK):
 
 ```txt
 {
   "id": "goal_789",
-  "message": "Goal created successfully."
+  "name": "Run 5km every morning",
+  "method": "photo",
+  "stakeCents": 5000
 }
 ```
 
@@ -529,28 +560,27 @@ Response (201 Created):
 Request:
 
 ```txt
-POST /api/goals/goal_789/verify
+POST /api/goals/goal_789/photo
 Authorization: Bearer eyJhbGciOiJIUzI1...
 Content-Type: application/json
 
-[
-  {
-    "type": "photo",
-    "photoUrl": "https://cdn.commit.app/uploads/run1.jpg",
-    "startTime": "2025-09-02T06:30:00Z"
-  }
-]
+{
+  "photoUrl": "/api/files/users/user_12345/2025/09/02/abc.jpg",
+  "occurrenceDate": "2025-09-02"
+}
 ```
 
 Response (200 OK):
 
 ```txt
 {
-  "message": "Verification log submitted."
+  "state": "pending",
+  "occurrence": { ... },
+  "actions": [ ... ]
 }
 ```
 
-### 3. Create a Group and Set Goal
+### 3. Create a Group (with embedded goal) and Join via Code
 
 Request:
 
@@ -561,11 +591,17 @@ Content-Type: application/json
 
 {
   "name": "Morning Runners",
-  "description": "Accountability group for daily 5km runs."
+  "description": "Accountability group for daily 5km runs.",
+  "goal": {
+    "name": "Run 5km every morning",
+    "startDate": "2025-09-01T06:00:00Z",
+    "stakeCents": 5000,
+    "method": "photo"
+  }
 }
 ```
 
-Response (201 Created):
+Response (200 OK):
 
 ```txt
 {
@@ -574,42 +610,17 @@ Response (201 Created):
 }
 ```
 
----
-
 Request:
 
 ```txt
-GET /api/groups/group_456/goal
+POST /api/groups/join
 Authorization: Bearer eyJhbGciOiJIUzI1...
+Content-Type: application/json
+
+{ "code": "ABC123" }
 ```
 
-Response (200 OK):
-
-```txt
-{
-  "id": "goal_789",
-  "name": "Run 5km every morning",
-  "description": "Daily accountability run",
-  "stakeCents": 5000,
-  "currency": "CHF",
-  "recurrence": {
-    "freq": "DAILY",
-    "count": 30
-  },
-  "startDate": "2025-09-01T06:00:00Z",
-  "endDate": "2025-09-30T06:00:00Z",
-  "dueStartTime": "2025-09-01T06:00:00Z",
-  "dueEndTime": "2025-09-01T09:00:00Z",
-  "destinationType": "charity",
-  "destinationCharityId": "charity_111",
-  "verificationMethods": [
-    {
-      "method": "photo",
-      "graceTime": null
-    }
-  ]
-}
-```
+Response (200 OK): base group fields.
 
 ### 4. Leave a Group
 
@@ -628,7 +639,38 @@ Response (200 OK):
 }
 ```
 
-### 5. Error Example – Invalid Group Invite Code
+### 5. Payments and Files
+
+- Create setup intent
+
+```txt
+POST /api/payments/setup-intent
+Authorization: Bearer <token>
+```
+
+Response:
+
+```txt
+{ "clientSecret": "seti_..._secret_..." }
+```
+
+- Upload a file
+
+```txt
+POST /api/files/upload
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+
+file=<binary>
+```
+
+Response:
+
+```txt
+{ "url": "/api/files/users/.../file.jpg", "key": "users/.../file.jpg" }
+```
+
+### 6. Invalid Group Invite Code (example)
 
 Request:
 
@@ -637,12 +679,8 @@ GET /api/groups/group_456/invite/verify?code=WRONGCODE
 Authorization: Bearer eyJhbGciOiJIUzI1...
 ```
 
-Response:
+Response (200 OK):
 
 ```txt
-{
-  "error": "Bad Request",
-  "code": 400,
-  "message": "The provided invite code is not valid."
-}
+{ "valid": false }
 ```
