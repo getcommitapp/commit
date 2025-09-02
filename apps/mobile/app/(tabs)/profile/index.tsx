@@ -1,10 +1,4 @@
-import {
-  Image,
-  Linking,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 
 import { FormGroup, FormItem } from "@/components/ui/form";
 import {
@@ -14,13 +8,13 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { usePaymentMethod } from "@/lib/hooks/usePaymentMethod";
 import { capitalize } from "@/lib/utils";
 import Constants from "expo-constants";
-import logo from "@/assets/images/logo.png";
+import SwissFlag from "@/assets/icons/swiss-flag.svg";
+import CommitLogo from "@/assets/icons/commit-logo-text.svg";
 
 export default function ProfileScreen() {
   const success = useThemeColor({}, "success");
@@ -80,41 +74,37 @@ export default function ProfileScreen() {
         />
       </FormGroup>
       <View style={styles.footer}>
-        <View style={styles.footerRow}>
-          <Image source={logo} style={styles.logo} />
-          <View style={styles.footerColumn}>
-            <ThemedText style={styles.version}>v{APP_VERSION}</ThemedText>
-            <TouchableOpacity
-              onPress={() =>
-                Linking.openURL("https://commit.leo-c50.workers.dev/")
-              }
-            >
-              <ThemedText
-                style={[styles.footerText, { textDecorationLine: "underline" }]}
-              >
-                Visit our website
-              </ThemedText>
-            </TouchableOpacity>
-            <View style={styles.madeIn}>
-              <ThemedText style={styles.footerText}>
-                Made in Switzerland
-              </ThemedText>
-              <MaterialIcons
-                name="add-box"
-                size={24}
-                color="#D52B1E"
-                style={{ marginLeft: 2, marginRight: 2 }}
-              />
-              <ThemedText style={styles.footerText}>with</ThemedText>
-              <Ionicons
-                name="heart"
-                size={24}
-                color="#E63946"
-                style={{ marginLeft: 2, marginRight: 2 }}
-              />
-            </View>
-          </View>
+        <CommitLogo width={50} height={14} />
+        <View style={styles.madeIn}>
+          <Text
+            style={{
+              ...textVariants.caption1,
+              color: mutedForeground,
+            }}
+          >
+            Made with <Text style={{ color: "red" }}>♥</Text> in Switzerland
+          </Text>
+          <SwissFlag width={12} height={12} />
         </View>
+        <Text
+          style={{
+            ...textVariants.caption2,
+            color: mutedForeground,
+          }}
+        >
+          v{APP_VERSION}
+        </Text>
+
+        {/* <TouchableOpacity
+          onPress={() => Linking.openURL("https://commit.leo-c50.workers.dev/")}
+        >
+          <ThemedText
+            style={[styles.footerText, { textDecorationLine: "underline" }]}
+          >
+            Visit our website
+          </ThemedText>
+        </TouchableOpacity>
+         */}
       </View>
     </ScreenLayout>
   );
@@ -122,35 +112,19 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   footer: {
-    marginTop: 32,
+    marginTop: spacing.md,
     alignItems: "center",
-    justifyContent: "center",
+    gap: spacing.sm,
   },
   footerRow: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  footerColumn: {
-    flexDirection: "column",
     justifyContent: "center",
-    marginLeft: 12,
-  },
-  logo: {
-    width: 64,
-    height: 64,
-    borderRadius: 4,
-  },
-  version: {
-    color: "#888",
-    fontSize: 12,
-    marginBottom: 4,
+    gap: spacing.sm,
   },
   madeIn: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  footerText: {
-    color: "#888",
-    fontSize: 12,
+    gap: 6,
   },
 });

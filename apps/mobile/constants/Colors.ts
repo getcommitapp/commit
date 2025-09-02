@@ -1,11 +1,10 @@
-// Design token palette (derived from design variables) - A1FFEB
+// Design token palette (derived from design variables)
 const palette = {
   primary: "#000000",
   secondary: "#ffffff",
   mutedForeground: "#9e9e9e",
   muted: "#d9d9d9",
   background: "#f4f4f4",
-  colorfulBackground: "#A1FFEB",
   card: "#ffffff",
   border: "#e8e8e8",
   accent: "#a1ffeb",
@@ -24,7 +23,6 @@ const Colors = {
     // extended tokens
     primary: palette.primary,
     secondary: palette.secondary,
-    colorfulBackground: palette.colorfulBackground,
     mutedForeground: palette.mutedForeground,
     muted: palette.muted,
     card: palette.card,
@@ -44,7 +42,6 @@ const Colors = {
     // extended tokens
     primary: "#ffffff",
     secondary: "#000000",
-    colorfulBackground: palette.colorfulBackground,
     mutedForeground: palette.mutedForeground,
     muted: "#666666",
     card: "#000000",

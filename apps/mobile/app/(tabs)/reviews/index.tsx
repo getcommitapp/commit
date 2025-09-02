@@ -2,7 +2,6 @@ import {
   Animated,
   Dimensions,
   PanResponder,
-  Platform,
   StyleSheet,
   Text,
   View,
@@ -10,7 +9,12 @@ import {
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import { StatusLayout } from "@/components/layouts/StatusLayout";
 
-import { spacing, useThemeColor } from "@/components/Themed";
+import {
+  spacing,
+  useThemeColor,
+  ThemedText,
+  textVariants,
+} from "@/components/Themed";
 import { useReviews } from "@/lib/hooks/useReviews";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image } from "expo-image";
@@ -35,6 +39,7 @@ export default function ReviewsScreen() {
   const mutedForeground = useThemeColor({}, "mutedForeground");
   const background = useThemeColor({}, "background");
   const placeholderBorder = useThemeColor({}, "border");
+  const borderColor = useThemeColor({}, "border");
 
   const screenWidth = Dimensions.get("window").width;
 
@@ -224,13 +229,30 @@ export default function ReviewsScreen() {
       scrollable={false}
       style={{
         flex: 1,
-        // TODO: find a better way to handle this
-        paddingTop: Platform.select({ ios: 0, android: 100 }),
       }}
       onRefresh={async () => {
         await refetch();
       }}
     >
+      {/* Goal information header */}
+      <View
+        style={{
+          marginBottom: spacing.md,
+          borderTopWidth: 2,
+          borderColor: borderColor,
+          paddingTop: spacing.md,
+        }}
+      >
+        <ThemedText style={[styles.goalTitle, { marginBottom: spacing.xs }]}>
+          {currentReview.goalName}
+        </ThemedText>
+        {currentReview.goalDescription && (
+          <Text style={[styles.goalDescription, { color: mutedForeground }]}>
+            {currentReview.goalDescription}
+          </Text>
+        )}
+      </View>
+
       <View
         style={{
           flex: 1,
@@ -399,5 +421,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  goalTitle: {
+    ...textVariants.title3,
+  },
+  goalDescription: {
+    ...textVariants.body,
   },
 });

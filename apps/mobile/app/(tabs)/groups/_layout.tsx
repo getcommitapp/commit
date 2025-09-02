@@ -1,7 +1,7 @@
 import { Stack, useRouter } from "expo-router";
 import { Platform, View } from "react-native";
 import { HeaderButton } from "@/components/navigation/HeaderButton";
-import { useThemeColor } from "@/components/Themed";
+import { spacing, useThemeColor } from "@/components/Themed";
 import { CancelButton } from "@/components/navigation/CancelButton";
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 
@@ -24,9 +24,9 @@ export default function GroupsStackLayout() {
         options={{
           title: "My Groups",
           headerRight: () => (
-            <View style={{ flexDirection: "row", gap: 12 }}>
+            <View style={{ flexDirection: "row", gap: spacing.sm }}>
               <HeaderButton
-                icon="create-outline"
+                icon="add"
                 label="Create"
                 onPress={() => {
                   dismissAll();

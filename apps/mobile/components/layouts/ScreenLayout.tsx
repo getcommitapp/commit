@@ -1,5 +1,5 @@
 import { Platform, RefreshControl, ScrollView, ViewStyle } from "react-native";
-import { Edge, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { spacing } from "@/components/Themed";
 import { useCallback, useState } from "react";
@@ -25,7 +25,7 @@ export function ScreenLayout({
 }: Props) {
   const paddingTop = Platform.select({
     ios: spacing.md,
-    android: 56,
+    android: fullscreen ? 0 : 56,
     default: spacing.md,
   });
 
@@ -47,11 +47,17 @@ export function ScreenLayout({
         flex: 1,
       }}
       edges={
-        Platform.select({
-          ios: largeTitle ? ["top"] : [],
-          android: ["top"],
-          default: ["top"],
-        }).concat(fullscreen ? ["bottom"] : []) as Edge[]
+        fullscreen
+          ? Platform.select({
+              ios: largeTitle ? ["top", "bottom"] : ["bottom"],
+              android: [],
+              default: ["top", "bottom"],
+            })
+          : Platform.select({
+              ios: largeTitle ? ["top"] : [],
+              android: ["top"],
+              default: ["top"],
+            })
       }
     >
       <ScrollView
@@ -59,7 +65,7 @@ export function ScreenLayout({
         contentContainerStyle={{
           paddingTop,
           paddingHorizontal: spacing.headerContentInset,
-          paddingBottom: scrollable ? 0 : spacing.md,
+          paddingBottom: spacing.md,
           ...style,
         }}
         contentInsetAdjustmentBehavior="automatic"

@@ -26,7 +26,7 @@ export default function GoalsStackLayout() {
           title: "My Goals",
           headerRight: () => (
             <HeaderButton
-              icon="create-outline"
+              icon="add"
               label="Create"
               onPress={() => {
                 dismissAll();
