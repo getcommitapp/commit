@@ -78,6 +78,16 @@ export function evaluateMovement(input: EngineInputs): EngineOutputs {
   if (now > latestStart && now <= (occ.dueEnd as Date)) {
     out.state = "missed"; // cannot start anymore
     out.nextTransitionAt = occ.dueEnd as Date;
+    out.actions = [
+      {
+        kind: "movement_start",
+        presentation: "button",
+        visibleFrom: windowStart,
+        visibleUntil: latestStart,
+        enabled: false,
+        label: "Start timer",
+      },
+    ];
     return out;
   }
 

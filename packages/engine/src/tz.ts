@@ -34,3 +34,10 @@ export function formatLocalDate(date: Date, tz: string): string {
   const d = z.day.toString().padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
+
+export function formatLocalTimeHHmm(date: Date, tz: string): string {
+  const z = Temporal.Instant.from(date.toISOString()).toZonedDateTimeISO(tz);
+  const hh = z.hour.toString().padStart(2, "0");
+  const mm = z.minute.toString().padStart(2, "0");
+  return `${hh}:${mm}`;
+}
