@@ -18,7 +18,7 @@ Built with `Expo` + `React Native` and deployed as a `GitHub` release (tagged in
 
 ## Overview
 
-This app uses `expo-router` for navigation, `TypeScript` for types, and `Jest` for tests.
+This app uses `expo-router` for navigation, `TypeScript` for types, `Jest` for tests, `Better Auth` for authentication, and `Stripe` for payments.
 
 > "Build, preview, iterate." Start locally with Expo and iterate quickly on device or simulator.
 
@@ -29,11 +29,12 @@ This app uses `expo-router` for navigation, `TypeScript` for types, and `Jest` f
 
 ### Authentication
 
-The app uses Better Auth with a Hono backend (Cloudflare Workers).
+The app uses Better Auth with a Hono backend (Cloudflare Workers) and Stripe for payment processing.
 
 - Server: see `apps/api` where the Better Auth handler is mounted under `/api/auth/*`.
-- Client: initialized in `apps/mobile/lib/auth-client.ts` with the Expo plugin and `expo-secure-store`.
-- Providers: configure Google and Apple as per Better Auth docs.
+- Client: initialized in `apps/mobile/lib/auth-client.ts` with the Expo plugin, `expo-secure-store`, and Stripe integration.
+- Providers: Google and Apple authentication are configured.
+- Payment: Stripe integration for payment method handling and transaction processing.
 
 ## Getting started
 
@@ -70,6 +71,7 @@ Available variables:
 - `EXPO_PUBLIC_API_URL` (required): The API URL for the mobile app to connect to.
   - Use `http://localhost:8787` for simulator/emulator development
   - Use `https://commit-api-preview.leo-c50.workers.dev/` for Expo Go on physical devices
+- `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY` (required): Stripe publishable key for payment processing
 - `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (dev-only, optional): If defined, onboarding is reset on each reload in development. Outside development, this is always ignored (feature is disabled).
 - `EXPO_PUBLIC_DEV_DEFAULT_PAGE` (dev-only, optional): If defined, the app will redirect to this route on launch during development. Examples: `/signup`, `/onboarding/1`, `/(tabs)/home`.
 - `EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER` (dev-only, optional): If defined, the app will auto-authenticate with a seeded test user on launch during development. Set to an email to choose the role:
@@ -126,32 +128,52 @@ Manual, version-aligned release flow:
 
 Notes:
 
-- Regular `Build Mobile` workflow runs on `main` commits for CI verification and artifact previews.
-- The release job is `release-android` in `.github/workflows/release-mobile.yml`.
+- The `Build Mobile` workflow runs on `main` commits for CI verification and artifact previews.
+- The `Release Mobile` workflow downloads artifacts from the build workflow and creates a tagged GitHub Release.
+- Release artifacts are available as `commit-android-{version}.apk` from GitHub Releases.
 
 ## Project structure
 
     apps/mobile/
     ├─ app/               # expo-router routes (tabs, modals, 404)
-    │  ├─ (tabs)/
+    │  ├─ (tabs)/         # Tab navigation (home, goals, groups, reviews, profile)
+    │  ├─ checkin/        # Check-in flow for goal verification
+    │  ├─ onboarding/     # Onboarding screens
     │  ├─ _layout.tsx
     │  ├─ +html.tsx
     │  ├─ +not-found.tsx
-    │  └─ modal.tsx
-    ├─ components/
+    │  └─ signup.tsx
+    ├─ components/        # Reusable UI components
+    │  ├─ auth/           # Authentication components
+    │  ├─ goals/          # Goal-related components
+    │  ├─ groups/         # Group-related components
+    │  ├─ layouts/        # Layout components
+    │  ├─ navigation/     # Navigation components
+    │  ├─ pages/          # Page-specific components
+    │  ├─ providers/      # Context providers (Auth, Stripe, etc.)
+    │  └─ ui/             # Base UI components
+    ├─ lib/               # Utilities and configurations
+    │  ├─ hooks/          # Custom React hooks
+    │  ├─ api.ts          # API client
+    │  ├─ auth-client.ts  # Better Auth client with Stripe
+    │  └─ utils.ts        # Utility functions
     ├─ assets/
     ├─ constants/
     ├─ types/
+    ├─ __tests__/         # Jest test files
+    ├─ config.ts          # App configuration
     ├─ app.json
     ├─ tsconfig.json
     └─ eslint.config.cjs
 
 ## MVP features
 
-- Sign-in: Google & Apple
-- Solo and group goals; uniform stake in groups
-- Verification: GPS / time / duration / photo
-- Money flow: authorize stake; capture on failure; distribute to winners or fallback
-- Reviewer screen: approve/reject photo evidence
+- Authentication: Google & Apple sign-in with Better Auth
+- Goal management: Solo and group goals with uniform stakes
+- Payment integration: Stripe for payment method handling and stake processing
+- Verification system: Time, duration, and photo verification
+- Money flow: Authorize stakes, capture on failure, distribute to winners or fallback
+- Review system: Reviewer interface for approving/rejecting photo evidence
+- Group functionality: Create and join groups with shared goals
 
 Full specification: see [software-requirements-specification.md](../../docs/software-requirements-specification.md).
