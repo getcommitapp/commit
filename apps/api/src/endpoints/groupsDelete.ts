@@ -2,7 +2,7 @@ import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
-import { Group, Goal } from "../db/schema";
+import { Group, Goal, GroupMember, GoalOccurrence } from "../db/schema";
 import { GroupDeleteResponseSchema } from "@commit/types";
 
 export class GroupsDelete extends OpenAPIRoute {
@@ -34,10 +34,16 @@ export class GroupsDelete extends OpenAPIRoute {
     if (g.creatorId !== userId)
       return new Response("Forbidden", { status: 403 });
 
-    // Delete the associated goal first (due to foreign key constraints)
+    // Delete goal occurrences linked to this group's goal
+    await db.delete(GoalOccurrence).where(eq(GoalOccurrence.goalId, g.goalId));
+
+    // Delete the associated goal
     await db.delete(Goal).where(eq(Goal.id, g.goalId));
 
-    // Delete the group (this will cascade delete group participants)
+    // Explicitly delete group membership rows (in case cascades are not enforced)
+    await db.delete(GroupMember).where(eq(GroupMember.groupId, id));
+
+    // Delete the group
     await db.delete(Group).where(eq(Group.id, id));
 
     return c.json({ message: "Group and associated goal deleted." });

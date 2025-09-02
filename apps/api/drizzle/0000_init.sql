@@ -10,7 +10,7 @@ CREATE TABLE `account` (
 	`refreshTokenExpiresAt` integer,
 	`scope` text,
 	`password` text,
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
@@ -19,7 +19,7 @@ CREATE TABLE `charity` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`url` text,
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL
 );
 --> statement-breakpoint
@@ -46,7 +46,7 @@ CREATE TABLE `goal` (
 	`geoLat` real,
 	`geoLng` real,
 	`geoRadiusM` integer,
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`ownerId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`destinationUserId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
@@ -64,7 +64,7 @@ CREATE TABLE `goal_occurrence` (
 	`timerEndedAt` integer,
 	`violated` integer,
 	`approvedBy` text,
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL,
 	PRIMARY KEY(`goalId`, `userId`, `occurrenceDate`),
 	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade,
@@ -79,7 +79,7 @@ CREATE TABLE `group` (
 	`name` text NOT NULL,
 	`description` text,
 	`inviteCode` text NOT NULL,
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL,
 	FOREIGN KEY (`creatorId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`goalId`) REFERENCES `goal`(`id`) ON UPDATE no action ON DELETE cascade
@@ -91,7 +91,7 @@ CREATE TABLE `group_member` (
 	`userId` text NOT NULL,
 	`joinedAt` integer NOT NULL,
 	`status` text,
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL,
 	PRIMARY KEY(`groupId`, `userId`),
 	FOREIGN KEY (`groupId`) REFERENCES `group`(`id`) ON UPDATE no action ON DELETE cascade,
@@ -102,7 +102,7 @@ CREATE TABLE `session` (
 	`id` text PRIMARY KEY NOT NULL,
 	`expiresAt` integer NOT NULL,
 	`token` text NOT NULL,
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL,
 	`ipAddress` text,
 	`userAgent` text,
@@ -120,7 +120,7 @@ CREATE TABLE `user` (
 	`role` text DEFAULT 'user' NOT NULL,
 	`stripeCustomerId` text,
 	`timezone` text DEFAULT 'UTC',
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL
 );
 --> statement-breakpoint
@@ -130,6 +130,6 @@ CREATE TABLE `verification` (
 	`identifier` text NOT NULL,
 	`value` text NOT NULL,
 	`expiresAt` integer NOT NULL,
-	`createdAt` integer DEFAULT (current_timestamp),
+	`createdAt` integer DEFAULT (unixepoch()),
 	`updatedAt` integer NOT NULL
 );

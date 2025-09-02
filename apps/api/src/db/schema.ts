@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 
 const createCreatedAt = () =>
-  integer("createdAt", { mode: "timestamp" }).default(sql`(current_timestamp)`);
+  integer("createdAt", { mode: "timestamp" }).default(sql`(unixepoch())`);
 const createUpdatedAt = () =>
   integer("updatedAt", { mode: "timestamp" }).notNull();
 
