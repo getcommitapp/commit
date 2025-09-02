@@ -14,7 +14,7 @@ legend left
   commit. MVP Architecture
   - Mobile: Expo React Native (iOS/Android)
   - Web: Astro static site on Cloudflare Workers
-  - Backend: Cloudflare (D1, R2, Workers: Auth, Business Logic, Stripe Webhooks)
+  - Backend: Cloudflare (D1, R2, Workers: Auth, Business Logic)
   - Payments: Stripe
 endlegend
 
@@ -46,7 +46,6 @@ package "Cloudflare Backend" as Cloudflare {
   node "Workers" as Edge {
     [Auth Logic] as Auth
     [Business Logic] as BizLogic
-    [Stripe Webhooks] as StripeHooks
   }
 }
 
@@ -66,8 +65,6 @@ MobileStorage --> BizLogic : photo uploads
 MobileApi --> BizLogic : business logic / verification
 
 MobileStripe -right-> Stripe : setup/capture payments
-Stripe -left-> StripeHooks : events (webhooks)
-StripeHooks -down-> Stripe : transfers
 
 BizLogic --> DB : read/write
 BizLogic --> Storage : signed URLs
@@ -92,11 +89,7 @@ note bottom of BizLogic
   - Signed URL issuance
 end note
 
-note bottom of StripeHooks
-  Implements:
-  - Stripe webhook handlers
-  - Payment capture / refund logic
-end note
+
 
 note bottom of MobileStripe
   - Create/setup payment method

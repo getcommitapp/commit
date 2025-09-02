@@ -31,11 +31,6 @@ partition "Tabs" {
         :Custom Goal Form;
         -> :Goal Creation;
         :Goal Form\nEnter title, description,\n due date, verification method\n(photo, checkin, movement);
-        if (Payment method registered?) then (yes)
-          :Confirm stake popup\n"If you do not complete the goal, {amount} CHF\nwill be paid to {recipient}";
-        else (no)
-          :Payment Method Setup;
-        endif
       elseif (Template)
         :Choose from templates;
         :Pre-filled Goal Form;
@@ -52,10 +47,6 @@ partition "Tabs" {
       -> :Group Creation;
       :Group Form\nName, description, goal selection;
       :Add members via invite code;
-      if (Payment method registered?) then (yes)
-      else (no)
-        :Payment Method Setup;
-      endif
     elseif (Join)
       :Enter invite code;
       :Join existing group;
