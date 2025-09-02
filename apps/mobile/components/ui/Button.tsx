@@ -49,11 +49,12 @@ export function Button({
   const accent = useThemeColor({}, "accent");
   const danger = useThemeColor({}, "danger");
   const border = useThemeColor({}, "border");
+  const colorful = useThemeColor({}, "colorfulBackground");
   const isSecondary = variant === "secondary";
   const isAccent = variant === "accent";
 
-  let backgroundColor = primary;
-  let textColor = secondary;
+  let backgroundColor = colorful;
+  let textColor = primary;
   let borderColor = border;
   let borderWidth = 0;
   if (isSecondary) {

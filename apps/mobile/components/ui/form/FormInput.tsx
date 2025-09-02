@@ -1,6 +1,6 @@
 import React from "react";
-import { View, TextInput } from "react-native";
-import { textVariants, spacing, useThemeColor } from "@/components/Themed";
+import { TextInput, TextStyle, View } from "react-native";
+import { spacing, textVariants, useThemeColor } from "@/components/Themed";
 
 interface FormInputProps {
   label: string;
@@ -20,6 +20,7 @@ interface FormInputProps {
   numberOfLines?: number;
   maxLength?: number;
   autoFocus?: boolean;
+  textStyle?: TextStyle;
 }
 
 export function FormInput({
@@ -40,6 +41,7 @@ export function FormInput({
   numberOfLines,
   maxLength,
   autoFocus,
+  textStyle,
 }: FormInputProps) {
   const text = useThemeColor({}, "text");
   const mutedForeground = useThemeColor({}, "mutedForeground");
@@ -94,15 +96,17 @@ export function FormInput({
           numberOfLines={numberOfLines}
           maxLength={maxLength}
           autoFocus={autoFocus}
-          style={{
-            ...textVariants.body,
-            color: text,
-            padding: 0,
-            // Ensure multiline inputs start at the top-left
-            textAlignVertical: multiline ? "top" : undefined,
-            minHeight:
-              multiline && numberOfLines ? numberOfLines * 20 : undefined,
-          }}
+          style={[
+            textVariants.body,
+            {
+              color: text,
+              padding: 0,
+              textAlignVertical: multiline ? "top" : undefined,
+              minHeight:
+                multiline && numberOfLines ? numberOfLines * 20 : undefined,
+            },
+            textStyle,
+          ]}
         />
       </View>
     </>

@@ -1,13 +1,12 @@
 import { Stack, useRouter } from "expo-router";
-import { Platform, Pressable, View } from "react-native";
-import IonIcons from "@expo/vector-icons/Ionicons";
-import { useThemeColor, ThemedText } from "@/components/Themed";
+import { Platform, View } from "react-native";
+import { HeaderButton } from "@/components/navigation/HeaderButton";
+import { useThemeColor } from "@/components/Themed";
 import { CancelButton } from "@/components/navigation/CancelButton";
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 
 export default function GroupsStackLayout() {
   const backgroundColor = useThemeColor({}, "background");
-  const textColor = useThemeColor({}, "text");
   const router = useRouter();
   const { dismissAll } = useBottomSheetModal();
 
@@ -26,44 +25,22 @@ export default function GroupsStackLayout() {
           title: "My Groups",
           headerRight: () => (
             <View style={{ flexDirection: "row", gap: 12 }}>
-              <Pressable
-                accessibilityRole="button"
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 4,
-                  paddingHorizontal: 10,
-                  paddingVertical: 6,
-                  borderRadius: 20,
-                  backgroundColor: textColor + "15",
-                }}
+              <HeaderButton
+                icon="create-outline"
+                label="Create"
                 onPress={() => {
                   dismissAll();
                   router.push("/(tabs)/groups/create");
                 }}
-              >
-                <IonIcons name="create-outline" size={18} color={textColor} />
-                <ThemedText style={{ fontSize: 14 }}>Create</ThemedText>
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 4,
-                  paddingHorizontal: 10,
-                  paddingVertical: 6,
-                  borderRadius: 20,
-                  backgroundColor: textColor + "15",
-                }}
+              />
+              <HeaderButton
+                icon="enter-outline"
+                label="Join"
                 onPress={() => {
                   dismissAll();
                   router.push("/(tabs)/groups/join");
                 }}
-              >
-                <IonIcons name="enter-outline" size={18} color={textColor} />
-                <ThemedText style={{ fontSize: 14 }}>Join</ThemedText>
-              </Pressable>
+              />
             </View>
           ),
         }}
