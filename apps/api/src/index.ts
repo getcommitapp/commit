@@ -22,7 +22,7 @@ import { GoalsActionCheckin } from "./endpoints/goalsActionCheckin";
 import { GoalsActionPhoto } from "./endpoints/goalsActionPhoto";
 import {
   GoalsActionMovementStart,
-  GoalsActionMovementStop,
+  GoalsActionMovementViolate,
 } from "./endpoints/goalsActionMovement";
 
 // Groups
@@ -163,7 +163,7 @@ openapi.put("/api/goals/review", GoalsReviewUpdate);
 openapi.post("/api/goals/:id/checkin", GoalsActionCheckin);
 openapi.post("/api/goals/:id/photo", GoalsActionPhoto);
 openapi.post("/api/goals/:id/movement/start", GoalsActionMovementStart);
-openapi.post("/api/goals/:id/movement/stop", GoalsActionMovementStop);
+openapi.post("/api/goals/:id/movement/violate", GoalsActionMovementViolate);
 
 // Groups
 openapi.get("/api/groups", GroupsList);

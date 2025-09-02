@@ -8,7 +8,10 @@ import {
   useThemeColor,
 } from "@/components/Themed";
 import { BottomSheetModal, useBottomSheetModal } from "@gorhom/bottom-sheet";
-import { useLocalMovementTimer } from "@/lib/hooks/useMovement";
+import {
+  useLocalMovementTimer,
+  useMovementWatcher,
+} from "@/lib/hooks/useMovement";
 import { useElapsedTimer } from "@/lib/hooks/useElapsedTimer";
 import { GoalDetailsSheet } from "./GoalDetailsSheet";
 import { useGoals } from "@/lib/hooks/useGoals";
@@ -38,6 +41,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   const activeTimerStartedAt =
     persistedTimerStartedAt || localTimer?.startedAt || null;
   const hasActiveTimer = !!activeTimerStartedAt;
+  useMovementWatcher(goal.id, hasActiveTimer && goal.method === "movement");
   const nextLabel = useMemo(
     () => formatRelativeTimeLeft(goal.nextTransitionAt),
     [goal.nextTransitionAt]

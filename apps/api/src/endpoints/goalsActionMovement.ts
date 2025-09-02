@@ -6,7 +6,7 @@ import { and, eq } from "drizzle-orm";
 import {
   GoalActionResponseSchema,
   GoalMovementStartRequestSchema,
-  GoalMovementStopRequestSchema,
+  GoalMovementViolateRequestSchema,
 } from "@commit/types";
 import { todayLocal, computeState } from "../services/goalService";
 
@@ -107,11 +107,13 @@ export class GoalsActionMovementStart extends OpenAPIRoute {
   }
 }
 
-export class GoalsActionMovementStop extends OpenAPIRoute {
+// Removed explicit stop; violation handler will also reset timer fields
+
+export class GoalsActionMovementViolate extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
-    summary: "Stop movement timer for today's occurrence",
-    request: { body: contentJson(GoalMovementStopRequestSchema) },
+    summary: "Mark movement violation for today's occurrence (auto-reject)",
+    request: { body: contentJson(GoalMovementViolateRequestSchema) },
     responses: {
       "200": {
         description: "State after action",
@@ -137,12 +139,9 @@ export class GoalsActionMovementStop extends OpenAPIRoute {
     // Check if user can act on this goal (owner or group member)
     let canAct = goal.ownerId === user.id;
     if (!canAct) {
-      // Check if user is a member of any group that has this goal
       const groupMemberships = await db.query.GroupMember.findMany({
         where: eq(schema.GroupMember.userId, user.id),
-        with: {
-          group: true,
-        },
+        with: { group: true },
       });
       canAct = groupMemberships.some(
         (membership) => membership.group.goalId === id
@@ -155,9 +154,61 @@ export class GoalsActionMovementStop extends OpenAPIRoute {
 
     const occurrenceDate = body.occurrenceDate ?? todayLocal(user.timezone);
     const now = new Date();
+
+    // Upsert occurrence
+    const existing = await db.query.GoalOccurrence.findFirst({
+      where: and(
+        eq(schema.GoalOccurrence.goalId, id),
+        eq(schema.GoalOccurrence.userId, user.id),
+        eq(schema.GoalOccurrence.occurrenceDate, occurrenceDate)
+      ),
+    });
+
+    if (!existing) {
+      await db.insert(schema.GoalOccurrence).values({
+        goalId: id,
+        userId: user.id,
+        occurrenceDate,
+        status: "pending",
+        verifiedAt: null,
+        violated: false,
+        timerStartedAt: null,
+        timerEndedAt: null,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
+    // Re-fetch for latest values
+    let occ = await db.query.GoalOccurrence.findFirst({
+      where: and(
+        eq(schema.GoalOccurrence.goalId, id),
+        eq(schema.GoalOccurrence.userId, user.id),
+        eq(schema.GoalOccurrence.occurrenceDate, occurrenceDate)
+      ),
+    });
+    // Compute to know if we are within an active timer window
+    let cs = computeState(goal, user, occ);
+
+    // Always reset timer fields when violation is reported
+    const resetFields = { timerStartedAt: null, timerEndedAt: null } as const;
+
+    // Fail only if goal is currently ongoing/window_open for movement OR awaiting_verification with active timer
+    const shouldFail =
+      goal.method === "movement" &&
+      (cs.state === "ongoing" ||
+        cs.state === "window_open" ||
+        cs.state === "awaiting_verification");
+
     await db
       .update(schema.GoalOccurrence)
-      .set({ timerEndedAt: now, updatedAt: now })
+      .set({
+        violated: shouldFail,
+        status: shouldFail ? "rejected" : (occ?.status ?? "pending"),
+        verifiedAt: shouldFail ? now : (occ?.verifiedAt ?? null),
+        updatedAt: now,
+        ...resetFields,
+      })
       .where(
         and(
           eq(schema.GoalOccurrence.goalId, id),
@@ -166,14 +217,15 @@ export class GoalsActionMovementStop extends OpenAPIRoute {
         )
       );
 
-    const occ = await db.query.GoalOccurrence.findFirst({
+    // Recompute state with updated occurrence values
+    occ = await db.query.GoalOccurrence.findFirst({
       where: and(
         eq(schema.GoalOccurrence.goalId, id),
         eq(schema.GoalOccurrence.userId, user.id),
         eq(schema.GoalOccurrence.occurrenceDate, occurrenceDate)
       ),
     });
-    const cs = computeState(goal, user, occ);
+    cs = computeState(goal, user, occ);
     return c.json({
       state: cs.state,
       occurrence: cs.occurrence ?? null,

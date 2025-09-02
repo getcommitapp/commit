@@ -36,6 +36,17 @@ export function FormDurationInput({
     return 220;
   }, []);
 
+  const normalizeDuration = (input: Date): Date => {
+    const hours = input.getHours();
+    const minutes = input.getMinutes();
+    if (hours === 0 && minutes === 0) {
+      const next = new Date(input);
+      next.setMinutes(1);
+      return next;
+    }
+    return input;
+  };
+
   useEffect(() => {
     if (Platform.OS === "android") return;
     const durationMs = open ? 300 : 220;
@@ -66,13 +77,13 @@ export function FormDurationInput({
   }, [formEmitter, testID]);
 
   const valueLabel = useMemo(() => {
-    const base = duration ?? new Date(0, 0, 0, 0, 0, 0, 0);
+    if (!duration) return "Required";
     try {
-      const hours = base.getHours().toString().padStart(2, "0");
-      const minutes = base.getMinutes().toString().padStart(2, "0");
+      const hours = duration.getHours().toString().padStart(2, "0");
+      const minutes = duration.getMinutes().toString().padStart(2, "0");
       return `${hours}:${minutes}`;
     } catch {
-      return String(base);
+      return String(duration);
     }
   }, [duration]);
 
@@ -87,10 +98,10 @@ export function FormDurationInput({
             DateTimePickerAndroid.open({
               mode: "time",
               display: "clock",
-              value: duration ?? new Date(0, 0, 0, 0, 0, 0, 0),
+              value: duration ?? new Date(0, 0, 0, 0, 1, 0, 0),
               onChange: (event, selectedDate) => {
                 if (event?.type === "dismissed") return;
-                if (selectedDate) onChange(selectedDate);
+                if (selectedDate) onChange(normalizeDuration(selectedDate));
               },
               testID: testID ? `${testID}-picker` : undefined,
             });
@@ -138,13 +149,14 @@ export function FormDurationInput({
           >
             {open ? (
               <DateTimePicker
-                mode="time"
+                mode="countdown"
                 display="spinner"
                 textColor={text}
-                value={duration ?? new Date(0, 0, 0, 0, 0, 0, 0)}
+                value={duration ?? new Date(0, 0, 0, 0, 1, 0, 0)}
+                minuteInterval={1}
                 onChange={(event, selectedDate) => {
                   if (event?.type === "dismissed") return;
-                  if (selectedDate) onChange(selectedDate);
+                  if (selectedDate) onChange(normalizeDuration(selectedDate));
                 }}
                 testID={testID ? `${testID}-picker` : undefined}
               />
