@@ -138,7 +138,6 @@ toc: true
 ### Payments & Account Receivers (MVP decisions)
 
 - Charging model: Stakes are defined at creation but only charged if a user fails at settlement; if achieved, no funds are captured.
-- Stake range: CHF 1 (min) to CHF 1000 (max) per goal.
 - Currency: CHF only at launch.
 - Recipients and settlement:
   - Solo challenge: on failure, the owner is charged; the money goes to the developers (if possible in MVP, to charities).
@@ -153,8 +152,6 @@ toc: true
 - Group lifecycle: create private group, invite via code, join/leave, view results
 - Verification capture: check-in (time), in-app photo (manual review), movement timer (start/stop). Location verification not available in MVP.
 - Money: charge losers, credit winners via Stripe Customer Balance; no fallback destination in MVP
-- Activity/history: per-user list of past goals/challenges with outcomes
-- Settings: change display name
 
 ## Goal Creation
 
@@ -188,7 +185,7 @@ toc: true
 
 ## Settings
 
-- Update display name
+- Update payment details
 
 ## Optional Functions (Future Enhancements)
 
@@ -214,14 +211,7 @@ toc: true
 
 - Photos are stored for verification purposes only; access is restricted to the
   account owner and authorized reviewers.
-- Location traces are not persisted server-side; only ephemeral checks are
-  performed for verification.
 - Compliance posture: out of scope for MVP.
-
-## Reliability & Operations notes
-
-- Manual verification SLA: initial target is to perform manual photo. The team
-  will adjust this SLA based on capacity.
 
 ## Usability
 
@@ -259,7 +249,7 @@ toc: true
 - Database: Cloudflare D1 (SQLite)
 - Backend/services: Cloudflare (Workers, D1, R2) with Hono + chanfana
 - Payments: Stripe cards only (SetupIntents, PaymentIntents); winners credited via Customer Balance;
-- Third-party libraries & APIs: Stripe SDK, Better-Auth, Expo Camera; Location available client-side but no server action in MVP
+- Third-party libraries & APIs: Stripe SDK, Better-Auth, Expo Camera
 - Hosting: Cloudflare (backend, db, workers); Cloudflare Workers (Astro landing page)
 
 # Work Process
