@@ -45,6 +45,7 @@ export function AppleButton({ onSignInSuccess, onSignInError }: Props) {
 
   return (
     <Button
+      variant="primary"
       title="Sign in with Apple"
       onPress={signInWithApple}
       disabled={loading}

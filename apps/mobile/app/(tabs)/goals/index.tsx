@@ -8,7 +8,9 @@ export default function GoalsScreen() {
   const { data: goals, isLoading, isError, refetch } = useGoals();
 
   if (isLoading) {
-    return <StatusLayout status="loading" title="Loading goals..." />;
+    return (
+      <StatusLayout largeTitle status="loading" title="Loading goals..." />
+    );
   }
 
   if (isError) {

@@ -77,6 +77,19 @@ app.use(
   })
 );
 
+// CORS for all other API routes to allow Authorization header from mobile client
+app.use(
+  "/api/*",
+  cors({
+    origin: (origin) => origin || "*",
+    allowHeaders: ["Content-Type", "Authorization", "X-Commit-Dev-Auto-Auth"],
+    allowMethods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  })
+);
+
 // Mount Better Auth handler (per-request to access env bindings)
 app.on(["POST", "GET"], "/api/auth/*", (c) =>
   createAuth(c.env).handler(c.req.raw)
@@ -131,7 +144,42 @@ app.use("*", async (c, next) => {
     return next();
   }
 
-  // Default: use Better Auth
+  // Check for Bearer token (mobile app)
+  const authHeader = c.req.header("Authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    const db = drizzle(c.env.DB, { schema });
+
+    // Look up session by token
+    const [sessionData] = await db
+      .select({
+        session: schema.Session,
+        user: schema.User,
+      })
+      .from(schema.Session)
+      .innerJoin(schema.User, eq(schema.Session.userId, schema.User.id))
+      .where(eq(schema.Session.token, token))
+      .limit(1);
+
+    if (sessionData && sessionData.session.expiresAt > new Date()) {
+      c.set("user", {
+        id: sessionData.user.id,
+        name: sessionData.user.name,
+        email: sessionData.user.email,
+        image: sessionData.user.image,
+        stripeCustomerId: sessionData.user.stripeCustomerId,
+        emailVerified: sessionData.user.emailVerified,
+        role: sessionData.user.role,
+        timezone: sessionData.user.timezone,
+        createdAt: sessionData.user.createdAt,
+        updatedAt: sessionData.user.updatedAt,
+      });
+      c.set("session", sessionData.session);
+      return next();
+    }
+  }
+
+  // Fallback: use Better Auth for cookie-based sessions (web app)
   const session = await createAuth(c.env).api.getSession({
     headers: c.req.raw.headers,
   });
