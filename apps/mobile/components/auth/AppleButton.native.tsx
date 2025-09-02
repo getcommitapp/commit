@@ -30,9 +30,19 @@ export function AppleButton({ onSignInSuccess, onSignInError }: Props) {
         idToken: {
           token: credential.identityToken,
         },
-        callbackURL: "/(tabs)/home",
+        callbackURL: "/onboarding/1",
       });
-      onSignInSuccess?.();
+      const session = await authClient.getSession();
+      const sessionToken = session?.data?.session?.token ?? null;
+
+      if (sessionToken) {
+        onSignInSuccess?.();
+        setLoading(false);
+      } else {
+        // Authentication was cancelled - silently return without calling success or error
+        setLoading(false);
+        return;
+      }
     } catch (e: any) {
       if (e?.code === "ERR_REQUEST_CANCELED") return;
       const message = e?.message || "An error occurred during Apple sign-in";
