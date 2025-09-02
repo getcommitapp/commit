@@ -22,6 +22,9 @@ jest.mock("@/lib/auth-client", () => ({
     signIn: {
       social: jest.fn().mockResolvedValue(undefined),
     },
+    getSession: jest
+      .fn()
+      .mockResolvedValue({ data: { session: { token: "test-token" } } }),
   },
 }));
 

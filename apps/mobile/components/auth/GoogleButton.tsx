@@ -17,9 +17,21 @@ export function GoogleButton({ onSignInSuccess, onSignInError }: Props) {
       setLoading(true);
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/(tabs)/home",
+        callbackURL: "/onboarding/1",
       });
-      onSignInSuccess?.();
+
+      // Check if authentication actually succeeded by verifying session
+      const session = await authClient.getSession();
+      const sessionToken = session?.data?.session?.token ?? null;
+
+      if (sessionToken) {
+        onSignInSuccess?.();
+        setLoading(false);
+      } else {
+        // Authentication was cancelled - silently return without calling success or error
+        setLoading(false);
+        return;
+      }
     } catch (error: any) {
       const message = error?.message || "An unknown error occurred";
       Alert.alert("Google Sign-In Error", message);

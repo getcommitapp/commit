@@ -35,7 +35,7 @@ export function Button({
   onPress,
   disabled,
   leftIcon,
-  variant = "primary",
+  variant = "accent",
   size = "md",
   style,
   textStyle,
@@ -52,8 +52,8 @@ export function Button({
   const isSecondary = variant === "secondary";
   const isAccent = variant === "accent";
 
-  let backgroundColor = accent;
-  let textColor = primary;
+  let backgroundColor = primary;
+  let textColor = secondary;
   let borderColor = border;
   let borderWidth = 0;
   if (isSecondary) {
