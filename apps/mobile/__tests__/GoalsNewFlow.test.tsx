@@ -67,6 +67,21 @@ jest.mock("@/components/ui/form", () => ({
       onChange={onChange}
     />
   ),
+  // Provide minimal mocks for components used from the barrel but not previously mocked
+  FormInputToggle: ({ label, value, onValueChange }: any) => {
+    const React = require("react");
+    const { Pressable, Text } = require("react-native");
+    return React.createElement(
+      Pressable,
+      { accessibilityLabel: label, onPress: () => onValueChange?.(!value) },
+      React.createElement(Text, null, label)
+    );
+  },
+  FormWeekdaysInput: ({ label }: any) => {
+    const React = require("react");
+    const { Text } = require("react-native");
+    return React.createElement(Text, { accessibilityLabel: label }, label);
+  },
   FormSpacer: () => null,
 }));
 

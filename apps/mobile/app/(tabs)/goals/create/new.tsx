@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Alert } from "react-native";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import {
   FormGroup,
@@ -7,6 +8,8 @@ import {
   FormDateInput,
   FormTimeInput,
   FormDurationInput,
+  FormInputToggle,
+  FormWeekdaysInput,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
 import { useCreateGoal } from "@/lib/hooks/useCreateGoal";
@@ -24,7 +27,7 @@ export default function GoalNewScreen() {
   const [stake, setStake] = useState<number | null>(null);
 
   const [startAt, setStartAt] = useState<Date | null>(new Date());
-  // const [endAt, setEndAt] = useState<Date | null>(null);
+  const [endAt, setEndAt] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(new Date());
   const [endTime, setEndTime] = useState<Date | null>(null);
 
@@ -40,17 +43,29 @@ export default function GoalNewScreen() {
     typeof params.groupDescription === "string" ? params.groupDescription : "";
   const [duration, setDuration] = useState<Date | null>(null);
 
+  // Recurrence UI state
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recMask, setRecMask] = useState<number>(0);
+
+  // Sync recMask when returning from weekdays modal
+  if (typeof params.recMask === "string") {
+    const parsed = parseInt(params.recMask, 10);
+    if (Number.isFinite(parsed) && parsed !== recMask) {
+      setRecMask(parsed);
+    }
+  }
+
   const onChangeStart: NonNullable<
     IOSNativeProps["onChange"] | AndroidNativeProps["onChange"]
   > = (_event, date) => {
     if (date) setStartAt(date);
   };
 
-  // const onChangeEnd: NonNullable<
-  //   IOSNativeProps["onChange"] | AndroidNativeProps["onChange"]
-  // > = (_event, date) => {
-  //   if (date) setEndAt(date);
-  // };
+  const onChangeEnd: NonNullable<
+    IOSNativeProps["onChange"] | AndroidNativeProps["onChange"]
+  > = (_event, date) => {
+    if (date) setEndAt(date);
+  };
 
   const computeMethodAndDuration = () => {
     if (!method)
@@ -70,8 +85,30 @@ export default function GoalNewScreen() {
     };
   };
 
+  const toHHmm = (d: Date | null): string | undefined => {
+    if (!d) return undefined;
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    return `${hh}:${mm}`;
+  };
+
   const buildGoalPayload = (stakeCents: number) => {
     const { method: m, durationSeconds } = computeMethodAndDuration();
+    if (isRecurring) {
+      return {
+        name: title,
+        description: description || null,
+        stakeCents,
+        startDate: startAt?.toISOString() as string,
+        endDate: endAt ? endAt.toISOString() : null,
+        localDueStart: toHHmm(startTime ?? startAt)!,
+        localDueEnd: endTime ? toHHmm(endTime)! : null,
+        recDaysMask: recMask,
+        destinationType: "burn" as const,
+        method: m,
+        durationSeconds,
+      } as const;
+    }
     return {
       name: title,
       description: description || null,
@@ -93,6 +130,17 @@ export default function GoalNewScreen() {
 
     // UI guard: prevent start time later than end time when both provided
     if (startTime && endTime && startTime.getTime() > endTime.getTime()) {
+      return;
+    }
+
+    // UI guard: for recurrence, ensure end date is not before start date
+    if (
+      isRecurring &&
+      endAt &&
+      startAt &&
+      endAt.getTime() < startAt.getTime()
+    ) {
+      Alert.alert("Invalid end date", "End date cannot be before start date.");
       return;
     }
 
@@ -144,17 +192,6 @@ export default function GoalNewScreen() {
           }
           testID="start-date"
         />
-        {/**        <FormDateInput
-          label="End date"
-          date={endAt}
-          onChange={(d) =>
-            onChangeEnd({ type: "set", nativeEvent: {} } as any, d)
-          }
-          minimumDate={startAt ?? undefined}
-          placeholder="Optional"
-          testID="end-date"
-        />
-*/}
       </FormGroup>
 
       <FormGroup title="Due time">
@@ -168,9 +205,45 @@ export default function GoalNewScreen() {
           label="End time"
           time={endTime}
           onChange={(d) => setEndTime(d)}
+          minimumDate={startTime ?? undefined}
           placeholder="Optional"
           testID="end-time"
         />
+      </FormGroup>
+
+      <FormGroup title="Recurrence">
+        <FormInputToggle
+          label="Repeat weekly"
+          value={isRecurring}
+          onValueChange={(v: boolean) => {
+            setIsRecurring(v);
+            if (!v) {
+              setEndAt(null);
+              setRecMask(0);
+            }
+          }}
+          testID="repeat-weekly"
+        />
+        {isRecurring && (
+          <FormDateInput
+            label="End date"
+            date={endAt}
+            onChange={(d: Date) =>
+              onChangeEnd({ type: "set", nativeEvent: {} } as any, d)
+            }
+            minimumDate={startAt ?? undefined}
+            placeholder="Optional"
+            testID="end-date"
+          />
+        )}
+        {isRecurring && (
+          <FormWeekdaysInput
+            label="Weekdays"
+            mask={recMask}
+            onChange={(next: number) => setRecMask(next)}
+            testID="select-weekdays"
+          />
+        )}
       </FormGroup>
 
       {/** Duration input */}
@@ -199,6 +272,11 @@ export default function GoalNewScreen() {
           (startTime != null &&
             endTime != null &&
             startTime.getTime() > endTime.getTime()) ||
+          // Disable when invalid end date for recurrence
+          (isRecurring &&
+            endAt != null &&
+            startAt != null &&
+            endAt.getTime() < startAt.getTime()) ||
           // Require duration when method is movement
           (method === "movement" &&
             !computeDurationMinutes(method, duration)) ||
