@@ -74,11 +74,17 @@ export function FormItem({
             flexDirection: "row",
             alignItems: "center",
             gap: spacing.sm,
+            minWidth: 0,
+            flexShrink: 1,
           }}
         >
           {value !== undefined && value !== null ? (
             typeof value === "string" ? (
-              <Text style={{ ...textVariants.body, color: mutedForeground }}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{ ...textVariants.body, color: mutedForeground }}
+              >
                 {value}
               </Text>
             ) : (

@@ -5,3 +5,6 @@ export { FormDateInput } from "./FormDateInput";
 export { FormTimeInput } from "./FormTimeInput";
 export { FormSpacer } from "./FormSpacer";
 export { FormDurationInput } from "./FormDurationInput";
+export { FormInputToggle } from "./FormInputToggle";
+export { FormSelectItem } from "./FormSelectItem";
+export { FormWeekdaysInput } from "./FormWeekdaysInput";

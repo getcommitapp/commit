@@ -1,4 +1,4 @@
-import { formatLocalDate, fromLocalParts } from "./tz";
+import { formatLocalDate, formatLocalTimeHHmm, fromLocalParts } from "./tz";
 import { EngineInputs, GoalCore, Occurrence } from "./types";
 
 function pickTodayOrNext(
@@ -6,16 +6,51 @@ function pickTodayOrNext(
   tz: string,
   now: Date
 ): Occurrence | null {
-  // Single goal path using absolute dueStart/dueEnd
+  // Single goal path: use calendar startDate combined with due time-of-day
   if (!goal.recurrence) {
-    if (!goal.dueStartTime) return null;
-    const dueStart = new Date(goal.dueStartTime);
-    const dueEnd = goal.dueEndTime ? new Date(goal.dueEndTime) : null;
-    return {
-      date: formatLocalDate(dueStart, tz),
-      dueStart,
-      dueEnd: dueEnd ?? undefined,
-    };
+    // Determine local calendar date for the occurrence
+    const localDate = goal.startDate
+      ? formatLocalDate(new Date(goal.startDate), tz)
+      : null;
+
+    // Determine local time-of-day strings (prefer explicit local fields)
+    const localStartHHmm = goal.localDueStart
+      ? goal.localDueStart
+      : goal.dueStartTime
+        ? formatLocalTimeHHmm(new Date(goal.dueStartTime), tz)
+        : null;
+
+    const localEndHHmm = goal.localDueEnd
+      ? goal.localDueEnd
+      : goal.dueEndTime
+        ? formatLocalTimeHHmm(new Date(goal.dueEndTime), tz)
+        : null;
+
+    // If we have a calendar date and a start time, build the occurrence from local parts
+    if (localDate && localStartHHmm) {
+      const dueStart = fromLocalParts(localDate, localStartHHmm, tz);
+      const dueEnd = localEndHHmm
+        ? fromLocalParts(localDate, localEndHHmm, tz)
+        : null;
+      return {
+        date: localDate,
+        dueStart,
+        dueEnd: dueEnd ?? undefined,
+      };
+    }
+
+    // Fallback to previous absolute behavior if startDate or due times are missing
+    if (goal.dueStartTime) {
+      const dueStart = new Date(goal.dueStartTime);
+      const dueEnd = goal.dueEndTime ? new Date(goal.dueEndTime) : null;
+      return {
+        date: formatLocalDate(dueStart, tz),
+        dueStart,
+        dueEnd: dueEnd ?? undefined,
+      };
+    }
+
+    return null;
   }
 
   // Recurring: compute today's occurrence if today is selected, else next selected day within 14 days

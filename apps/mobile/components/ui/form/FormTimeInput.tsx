@@ -11,6 +11,8 @@ interface FormTimeInputProps {
   time: Date | null;
   onChange: (date: Date) => void;
   placeholder?: string;
+  minimumDate?: Date;
+  maximumDate?: Date;
   testID?: string;
 }
 
@@ -19,6 +21,8 @@ export function FormTimeInput({
   time,
   onChange,
   placeholder,
+  minimumDate,
+  maximumDate,
   testID,
 }: FormTimeInputProps) {
   const text = useThemeColor({}, "text");
@@ -90,6 +94,8 @@ export function FormTimeInput({
               mode: "time",
               display: "clock",
               value: time ?? new Date(),
+              minimumDate: minimumDate,
+              maximumDate: maximumDate,
               onChange: (event, selectedDate) => {
                 if (event?.type === "dismissed") return;
                 if (selectedDate) onChange(selectedDate);
@@ -144,6 +150,8 @@ export function FormTimeInput({
                 display="spinner"
                 textColor={text}
                 value={time ?? new Date()}
+                minimumDate={minimumDate}
+                maximumDate={maximumDate}
                 onChange={(event, selectedDate) => {
                   if (event?.type === "dismissed") return;
                   if (selectedDate) onChange(selectedDate);
