@@ -78,6 +78,9 @@ jobs:
       - name: Build Android APK
         id: build
         working-directory: apps/mobile
+        env:
+          EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
         run: |
           VERSION=$(node -p "require('./package.json').version")
           APK_NAME=commit-android-${VERSION}.apk
