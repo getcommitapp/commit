@@ -12,13 +12,14 @@ vi.mock("../../auth", () => {
       api: {
         getSession: async (_opts: { headers: Headers }) => {
           // Query current user role from DB so tests reflect updates
+          const userId = env.user?.id || "user_1";
           const result = await env.DB.prepare(
             "SELECT role FROM user WHERE id = ? LIMIT 1"
           )
-            .bind("user_1")
+            .bind(userId)
             .first<{ role: string }>();
           return {
-            user: { id: "user_1", role: result?.role ?? "user" },
+            user: { id: userId, role: result?.role ?? "user" },
             session: { id: "session_1" },
           };
         },
@@ -94,7 +95,9 @@ async function resetDb() {
     .join("\n");
 
   const seedUserStatement =
-    "INSERT INTO user (id, name, email, emailVerified, image, updatedAt, role) VALUES ('user_1','Test User','test@example.com',1,NULL,strftime('%s','now'),'user');";
+    "INSERT INTO user (id, name, email, emailVerified, image, updatedAt, role) VALUES " +
+    "('user_1','Test User','user@commit.local',1,NULL,strftime('%s','now'),'user')," +
+    "('reviewer_1','Reviewer User','reviewer@commit.local',1,NULL,strftime('%s','now'),'user');";
 
   try {
     await env.DB.exec(`${deleteStatements}\n${seedUserStatement}`);
