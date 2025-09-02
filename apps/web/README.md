@@ -1,6 +1,6 @@
 # commit. — Web
 
-Single-page marketing/landing site. Built with `Astro` and deployed to `Cloudflare Workers`.
+Marketing/landing website for the commit. goal tracking app. Built with `Astro 5` and `Tailwind CSS`, deployed as static assets to `Cloudflare Workers`.
 
 <details>
   <summary>Table of Contents</summary>
@@ -16,17 +16,26 @@ Single-page marketing/landing site. Built with `Astro` and deployed to `Cloudfla
 
 ## Overview
 
-Astro 5 is targeting the Cloudflare Workers runtime via `@astrojs/cloudflare`. Ideal for a fast, static-first landing page with edge deployment.
+The commit. web app is a static marketing website built with Astro 5 and Tailwind CSS. It showcases the commit. goal tracking app with multiple sections including hero, problem statement, solution overview, features, team, FAQ, and call-to-action.
 
-> "Fast by default." Keep pages lean; ship only what the landing needs.
+Key features:
+
+- **Static build**: Generates static HTML/CSS/JS for optimal performance
+- **Mobile-responsive**: Optimized for all device sizes
+- **SEO-optimized**: Meta tags, Open Graph, and structured data
+- **Component-based**: Modular Astro components for maintainability
+- **Cloudflare deployment**: Static assets deployed to Cloudflare Workers
+
+> [!NOTE]  
+> The site is built as static assets and deployed to Cloudflare Workers for global edge performance.
 
 ## Prerequisites
 
 - `Node.js 22+` and `pnpm`
-- `Cloudflare account` and `wrangler CLI` (installed via DevDeps)
+- `Cloudflare account` and `wrangler CLI` (for deployment)
 
-> [!TIP]
-> Prefer installing dependencies from the workspace root to share the lockfile.
+> [!TIP]  
+> Dependencies are managed from the workspace root using pnpm workspaces.
 
 ## Getting started
 
@@ -81,19 +90,32 @@ pnpm format
 ## Project structure
 
     apps/web/
-    ├─ public/
+    ├─ public/                  # static assets (images, icons, etc.)
     ├─ src/
-    │  └─ pages/
-    │     └─ index.astro        # landing page
-    ├─ astro.config.mjs
-    ├─ wrangler.jsonc
-    ├─ worker-configuration.d.ts
-    ├─ eslint.config.mjs
-    ├─ tsconfig.json
+    │  ├─ assets/              # optimized images and resources
+    │  ├─ components/          # reusable Astro components
+    │  │  ├─ sections/         # page sections (Hero, Problem, etc.)
+    │  │  ├─ ui/               # UI components (Button, etc.)
+    │  │  ├─ Header.astro
+    │  │  └─ Footer.astro
+    │  ├─ layouts/
+    │  │  └─ Layout.astro      # base HTML layout with SEO
+    │  ├─ pages/
+    │  │  └─ index.astro       # main landing page
+    │  ├─ styles/              # global CSS and Tailwind
+    │  └─ env.d.ts
+    ├─ astro.config.mjs        # Astro configuration
+    ├─ tailwind.config.js      # Tailwind CSS configuration
+    ├─ wrangler.jsonc          # Cloudflare Workers deployment config
+    ├─ eslint.config.mjs       # ESLint configuration
+    ├─ tsconfig.json          # TypeScript configuration
     └─ package.json
 
 ## Contributing
 
-If you clone this repository, you'll need to update environment variables in the web deployment pipeline for your own Cloudflare Workers setup.
+The web app is deployed automatically via GitHub Actions when changes are pushed to the main branch. For manual deployment:
+
+1. Ensure you have the correct Cloudflare Workers environment variables configured
+2. Run `pnpm deploy` to build and deploy to Cloudflare Workers
 
 Refer to the [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) for GitHub Actions integration details.
