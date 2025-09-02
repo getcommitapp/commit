@@ -32,11 +32,11 @@ describe("Goals review endpoints", () => {
         }),
         headers: new Headers({ "Content-Type": "application/json" }),
       },
-      env
+      { ...env, user: { id: "user_1" } } // Explicitly set user_1
     );
     const created = await createRes.json<GoalCreateResponse>();
 
-    // Create a pending occurrence with a photo by calling photo endpoint
+    // Create a pending occurrence with a photo by calling photo endpoint as user_1
     const photoRes = await app.request(
       `/api/goals/${created.id}/photo`,
       {
@@ -47,17 +47,24 @@ describe("Goals review endpoints", () => {
         }),
         headers: new Headers({ "Content-Type": "application/json" }),
       },
-      env
+      { ...env, user: { id: "user_1" } }
     );
     expect(photoRes.status).toBe(200);
 
-    // Elevate default test user to reviewer role (auth mock reads this)
+    // Elevate reviewer_1 to reviewer role
     await testEnv.DB.exec(
-      `UPDATE user SET role = 'reviewer' WHERE id = 'user_1';`
+      `INSERT OR IGNORE INTO user (id, role) VALUES ('reviewer_1', 'reviewer');`
+    );
+    await testEnv.DB.exec(
+      `UPDATE user SET role = 'reviewer' WHERE id = 'reviewer_1';`
     );
 
-    // Reviewer lists pending verifications
-    const listRes = await app.request("/api/goals/review", {}, env);
+    // Reviewer (user_2) lists pending verifications
+    const listRes = await app.request(
+      "/api/goals/review",
+      {},
+      { ...env, user: { id: "reviewer_1" } }
+    );
     expect(listRes.status).toBe(200);
     const items = (await listRes.json()) as Array<{
       goalId: string;
@@ -83,7 +90,7 @@ describe("Goals review endpoints", () => {
           "Content-Type": "application/json",
         }),
       },
-      env
+      { ...env, user: { id: "reviewer_1" } }
     );
     expect(updRes.status).toBe(200);
     const updated = await updRes.json<GoalOccurrence>();

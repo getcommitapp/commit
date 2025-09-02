@@ -3,7 +3,7 @@ import type { AppContext } from "../types";
 import { GoalReviewListResponseSchema } from "@commit/types";
 import * as schema from "../db/schema";
 import { drizzle } from "drizzle-orm/d1";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, ne, sql } from "drizzle-orm";
 
 export class GoalsReviewList extends OpenAPIRoute {
   schema = {
@@ -47,7 +47,8 @@ export class GoalsReviewList extends OpenAPIRoute {
         and(
           eq(schema.GoalOccurrence.status, "pending"),
           sql`${schema.GoalOccurrence.photoUrl} IS NOT NULL`,
-          eq(schema.Goal.method, "photo")
+          eq(schema.Goal.method, "photo"),
+          ne(schema.GoalOccurrence.userId, user.id)
         )
       )
       .orderBy(asc(schema.GoalOccurrence.occurrenceDate));
