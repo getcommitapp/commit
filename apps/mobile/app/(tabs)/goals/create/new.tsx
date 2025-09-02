@@ -2,26 +2,28 @@ import React, { useState } from "react";
 import { Alert } from "react-native";
 import { ScreenLayout } from "@/components/layouts/ScreenLayout";
 import {
+  FormDateInput,
+  FormDurationInput,
   FormGroup,
   FormInput,
   FormSpacer,
-  FormDateInput,
   FormTimeInput,
-  FormDurationInput,
   FormInputToggle,
   FormWeekdaysInput,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
 import { useCreateGoal } from "@/lib/hooks/useCreateGoal";
 import { useCreateGroup } from "@/lib/hooks/useCreateGroup";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   AndroidNativeProps,
   IOSNativeProps,
 } from "@react-native-community/datetimepicker";
 import { computeDurationMinutes, computeStakeCents } from "@/lib/utils";
+import { useThemeColor } from "@/components/Themed";
 
 export default function GoalNewScreen() {
+  const danger = useThemeColor({}, "danger");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [stake, setStake] = useState<number | null>(null);
@@ -30,7 +32,6 @@ export default function GoalNewScreen() {
   const [endAt, setEndAt] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(new Date());
   const [endTime, setEndTime] = useState<Date | null>(null);
-
   const createGoal = useCreateGoal();
   const createGroup = useCreateGroup();
   const router = useRouter();
@@ -180,6 +181,7 @@ export default function GoalNewScreen() {
           value={stake ?? ""}
           type="number"
           onChangeNumber={setStake}
+          textStyle={stake === 0 ? { color: danger } : undefined}
         />
       </FormGroup>
 

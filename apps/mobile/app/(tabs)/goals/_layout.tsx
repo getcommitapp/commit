@@ -1,13 +1,12 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Platform, Pressable } from "react-native";
-import IonIcons from "@expo/vector-icons/Ionicons";
-import { ThemedText, useThemeColor } from "@/components/Themed";
+import { Platform } from "react-native";
+
+import { useThemeColor } from "@/components/Themed";
 import { CancelButton } from "@/components/navigation/CancelButton";
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
-
+import { HeaderButton } from "@/components/navigation/HeaderButton";
 export default function GoalsStackLayout() {
   const backgroundColor = useThemeColor({}, "background");
-  const textColor = useThemeColor({}, "text");
   const router = useRouter();
   const params = useLocalSearchParams();
   const { dismissAll } = useBottomSheetModal();
@@ -26,25 +25,14 @@ export default function GoalsStackLayout() {
         options={{
           title: "My Goals",
           headerRight: () => (
-            <Pressable
-              accessibilityRole="button"
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 4,
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                borderRadius: 20,
-                backgroundColor: textColor + "15",
-              }}
+            <HeaderButton
+              icon="add"
+              label="Create"
               onPress={() => {
                 dismissAll();
                 router.push("/(tabs)/goals/create");
               }}
-            >
-              <IonIcons name="create-outline" size={18} color={textColor} />
-              <ThemedText style={{ fontSize: 14 }}>Create</ThemedText>
-            </Pressable>
+            />
           ),
         }}
       />

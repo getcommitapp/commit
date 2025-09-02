@@ -52,8 +52,8 @@ export function Button({
   const isSecondary = variant === "secondary";
   const isAccent = variant === "accent";
 
-  let backgroundColor = primary;
-  let textColor = secondary;
+  let backgroundColor = accent;
+  let textColor = primary;
   let borderColor = border;
   let borderWidth = 0;
   if (isSecondary) {
@@ -64,6 +64,7 @@ export function Button({
     textColor = primary;
   } else if (variant === "danger") {
     backgroundColor = danger;
+    textColor = secondary;
   } else if (variant === "border") {
     backgroundColor = secondary;
     textColor = primary;
