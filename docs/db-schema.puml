@@ -22,7 +22,9 @@ entity "User" as user {
   email: text [unique]
   emailVerified: boolean
   image: text
-  role: text ' (user, admin, reviewer)
+  role: text ' (user, reviewer, admin)
+  stripeCustomerId: text
+  timezone: text [default: UTC]
   createdAt: integer [timestamp]
   updatedAt: integer [timestamp]
 }
@@ -90,43 +92,37 @@ entity "Goal" as goal {
   endDate: integer [timestamp]
   dueStartTime: integer [timestamp]
   dueEndTime: integer [timestamp]
-  recurrence: text
+  localDueStart: text ' HH:mm
+  localDueEnd: text ' HH:mm
+  recDaysMask: integer ' bitmask for weekdays
   stakeCents: int
   currency: text
   destinationType: text
   destinationUserId: text [fk -> user.id] ' (nullable)
   destinationCharityId: text [fk -> charity.id] ' (nullable)
+  method: text ' (location, photo, checkin, movement)
+  graceTimeSeconds: integer
+  durationSeconds: integer
+  geoLat: real
+  geoLng: real
+  geoRadiusM: integer
   createdAt: integer [timestamp]
   updatedAt: integer [timestamp]
 }
 
-' Evidence Method
-entity "Goal_verifications_method" as goal_verifications_method {
-  + id: text [pk]
+' Goal occurrence tracking - replaces Goal_verifications_log
+entity "Goal_occurrence" as goal_occurrence {
+  + goalId: text [pk, fk -> goal.id]
+  + userId: text [pk, fk -> user.id]
+  + occurrenceDate: text [pk] ' YYYY-MM-DD
   --
-  goalId: text [fk -> goal.id]
-  method: text
-  latitude: real
-  longitude: real
-  radiusM: int
-  durationSeconds: int
-  graceTime: integer [timestamp]
-  createdAt: integer [timestamp]
-  updatedAt: integer [timestamp]
-}
-
-' Evidence Log
-entity "Goal_verifications_log" as goal_verifications_log {
-  + id: text [pk]
-  --
-  goalId: text [fk -> goal.id]
-  userId: text [fk -> user.id]
-  type: text
+  status: text [default: pending] ' (pending, approved, rejected)
   verifiedAt: integer [timestamp]
-  approvalStatus: text
-  approvedBy: text [fk -> user.id] ' (nullable)
-  startTime: integer [timestamp]
   photoUrl: text
+  timerStartedAt: integer [timestamp]
+  timerEndedAt: integer [timestamp]
+  violated: boolean
+  approvedBy: text [fk -> user.id] ' (nullable)
   createdAt: integer [timestamp]
   updatedAt: integer [timestamp]
 }
@@ -136,7 +132,7 @@ entity "Group" as group {
   + id: text [pk]
   --
   creatorId: text [fk -> user.id]
-  goalId: text [fk -> goal.id] ' (nullable)
+  goalId: text [fk -> goal.id]
   name: text
   description: text
   inviteCode: text [unique]
@@ -144,9 +140,9 @@ entity "Group" as group {
   updatedAt: integer [timestamp]
 }
 
-entity "Group_participants" as group_participants {
-  + groupId: text [fk -> group.id]
-  + userId: text [fk -> user.id]
+entity "Group_member" as group_member {
+  + groupId: text [pk, fk -> group.id]
+  + userId: text [pk, fk -> user.id]
   --
   joinedAt: integer [timestamp]
   status: text
@@ -156,25 +152,29 @@ entity "Group_participants" as group_participants {
 
 ' Relationships
 user ||--o{ goal : owns
-user ||--o{ goal_verifications_log : submits
-user ||--o{ goal_verifications_log : approves
+user ||--o{ goal_occurrence : participates
+user ||--o{ goal_occurrence : approves
 user ||--o{ group : creates
-user ||--o{ group_participants : participates
+user ||--o{ group_member : joins
 user ||--o{ session : has
 user ||--o{ account : linked
 
 charity ||--o{ goal : destination
 
-goal ||--o{ goal_verifications_method : has
-goal ||--o{ goal_verifications_log : rules
+goal ||--o{ goal_occurrence : tracks
 goal ||--o{ group : spawns
 
-group ||--o{ group_participants : has
+group ||--o{ group_member : has
 
-note right of goal_verifications_log
+note right of goal_occurrence
 approvedBy -> user.id
-Only admin or reviewer roles can approve
-(logical integrity constraint; in SQLite use a trigger)
+Only reviewer or admin roles can approve
+Composite primary key: (goalId, userId, occurrenceDate)
+end note
+
+note right of goal
+Verification methods are flattened into Goal table
+instead of separate Goal_verifications_method table
 end note
 
 @enduml

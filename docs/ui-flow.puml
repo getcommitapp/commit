@@ -16,25 +16,24 @@ if (First opening?) then (yes)
 else (no)
 endif
 
-
 partition "Tabs" {
   if (Select tab?) then (Home)
     :Home;
-    :View Dashboard / Activity Feed;
+    :Dashboard / Activity Feed;
   elseif (Goals)
     :Goals;
     if (Action?) then (View)
-      :Select goal;
-      :Show Goal Details (modal);
+      :Select goal;\nShow details modal;
     elseif (Create)
       :+ Create button;
-      :Create new goal;
-      -> :Goal Creation;
-      :Goal Form\nEnter title, description,\n due date, verification methods;
-      if (Payment method registered?) then (yes)
-        :Confirm stake popup\n"If you do not complete the goal, {amount} CHF\nwill be paid to {recipient}";
-      else (no)
-        :Payment Method;
+      :Goal Creation Choice;
+      if (Goal type?) then (Custom)
+        :Custom Goal Form;
+        -> :Goal Creation;
+        :Goal Form\nEnter title, description,\n due date, verification method\n(photo, checkin, movement);
+      elseif (Template)
+        :Choose from templates;
+        :Pre-filled Goal Form;
       endif
     endif
   elseif (Groups)
@@ -46,30 +45,39 @@ partition "Tabs" {
       :+ Create button;
       :Create new group;
       -> :Group Creation;
-      :Group Form\nName, description, members;
-      if (Payment method registered?) then (yes)
-      else (no)
-        :Payment Method;
-      endif
+      :Group Form\nName, description, goal selection;
+      :Add members via invite code;
+    elseif (Join)
+      :Enter invite code;
+      :Join existing group;
     endif
-  elseif (Reviewer)
-    :Reviewer;
+  elseif (Reviews)
+    :Reviews;
+    note right: Only visible for reviewer/admin roles
     :Review Queue;
-    :Approve / Reject photo;
+    :Swipe through photo submissions;
+    :Review photo evidence;
+    if (Swipe direction?) then (Right - Approve)
+      :Approve photo submission;
+    elseif (Left - Reject)
+      :Reject photo submission;
+    endif
   elseif (Profile)
     :Profile;
-    if (Edit what?) then (Name)
-      :Edit Display Name;
-    elseif (Username)
-      :Edit Username;
-    elseif (Payment)
-      :Edit Payment Method;
+    :View Account Info\n(Name, Email - read only);
+    :Payment Method Management;
+    if (Payment method?) then (Not set up)
+      :Set up Payment Method\n(Stripe Card Field);
+    elseif (Active)
+      :Update Payment Method\n(Stripe Card Field);
     endif
   endif
 }
 
 note right
-  To join a group: invite link required
+  Group joining requires invite code
+  Payment integration via Stripe
+  Multiple verification methods supported
 end note
 
 stop

@@ -14,12 +14,12 @@ legend left
   commit. MVP Architecture
   - Mobile: Expo React Native (iOS/Android)
   - Web: Astro static site on Cloudflare Workers
-  - Backend: Cloudflare (D1, R2, Workers: Auth, Business Logic, Stripe Webhooks)
-  - Payments: Stripe Connect (incl. TWINT for CH)
+  - Backend: Cloudflare (D1, R2, Workers: Auth, Business Logic)
+  - Payments: Stripe
 endlegend
 
 rectangle "Users" as Users {
-  actor "Mobile User\n(iOS / Android)" as MobileUser
+  actor "Mobile User" as MobileUser
   actor "Reviewer" as Reviewer
   actor "Admin" as Admin
 }
@@ -46,15 +46,14 @@ package "Cloudflare Backend" as Cloudflare {
   node "Workers" as Edge {
     [Auth Logic] as Auth
     [Business Logic] as BizLogic
-    [Stripe Webhooks] as StripeHooks
   }
 }
 
-cloud "Stripe Connect" as Stripe
+cloud Stripe
 
 MobileUser --> AppShell
-Reviewer --> AppShell : reviewer flows
-Admin --> AppShell : future admin
+Reviewer --> AppShell
+Admin --> AppShell
 
 AppShell --> MobileAuth
 AppShell --> MobileApi
@@ -66,16 +65,10 @@ MobileStorage --> BizLogic : photo uploads
 MobileApi --> BizLogic : business logic / verification
 
 MobileStripe -right-> Stripe : setup/capture payments
-Stripe -left-> StripeHooks : events (webhooks)
-StripeHooks -down-> Stripe : transfers
 
 BizLogic --> DB : read/write
 BizLogic --> Storage : signed URLs
 Auth --> DB : user profiles
-
-Reviewer --> AppShell : photo review
-
-Admin -[#gray,dashed]-> AppShell : no special functions (MVP)
 
 queue "Logs/Monitoring" as Observability
 Edge -[#gray,dashed]-> Observability
@@ -96,16 +89,13 @@ note bottom of BizLogic
   - Signed URL issuance
 end note
 
-note bottom of StripeHooks
-  Implements:
-  - Stripe webhook handlers
-  - Payment capture / refund logic
-end note
+
 
 note bottom of MobileStripe
   - Create/setup payment method
   - Authorize stake on goal creation
   - Capture on failure
+  - Redistribute stake
 end note
 
 @enduml
