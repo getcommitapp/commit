@@ -15,11 +15,11 @@ legend left
   - Mobile: Expo React Native (iOS/Android)
   - Web: Astro static site on Cloudflare Workers
   - Backend: Cloudflare (D1, R2, Workers: Auth, Business Logic, Stripe Webhooks)
-  - Payments: Stripe Connect (incl. TWINT for CH)
+  - Payments: Stripe
 endlegend
 
 rectangle "Users" as Users {
-  actor "Mobile User\n(iOS / Android)" as MobileUser
+  actor "Mobile User" as MobileUser
   actor "Reviewer" as Reviewer
   actor "Admin" as Admin
 }
@@ -50,11 +50,11 @@ package "Cloudflare Backend" as Cloudflare {
   }
 }
 
-cloud "Stripe Connect" as Stripe
+cloud Stripe
 
 MobileUser --> AppShell
-Reviewer --> AppShell : reviewer flows
-Admin --> AppShell : future admin
+Reviewer --> AppShell
+Admin --> AppShell
 
 AppShell --> MobileAuth
 AppShell --> MobileApi
@@ -72,10 +72,6 @@ StripeHooks -down-> Stripe : transfers
 BizLogic --> DB : read/write
 BizLogic --> Storage : signed URLs
 Auth --> DB : user profiles
-
-Reviewer --> AppShell : photo review
-
-Admin -[#gray,dashed]-> AppShell : no special functions (MVP)
 
 queue "Logs/Monitoring" as Observability
 Edge -[#gray,dashed]-> Observability
@@ -106,6 +102,7 @@ note bottom of MobileStripe
   - Create/setup payment method
   - Authorize stake on goal creation
   - Capture on failure
+  - Redistribute stake
 end note
 
 @enduml
