@@ -63,18 +63,15 @@ toc: true
     - Successfully transfer money from one user to another
     - Cross platform mobile application (IOS and Android)
 - **Scope**:
-- Platforms: iOS and Android via Expo; web landing page (marketing/information
-  only).
-- Geography at launch: Switzerland.
-- User types: Standard users, reviewer and admin.
-- MVP goal types: Wake-up time, location-based, time-based, duration-based, and
-  combinations of location/time/duration.
-- Money flow: Real money via Stripe (payments and transfers).
-- Group challenges: Invite-only, private groups.
-- Out of scope (MVP): App Store/Play Store deployment, tablet support, advanced
-  analytics, notifications (not planned), appeals/dispute handling.
-- Languages: English only at launch.
-- Accessibility & compliance: Out of scope for MVP.
+  - Platforms: iOS and Android via Expo; web landing page (marketing/information only).
+  - Geography at launch: Switzerland.
+  - User types: Standard users, reviewer, and admin.
+  - MVP goal types: checkin (time-based), photo (manual review), movement (timer). Location method exists in the model but no server action endpoint in MVP.
+  - Money flow: Stripe card payments (PaymentIntents) and Customer Balance credits for winners; no TWINT in MVP.
+  - Group challenges: Invite-only, private groups via invite codes (no expiration in MVP).
+  - Out of scope (MVP): App Store/Play Store deployment, tablet support, advanced analytics, notifications, appeals/dispute handling, dedicated location-action endpoint, goal editing, invite expiration, fallback destination when all fail.
+  - Languages: English only at launch.
+  - Accessibility & compliance: Out of scope for MVP.
 
 # Project Description
 
@@ -86,26 +83,23 @@ toc: true
     2. Location-based activity (arrive and stay at a gym/park)
     3. Focused session for a specified duration (no-phone-use)
   - Differentiators: Ease of use, pooled stakes for group challenges.
-  - Constraints/guiding principles: Instant money transfers between parties with
-    minimal fees.
+  - Constraints/guiding principles: Minimize operational fees with Stripe; avoid bank payouts in MVP.
 
 # System Overview
 
 - High-level description of the app
   - Solo flow: A user creates a goal, due date or recurrence, selects a
-    verification method (GPS/time/duration/photo), sets a stake amount and a
+    verification method (check-in/photo/movement), sets a stake amount and a
     destination for funds. If the goal is completed and verified within the
     rules, no transfer occurs; if not, the staked amount is transferred to the
     configured destination.
   - Group flow: A user creates a private, invite-only group challenge with a
     defined goal, due date or recurrence, selects a verification method
-    (GPS/time/duration/photo) and stake amount (and a fallback destination if
-    all participants fail). Invitees accept the stake. Upon completion,
-    successful participants receive the pooled stakes from members who failed;
-    if all fail, funds are sent to the fallback destination.
+    (check-in/photo/movement) and stake amount. Invitees accept the stake. Upon
+    completion, successful participants receive the pooled stakes from members
+    who failed. If winners=0 or losers=0, no redistribution occurs in MVP.
 - Mobile: iOS and Android (phones only; no tablet support. Expo + React Native)
-- Permissions/capabilities: Background location (GPS), camera, device usage
-  detection (for no-phone-use goals)
+- Permissions/capabilities: Camera; movement timer in-app. Location method exists in the data model but no server action endpoint in MVP.
 - Web: Single static marketing landing page (Astro)
 - Target audience
   - Adults 18+ seeking productivity, fitness improvements, and habit-building.
@@ -135,82 +129,63 @@ toc: true
 
 ### Authentication
 
-- Sign-in methods: Google, Apple (no email/password at MVP)
+- Sign-in methods: Google, Apple via Better-Auth/Expo (no email/password at MVP)
+- Sessions: handled by Better-Auth on Cloudflare Workers
+- Dev/preview: header `X-Commit-Dev-Auto-Auth: <email>` may impersonate seeded users
 - Pre-stake verification: No email/phone verification required before staking
-- KYC/identity checks: Not required at MVP for payouts via Stripe
+- KYC/identity checks: Not required at MVP for credits via Stripe Customer Balance
 
 ### Payments & Account Receivers (MVP decisions)
 
-- Charging model: Stakes are defined at creation but only deducted if the goal
-  is not achieved (on failure). If the goal is achieved, no funds are captured.
-- Stake range: CHF 1 (min) to CHF 1000 (max) per goal.
+- Charging model: Stakes are defined at creation but only charged if a user fails at settlement; if achieved, no funds are captured.
 - Currency: CHF only at launch.
-- Recipients:
-  - Solo challenge: at creation the user selects a recipient among: (a) a named
-    person who is an existing app user, (b: if possible within MVP timeline) a
-    charity from a small predefined list, or (c) the developers (platform
-    donation account).
-  - Group challenge: on resolution, winners split the stakes evenly among all
-    winners. If no participants succeed, the pooled funds go to the destination
-    configured by the creator for the group goal.
-- Platform fees: No operational commission will be taken on stake transfers for
-  the MVP; transfers to the developers' account are treated as donations. Stripe
-  processing fees are available
-  [here](https://stripe.com/fr-ch/pricing/local-payment-methods).
-- Payout timing: instant payouts to winners are preferred; this requires
-  connected payout accounts for recipients or platform-managed routing via
-  Stripe. Stripe Connect patterns will be used appropriately in the
-  implementation.
+- Recipients and settlement:
+  - Solo challenge: on failure, the owner is charged; the money goes to the developers (if possible in MVP, to charities).
+  - Group challenge: losers are charged; winners are credited evenly via Stripe Customer Balance. If winners=0 or losers=0, no redistribution occurs.
+- Platform fees: No platform commission (Stripe fees apply).
+- Payment methods: Stripe cards; users save a card via SetupIntent. Group join does not require a saved card upfront in MVP.
+- Payout timing: Customer Balance credits for winners; no bank payouts in MVP.
 
 ## Core Features
 
-- Goal lifecycle: create, edit, delete, view history
-- Group lifecycle: create private group, invite by link, join/leave, view
-  results
-- Verification capture: GPS check, time check, in-app photo capture within
-  window
-- Money: create stake authorization, capture on failure, distribute to winners
-  or fallback destination
-- Activity/history: per-user list of past goals/challenges with outcomes
-- Settings: change display name and profile photo
+- Goal lifecycle: create, delete, view;
+- Group lifecycle: create private group, invite via code, join/leave, view results
+- Verification capture: check-in (time), in-app photo (manual review), movement timer (start/stop). Location verification not available in MVP.
+- Money: charge losers, credit winners via Stripe Customer Balance; no fallback destination in MVP
 
 ## Goal Creation
 
-- Required fields: name, goal type, start date, and due date or recurrence.
-- Recurrence: select days of the week with an end date.
-- Verification window: allowed; $N$ minutes around the scheduled time
-  (configurable per goal).
-- Location goals: geofence with default and maximum radius (meters) and a
-  must-stay duration.
-- Duration/focus goals: strictly continuous session; minimum and maximum
-  duration values.
-- Photo verification: photo must be captured within the verification window;
-  front or back camera allowed; selfie not required.
-- Failure definition: missing verification or verification outside the allowed
-  window results in automatic failure.
-- Grace/retries: none for MVP.
+- Required fields: name, stake, start date, and a scheduling mode: either
+  a single window or a weekly recurrence using a bitmask of the days of a week between the start and endDate (not required if not a recurrence). Description is optional.
+- Method: one of checkin, photo, movement. Movement requires a duration.
+  There is an optional grace time that applies after the window ends. Location
+  is implemented only if there is time for it in MVP.
+- Constraints: must have coherent dates (starting date < end date) and timestamps (start time < end time).
+- Verification behavior:
+  - Check-in: immediate approval when performed within the active window (or
+    grace).
+  - Photo: user uploads during the window; approval is manual by reviewers.
+  - Movement: user starts/stops a timer; must satisfy the duration within
+    the allowed window.
+- Failure: missing or late verification leads to failure; no retries beyond
+  grace in MVP.
 
 ## Group Challenges
 
-- Size limit: up to 100 participants per group challenge.
-- Stake uniformity: same stake amount for all participants.
-- Join flow: invite via link with expiration; joiners must register/sign in and
-  have a valid payment method on file.
-- Invite expiration: default 24 hours.
-- Schedule: group goals follow the creator’s schedule. The creator may set a
-  time interval window to allow flexibility for participants to perform within
-  their availability.
-- Distribution: on resolution, winners split the pooled stakes evenly. If no
-  participants succeed, funds go to the destination selected by the creator for
-  this group goal.
-- Failure to verify: not providing required verification within the window is an
-  automatic failure.
-- Cancellation: if the creator cancels before the start, no stakes are captured
-  (since capture happens only on failure at resolution).
+- Stake uniformity: all participants share the same goal and stake.
+- Join flow: invite via code. Joiners must register/sign in.
+- Schedule: groups reference a single shared goal; all participants follow that
+  goal’s schedule.
+- Distribution: on resolution, winners split losers’ captured stakes evenly. If
+  winners=0 or losers=0, no redistribution occurs in MVP.
+- Failure to verify: not providing required verification within the window is
+  an automatic failure.
+- Cancellation: deleting the group (and its goal) before settlement results in
+  no captures.
 
 ## Settings
 
-- Update display name
+- Update payment details
 
 ## Optional Functions (Future Enhancements)
 
@@ -218,8 +193,8 @@ toc: true
   join and compete, with shared stakes and leaderboards.
 - **AI Image Check:** Automated verification of user-submitted photos using AI
   to reduce manual reviewer workload and improve scalability.
-- **Additional Payment Methods:** Support for more payment options beyond TWINT,
-  such as PayPal or credit cards.
+- **Additional Payment Methods:** Support for more payment options beyond cards
+  (e.g., Twint, Apple Pay, bank transfers, PayPal).
 - **Charity Donations:** Users can choose a charity to donate to when selecting
   the destination for a goal.
 
@@ -228,25 +203,15 @@ toc: true
 ## Security
 
 - Data encryption in transit and at rest
-- Secure authentication (OAuth2, JWT, etc.)
-- Photo storage: stored as objects in Cloudflare R2.
-  Retention policy: Out of scope for MVP.
-- Location data: not stored server-side; processed on-device for verification
-  where possible.
-- JWT session tokens validated by Workers; Stripe keys & secrets managed via Cloudflare project settings.
+- Authentication: Better-Auth sessions (managed by Workers) with Google/Apple social sign-in. No email/password in MVP. Dev/preview may use a trusted header to impersonate seeded users.
+- Photo storage: stored as objects in Cloudflare R2; access is reviewer-only via a protected serve endpoint. Retention policy: out of scope for MVP.
+- Secrets: Stripe keys and Cloudflare credentials managed via Cloudflare project settings; no secrets in the repository.
 
 ## Privacy
 
 - Photos are stored for verification purposes only; access is restricted to the
   account owner and authorized reviewers.
-- Location traces are not persisted server-side; only ephemeral checks are
-  performed for verification.
 - Compliance posture: out of scope for MVP.
-
-## Reliability & Operations notes
-
-- Manual verification SLA: initial target is to perform manual photo. The team
-  will adjust this SLA based on capacity.
 
 ## Usability
 
@@ -267,10 +232,11 @@ toc: true
 
 # Preliminary Architecture Description
 
-- Presentation layer: React native
-- Application layer: Expo/React Native (frontend), Cloudflare Workers (backend)
+- Presentation layer: React Native mobile app
+- Application layer: Expo/React Native (frontend); Cloudflare Workers backend using Hono with chanfana (OpenAPI) and Better-Auth; scheduled Worker runs
+  settlements.
 - Data layer: Cloudflare D1 (SQLite-based relational DB)
-- Infrastructure: Cloudflare hosting
+- Infrastructure: Cloudflare Workers + R2 + D1 (global CDN/edge)
 
 # Mockups / Landing Page
 
@@ -281,9 +247,9 @@ toc: true
 
 - Programming languages & frameworks: Expo + React Native (TypeScript)
 - Database: Cloudflare D1 (SQLite)
-- Backend/services: Cloudflare (D1, R2, Workers)
-- Payments: Stripe Connect Standard with TWINT enabled for Switzerland
-- Third-party libraries & APIs: Stripe SDK, Expo Location/Camera
+- Backend/services: Cloudflare (Workers, D1, R2) with Hono + chanfana
+- Payments: Stripe cards only (SetupIntents, PaymentIntents); winners credited via Customer Balance;
+- Third-party libraries & APIs: Stripe SDK, Better-Auth, Expo Camera
 - Hosting: Cloudflare (backend, db, workers); Cloudflare Workers (Astro landing page)
 
 # Work Process
@@ -327,7 +293,7 @@ toc: true
 - Code review: GitHub pull requests
 - Documentation: repository README and SRS in `docs/`
 - Code style: Prettier + ESLint with TypeScript rules
-- Testing approach: jest
+- Testing approach: Vitest for API Workers and React Native tests where applicable
 - Secrets/config: Cloudflare and Stripe keys via env files with secure storage
 
 # Deployment Environment
@@ -337,8 +303,7 @@ toc: true
 - Mobile app: Expo EAS builds with two channels: development and production. App
   Store/Play Store distribution is out of scope for MVP; internal distribution
   only (TestFlight/Android internal testing).
-- Environments: development and production only, with separate Cloudflare projects
-  and isolated resources.
+- Environments: development, preview, and production with separate Cloudflare projects or namespaces and isolated resources.
 - Secrets/configuration: managed via Cloudflare project settings, and EAS secrets.
   Stripe runs in Test mode for development and Live mode for production.
 
