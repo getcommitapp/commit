@@ -67,6 +67,9 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
     │  ├─ mobile/   # Expo + React Native (iOS/Android)
     │  └─ web/      # Astro landing (Cloudflare Workers)
     ├─ docs/        # SRS, architecture, flow, assets
+    ├─ packages/    # Shared libraries and utilities
+    │  ├─ engine/   # Core business logic engine
+    │  └─ types/    # Shared TypeScript types
     └─ package.json
 ```
 
@@ -88,6 +91,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 <div align="center">
   <img src="https://img.shields.io/badge/Testing-informational?style=for-the-badge&color=gray">
   <img src="https://img.shields.io/badge/Jest-informationa?style=for-the-badge&logo=jest&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Vitest-informationa?style=for-the-badge&logo=vitest&logoColor=black&color=A1FFEB">
 </div>
 
 ### Backend & Services
@@ -101,6 +105,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 <div align="center">
   <img src="https://img.shields.io/badge/Database-informational?style=for-the-badge&color=gray">
   <img src="https://img.shields.io/badge/SQLite-informationa?style=for-the-badge&logo=sqlite&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Drizzle ORM-informationa?style=for-the-badge&logo=drizzle&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
@@ -109,8 +114,9 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Payments Methods-informational?style=for-the-badge&color=gray">
-  <img src="https://img.shields.io/badge/TWINT (CH)-informationa?style=for-the-badge&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Payment Methods-informational?style=for-the-badge&color=gray">
+    <img src="https://img.shields.io/badge/visa-informationa?style=for-the-badge&logo=visa&logoColor=black&color=A1FFEB">
+    <img src="https://img.shields.io/badge/Mastercard-informationa?style=for-the-badge&logo=mastercard&logoColor=black&color=A1FFEB">
 </div>
 
 > [!NOTE]  
@@ -120,14 +126,15 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 > - R2 (object storage for images)
 > - Workers (edge functions for business logic, authentication, and API endpoints)
 
-> [!WARNING]
-> Only `TWINT` is supported for payments.
+> [!WARNING]  
+> Credit and debit cards are supported for payments via Stripe.
 
 ### Web
 
 <div align="center">
   <img src="https://img.shields.io/badge/Framework-informational?style=for-the-badge&color=gray">
   <img src="https://img.shields.io/badge/Astro-informational?style=for-the-badge&logo=astro&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Tailwind CSS-informational?style=for-the-badge&logo=tailwindcss&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
@@ -167,7 +174,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 2. Tap the latest release (the one at the top, marked `Latest`).
 3. Under Assets, download the `.apk` file for your `Android` device.
 
-> [!WARNING]
+> [!WARNING]  
 > Deployment to `Apple (iOS)` is not yet supported.
 
 ### For Developers
@@ -204,10 +211,11 @@ pnpm install
 
 | Pipeline       | CI  | CD  | Description                                                                           |
 | -------------- | --- | --- | ------------------------------------------------------------------------------------- |
-| Lint and tests | Y   | N   | PRs must pass `ESLint` and `Jest` before review.                                      |
+| Lint and tests | Y   | N   | PRs must pass `ESLint` and `Jest`/`Vitest` before review.                             |
 | Build Mobile   | Y   | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
 | Compile Docs   | Y   | N   | Compile the `PDF` for the `Software Requirements Specification`                       |
-| Deploy web     | N   | Y   | Deploy the landing page to `CloudFlare`                                               |
+| Deploy API     | N   | Y   | Deploy the backend API to `CloudFlare Workers`                                        |
+| Deploy web     | N   | Y   | Deploy the landing page to `CloudFlare Workers`                                       |
 | Release mobile | N   | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
 
 > [!NOTE]
@@ -217,7 +225,7 @@ pnpm install
 > # Lint everything
 > pnpm lint
 >
-> # Run mobile tests
+> # Run tests (Jest for mobile, Vitest for API and engine)
 > pnpm test
 > ```
 
