@@ -32,7 +32,8 @@ export const GoalActions: React.FC<GoalActionsProps> = ({
     isCheckingIn || isStarting || isUploading || isSubmittingPhoto;
   // Decide which type of action(s) should display
   const showCheckin = goal.method === "checkin" && goal.state === "window_open";
-  const showMovement = goal.method === "movement";
+  const showMovement =
+    goal.method === "movement" && goal.state === "window_open";
   const showPhoto = goal.method === "photo" && goal.state === "window_open";
 
   // If nothing to show, render nothing to avoid vertical gap in parent layout

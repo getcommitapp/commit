@@ -203,7 +203,7 @@ export const GoalMovementStartRequestSchema = z.object({
     .optional(),
 });
 
-export const GoalMovementStopRequestSchema = z.object({
+export const GoalMovementViolateRequestSchema = z.object({
   occurrenceDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -292,8 +292,8 @@ export type GoalPhotoRequest = z.infer<typeof GoalPhotoRequestSchema>;
 export type GoalMovementStartRequest = z.infer<
   typeof GoalMovementStartRequestSchema
 >;
-export type GoalMovementStopRequest = z.infer<
-  typeof GoalMovementStopRequestSchema
+export type GoalMovementViolateRequest = z.infer<
+  typeof GoalMovementViolateRequestSchema
 >;
 export type GoalActionResponse = z.infer<typeof GoalActionResponseSchema>;
 

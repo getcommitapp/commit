@@ -8,6 +8,13 @@ export function computeGoalState(input: EngineInputs): EngineOutputs {
   const method = input.goal.verificationMethod?.method as
     | VerificationMethod["method"]
     | undefined;
+  // If explicitly rejected, treat as failed regardless of method/window
+  if (input.occurrenceVerification?.status === "rejected") {
+    return {
+      state: "failed",
+      actions: [],
+    };
+  }
   // If occurrence has approved verification, short-circuit to a passed state and hide CTAs
   if (input.occurrenceVerification?.status === "approved") {
     return {

@@ -3,6 +3,12 @@ import { baseOutput, ensureOccurrence } from "./common";
 
 export function evaluateMovement(input: EngineInputs): EngineOutputs {
   const { goal, now = new Date() } = input;
+  // If this occurrence was explicitly rejected (e.g., motion detected), force failed state
+  if (input.occurrenceVerification?.status === "rejected") {
+    return {
+      ...baseOutput("failed"),
+    } as const;
+  }
   const occ = ensureOccurrence(input);
   if (!occ) return baseOutput("scheduled");
 
