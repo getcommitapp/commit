@@ -18,29 +18,34 @@
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#quick-links">Quick links</a></li>
     <li><a href="#monorepo-layout">Monorepo layout</a></li>
-    <li><a href="#tech-stack">Tech stack</a></li>
-    <li>
-        <a href="#getting-started">Getting Started</a>
+    <li><a href="#tech-stack">Tech stack</a>
+      <ul>
+        <li><a href="#mobile-app">Mobile App</a></li>
+        <li><a href="#backend--services">Backend & Services</a></li>
+        <li><a href="#web">Web</a></li>
+        <li><a href="#development-tools">Development Tools</a></li>
+      </ul>
+    </li>
+    <li><a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#how-to-download-the-mobile-app">How to download the mobile app</a></li>
-        <li>
-            <a href="#for-developers">For Developers</a>
+        <li><a href="#for-developers">For Developers</a>
           <ul>
             <li><a href="#prerequisites">Prerequisites</a></li>
-            <li><a href="#running-on-local-machine">Running on local machine</a></li>
+            <li><a href="#setup">Setup</a></li>
           </ul>
         </li>
       </ul>
     </li>
     <li><a href="#cicd-pipeline">CI/CD Pipeline</a></li>
-    <li>
-        <a href="#documentation">Documentation</a>
+    <li><a href="#documentation">Documentation</a>
       <ul>
         <li><a href="#software-requirements-specification">Software requirements specification</a></li>
         <li><a href="#system-architecture">System Architecture</a></li>
       </ul>
     </li>
     <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
     <li><a href="#team">Team</a></li>
   </ol>
 </details>
@@ -135,7 +140,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 > - R2 (object storage for images)
 > - Workers (edge functions for business logic, authentication, and API endpoints)
 
-> [!WARNING]  
+> [!NOTE]  
 > Only credit and debit cards are supported for payments via Stripe.
 
 ### Web
@@ -184,7 +189,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 3. Under Assets, download the `.apk` file for your `Android` device.
 
 > [!WARNING]  
-> Deployment to `Apple (iOS)` is not yet supported.
+> `Apple (iOS)` is not yet supported.
 
 ### For Developers
 
@@ -199,8 +204,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 | Expo account                | -       | Mobile App |
 | Stripe account              | -       | Mobile App |
 | Expo Go (install on mobile) | -       | Mobile App |
-| OAuth Google                | -       | Mobile App |
-| OAuth Apple                 | -       | Mobile App |
+| Google OAuth Client         | -       | Mobile App |
 
 > [!NOTE]
 > You can install `pnpm` through `npm`: `npm install -g pnpm@latest` or through your OS package manager.
@@ -208,15 +212,22 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 > [!TIP]
 > Prefer `pnpm` at the workspace root to install all dependencies at once.
 
-#### Running on local machine
+#### Setup
 
 ```bash
 # Install dependencies (run from project root)
 pnpm install
+
+# Build the `packages/engine` package
+pnpm build
 ```
 
-> [!TIP]
-> See app-specific guides after installing: [`apps/api/README.md`](./apps/api/README.md), [`apps/mobile/README.md`](./apps/mobile/README.md), and [`apps/web/README.md`](./apps/web/README.md).
+Next, see app-specific guides after installing:
+
+- [`apps/api/README.md`](./apps/api/README.md)
+- [`apps/mobile/README.md`](./apps/mobile/README.md)
+- [`apps/web/README.md`](./apps/web/README.md)
+- [`packages/engine/README.md`](./packages/engine/README.md)
 
 ## CI/CD Pipeline
 
@@ -230,9 +241,12 @@ pnpm install
 | Release mobile | N   | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
 
 > [!NOTE]
-> To catch issues early (Lint and tests), use the following commands on local:
+> To catch issues early (Lint and tests), use the following commands locally:
 >
 > ```bash
+> # Format everything
+> pnpm format
+>
 > # Lint everything
 > pnpm lint
 >

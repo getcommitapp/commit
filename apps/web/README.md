@@ -17,13 +17,6 @@
 The `commit.` web app is a static marketing website built with **Astro 5** and **Tailwind CSS**.
 It showcases the `commit.` goal-tracking app with sections for hero, problem, solution, features, team, FAQ, and call-to-action.
 
-Key highlights:
-
-- **Mobile-responsive** across all device sizes
-- **SEO-ready** with meta tags, Open Graph, and structured data
-- **Component-based** via modular Astro components
-- **Global performance** through deployment on **Cloudflare Workers**
-
 ## Prerequisites
 
 - `Node.js 22+`
@@ -31,10 +24,10 @@ Key highlights:
 
 ## Getting Started
 
-Install dependencies from the workspace root:
+Install dependencies from the workspace root if you haven't already:
 
 ```sh
-pnpm install
+pnpm -w install
 ```
 
 Start the web app locally:
@@ -43,6 +36,8 @@ Start the web app locally:
 cd apps/web
 pnpm dev
 ```
+
+The app will be available at <http://localhost:4321/>.
 
 > [!NOTE]
 >

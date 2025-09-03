@@ -6,11 +6,12 @@
     <li><a href="#overview">Overview</a></li>
     <li><a href="#prerequisites">Prerequisites</a></li>
     <li><a href="#getting-started">Getting started</a></li>
-    <li><a href="#development-with-expo-go">Development with Expo Go</a></li>
+    <li><a href="#development-setup">Development Setup</a></li>
     <li><a href="#environment-variables">Environment Variables</a></li>
+    <li><a href="#development-with-expo-go">Development with Expo Go</a></li>
     <li><a href="#production--release">Production & Release</a></li>
     <li><a href="#scripts">Scripts</a></li>
-    <li><a href="#project-structure">Project structure</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
     <li><a href="#mvp-features">MVP Features</a></li>
   </ol>
 </details>
@@ -36,19 +37,12 @@ Key highlights:
 - `Expo Go` on a phone or simulator
 - Access to the backend (see [`apps/api`](https://github.com/getcommitapp/commit/apps/api/README.md))
 
-Authentication & Payment:
-
-- Server: `Better Auth` handlers in `apps/api` mounted under `/api/auth/*`
-- Client: initialized in `apps/mobile/lib/auth-client.ts` with `expo-secure-store` and `Stripe` integration
-- Providers: `Google` & `Apple` authentication
-- Payment: `Stripe` for handling payment methods and transaction processing
-
 ## Getting Started
 
 Install dependencies from the workspace root:
 
 ```sh
-pnpm install
+pnpm -w install
 ```
 
 Start the mobile app:
@@ -84,14 +78,12 @@ Variables:
   - `user@commit.local` → regular user
   - `reviewer@commit.local` → reviewer role
 
-> [!TIP]
-> Use the same Stripe publishable key as configured in the API.
-
 ### Development with Expo Go
 
 Depending on your setup, use one of the following options:
 
-Option 1: Same Network (Local API)
+**Option 1: Same Network (Local API)**
+
 If your computer and mobile device are on the same network:
 
 1. Start the API locally:
@@ -116,7 +108,8 @@ If your computer and mobile device are on the same network:
 > [!TIP]
 > Avoids tunnels and gives faster development cycles.
 
-Option 2: Personal Preview API
+**Option 2: Personal Preview API**
+
 If your device cannot reach your local machine, use the deployed preview API:
 
 1. Get your preview URL from `Cloudflare` dashboard (custom link)
@@ -130,7 +123,7 @@ If your device cannot reach your local machine, use the deployed preview API:
 3. Update your `.env.local` to use the preview URL, for example:
 
    ```sh
-   EXPO_PUBLIC_API_URL=https://commit-api-preview.leo-c50.workers.dev/
+   EXPO_PUBLIC_API_URL=https://commit-api-preview.leo-c50.workers.dev
    ```
 
 4. Start the mobile app:
@@ -264,9 +257,16 @@ apps/mobile/
 
 ## MVP Features
 
-- Authentication: `Google` & `Apple` sign-in via `Better Auth`
+Authentication & Payment:
+
+- Server: `Better Auth` handlers in `apps/api` mounted under `/api/auth/*`
+- Client: initialized in `apps/mobile/lib/auth-client.ts` with `expo-secure-store` and `Stripe` integration
+- Providers: `Google` & `Apple` authentication
+- Payment: `Stripe` for handling payment methods and transaction processing
+
+Features:
+
 - Goal management: Solo & group goals with uniform stakes
-- Payment integration: `Stripe` for payments & stakes
 - Verification system: Time, photo evidence and movement detection
 - Review system: Reviewer interface for approving/rejecting photo evidence
 - Group functionality: Create/join groups with a shared goal

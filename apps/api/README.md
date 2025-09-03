@@ -5,9 +5,25 @@
   <ol>
     <li><a href="#overview">Overview</a></li>
     <li><a href="#prerequisites">Prerequisites</a></li>
-    <li><a href="#getting-started">Getting started</a></li>
-    <li><a href="#database">Database</a></li>
-    <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#getting-started">Getting started</a>
+      <ul>
+        <li><a href="#environment-setup">Environment Setup</a></li>
+        <li><a href="#start-the-api">Start the API</a></li>
+        <li><a href="#development-with-expo-go">Development with Expo Go</a></li>
+      </ul>
+    </li>
+    <li><a href="#database">Database</a>
+      <ul>
+        <li><a href="#environments">Environments</a></li>
+        <li><a href="#common-operations">Common Operations</a></li>
+      </ul>
+    </li>
+    <li><a href="#deployment">Deployment</a>
+      <ul>
+        <li><a href="#manual">Manual</a></li>
+        <li><a href="#automated-github-actions">Automated (GitHub Actions)</a></li>
+      </ul>
+    </li>
     <li><a href="#scripts">Scripts</a></li>
     <li><a href="#project-structure">Project structure</a></li>
   </ol>
@@ -20,7 +36,6 @@ It powers the `commit.` mobile app with features for goal tracking, group manage
 
 Key highlights:
 
-- Edge-first architecture for global performance via `Cloudflare's` network
 - `OAuth` authentication with `Google`/`Apple` via `Better Auth` + `Stripe` integration
 - Goal & group management with verification, reviews, and invite systems
 - Payment processing through `Stripe` for stakes and payment methods
@@ -39,10 +54,12 @@ Key highlights:
 
 ## Getting Started
 
-Install dependencies from the workspace root:
+Install dependencies and build the dependencies from the workspace root if you haven't already:
 
 ```sh
-pnpm install
+pnpm -w install
+
+pnpm -w build
 ```
 
 ### Environment Setup
@@ -69,7 +86,6 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 > For setup guides on obtaining these credentials:
 >
 > - Google OAuth: [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-> - Apple Sign In: [Apple Developer Portal](https://developer.apple.com/account/resources/identifiers/list/serviceId)
 > - Stripe Keys: [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys)
 
 > [!WARNING]
@@ -77,16 +93,24 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 
 ### Start the API
 
-Once environment variables are configured:
+Once environment variables are configured, migrate the database:
+
+```sh
+pnpm db:migrate
+```
+
+Then start the API:
 
 ```sh
 pnpm dev
 ```
 
+The API will be available at `http://localhost:8787`
+
 > [!NOTE]
 >
-> - `pnpm dev`: Local development server at `http://localhost:8787`
-> - `pnpm dev:preview`: Development with preview environment
+> - `pnpm dev`: Local development server
+> - `pnpm dev:preview`: Remote development with preview environment (see [Deployment](#deployment))
 > - `OpenAPI` docs available at the root endpoint
 >
 > See [Scripts](#scripts) for all commands
@@ -96,6 +120,7 @@ pnpm dev
 For mobile development using `Expo Go` on physical devices, `localhost` won't be accessible. You have two options:
 
 **Option 1: Same Network Development**
+
 If your mobile device and computer are on the same network:
 
 ```sh
@@ -105,21 +130,31 @@ pnpm dev --ip <your_computer_ip>
 Then update mobile app to use your computer's IP in `apps/mobile/.env.local`:
 
 ```sh
-EXPO_PUBLIC_API_URL=http://<your_computer_ip>:8787/
+EXPO_PUBLIC_API_URL=http://<your_computer_ip>:8787
 ```
 
 **Option 2: Preview Environment**
+
+Make sure to configure cloudflare (see [Deployment](#deployment)).
+
 For remote development or different networks:
 
-1. Deploy to preview:
+1. Migrate the preview database
+
+   ```sh
+   pnpm db:migrate:preview
+   ```
+
+2. Deploy to preview:
 
    ```sh
    pnpm deploy:preview
    ```
 
-2. Update mobile app to use preview API URL in `apps/mobile/.env.local`:
+3. Update mobile app to use preview API URL in `apps/mobile/.env.local`:
+
    ```sh
-   EXPO_PUBLIC_API_URL=https://commit-api-preview.leo-c50.workers.dev/
+   EXPO_PUBLIC_API_URL=https://commit-api-preview.leo-c50.workers.dev
    ```
 
 > [!TIP]
@@ -139,11 +174,11 @@ The API uses `Cloudflare D1` (`SQLite`) with `Drizzle ORM` for type-safe databas
 
 ```sh
 # Generate migrations from schema changes
-pnpm db:generate
+pnpm db:generate --name <migration_name>
 
 # Apply migrations
-pnpm db:migrate           # Local
-pnpm db:migrate:preview   # Preview
+pnpm db:migrate            # Local
+pnpm db:migrate:preview    # Preview
 pnpm db:migrate:production # Production
 
 # Database inspection
@@ -168,6 +203,18 @@ The API deploys to `Cloudflare Workers` with separate environments.
 Requirements:
 
 - `Cloudflare account`
+- `Cloudflare D1 databases`
+
+  In the cloudflare dashboard, navigate to `D1` and create two new databases:
+  - `commit-api-db-preview`
+  - `commit-api-db`
+
+  Then update the [wrangler.jsonc](./wrangler.jsonc) file with the new database ids.
+
+- `Cloudflare R2 bucket`
+
+  In the cloudflare dashboard, navigate to `R2` and create a new bucket:
+  - `commit-photos`
 
 ### Manual
 
@@ -182,8 +229,15 @@ pnpm deploy:preview     # Staging environment
 pnpm deploy:production  # Live environment
 ```
 
-> [!IMPORTANT]
-> Always test changes in preview before deploying to production.
+After the first deployment, you will need to update clouflare workers' environment variables to include:
+
+- `AUTH_GOOGLE_CLIENT_ID`
+- `AUTH_GOOGLE_CLIENT_SECRET`
+- `AUTH_APPLE_CLIENT_ID`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+
+You can get these from the `.env.example` file in the root of the project.
 
 ### Automated (GitHub Actions)
 
@@ -193,7 +247,6 @@ Required GitHub Secrets:
 
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
-- Plus environment-specific secrets for `OAuth` and `Stripe`
 
 Setup:
 
