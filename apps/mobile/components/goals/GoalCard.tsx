@@ -123,6 +123,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
             <View style={{ gap: 8 }}>
               {hasActiveTimer && goal.method === "movement" ? (
                 <GoalTimerRow
+                  key={`${goal.id}-${activeTimerStartedAt}`}
                   durationSeconds={goal.durationSeconds ?? 0}
                   startedAt={activeTimerStartedAt}
                 />
