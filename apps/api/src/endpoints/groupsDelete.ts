@@ -1,9 +1,10 @@
 import { OpenAPIRoute } from "chanfana";
 import type { AppContext } from "../types";
 import { drizzle } from "drizzle-orm/d1";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { Group, Goal, GroupMember, GoalOccurrence } from "../db/schema";
 import { GroupDeleteResponseSchema } from "@commit/types";
+import { todayLocal, computeState } from "../services/goalService";
 
 export class GroupsDelete extends OpenAPIRoute {
   schema = {
@@ -25,7 +26,8 @@ export class GroupsDelete extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB);
-    const userId = c.var.user!.id;
+    const user = c.var.user!;
+    const userId = user.id;
     const { id } = c.req.param();
     if (!id) return new Response("Bad Request", { status: 400 });
 
@@ -33,6 +35,43 @@ export class GroupsDelete extends OpenAPIRoute {
     if (!g) return new Response("Not Found", { status: 404 });
     if (g.creatorId !== userId)
       return new Response("Forbidden", { status: 403 });
+
+    // Get the associated goal to check its state
+    const goal = await db
+      .select()
+      .from(Goal)
+      .where(eq(Goal.id, g.goalId))
+      .get();
+    if (!goal) return new Response("Goal not found", { status: 404 });
+
+    // Check goal state - prevent deletion if goal is in active states
+    const localDate = todayLocal(user.timezone);
+    const occurrence = await db
+      .select()
+      .from(GoalOccurrence)
+      .where(
+        and(
+          eq(GoalOccurrence.goalId, g.goalId),
+          eq(GoalOccurrence.userId, userId),
+          eq(GoalOccurrence.occurrenceDate, localDate)
+        )
+      )
+      .get();
+
+    const goalState = computeState(goal, user, occurrence || null);
+    const activeStates = [
+      "scheduled",
+      "window_open",
+      "ongoing",
+      "awaiting_verification",
+    ];
+
+    if (activeStates.includes(goalState.state)) {
+      return new Response(
+        `Cannot delete group while the goal is in "${goalState.state}" state`,
+        { status: 409 }
+      );
+    }
 
     // Delete goal occurrences linked to this group's goal
     await db.delete(GoalOccurrence).where(eq(GoalOccurrence.goalId, g.goalId));

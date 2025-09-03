@@ -30,8 +30,21 @@ export const GroupDetailsSheet = forwardRef<
     isOwner: group.isOwner,
   });
 
+  // Check if goal is in an active state that prevents deletion/leaving
+  const activeStates = [
+    "scheduled",
+    "window_open",
+    "ongoing",
+    "awaiting_verification",
+  ];
+  const isGoalInActiveState =
+    group.goal && activeStates.includes(group.goal.state);
+  const canLeaveOrDelete = !isGoalInActiveState;
+
   const handleLeaveGroup = () => {
-    leaveOrDelete(group.id);
+    if (canLeaveOrDelete) {
+      leaveOrDelete(group.id);
+    }
   };
 
   return (
@@ -110,6 +123,7 @@ export const GroupDetailsSheet = forwardRef<
         accessibilityLabel={group.isOwner ? "delete-group" : "leave-group"}
         testID={group.isOwner ? "delete-group" : "leave-group"}
         loading={isPending}
+        disabled={!canLeaveOrDelete}
       />
     </DetailsSheet>
   );
