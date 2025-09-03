@@ -5,6 +5,10 @@
       "android": {
         "buildType": "apk",
         "withoutCredentials": true
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://commit-api.leo-c50.workers.dev",
+        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51S15CPB9fPTbGcGYGWB23xjLO4s5zJSeLPuZYrg94eAvGWlnt0Ty4odQO1edYyLmKla55CpJNqAA6MgLfN351qzq005Zi7atgt"
       }
     }
   }
