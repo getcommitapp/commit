@@ -1,7 +1,4 @@
-# commit. - API Backend
-
-Built with `Hono` + `Cloudflare Workers` and deployed to `Cloudflare` with `D1` database and `Better Auth` for authentication.
-
+# commit. — API
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -9,57 +6,46 @@ Built with `Hono` + `Cloudflare Workers` and deployed to `Cloudflare` with `D1` 
     <li><a href="#prerequisites">Prerequisites</a></li>
     <li><a href="#getting-started">Getting started</a></li>
     <li><a href="#database">Database</a></li>
-    <li><a href="#api-endpoints">API Endpoints</a></li>
-    <li><a href="#scripts">Scripts</a></li>
     <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#scripts">Scripts</a></li>
     <li><a href="#project-structure">Project structure</a></li>
   </ol>
 </details>
 
 ## Overview
+The `commit.` API is a serverless backend built with Hono and deployed to Cloudflare Workers.
+It powers the `commit.` mobile app with features for goal tracking, group management, payments, and user authentication.
 
-This API serves as the backend for the commit. mobile application, providing:
-
-- **Authentication**: Google and Apple OAuth via Better Auth with Stripe integration
-- **Goal Management**: CRUD operations for goals with occurrence tracking and verification
-- **Group Management**: Create and manage goal groups with invite system
-- **User Management**: User profiles with role-based access (user, reviewer, admin)
-- **Payment Processing**: Stripe integration for stakes and payment methods
-- **File Handling**: Photo upload and serving via Cloudflare R2
-- **Database**: SQLite via Cloudflare D1 with Drizzle ORM
-- **API Documentation**: Auto-generated OpenAPI docs at the root endpoint
-- **Scheduled Tasks**: Automatic settlement processing via cron triggers
-
-> "Edge-first, serverless backend." Built for global performance and scalability on Cloudflare's edge network.
+Key highlights:
+* Edge-first architecture for global performance via Cloudflare's network
+* OAuth authentication with Google/Apple via Better Auth + Stripe integration
+* Goal & group management with verification, reviews, and invite systems
+* Payment processing through Stripe for stakes and payment methods
+* File handling via Cloudflare R2 for photo uploads
+* SQLite database using Cloudflare D1 with Drizzle ORM
+* Auto-generated docs at the root endpoint with OpenAPI via Chanfana
+* Scheduled tasks for automatic settlement processing
 
 ## Prerequisites
+* `Node.js 22+`
+* `pnpm` (workspace root manages dependencies)
+* `Cloudflare account` with D1 database and R2 storage access
 
-- `Node.js 22+` and `pnpm`
-- `Cloudflare account` with D1 database and R2 storage access
-- `wrangler CLI` (installed via devDependencies)
-- OAuth credentials for Google and Apple
-- `Stripe account` for payment processing
-
-## Getting started
-
-From the workspace root:
-
-```bash
+## Getting Started
+Install dependencies from the workspace root:
+```sh
 pnpm install
 ```
 
 ### Environment Setup
-
-Before starting the API, you need to configure environment variables:
-
-```bash
+Configure environment variables before starting:
+```sh
 cd apps/api
 cp .dev.vars.example .dev.vars
 ```
 
 Required variables in `.dev.vars`:
-
-```bash
+```sh
 AUTH_GOOGLE_CLIENT_ID=your_google_client_id
 AUTH_GOOGLE_CLIENT_SECRET=your_google_client_secret
 AUTH_APPLE_CLIENT_ID=your_apple_client_id
@@ -68,241 +54,193 @@ STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
+> [!TIP]
+> For setup guides on obtaining these credentials:
+> - Google OAuth: [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+> - Apple Sign In: [Apple Developer Portal](https://developer.apple.com/account/resources/identifiers/list/serviceId)
+> - Stripe Keys: [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys)
+
 > [!WARNING]
 > Never commit `.dev.vars` to version control. Use Cloudflare secrets for production.
 
 ### Start the API
-
-Once environment variables are configured, start the API locally:
-
-```bash
+Once environment variables are configured:
+```sh
 pnpm dev
 ```
 
 > [!NOTE]
-> The API will be available at `http://localhost:8787` with OpenAPI docs at the root endpoint.
+> - `pnpm dev`: Local development server at `http://localhost:8787`
+> - `pnpm dev:preview`: Development with preview environment
+> - `OpenAPI` docs available at the root endpoint
+> 
+> See [Scripts](#scripts) for all commands
 
 ### Development with Expo Go
+For mobile development using Expo Go on physical devices, `localhost` won't be accessible. You have two options:
 
-If you're developing the mobile app using **Expo Go** on a physical device, `localhost` won't be accessible from your mobile device. In this case, you should use the **preview environment** instead:
+Option 1: Same Network Development
+If your mobile device and computer are on the same network:
+```sh
+pnpm dev --ip <your_computer_ip>
+```
 
-1. **Deploy to preview environment**:
+Then update mobile app to use your computer's IP in `apps/mobile/.env.local`:
+```sh
+EXPO_PUBLIC_API_URL=http://<your_computer_ip>:8787/
+```
 
-   ```bash
+Option 2: Preview Environment
+For remote development or different networks:
+
+1. Deploy to preview:
+   ```sh
    pnpm deploy:preview
    ```
 
-2. **Update mobile app configuration** to use the preview API URL by setting `EXPO_PUBLIC_API_URL=https://commit-api-preview.leo-c50.workers.dev/` in `apps/mobile/.env.local`
+2. Update mobile app to use preview API URL in `apps/mobile/.env.local`:
+   ```sh
+   EXPO_PUBLIC_API_URL=https://commit-api-preview.leo-c50.workers.dev/
+   ```
 
 > [!TIP]
-> The preview environment provides a publicly accessible URL that works with Expo Go on physical devices, while localhost is only accessible from simulators or devices on the same network.
-
-### Additional Infrastructure
-
-The API also utilizes:
-
-- **R2 Storage**: For file uploads (photos and other assets)
-  - Bucket: `commit-photos` (production) / `commit-photos-preview` (preview)
-- **Cron Triggers**: Scheduled settlement processing every 15 minutes
-- **Development Auth**: Special header-based authentication for testing environments
+> Use Option 1 for faster development cycles, Option 2 for testing in production-like environment or when devices are on different networks.
 
 ## Database
-
 The API uses Cloudflare D1 (SQLite) with Drizzle ORM for type-safe database operations.
 
-### Schema Management
+### Environments
+- Local: SQLite file with D1 local simulation
+- Preview: `commit-api-db-preview` for staging/testing
+- Production: `commit-api-db` for live users
 
-```bash
+### Common Operations
+```sh
 # Generate migrations from schema changes
-pnpm db:generate --name <migration_name>
+pnpm db:generate
 
-# Apply migrations to remote databases
-pnpm db:migrate:preview    # Preview environment
+# Apply migrations
+pnpm db:migrate           # Local
+pnpm db:migrate:preview   # Preview
+pnpm db:migrate:production # Production
 
-# Open Drizzle Studio for database inspection
+# Database inspection
 pnpm db:studio
+
+# Seed with test data
+pnpm db:seed              # Local
+pnpm db:seed:preview      # Preview
+
+# Reset database
+pnpm db:reset             # Local
+pnpm db:reset:preview     # Preview
 ```
 
-### Database Environments
-
-- **Local**: SQLite file for development (with D1 local simulation)
-- **Preview**: Separate D1 database for staging/testing (`commit-api-db-preview`)
-- **Production**: Main D1 database for live users (`commit-api-db`)
-
-### Additional Database Operations
-
-```bash
-# Seed database with test data
-pnpm db:seed          # Local development
-pnpm db:seed:preview  # Preview environment
-
-# Reset and rebuild database
-pnpm db:reset         # Local development
-pnpm db:reset:preview # Preview environment
-
-# Push schema changes directly (use with caution)
-pnpm db:push
-```
-
-## API Endpoints
-
-The API provides the following main endpoint categories:
-
-### Authentication
-
-- OAuth integration with Google and Apple
-- Session management via Better Auth
-- Development mode supports custom header authentication
-
-### Users
-
-- `GET /api/users` - Fetch current user profile
-- `PUT /api/users` - Update user profile
-- `DELETE /api/users` - Delete user account
-
-### Goals
-
-- `GET /api/goals` - List user's goals
-- `POST /api/goals` - Create new goal
-- `GET /api/goals/:id` - Fetch specific goal
-- `DELETE /api/goals/:id` - Delete goal
-- `POST /api/goals/:id/checkin` - Submit check-in verification
-- `POST /api/goals/:id/photo` - Submit photo verification
-- `POST /api/goals/:id/movement/start` - Start movement timer
-- `POST /api/goals/:id/movement/violate` - Report movement violation
-
-### Goal Review (for reviewers)
-
-- `GET /api/goals/review` - List goals pending review
-- `PUT /api/goals/review` - Approve/reject goal verification
-
-### Groups
-
-- `GET /api/groups` - List user's groups
-- `POST /api/groups` - Create new group
-- `GET /api/groups/:id` - Fetch group details
-- `DELETE /api/groups/:id` - Delete group
-- `POST /api/groups/join` - Join group via invite code
-- `POST /api/groups/:id/leave` - Leave group
-- `GET /api/groups/:id/invite` - Get group invite link
-- `GET /api/groups/:id/invite/verify` - Verify invite code
-
-### Payments
-
-- `POST /api/payments/setup-intent` - Create Stripe setup intent
-- `GET /api/payments/method` - Get user's payment methods
-
-### Files
-
-- `POST /api/files/upload` - Upload files to R2 storage
-- `GET /api/files/:key` - Serve files from R2 storage
-
-## Scripts
-
-### Development
-
-```bash
-pnpm dev              # Start local development server
-pnpm dev:preview      # Start development server with preview environment
-pnpm start            # Alias for pnpm dev
-```
-
-### Database Management
-
-```bash
-# Schema and migrations
-pnpm db:generate      # Generate migration files from schema changes
-pnpm db:push          # Push schema changes directly (development only)
-pnpm db:studio        # Open Drizzle Studio for database inspection
-
-# Local database operations
-pnpm db:migrate       # Apply migrations to local database
-pnpm db:seed          # Seed local database with test data
-pnpm db:reset         # Reset and rebuild local database
-
-# Preview environment operations
-pnpm db:migrate:preview    # Apply migrations to preview database
-pnpm db:seed:preview      # Seed preview database with test data
-pnpm db:reset:preview     # Reset and rebuild preview database
-
-# Production operations
-pnpm db:migrate:production # Apply migrations to production database
-```
-
-### Testing and Quality
-
-```bash
-pnpm test             # Run test suite with Vitest
-pnpm lint             # Check code formatting and linting
-pnpm format           # Auto-format code with Prettier
-```
-
-### Deployment
-
-```bash
-pnpm deploy:preview     # Deploy to preview environment
-pnpm deploy:production  # Deploy to production environment
-```
-
-### Utilities
-
-```bash
-pnpm cf-typegen       # Generate Cloudflare Workers types
-```
+> [!NOTE]
+> See [Scripts](#scripts) for the complete list of database commands.
 
 ## Deployment
+The API deploys to Cloudflare Workers with separate environments.
 
-The API is deployed to Cloudflare Workers with separate environments:
+### Manual
+Requirements:
+- Running `pnpm wrangler login` once to authenticate your Cloudflare account
 
-### Preview Environment
-
-```bash
-pnpm deploy:preview
+Deploy to environments:
+```sh
+pnpm deploy:preview     # Staging environment
+pnpm deploy:production  # Live environment
 ```
-
-- Database: `commit-api-db-preview`
-- Used for testing and staging
-
-### Production Environment
-
-```bash
-pnpm deploy:production
-```
-
-- Database: `commit-api-db`
-- Used for live users
 
 > [!IMPORTANT]
 > Always test changes in preview before deploying to production.
 
-## Project structure
+### Automated (GitHub Actions)
+Pushing to `main` triggers automatic deployment via GitHub Actions.
 
-    apps/api/
-    ├─ src/
-    │  ├─ endpoints/        # API route handlers
-    │  │  ├─ users*.ts      # User management endpoints
-    │  │  ├─ goals*.ts      # Goal management and verification
-    │  │  ├─ groups*.ts     # Group management and invites
-    │  │  ├─ payments*.ts   # Stripe payment integration
-    │  │  └─ files*.ts      # File upload and serving
-    │  ├─ db/
-    │  │  └─ schema.ts      # Drizzle database schema
-    │  ├─ scheduler/        # Cron job handlers
-    │  │  └─ settlement.ts  # Automated settlement processing
-    │  ├─ services/         # Business logic services
-    │  ├─ lib/              # Utility functions
-    │  ├─ auth.ts           # Better Auth configuration
-    │  ├─ index.ts          # Main application entry point
-    │  ├─ types.ts          # TypeScript type definitions
-    │  └─ env.d.ts          # Environment type definitions
-    ├─ drizzle/             # Database migrations
-    │  ├─ 0000_init.sql
-    │  └─ meta/
-    ├─ drizzle-seed/        # Database seeding scripts
-    │  ├─ seed-dev-preview.sql
-    │  └─ reset-db.sql
-    ├─ wrangler.jsonc       # Cloudflare Workers configuration
-    ├─ drizzle.config.ts    # Drizzle ORM configuration
-    ├─ vitest.config.ts     # Test configuration
-    ├─ package.json
-    └─ tsconfig.json
+Required GitHub Secrets:
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+Setup:
+1. Repo → **Settings → Secrets and variables → Actions**
+2. Add the above secrets
+3. Push to `main`
+
+See [Cloudflare Workers docs](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) for details.
+
+## Scripts
+You can run these commands from `apps/api`:
+
+```sh
+# Development
+pnpm dev                   # runs `wrangler dev` (local)
+pnpm dev:preview           # runs `wrangler dev --env preview`
+pnpm start                 # alias for `pnpm dev`
+
+# Testing & Quality
+pnpm test                  # runs `vitest run`
+pnpm format                # runs Prettier with workspace ignore path
+pnpm lint                  # runs Prettier check + ESLint
+
+# Database Operations
+pnpm db:generate           # runs `drizzle-kit generate`
+pnpm db:push               # runs `drizzle-kit push`
+pnpm db:studio             # runs `drizzle-kit studio`
+
+# Local Database
+pnpm db:migrate            # applies migrations + seeds local DB
+pnpm db:seed               # seeds local DB with test data
+pnpm db:reset              # resets local DB + migrates
+
+# Preview Database
+pnpm db:migrate:preview    # applies migrations + seeds preview DB
+pnpm db:seed:preview       # seeds preview DB with test data
+pnpm db:reset:preview      # resets preview DB + migrates
+
+# Production Database
+pnpm db:migrate:production # applies migrations to production DB
+
+# Deployment
+pnpm deploy:preview        # runs `wrangler deploy --env preview`
+pnpm deploy:production     # runs `wrangler deploy --env production`
+```
+
+> [!TIP]
+> To see all commands including less common, run:
+> ```sh
+> pnpm run
+> ```
+
+## Project Structure
+```
+apps/api/
+├─ src/
+│  ├─ endpoints/           # API route handlers
+│  │  ├─ users*.ts         # User management endpoints
+│  │  ├─ goals*.ts         # Goal management and verification
+│  │  ├─ groups*.ts        # Group management and invites
+│  │  ├─ payments*.ts      # Stripe payment integration
+│  │  └─ files*.ts         # File upload and serving
+│  ├─ db/
+│  │  └─ schema.ts         # Drizzle database schema
+│  ├─ scheduler/           # Cron job handlers
+│  │  └─ settlement.ts     # Automated settlement processing
+│  ├─ services/            # Business logic services
+│  ├─ lib/                 # Utility functions
+│  ├─ auth.ts              # Better Auth configuration
+│  ├─ index.ts             # Main application entry point
+│  ├─ types.ts             # TypeScript type definitions
+│  └─ env.d.ts             # Environment type definitions
+├─ drizzle/                # Database migrations
+│  ├─ 0000_init.sql
+│  └─ meta/
+├─ drizzle-seed/           # Database seeding scripts
+│  ├─ seed-dev-preview.sql
+│  └─ reset-db.sql
+├─ wrangler.jsonc          # Cloudflare Workers config
+├─ drizzle.config.ts       # Drizzle ORM config
+├─ vitest.config.ts        # Test config
+├─ package.json
+└─ tsconfig.json
+```
