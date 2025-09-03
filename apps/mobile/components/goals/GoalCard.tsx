@@ -47,7 +47,12 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   // 2. The goal state is "ongoing" (time-based ongoing state for goals without due end time)
   const shouldWatchMovement =
     goal.method === "movement" && (hasActiveTimer || goal.state === "ongoing");
-  useMovementWatcher(goal.id, shouldWatchMovement);
+  useMovementWatcher(
+    goal.id,
+    shouldWatchMovement,
+    activeTimerStartedAt,
+    goal.durationSeconds
+  );
   const nextLabel = useMemo(
     () => formatRelativeTimeLeft(goal.nextTransitionAt),
     [goal.nextTransitionAt]

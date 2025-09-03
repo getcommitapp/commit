@@ -70,7 +70,13 @@ export function useMovementViolation(goalId: string) {
 
 // Simple motion detector combining accelerometer and gyroscope magnitudes.
 // If motion exceeds thresholds while timer is active, trigger violation once.
-export function useMovementWatcher(goalId: string, isActive: boolean) {
+// Stops monitoring once timer duration is completed.
+export function useMovementWatcher(
+  goalId: string,
+  isActive: boolean,
+  timerStartedAt?: string | null,
+  durationSeconds?: number | null
+) {
   const { mutate: violate, isPending } = useMovementViolation(goalId);
   const triggeredRef = useRef(false);
 
@@ -78,7 +84,16 @@ export function useMovementWatcher(goalId: string, isActive: boolean) {
     let accelSub: any | null = null;
     let gyroSub: any | null = null;
 
-    if (!isActive) {
+    // Check if timer has completed its required duration
+    const hasTimerCompleted = (() => {
+      if (!isActive || !timerStartedAt || !durationSeconds) return false;
+      const startTime = new Date(timerStartedAt);
+      const requiredDurationMs = durationSeconds * 1000;
+      const elapsedTime = Date.now() - startTime.getTime();
+      return elapsedTime >= requiredDurationMs;
+    })();
+
+    if (!isActive || hasTimerCompleted) {
       triggeredRef.current = false;
       Accelerometer.removeAllListeners();
       Gyroscope.removeAllListeners();
@@ -119,5 +134,5 @@ export function useMovementWatcher(goalId: string, isActive: boolean) {
       accelSub = null;
       gyroSub = null;
     };
-  }, [goalId, isActive, isPending, violate]);
+  }, [goalId, isActive, isPending, violate, timerStartedAt, durationSeconds]);
 }

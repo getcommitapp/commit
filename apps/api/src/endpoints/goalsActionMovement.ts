@@ -193,19 +193,42 @@ export class GoalsActionMovementViolate extends OpenAPIRoute {
     // Always reset timer fields when violation is reported
     const resetFields = { timerStartedAt: null, timerEndedAt: null } as const;
 
-    // Fail only if goal is currently ongoing/window_open for movement OR awaiting_verification with active timer
+    // Check if timer has completed its required duration
+    const hasTimerCompleted = (() => {
+      if (!occ?.timerStartedAt || !goal.durationSeconds) return false;
+      const timerStarted = new Date(occ.timerStartedAt);
+      const requiredDurationMs = goal.durationSeconds * 1000;
+      const elapsedTime = now.getTime() - timerStarted.getTime();
+      return elapsedTime >= requiredDurationMs;
+    })();
+
+    // Fail only if goal is currently ongoing/window_open for movement
+    // OR awaiting_verification with active timer that hasn't completed its duration yet
     const shouldFail =
       goal.method === "movement" &&
       (cs.state === "ongoing" ||
         cs.state === "window_open" ||
-        cs.state === "awaiting_verification");
+        (cs.state === "awaiting_verification" && !hasTimerCompleted));
+
+    // If timer completed, mark as approved; if should fail, mark as rejected; otherwise keep current status
+    const newStatus =
+      hasTimerCompleted && !shouldFail
+        ? "approved"
+        : shouldFail
+          ? "rejected"
+          : (occ?.status ?? "pending");
+
+    const newVerifiedAt =
+      (hasTimerCompleted && !shouldFail) || shouldFail
+        ? now
+        : (occ?.verifiedAt ?? null);
 
     await db
       .update(schema.GoalOccurrence)
       .set({
         violated: shouldFail,
-        status: shouldFail ? "rejected" : (occ?.status ?? "pending"),
-        verifiedAt: shouldFail ? now : (occ?.verifiedAt ?? null),
+        status: newStatus,
+        verifiedAt: newVerifiedAt,
         updatedAt: now,
         ...resetFields,
       })
