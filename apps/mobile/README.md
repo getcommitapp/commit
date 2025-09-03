@@ -1,4 +1,5 @@
 # commit. — Mobile
+
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -15,9 +16,11 @@
 </details>
 
 ## Overview
+
 The `commit.` mobile app is built with `Expo` + `React Native`, using `TypeScript` for types, `expo-router` for navigation, `Better Auth` for authentication, and `Stripe` for payments.
 
 Key highlights:
+
 - Quick iteration locally on device or simulator using `Expo`
 - `Google` & `Apple` authentication with `Better Auth`
 - Goal and group management with stake handling
@@ -27,24 +30,29 @@ Key highlights:
 - Supports both solo and group goals
 
 ## Prerequisites
+
 - `Node.js 22+`
 - `pnpm` (workspace root manages dependencies)
 - `Expo Go` on a phone or simulator
 - Access to the backend (see [`apps/api`](https://github.com/getcommitapp/commit/apps/api/README.md))
 
 Authentication & Payment:
+
 - Server: `Better Auth` handlers in `apps/api` mounted under `/api/auth/*`
 - Client: initialized in `apps/mobile/lib/auth-client.ts` with `expo-secure-store` and `Stripe` integration
 - Providers: `Google` & `Apple` authentication
 - Payment: `Stripe` for handling payment methods and transaction processing
 
 ## Getting Started
+
 Install dependencies from the workspace root:
+
 ```sh
 pnpm install
 ```
 
 Start the mobile app:
+
 ```sh
 cd apps/mobile
 pnpm start
@@ -54,16 +62,20 @@ pnpm start
 > Use `--clear` to reset the cache and reload the app if needed. See [Scripts](#scripts) for all commands.
 
 ## Development Setup
+
 The mobile app relies on the `commit.` API backend. First, create your environment configuration, then choose your development approach.
 
 ### Environment Variables
+
 Create a local `.env` from the example:
+
 ```sh
 cd apps/mobile
 cp .env.local.example .env.local
 ```
 
 Variables:
+
 - `EXPO_PUBLIC_API_URL` (required): Mobile app API endpoint
 - `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY` (required): `Stripe` key
 - `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (optional, dev-only)
@@ -76,18 +88,21 @@ Variables:
 > Use the same Stripe publishable key as configured in the API.
 
 ### Development with Expo Go
+
 Depending on your setup, use one of the following options:
 
 Option 1: Same Network (Local API)
 If your computer and mobile device are on the same network:
 
 1. Start the API locally:
+
    ```sh
    cd apps/api
    pnpm dev --ip <your_computer_ip>
    ```
 
 2. Update your `.env.local` to use your computer's IP:
+
    ```sh
    EXPO_PUBLIC_API_URL=http://<your_computer_ip>:8787
    ```
@@ -106,12 +121,14 @@ If your device cannot reach your local machine, use the deployed preview API:
 
 1. Get your preview URL from `Cloudflare` dashboard (custom link)
 2. Start the API in preview environment:
+
    ```sh
    cd apps/api
    pnpm deploy:preview
    ```
 
 3. Update your `.env.local` to use the preview URL, for example:
+
    ```sh
    EXPO_PUBLIC_API_URL=https://commit-api-preview.leo-c50.workers.dev/
    ```
@@ -128,17 +145,21 @@ If your device cannot reach your local machine, use the deployed preview API:
 ## Production & Release
 
 Required GitHub Secrets:
+
 - `EXPO_TOKEN`: Required for `EAS` builds
 
 Setup:
+
 1. Repo → Settings → Secrets and variables → Actions
 2. Add the required secrets
 3. Push to `main`
 
 ### EAS Build (Production APK)
+
 Building a production APK for Android uses `EAS` and the `eas.json` configuration.
 
 Setup:
+
 1. Open `apps/mobile/eas.json`
 2. Replace `EXPO_PUBLIC_API_URL` and `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY` with production values:
    ```json
@@ -150,11 +171,14 @@ Setup:
 3. `GitHub Actions` CI (`Build APK`) will use this configuration when pushed to `main`
 
 ### Automated (GitHub Actions)
+
 Build APK CI:
 Pushing to `main` triggers the `Build Mobile` workflow for CI verification and artifact previews.
 
 Manual, version-aligned release flow:
+
 1. Bump version in `apps/mobile` (updates both `app.json` and `package.json`):
+
    ```sh
    # from apps/mobile/
    VERSION=x.y.z pnpm run release:bump
@@ -169,10 +193,12 @@ Manual, version-aligned release flow:
    - `commit-android-{version}.apk`
 
 > [!NOTE]
+>
 > - The release workflow leverages the APK artifact from the most recent `Build Mobile` CI run.
 > - The release job is `release-android` in `.github/workflows/release-mobile.yml`.
 
 ## Scripts
+
 You can run these commands from `apps/mobile`:
 
 ```sh
@@ -195,11 +221,13 @@ pnpm release:bump          # Bump version in app.json & package.json
 
 > [!TIP]
 > To see all commands including less common, run:
+>
 > ```sh
 > pnpm run
 > ```
 
 ## Project Structure
+
 ```
 apps/mobile/
 ├─ app/                    # expo-router routes
@@ -235,11 +263,12 @@ apps/mobile/
 ```
 
 ## MVP Features
-* Authentication: `Google` & `Apple` sign-in via `Better Auth`
-* Goal management: Solo & group goals with uniform stakes
-* Payment integration: `Stripe` for payments & stakes
-* Verification system: Time, photo evidence and movement detection
-* Review system: Reviewer interface for approving/rejecting photo evidence
-* Group functionality: Create/join groups with a shared goal
+
+- Authentication: `Google` & `Apple` sign-in via `Better Auth`
+- Goal management: Solo & group goals with uniform stakes
+- Payment integration: `Stripe` for payments & stakes
+- Verification system: Time, photo evidence and movement detection
+- Review system: Reviewer interface for approving/rejecting photo evidence
+- Group functionality: Create/join groups with a shared goal
 
 > Full spec: [software-requirements-specification.md](../../docs/software-requirements-specification.md)

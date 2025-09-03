@@ -277,7 +277,7 @@ Contributions are what make the open source community such an amazing place to l
 8. Commit your Changes, see [conventional naming](https://www.conventionalcommits.org/en/v1.0.0/) (`git commit -m "feat: add some AmazingFeature"`)
 9. Push the branch to your fork (`git push origin feature/AmazingFeature`)
 10. Open a Pull Request from your fork to the main repository
-11. Ensure that all lint checks and tests pass.  
+11. Ensure that all lint checks and tests pass.
     - If they fail, make the necessary changes and push additional commits until the checks pass.
 12. Wait for a reviewer to assess your changes
 

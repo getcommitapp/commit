@@ -19,15 +19,15 @@ It showcases the `commit.` goal-tracking app with sections for hero, problem, so
 
 Key highlights:
 
-* **Mobile-responsive** across all device sizes
-* **SEO-ready** with meta tags, Open Graph, and structured data
-* **Component-based** via modular Astro components
-* **Global performance** through deployment on **Cloudflare Workers**
+- **Mobile-responsive** across all device sizes
+- **SEO-ready** with meta tags, Open Graph, and structured data
+- **Component-based** via modular Astro components
+- **Global performance** through deployment on **Cloudflare Workers**
 
 ## Prerequisites
 
-* `Node.js 22+`
-* `pnpm` (workspace root manages dependencies)
+- `Node.js 22+`
+- `pnpm` (workspace root manages dependencies)
 
 ## Getting Started
 
@@ -45,9 +45,10 @@ pnpm dev
 ```
 
 > [!NOTE]
+>
 > - `pnpm dev`: Astro dev server with hot reload
 > - `pnpm preview`: production-like build served with `wrangler dev` (no hot reload)
-> 
+>
 > See [Scripts](#scripts) for all commands
 
 ## Deployment
@@ -86,6 +87,7 @@ Setup:
 See [Cloudflare Workers docs](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) for details.
 
 ## Scripts
+
 You can run these commands from `apps/web`:
 
 ```sh
@@ -110,6 +112,7 @@ pnpm lint         # runs Prettier check + ESLint
 
 > [!TIP]
 > To see all commands including less common, run:
+>
 > ```sh
 > pnpm run
 > ```
