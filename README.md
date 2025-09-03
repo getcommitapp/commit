@@ -5,7 +5,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/HEIG_VD-Engineering school-informational?style=for-the-badge&logo=bookstack&logoColor=white&color=darkred">
   <img src="https://img.shields.io/badge/PDG-2025-informational?style=for-the-badge&logo=moodle&logoColor=white&color=blue">
-  <img src="https://img.shields.io/badge/Status-In developpment-informational?style=for-the-badge&logo=rocket&logoColor=white&color=purple">
+  <img src="https://img.shields.io/badge/Status-BETA-informational?style=for-the-badge&logo=rocket&logoColor=white&color=purple">
 </div>
 
 <p align="center"><em>Goal-tracking app with financial stakes and private group challenges.</em></p>
@@ -63,10 +63,10 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 ```text
     .
     ├─ apps/
-    │  ├─ api/      # Hono + Cloudflare Workers (Backend API)
-    │  ├─ mobile/   # Expo + React Native (iOS/Android)
-    │  └─ web/      # Astro landing (Cloudflare Workers)
-    ├─ docs/        # SRS, architecture, flow, assets
+    │  ├─ api/      # Backend
+    │  ├─ mobile/   # Frontend mobile
+    │  └─ web/      # Frontend web
+    ├─ docs/        # SRS, architecture, flow, schemas
     ├─ packages/    # Shared libraries and utilities
     │  ├─ engine/   # Core business logic engine
     │  └─ types/    # Shared TypeScript types
@@ -91,15 +91,19 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 <div align="center">
   <img src="https://img.shields.io/badge/Testing-informational?style=for-the-badge&color=gray">
   <img src="https://img.shields.io/badge/Jest-informationa?style=for-the-badge&logo=jest&logoColor=black&color=A1FFEB">
-  <img src="https://img.shields.io/badge/Vitest-informationa?style=for-the-badge&logo=vitest&logoColor=black&color=A1FFEB">
 </div>
 
 ### Backend & Services
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Backend-informational?style=for-the-badge&color=gray">
+  <img src="https://img.shields.io/badge/Backend-informational?style=for-the-badge&color=gray"> 
   <img src="https://img.shields.io/badge/Hono-informational?style=for-the-badge&logo=hono&logoColor=black&color=A1FFEB">
-  <img src="https://img.shields.io/badge/Cloudflare Workers-informational?style=for-the-badge&logo=cloudflare&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Chanfana-informational?style=for-the-badge&color=A1FFEB">
+</div>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Testing-informational?style=for-the-badge&color=gray">
+  <img src="https://img.shields.io/badge/Vitest-informationa?style=for-the-badge&logo=vitest&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
@@ -119,6 +123,11 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
     <img src="https://img.shields.io/badge/Mastercard-informationa?style=for-the-badge&logo=mastercard&logoColor=black&color=A1FFEB">
 </div>
 
+<div align="center">
+  <img src="https://img.shields.io/badge/Hosting-informational?style=for-the-badge&color=gray">
+  <img src="https://img.shields.io/badge/Cloudflare-informationa?style=for-the-badge&logo=cloudflare&logoColor=black&color=A1FFEB">
+</div>
+
 > [!NOTE]  
 > The backend is built on `Cloudflare`, using:
 >
@@ -127,7 +136,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 > - Workers (edge functions for business logic, authentication, and API endpoints)
 
 > [!WARNING]  
-> Credit and debit cards are supported for payments via Stripe.
+> Only credit and debit cards are supported for payments via Stripe.
 
 ### Web
 
@@ -187,6 +196,8 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 | Node.js                     | 22+     | All        |
 | pnpm                        | 10+     | All        |
 | Cloudflare account          | -       | All        |
+| Expo account                | -       | Mobile App |
+| Stripe account              | -       | Mobile App |
 | Expo Go (install on mobile) | -       | Mobile App |
 | OAuth Google                | -       | Mobile App |
 | OAuth Apple                 | -       | Mobile App |
@@ -213,19 +224,19 @@ pnpm install
 | -------------- | --- | --- | ------------------------------------------------------------------------------------- |
 | Lint and tests | Y   | N   | PRs must pass `ESLint` and `Jest`/`Vitest` before review.                             |
 | Build Mobile   | Y   | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
-| Compile Docs   | Y   | N   | Compile the `PDF` for the `Software Requirements Specification`                       |
+| Compile Docs   | Y   | N   | Compile the `PDF` for the `SRS` as well as the schemas from their `PlantUML` format   |
 | Deploy API     | N   | Y   | Deploy the backend API to `CloudFlare Workers`                                        |
 | Deploy web     | N   | Y   | Deploy the landing page to `CloudFlare Workers`                                       |
 | Release mobile | N   | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
 
 > [!NOTE]
-> To catch issues early (Lint and tests), use the following commands:
+> To catch issues early (Lint and tests), use the following commands on local:
 >
 > ```bash
 > # Lint everything
 > pnpm lint
 >
-> # Run tests (Jest for mobile, Vitest for API and engine)
+> # Run tests
 > pnpm test
 > ```
 
@@ -266,7 +277,9 @@ Contributions are what make the open source community such an amazing place to l
 8. Commit your Changes, see [conventional naming](https://www.conventionalcommits.org/en/v1.0.0/) (`git commit -m "feat: add some AmazingFeature"`)
 9. Push the branch to your fork (`git push origin feature/AmazingFeature`)
 10. Open a Pull Request from your fork to the main repository
-11. Wait for a reviewer to assess your changes
+11. Ensure that all lint checks and tests pass.  
+    - If they fail, make the necessary changes and push additional commits until the checks pass.
+12. Wait for a reviewer to assess your changes
 
 ## License
 
