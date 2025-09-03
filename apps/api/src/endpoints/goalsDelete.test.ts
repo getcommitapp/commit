@@ -23,10 +23,10 @@ describe("DELETE /api/goals/:id (delete)", () => {
           description: null,
           stakeCents: 200,
           currency: "EUR",
-          startDate: new Date().toISOString(),
-          endDate: null,
-          dueStartTime: new Date().toISOString(),
-          dueEndTime: null,
+          startDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+          endDate: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago (expired)
+          dueStartTime: new Date(Date.now() - 86400000).toISOString(),
+          dueEndTime: new Date(Date.now() - 3600000).toISOString(),
           method: "checkin",
           graceTimeSeconds: 60,
           destinationType: "user",

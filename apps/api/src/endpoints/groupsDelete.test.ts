@@ -17,9 +17,10 @@ describe("DELETE /api/groups/:id (delete)", () => {
         body: JSON.stringify({
           name: "Test Goal",
           description: "A test goal",
-          startDate: new Date().toISOString(),
-          dueStartTime: new Date().toISOString(),
-          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+          startDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+          endDate: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago (expired)
+          dueStartTime: new Date(Date.now() - 86400000).toISOString(),
+          dueEndTime: new Date(Date.now() - 3600000).toISOString(),
           stakeCents: 1000,
           currency: "USD",
           destinationType: "charity",
@@ -43,9 +44,10 @@ describe("DELETE /api/groups/:id (delete)", () => {
           goal: {
             name: "Test Goal",
             description: "A test goal",
-            startDate: new Date().toISOString(),
-            dueStartTime: new Date().toISOString(),
-            dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+            startDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+            endDate: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago (expired)
+            dueStartTime: new Date(Date.now() - 86400000).toISOString(),
+            dueEndTime: new Date(Date.now() - 3600000).toISOString(),
             stakeCents: 1000,
             currency: "USD",
             destinationType: "charity",
@@ -82,9 +84,10 @@ describe("DELETE /api/groups/:id (delete)", () => {
           goal: {
             name: "Test Goal for Deletion",
             description: "A test goal to be deleted",
-            startDate: new Date().toISOString(),
-            dueStartTime: new Date().toISOString(),
-            dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+            startDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+            endDate: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago (expired)
+            dueStartTime: new Date(Date.now() - 86400000).toISOString(),
+            dueEndTime: new Date(Date.now() - 3600000).toISOString(),
             stakeCents: 1000,
             currency: "USD",
             destinationType: "charity",
@@ -141,9 +144,10 @@ describe("DELETE /api/groups/:id (delete)", () => {
         body: JSON.stringify({
           name: "Test Goal",
           description: "A test goal",
-          startDate: new Date().toISOString(),
-          dueStartTime: new Date().toISOString(),
-          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+          startDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+          endDate: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago (expired)
+          dueStartTime: new Date(Date.now() - 86400000).toISOString(),
+          dueEndTime: new Date(Date.now() - 3600000).toISOString(),
           stakeCents: 1000,
           currency: "USD",
           destinationType: "charity",
