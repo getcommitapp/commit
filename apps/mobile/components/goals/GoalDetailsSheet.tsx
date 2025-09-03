@@ -49,6 +49,17 @@ export const GoalDetailsSheet = forwardRef<
 
     const hasActiveTimer = !!activeTimerStartedAt;
 
+    // Check if goal is in an active state that prevents deletion
+    const activeStates = [
+      "scheduled",
+      "window_open",
+      "ongoing",
+      "awaiting_verification",
+    ];
+    const isGoalInActiveState = activeStates.includes(goal.state);
+    const canDeleteGoal =
+      !localTimer?.startedAt && !goal.groupId && !isGoalInActiveState;
+
     return (
       <DetailsSheet
         ref={ref}
@@ -87,7 +98,7 @@ export const GoalDetailsSheet = forwardRef<
 
         <GoalDetails goal={goal} />
 
-        {!localTimer?.startedAt && !goal.groupId ? (
+        {canDeleteGoal ? (
           <Button
             title="Delete Goal"
             onPress={() =>
@@ -102,6 +113,15 @@ export const GoalDetailsSheet = forwardRef<
             loading={isDeleting}
             accessibilityLabel="delete-goal"
             testID="delete-goal"
+          />
+        ) : !goal.groupId && (localTimer?.startedAt || isGoalInActiveState) ? (
+          <Button
+            title="Delete Goal"
+            onPress={() => {}}
+            variant="danger"
+            disabled={true}
+            accessibilityLabel="delete-goal-disabled"
+            testID="delete-goal-disabled"
           />
         ) : null}
       </DetailsSheet>

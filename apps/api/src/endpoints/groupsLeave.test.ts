@@ -19,9 +19,10 @@ describe("POST /api/groups/:id/leave (leave)", () => {
           goal: {
             name: "Test Goal",
             description: "A test goal",
-            startDate: new Date().toISOString(),
-            dueStartTime: new Date().toISOString(),
-            dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+            startDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+            endDate: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago (expired)
+            dueStartTime: new Date(Date.now() - 86400000).toISOString(),
+            dueEndTime: new Date(Date.now() - 3600000).toISOString(),
             stakeCents: 1000,
             currency: "USD",
             destinationType: "charity",
@@ -52,9 +53,10 @@ describe("POST /api/groups/:id/leave (leave)", () => {
         body: JSON.stringify({
           name: "Other's Goal",
           description: "A test goal",
-          startDate: new Date().toISOString(),
-          dueStartTime: new Date().toISOString(),
-          dueEndTime: new Date(Date.now() + 3600000).toISOString(),
+          startDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+          endDate: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago (expired)
+          dueStartTime: new Date(Date.now() - 86400000).toISOString(),
+          dueEndTime: new Date(Date.now() - 3600000).toISOString(),
           stakeCents: 1000,
           currency: "USD",
           destinationType: "charity",

@@ -41,7 +41,13 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
   const activeTimerStartedAt =
     persistedTimerStartedAt || localTimer?.startedAt || null;
   const hasActiveTimer = !!activeTimerStartedAt;
-  useMovementWatcher(goal.id, hasActiveTimer && goal.method === "movement");
+
+  // For movement goals, watch for motion when:
+  // 1. There's an active timer (timer-based ongoing state), OR
+  // 2. The goal state is "ongoing" (time-based ongoing state for goals without due end time)
+  const shouldWatchMovement =
+    goal.method === "movement" && (hasActiveTimer || goal.state === "ongoing");
+  useMovementWatcher(goal.id, shouldWatchMovement);
   const nextLabel = useMemo(
     () => formatRelativeTimeLeft(goal.nextTransitionAt),
     [goal.nextTransitionAt]
@@ -123,6 +129,7 @@ export function GoalCard({ goal, accessibilityLabel, testID }: GoalCardProps) {
             <View style={{ gap: 8 }}>
               {hasActiveTimer && goal.method === "movement" ? (
                 <GoalTimerRow
+                  key={`${goal.id}-${activeTimerStartedAt}`}
                   durationSeconds={goal.durationSeconds ?? 0}
                   startedAt={activeTimerStartedAt}
                 />

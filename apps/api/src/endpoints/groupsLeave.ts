@@ -3,7 +3,8 @@ import type { AppContext } from "../types";
 import { GroupLeaveResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import { and, eq } from "drizzle-orm";
-import { Group, GroupMember } from "../db/schema";
+import { Group, GroupMember, Goal, GoalOccurrence } from "../db/schema";
+import { todayLocal, computeState } from "../services/goalService";
 
 export class GroupsLeave extends OpenAPIRoute {
   schema = {
@@ -23,7 +24,8 @@ export class GroupsLeave extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const db = drizzle(c.env.DB);
-    const userId = c.var.user!.id;
+    const user = c.var.user!;
+    const userId = user.id;
 
     const { id } = c.req.param();
     if (!id) return new Response("Bad Request", { status: 400 });
@@ -34,6 +36,43 @@ export class GroupsLeave extends OpenAPIRoute {
       return new Response("Creator cannot leave their own group", {
         status: 400,
       });
+
+    // Get the associated goal to check its state
+    const goal = await db
+      .select()
+      .from(Goal)
+      .where(eq(Goal.id, g.goalId))
+      .get();
+    if (!goal) return new Response("Goal not found", { status: 404 });
+
+    // Check goal state - prevent leaving if goal is in active states
+    const localDate = todayLocal(user.timezone);
+    const occurrence = await db
+      .select()
+      .from(GoalOccurrence)
+      .where(
+        and(
+          eq(GoalOccurrence.goalId, g.goalId),
+          eq(GoalOccurrence.userId, userId),
+          eq(GoalOccurrence.occurrenceDate, localDate)
+        )
+      )
+      .get();
+
+    const goalState = computeState(goal, user, occurrence || null);
+    const activeStates = [
+      "scheduled",
+      "window_open",
+      "ongoing",
+      "awaiting_verification",
+    ];
+
+    if (activeStates.includes(goalState.state)) {
+      return new Response(
+        `Cannot leave group while the goal is in "${goalState.state}" state`,
+        { status: 409 }
+      );
+    }
 
     await db
       .delete(GroupMember)

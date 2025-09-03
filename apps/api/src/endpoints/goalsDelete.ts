@@ -3,7 +3,8 @@ import type { AppContext } from "../types";
 import { GoalDeleteResponseSchema } from "@commit/types";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
+import { todayLocal, computeState } from "../services/goalService";
 
 export class GoalsDelete extends OpenAPIRoute {
   schema = {
@@ -49,6 +50,35 @@ export class GoalsDelete extends OpenAPIRoute {
 
     if (existingGoal.ownerId !== user.id)
       return new Response("Forbidden", { status: 403 });
+
+    // Check goal state - prevent deletion if goal is in active states
+    const localDate = todayLocal(user.timezone);
+    const [occurrence] = await db
+      .select()
+      .from(schema.GoalOccurrence)
+      .where(
+        and(
+          eq(schema.GoalOccurrence.goalId, goalId),
+          eq(schema.GoalOccurrence.userId, user.id),
+          eq(schema.GoalOccurrence.occurrenceDate, localDate)
+        )
+      )
+      .limit(1);
+
+    const goalState = computeState(existingGoal, user, occurrence || null);
+    const activeStates = [
+      "scheduled",
+      "window_open",
+      "ongoing",
+      "awaiting_verification",
+    ];
+
+    if (activeStates.includes(goalState.state)) {
+      return new Response(
+        `Cannot delete goal while it is in "${goalState.state}" state`,
+        { status: 409 }
+      );
+    }
 
     // Prevent delete if goal is linked to a group
     const [group] = await db
