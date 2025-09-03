@@ -13,24 +13,25 @@
 </details>
 
 ## Overview
-The `commit.` API is a serverless backend built with Hono and deployed to Cloudflare Workers.
+The `commit.` API is a serverless backend built with `Hono` and deployed to `Cloudflare Workers`.
 It powers the `commit.` mobile app with features for goal tracking, group management, payments, and user authentication.
 
 Key highlights:
-- Edge-first architecture for global performance via Cloudflare's network
-- OAuth authentication with Google/Apple via Better Auth + Stripe integration
-- Goal & group management with verification, reviews, and invite systems
-- Payment processing through Stripe for stakes and payment methods
-- File handling via Cloudflare R2 for photo uploads
-- SQLite database using Cloudflare D1 with Drizzle ORM
-- Auto-generated docs at the root endpoint with OpenAPI via Chanfana
-- Scheduled tasks for automatic settlement processing
+* Edge-first architecture for global performance via `Cloudflare's` network
+* `OAuth` authentication with `Google`/`Apple` via `Better Auth` + `Stripe` integration
+* Goal & group management with verification, reviews, and invite systems
+* Payment processing through `Stripe` for stakes and payment methods
+* File handling via `Cloudflare R2` for photo uploads
+* `SQLite` database using `Cloudflare D1` with `Drizzle ORM`
+* Auto-generated docs at the root endpoint with `OpenAPI` via `Chanfana`
+* Scheduled tasks for automatic settlement processing
+
+> Detailed API documentation: [application-protocol.md](https://github.com/getcommitapp/commit/docs/application_protocol.md)
 
 ## Prerequisites
-- `Node.js 22+`
-- `pnpm` (workspace root manages dependencies)
-- `Cloudflare account` with D1 database and R2 storage access
-- `Stripe account`
+* `Node.js 22+`
+* `pnpm` (workspace root manages dependencies)
+* `Cloudflare account` with D1 database and R2 storage access
 
 ## Getting Started
 Install dependencies from the workspace root:
@@ -78,9 +79,9 @@ pnpm dev
 > See [Scripts](#scripts) for all commands
 
 ### Development with Expo Go
-For mobile development using Expo Go on physical devices, `localhost` won't be accessible. You have two options:
+For mobile development using `Expo Go` on physical devices, `localhost` won't be accessible. You have two options:
 
-Option 1: Same Network Development
+**Option 1: Same Network Development**
 If your mobile device and computer are on the same network:
 ```sh
 pnpm dev --ip <your_computer_ip>
@@ -91,7 +92,7 @@ Then update mobile app to use your computer's IP in `apps/mobile/.env.local`:
 EXPO_PUBLIC_API_URL=http://<your_computer_ip>:8787/
 ```
 
-Option 2: Preview Environment
+**Option 2: Preview Environment**
 For remote development or different networks:
 
 1. Deploy to preview:
@@ -108,10 +109,10 @@ For remote development or different networks:
 > Use Option 1 for faster development cycles, Option 2 for testing in production-like environment or when devices are on different networks.
 
 ## Database
-The API uses Cloudflare D1 (SQLite) with Drizzle ORM for type-safe database operations.
+The API uses `Cloudflare D1` (`SQLite`) with `Drizzle ORM` for type-safe database operations.
 
 ### Environments
-- Local: SQLite file with D1 local simulation
+- Local: `SQLite` file with `D1` local simulation
 - Preview: `commit-api-db-preview` for staging/testing
 - Production: `commit-api-db` for live users
 
@@ -141,11 +142,14 @@ pnpm db:reset:preview     # Preview
 > See [Scripts](#scripts) for the complete list of database commands.
 
 ## Deployment
-The API deploys to Cloudflare Workers with separate environments.
+The API deploys to `Cloudflare Workers` with separate environments.
+
+Requirements:
+- `Cloudflare account`
 
 ### Manual
 Requirements:
-- Running `pnpm wrangler login` once to authenticate your Cloudflare account
+- Running `pnpm wrangler login` once to authenticate your `Cloudflare` account
 
 Deploy to environments:
 ```sh
@@ -157,18 +161,19 @@ pnpm deploy:production  # Live environment
 > Always test changes in preview before deploying to production.
 
 ### Automated (GitHub Actions)
-Pushing to `main` triggers automatic deployment via GitHub Actions.
+Pushing to `main` triggers automatic deployment via `GitHub Actions`.
 
 Required GitHub Secrets:
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
+- Plus environment-specific secrets for `OAuth` and `Stripe`
 
 Setup:
-1. Repo → **Settings → Secrets and variables → Actions**
+1. Repo → Settings → Secrets and variables → Actions
 2. Add the above secrets
 3. Push to `main`
 
-See [Cloudflare Workers docs](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) for details.
+See [`Cloudflare Workers` docs](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) for details.
 
 ## Scripts
 You can run these commands from `apps/api`:
@@ -181,8 +186,8 @@ pnpm start                 # alias for `pnpm dev`
 
 # Testing & Quality
 pnpm test                  # runs `vitest run`
-pnpm format                # runs Prettier with workspace ignore path
-pnpm lint                  # runs Prettier check + ESLint
+pnpm format                # runs `Prettier` with workspace ignore path
+pnpm lint                  # runs `Prettier` check + `ESLint`
 
 # Database Operations
 pnpm db:generate           # runs `drizzle-kit generate`
