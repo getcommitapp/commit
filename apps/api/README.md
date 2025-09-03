@@ -17,19 +17,20 @@ The `commit.` API is a serverless backend built with Hono and deployed to Cloudf
 It powers the `commit.` mobile app with features for goal tracking, group management, payments, and user authentication.
 
 Key highlights:
-* Edge-first architecture for global performance via Cloudflare's network
-* OAuth authentication with Google/Apple via Better Auth + Stripe integration
-* Goal & group management with verification, reviews, and invite systems
-* Payment processing through Stripe for stakes and payment methods
-* File handling via Cloudflare R2 for photo uploads
-* SQLite database using Cloudflare D1 with Drizzle ORM
-* Auto-generated docs at the root endpoint with OpenAPI via Chanfana
-* Scheduled tasks for automatic settlement processing
+- Edge-first architecture for global performance via Cloudflare's network
+- OAuth authentication with Google/Apple via Better Auth + Stripe integration
+- Goal & group management with verification, reviews, and invite systems
+- Payment processing through Stripe for stakes and payment methods
+- File handling via Cloudflare R2 for photo uploads
+- SQLite database using Cloudflare D1 with Drizzle ORM
+- Auto-generated docs at the root endpoint with OpenAPI via Chanfana
+- Scheduled tasks for automatic settlement processing
 
 ## Prerequisites
-* `Node.js 22+`
-* `pnpm` (workspace root manages dependencies)
-* `Cloudflare account` with D1 database and R2 storage access
+- `Node.js 22+`
+- `pnpm` (workspace root manages dependencies)
+- `Cloudflare account` with D1 database and R2 storage access
+- `Stripe account`
 
 ## Getting Started
 Install dependencies from the workspace root:
