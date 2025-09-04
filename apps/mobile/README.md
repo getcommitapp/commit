@@ -1,6 +1,4 @@
-# commit. - Mobile Application
-
-Built with `Expo` + `React Native` and deployed as a `GitHub` release (tagged in the main repo).
+# commit. — Mobile
 
 <details>
   <summary>Table of Contents</summary>
@@ -8,150 +6,277 @@ Built with `Expo` + `React Native` and deployed as a `GitHub` release (tagged in
     <li><a href="#overview">Overview</a></li>
     <li><a href="#prerequisites">Prerequisites</a></li>
     <li><a href="#getting-started">Getting started</a></li>
-    <li><a href="#environment-variables">Environment variables</a></li>
+    <li><a href="#development-setup">Development Setup</a></li>
+    <li><a href="#environment-variables">Environment Variables</a></li>
+    <li><a href="#development-with-expo-go">Development with Expo Go</a></li>
+    <li><a href="#production--release">Production & Release</a></li>
     <li><a href="#scripts">Scripts</a></li>
-    <li><a href="#lint--tests">Lint & tests</a></li>
-    <li><a href="#project-structure">Project structure</a></li>
-    <li><a href="#mvp-features">MVP features</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#mvp-features">MVP Features</a></li>
   </ol>
 </details>
 
 ## Overview
 
-This app uses `expo-router` for navigation, `TypeScript` for types, and `Jest` for tests.
+The `commit.` mobile app is built with `Expo` + `React Native`, using `TypeScript` for types, `expo-router` for navigation, `Better Auth` for authentication, and `Stripe` for payments.
 
-> "Build, preview, iterate." Start locally with Expo and iterate quickly on device or simulator.
+Key highlights:
+
+- Quick iteration locally on device or simulator using `Expo`
+- `Google` & `Apple` authentication with `Better Auth`
+- Goal and group management with stake handling
+- Payment integration using `Stripe`
+- Verification system (time, duration, photo)
+- Reviewer interface for goal verification
+- Supports both solo and group goals
+
+## Quick Links
+
+- **User Guide**: [docs/user-guide.md](../../docs/user-guide.md) - Complete guide for using the mobile app
+- **API Backend**: [apps/api/README.md](../../apps/api/README.md)
 
 ## Prerequisites
 
-- `Node.js 22+` and [`pnpm`](https://pnpm.io/installation)
-- [`Expo Go`](https://expo.dev/client) on a phone, or an iOS/Android simulator
+- `Node.js 22+`
+- `pnpm` (workspace root manages dependencies)
+- `Expo Go` on a phone or simulator
+- Access to the backend (see [`apps/api`](https://github.com/getcommitapp/commit/apps/api/README.md))
 
-### Authentication
+## Getting Started
 
-The app uses Better Auth with a Hono backend (Cloudflare Workers).
+Install dependencies from the workspace root:
 
-- Server: see `apps/api` where the Better Auth handler is mounted under `/api/auth/*`.
-- Client: initialized in `apps/mobile/lib/auth-client.ts` with the Expo plugin and `expo-secure-store`.
-- Providers: configure Google and Apple as per Better Auth docs.
-
-## Getting started
-
-From the workspace root:
-
-```bash
-pnpm install
+```sh
+pnpm -w install
 ```
 
-Then start the mobile app:
+Start the mobile app:
 
-```bash
+```sh
 cd apps/mobile
-pnpm start --tunnel
+pnpm start
 ```
-
-> [!NOTE]
-> `--tunnel` helps devices connect over different networks; you can omit it on simulators or local networks.
 
 > [!TIP]
-> `--clear` clears the cache and reloads the app. Sometimes useful to reset the app state.
+> Use `--clear` to reset the cache and reload the app if needed. See [Scripts](#scripts) for all commands.
 
-## Environment variables
+> [!TIP]
+> Need help using the app? Check out our [User Guide](../../docs/user-guide.md) for detailed instructions on all features and workflows.
 
-Create a local env file from the example template:
+## Development Setup
 
-```bash
+The mobile app relies on the `commit.` API backend. First, create your environment configuration, then choose your development approach.
+
+### Environment Variables
+
+Create a local `.env` from the example:
+
+```sh
 cd apps/mobile
 cp .env.local.example .env.local
 ```
 
-Available variables:
+Variables:
 
-- `EXPO_PUBLIC_API_URL` (required): The API URL for the mobile app to connect to.
-  - Use `http://localhost:8787` for simulator/emulator development
-  - Use `https://commit-api-preview.leo-c50.workers.dev/` for Expo Go on physical devices
-- `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (dev-only, optional): If defined, onboarding is reset on each reload in development. Outside development, this is always ignored (feature is disabled).
-- `EXPO_PUBLIC_DEV_DEFAULT_PAGE` (dev-only, optional): If defined, the app will redirect to this route on launch during development. Examples: `/signup`, `/onboarding/1`, `/(tabs)/home`.
-- `EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER` (dev-only, optional): If defined, the app will auto-authenticate with a seeded test user on launch during development. Set to an email to choose the role:
-  - `user@commit.local` (regular user)
-  - `reviewer@commit.local` (reviewer role)
+- `EXPO_PUBLIC_API_URL` (required): Mobile app API endpoint
+- `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY` (required): `Stripe` key
+- `EXPO_PUBLIC_DEV_RESET_ONBOARDING_ON_RELOAD` (optional, dev-only)
+- `EXPO_PUBLIC_DEV_DEFAULT_PAGE` (optional, dev-only)
+- `EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER` (optional, dev-only)
+  - `user@commit.local` → regular user
+  - `reviewer@commit.local` → reviewer role
 
-## Scripts
+### Development with Expo Go
 
-Common scripts available in this package:
+Depending on your setup, use one of the following options:
 
-```bash
-# Start the dev server (choose device in the UI)
-pnpm start
+**Option 1: Same Network (Local API)**
 
-# Start directly on a platform
-pnpm android
-pnpm ios
-pnpm web
+If your computer and mobile device are on the same network:
 
-# Lint and format
-pnpm lint
-pnpm format
+1. Start the API locally:
 
-# Run tests
-pnpm test
-```
+   ```sh
+   cd apps/api
+   pnpm dev --ip <your_computer_ip>
+   ```
 
-## Lint & tests
+2. Update your `.env.local` to use your computer's IP:
 
-Run locally inside `apps/mobile/`:
+   ```sh
+   EXPO_PUBLIC_API_URL=http://<your_computer_ip>:8787
+   ```
 
-```bash
-pnpm lint
-pnpm test
-```
+3. Start the mobile app:
+   ```sh
+   cd apps/mobile
+   pnpm start
+   ```
+
+> [!TIP]
+> Avoids tunnels and gives faster development cycles.
+
+**Option 2: Personal Preview API**
+
+If your device cannot reach your local machine, use the deployed preview API:
+
+1. Get your preview URL from `Cloudflare` dashboard (custom link)
+2. Start the API in preview environment:
+
+   ```sh
+   cd apps/api
+   pnpm deploy:preview
+   ```
+
+3. Update your `.env.local` to use the preview URL, for example:
+
+   ```sh
+   EXPO_PUBLIC_API_URL=https://commit-api-preview.leo-c50.workers.dev
+   ```
+
+4. Start the mobile app:
+   ```sh
+   cd apps/mobile
+   pnpm start --tunnel
+   ```
 
 > [!IMPORTANT]
-> Ensure a clean lint state and passing tests before opening a PR.
+> Never use `localhost` as the IP address on the API as there will not be a connection with your physical device.
 
-## Release (Android)
+## Production & Release
+
+Required GitHub Secrets:
+
+- `EXPO_TOKEN`: Required for `EAS` builds
+
+Setup:
+
+1. Repo → Settings → Secrets and variables → Actions
+2. Add the required secrets
+3. Push to `main`
+
+### EAS Build (Production APK)
+
+Building a production APK for Android uses `EAS` and the `eas.json` configuration.
+
+Setup:
+
+1. Open `apps/mobile/eas.json`
+2. Replace `EXPO_PUBLIC_API_URL` and `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY` with production values:
+   ```json
+   "env": {
+     "EXPO_PUBLIC_API_URL": "<your_production_api_url>",
+     "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "<your_production_stripe_publishable_key>"
+   }
+   ```
+3. `GitHub Actions` CI (`Build APK`) will use this configuration when pushed to `main`
+
+### Automated (GitHub Actions)
+
+Build APK CI:
+Pushing to `main` triggers the `Build Mobile` workflow for CI verification and artifact previews.
 
 Manual, version-aligned release flow:
 
 1. Bump version in `apps/mobile` (updates both `app.json` and `package.json`):
-   ```bash
+
+   ```sh
    # from apps/mobile/
    VERSION=x.y.z pnpm run release:bump
    ```
+
 2. Commit and merge the bump to `main`.
-3. In GitHub Actions, run the workflow "Release Mobile" (workflow_dispatch).
-   - It validates versions, creates tag `mobile-v{version}`, builds, and publishes a GitHub Release.
-4. Download artifact from the GitHub Release:
+
+3. In `GitHub Actions`, run the workflow "Release Mobile" (workflow_dispatch).
+   - It validates versions, creates tag `mobile-v{version}`, uses the APK from the last `Build APK` CI, and publishes a `GitHub` Release.
+
+4. Download artifact from the `GitHub` Release:
    - `commit-android-{version}.apk`
 
-Notes:
+> [!NOTE]
+>
+> - The release workflow leverages the APK artifact from the most recent `Build Mobile` CI run.
+> - The release job is `release-android` in `.github/workflows/release-mobile.yml`.
 
-- Regular `Build Mobile` workflow runs on `main` commits for CI verification and artifact previews.
-- The release job is `release-android` in `.github/workflows/release-mobile.yml`.
+## Scripts
 
-## Project structure
+You can run these commands from `apps/mobile`:
 
-    apps/mobile/
-    ├─ app/               # expo-router routes (tabs, modals, 404)
-    │  ├─ (tabs)/
-    │  ├─ _layout.tsx
-    │  ├─ +html.tsx
-    │  ├─ +not-found.tsx
-    │  └─ modal.tsx
-    ├─ components/
-    ├─ assets/
-    ├─ constants/
-    ├─ types/
-    ├─ app.json
-    ├─ tsconfig.json
-    └─ eslint.config.cjs
+```sh
+# Development
+pnpm start                 # Launch `Expo` dev server
+pnpm android               # Run on Android device/emulator
+pnpm ios                   # Run on iOS device/simulator
+pnpm web                   # Run in web browser
 
-## MVP features
+# Quality
+pnpm lint                  # runs `Prettier` check + `ESLint`
+pnpm format                # runs `Prettier` with workspace ignore path
 
-- Sign-in: Google & Apple
-- Solo and group goals; uniform stake in groups
-- Verification: GPS / time / duration / photo
-- Money flow: authorize stake; capture on failure; distribute to winners or fallback
-- Reviewer screen: approve/reject photo evidence
+# Tests
+pnpm test                  # Run test suite
 
-Full specification: see [software-requirements-specification.md](../../docs/software-requirements-specification.md).
+# Release
+pnpm release:bump          # Bump version in app.json & package.json
+```
+
+> [!TIP]
+> To see all commands including less common, run:
+>
+> ```sh
+> pnpm run
+> ```
+
+## Project Structure
+
+```
+apps/mobile/
+├─ app/                    # expo-router routes
+│  ├─ (tabs)/              # Tab navigation (home, goals, groups, reviews, profile)
+│  ├─ checkin/             # Check-in flow
+│  ├─ onboarding/          # Onboarding screens
+│  ├─ _layout.tsx
+│  ├─ +html.tsx
+│  ├─ +not-found.tsx
+│  └─ signup.tsx
+├─ components/             # Reusable UI components
+│  ├─ auth/
+│  ├─ goals/
+│  ├─ groups/
+│  ├─ layouts/
+│  ├─ navigation/
+│  ├─ pages/
+│  ├─ providers/
+│  └─ ui/
+├─ lib/                    # Utilities & config
+│  ├─ hooks/
+│  ├─ api.ts
+│  ├─ auth-client.ts
+│  └─ utils.ts
+├─ assets/
+├─ constants/
+├─ types/
+├─ __tests__/
+├─ config.ts
+├─ app.json
+├─ tsconfig.json
+└─ eslint.config.cjs
+```
+
+## MVP Features
+
+Authentication & Payment:
+
+- Server: `Better Auth` handlers in `apps/api` mounted under `/api/auth/*`
+- Client: initialized in `apps/mobile/lib/auth-client.ts` with `expo-secure-store` and `Stripe` integration
+- Providers: `Google` & `Apple` authentication
+- Payment: `Stripe` for handling payment methods and transaction processing
+
+Features:
+
+- Goal management: Solo & group goals with uniform stakes
+- Verification system: Time, photo evidence and movement detection
+- Review system: Reviewer interface for approving/rejecting photo evidence
+- Group functionality: Create/join groups with a shared goal
+
+> Full spec: [software-requirements-specification.md](../../docs/software-requirements-specification.md)

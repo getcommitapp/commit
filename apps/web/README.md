@@ -1,99 +1,137 @@
 # commit. — Web
 
-Single-page marketing/landing site. Built with `Astro` and deployed to `Cloudflare Workers`.
-
 <details>
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#overview">Overview</a></li>
     <li><a href="#prerequisites">Prerequisites</a></li>
     <li><a href="#getting-started">Getting started</a></li>
+    <li><a href="#deployment">Deployment</a></li>
     <li><a href="#scripts">Scripts</a></li>
-    <li><a href="#lint--tests">Lint & tests</a></li>
     <li><a href="#project-structure">Project structure</a></li>
   </ol>
 </details>
 
 ## Overview
 
-Astro 5 is targeting the Cloudflare Workers runtime via `@astrojs/cloudflare`. Ideal for a fast, static-first landing page with edge deployment.
-
-> "Fast by default." Keep pages lean; ship only what the landing needs.
+The `commit.` web app is a static marketing website built with **Astro 5** and **Tailwind CSS**.
+It showcases the `commit.` goal-tracking app with sections for hero, problem, solution, features, team, FAQ, and call-to-action.
 
 ## Prerequisites
 
-- `Node.js 22+` and `pnpm`
-- `Cloudflare account` and `wrangler CLI` (installed via DevDeps)
+- `Node.js 22+`
+- `pnpm` (workspace root manages dependencies)
 
-> [!TIP]
-> Prefer installing dependencies from the workspace root to share the lockfile.
+## Getting Started
 
-## Getting started
+Install dependencies from the workspace root if you haven't already:
 
-From the workspace root:
-
-```bash
-pnpm install
+```sh
+pnpm -w install
 ```
 
-Then start the web app:
+Start the web app locally:
 
-```bash
+```sh
 cd apps/web
 pnpm dev
 ```
 
+The app will be available at <http://localhost:4321/>.
+
 > [!NOTE]
-> For a production-like preview, use `pnpm preview` which builds and runs `wrangler dev` locally.
+>
+> - `pnpm dev`: Astro dev server with hot reload
+> - `pnpm preview`: production-like build served with `wrangler dev` (no hot reload)
+>
+> See [Scripts](#scripts) for all commands
+
+## Deployment
+
+Requirements:
+
+- `Cloudflare account`
+
+### Manual
+
+Requirements:
+
+- Runnig `pnpm wrangler login` once to authenticate your `Cloudflare` account
+
+Deploy:
+
+```sh
+pnpm deploy
+```
+
+### Automated (GitHub Actions)
+
+Pushing to `main` triggers automatic deployment via GitHub Actions.
+
+Required GitHub Secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+Setup:
+
+1. Repo → **Settings → Secrets and variables → Actions**
+2. Add the above secrets
+3. Push to `main`
+
+See [Cloudflare Workers docs](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) for details.
 
 ## Scripts
 
-Available scripts in this package:
+You can run these commands from `apps/web`:
 
-```bash
-# Local development
-pnpm dev
+```sh
+# Local development (Astro dev server + HMR)
+pnpm dev          # runs `astro dev`
 
-# Build for production
-pnpm build
+# Build static assets for production
+pnpm build        # runs `astro build`
 
 # Production-like preview (build + wrangler dev)
-pnpm preview
+pnpm preview      # runs `astro build && wrangler dev`
 
-# Deploy to Cloudflare Workers (build + wrangler deploy)
-pnpm deploy
+# Deploy to Cloudflare Workers
+pnpm deploy       # runs `astro build && wrangler deploy`
 
-# Utilities
-pnpm lint
-pnpm format
-pnpm cf-typegen
+# Code formatting
+pnpm format       # runs Prettier with workspace ignore path
+
+# Linting
+pnpm lint         # runs Prettier check + ESLint
 ```
 
-## Lint & tests
+> [!TIP]
+> To see all commands including less common, run:
+>
+> ```sh
+> pnpm run
+> ```
 
-This package uses `ESLint` and `Prettier`:
+## Project Structure
 
-```bash
-pnpm lint
-pnpm format
 ```
-
-## Project structure
-
-    apps/web/
-    ├─ public/
-    ├─ src/
-    │  └─ pages/
-    │     └─ index.astro        # landing page
-    ├─ astro.config.mjs
-    ├─ wrangler.jsonc
-    ├─ worker-configuration.d.ts
-    ├─ eslint.config.mjs
-    ├─ tsconfig.json
-    └─ package.json
-
-## Contributing
-
-If you clone this repository, you'll need to update environment variables in the web deployment pipeline for your own Cloudflare Workers setup.
-
-Refer to the [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) for GitHub Actions integration details.
+apps/web/
+├─ public/                 # Static assets (images, icons, etc.)
+├─ src/
+│  ├─ assets/              # Optimized images/resources
+│  ├─ components/          # Reusable Astro components
+│  │  ├─ sections/         # Page sections (Hero, Problem, etc.)
+│  │  ├─ ui/               # UI components (Button, etc.)
+│  │  ├─ Header.astro
+│  │  └─ Footer.astro
+│  ├─ layouts/             # Base layouts (SEO, metadata)
+│  ├─ pages/               # Route pages (index.astro, etc.)
+│  ├─ styles/              # Global CSS + Tailwind
+│  └─ env.d.ts
+├─ astro.config.mjs        # Astro config
+├─ tailwind.config.js      # Tailwind CSS config
+├─ wrangler.jsonc          # Cloudflare Workers config
+├─ eslint.config.mjs       # ESLint config
+├─ tsconfig.json           # TypeScript config
+└─ package.json
+```

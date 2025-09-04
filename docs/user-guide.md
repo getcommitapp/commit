@@ -4,7 +4,7 @@
 
 1. **Open app**
 2. **Authenticate with Google / Apple**
-3. **Press "next" on the 4 onboarding screens**
+3. **Press `next` on the 4 onboarding screens**
 
 Now you are in the home screen.
 
@@ -12,14 +12,14 @@ Now you are in the home screen.
 
 ## Register Payment Method
 
-4. **Press on the "Profile" tab**
+4. **Press on the `Profile` tab**
 5. **Under "Payment", press on "Method"** and enter the card number `4242 4242 4242 4242`, a valid expiration date and a random CVC.
 
 <img src="screenshots/shared image (4).jpg" width="300">
 
 ## Creating a Goal
 
-6. **Press on "New Goal"**
+6. **Press on `New Goal`**
 7. **Choose a goal template or a custom goal**
 
 ### Goal Templates
@@ -41,32 +41,32 @@ There are two pre-configured goal templates available:
 
 <img src="screenshots/shared image (7).jpg" width="300">
 
-9. **Fill in the goal details** (some are optional) and press "Create Goal"
+9. **Fill in the goal details** (some are optional) and press `Create Goal`
 
 <img src="screenshots/shared image (16).jpg" width="300">
 
 ## Creating a Group
 
-10. **Press on "New Group"**
-11. **Enter the group name and description** and press "Next"
-12. **Create the goal** like shown previously and press "Create Group"
+10. **Press on `New Group`**
+11. **Enter the group name and description** and press `Next`
+12. **Create the goal** like shown previously and press `Create Group`
 
 <img src="screenshots/shared image (8).jpg" width="300">
 
 ## Joining a Group
 
-13. **Press on "Join Group" in the homepage, or "Join" in the Groups page**
-14. **Enter the group code** and press "Join"
+13. **Press on `Join Group` in the homepage, or `Join` in the Groups page**
+14. **Enter the group code** and press `Join`
 
 <img src="screenshots/shared image (20).jpg" width="300">
 
 ## View Goals & Groups
 
-15. **Press on the "Goals" tab**
+15. **Press on the `Goals` tab**
 
 <img src="screenshots/shared image (11).jpg" width="300">
 
-16. **Press on the "Groups" tab**
+16. **Press on the `Groups` tab**
 
 <img src="screenshots/shared image (12).jpg" width="300">
 
@@ -78,7 +78,7 @@ There are two pre-configured goal templates available:
 
 18. **On the Home or Goals page**, press on the goal to verify it. You can only verify it if it is in its verification window.
 
-**Goal Status**: Your goals will show their current status such as "Scheduled", "Window open", "Ongoing", "Awaiting verification", "Passed", "Failed", or "Missed".
+**Goal Status**: Your goals will show their current status such as `Scheduled`, `Window open`, `Ongoing`, `Awaiting verification`, `Passed`, `Failed`, or `Missed`.
 
 ### Verification Methods Explained
 
@@ -86,21 +86,21 @@ The verification process depends on your goal's method:
 
 #### Check-In Verification
 
-- **When no end time is set**: A popup modal appears during your grace period (default 60 seconds after due time). Simply tap "Check-in" to confirm completion.
-- **When an end time is set**: A "Check-in" button is available throughout your verification window. Tap it anytime within the window to verify.
+- **When no end time is set**: A popup modal appears during your grace period (default 60 seconds after due time). Simply tap `Check-in` to confirm completion.
+- **When an end time is set**: A `Check-in` button is available throughout your verification window. Tap it anytime within the window to verify.
 
 #### Photo Verification
 
-- **When no end time is set**: A "Submit Photo" button appears during your grace period for quick photo upload.
-- **When an end time is set**: A "Submit Photo" button is available throughout your verification window. Photos are reviewed by trained staff for approval.
+- **When no end time is set**: A `Submit Photo` button appears during your grace period for quick photo upload.
+- **When an end time is set**: A `Submit Photo` button is available throughout your verification window. Photos are reviewed by trained staff for approval.
 
 #### Movement Verification
 
 This method works differently depending on whether your goal has an end time:
 
 - **When no end time is set**: The app automatically monitors motion sensors during your goal's duration period (e.g., for a "No-Phone Goal"). No buttons are shown - monitoring begins automatically when your goal becomes active.
-- **When an end time is set**: A "Start timer" button appears, allowing you to manually begin the monitoring period within your verification window.
-- While a movement timer is active, the goal will display a countdown timer showing the remaining time (e.g., "Timer: 2:35").
+- **When an end time is set**: A `Start timer` button appears, allowing you to manually begin the monitoring period within your verification window.
+- While a movement timer is active, the goal will display a countdown timer showing the remaining time (e.g., `Timer: 2:35`).
 - The app detects motion violations and automatically fails your goal if inappropriate movement is detected during the monitoring period.
 
 ## Deleting a Goal

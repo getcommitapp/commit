@@ -5,7 +5,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/HEIG_VD-Engineering school-informational?style=for-the-badge&logo=bookstack&logoColor=white&color=darkred">
   <img src="https://img.shields.io/badge/PDG-2025-informational?style=for-the-badge&logo=moodle&logoColor=white&color=blue">
-  <img src="https://img.shields.io/badge/Status-In developpment-informational?style=for-the-badge&logo=rocket&logoColor=white&color=purple">
+  <img src="https://img.shields.io/badge/Status-BETA-informational?style=for-the-badge&logo=rocket&logoColor=white&color=purple">
 </div>
 
 <p align="center"><em>Goal-tracking app with financial stakes and private group challenges.</em></p>
@@ -18,29 +18,34 @@
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#quick-links">Quick links</a></li>
     <li><a href="#monorepo-layout">Monorepo layout</a></li>
-    <li><a href="#tech-stack">Tech stack</a></li>
-    <li>
-        <a href="#getting-started">Getting Started</a>
+    <li><a href="#tech-stack">Tech stack</a>
+      <ul>
+        <li><a href="#mobile-app">Mobile App</a></li>
+        <li><a href="#backend--services">Backend & Services</a></li>
+        <li><a href="#web">Web</a></li>
+        <li><a href="#development-tools">Development Tools</a></li>
+      </ul>
+    </li>
+    <li><a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#how-to-download-the-mobile-app">How to download the mobile app</a></li>
-        <li>
-            <a href="#for-developers">For Developers</a>
+        <li><a href="#for-developers">For Developers</a>
           <ul>
             <li><a href="#prerequisites">Prerequisites</a></li>
-            <li><a href="#running-on-local-machine">Running on local machine</a></li>
+            <li><a href="#setup">Setup</a></li>
           </ul>
         </li>
       </ul>
     </li>
     <li><a href="#cicd-pipeline">CI/CD Pipeline</a></li>
-    <li>
-        <a href="#documentation">Documentation</a>
+    <li><a href="#documentation">Documentation</a>
       <ul>
         <li><a href="#software-requirements-specification">Software requirements specification</a></li>
         <li><a href="#system-architecture">System Architecture</a></li>
       </ul>
     </li>
     <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
     <li><a href="#team">Team</a></li>
   </ol>
 </details>
@@ -57,16 +62,20 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 - API Backend: [apps/api/README.md](./apps/api/README.md)
 - Mobile Application: [apps/mobile/README.md](./apps/mobile/README.md)
 - Web Landing Page: [apps/web/README.md](./apps/web/README.md)
+- Application User Guide: [docs/user-guide.md](./docs/user-guide.md)
 
 ## Monorepo layout
 
 ```text
     .
     ├─ apps/
-    │  ├─ api/      # Hono + Cloudflare Workers (Backend API)
-    │  ├─ mobile/   # Expo + React Native (iOS/Android)
-    │  └─ web/      # Astro landing (Cloudflare Workers)
-    ├─ docs/        # SRS, architecture, flow, assets
+    │  ├─ api/      # Backend
+    │  ├─ mobile/   # Frontend mobile
+    │  └─ web/      # Frontend web
+    ├─ docs/        # SRS, architecture, flow, schemas
+    ├─ packages/    # Shared libraries and utilities
+    │  ├─ engine/   # Core business logic engine
+    │  └─ types/    # Shared TypeScript types
     └─ package.json
 ```
 
@@ -93,14 +102,20 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 ### Backend & Services
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Backend-informational?style=for-the-badge&color=gray">
+  <img src="https://img.shields.io/badge/Backend-informational?style=for-the-badge&color=gray"> 
   <img src="https://img.shields.io/badge/Hono-informational?style=for-the-badge&logo=hono&logoColor=black&color=A1FFEB">
-  <img src="https://img.shields.io/badge/Cloudflare Workers-informational?style=for-the-badge&logo=cloudflare&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Chanfana-informational?style=for-the-badge&color=A1FFEB">
+</div>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Testing-informational?style=for-the-badge&color=gray">
+  <img src="https://img.shields.io/badge/Vitest-informationa?style=for-the-badge&logo=vitest&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
   <img src="https://img.shields.io/badge/Database-informational?style=for-the-badge&color=gray">
   <img src="https://img.shields.io/badge/SQLite-informationa?style=for-the-badge&logo=sqlite&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Drizzle ORM-informationa?style=for-the-badge&logo=drizzle&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
@@ -109,8 +124,14 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Payments Methods-informational?style=for-the-badge&color=gray">
-  <img src="https://img.shields.io/badge/TWINT (CH)-informationa?style=for-the-badge&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Payment Methods-informational?style=for-the-badge&color=gray">
+    <img src="https://img.shields.io/badge/visa-informationa?style=for-the-badge&logo=visa&logoColor=black&color=A1FFEB">
+    <img src="https://img.shields.io/badge/Mastercard-informationa?style=for-the-badge&logo=mastercard&logoColor=black&color=A1FFEB">
+</div>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Hosting-informational?style=for-the-badge&color=gray">
+  <img src="https://img.shields.io/badge/Cloudflare-informationa?style=for-the-badge&logo=cloudflare&logoColor=black&color=A1FFEB">
 </div>
 
 > [!NOTE]  
@@ -120,14 +141,15 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 > - R2 (object storage for images)
 > - Workers (edge functions for business logic, authentication, and API endpoints)
 
-> [!WARNING]
-> Only `TWINT` is supported for payments.
+> [!NOTE]  
+> Only credit and debit cards are supported for payments via Stripe.
 
 ### Web
 
 <div align="center">
   <img src="https://img.shields.io/badge/Framework-informational?style=for-the-badge&color=gray">
   <img src="https://img.shields.io/badge/Astro-informational?style=for-the-badge&logo=astro&logoColor=black&color=A1FFEB">
+  <img src="https://img.shields.io/badge/Tailwind CSS-informational?style=for-the-badge&logo=tailwindcss&logoColor=black&color=A1FFEB">
 </div>
 
 <div align="center">
@@ -167,8 +189,8 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 2. Tap the latest release (the one at the top, marked `Latest`).
 3. Under Assets, download the `.apk` file for your `Android` device.
 
-> [!WARNING]
-> Deployment to `Apple (iOS)` is not yet supported.
+> [!WARNING]  
+> `Apple (iOS)` is not yet supported.
 
 ### For Developers
 
@@ -180,9 +202,10 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 | Node.js                     | 22+     | All        |
 | pnpm                        | 10+     | All        |
 | Cloudflare account          | -       | All        |
+| Expo account                | -       | Mobile App |
+| Stripe account              | -       | Mobile App |
 | Expo Go (install on mobile) | -       | Mobile App |
-| OAuth Google                | -       | Mobile App |
-| OAuth Apple                 | -       | Mobile App |
+| Google OAuth Client         | -       | Mobile App |
 
 > [!NOTE]
 > You can install `pnpm` through `npm`: `npm install -g pnpm@latest` or through your OS package manager.
@@ -190,34 +213,45 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 > [!TIP]
 > Prefer `pnpm` at the workspace root to install all dependencies at once.
 
-#### Running on local machine
+#### Setup
 
 ```bash
 # Install dependencies (run from project root)
 pnpm install
+
+# Build the `packages/engine` package
+pnpm build
 ```
 
-> [!TIP]
-> See app-specific guides after installing: [`apps/api/README.md`](./apps/api/README.md), [`apps/mobile/README.md`](./apps/mobile/README.md), and [`apps/web/README.md`](./apps/web/README.md).
+Next, see app-specific guides after installing:
+
+- [`apps/api/README.md`](./apps/api/README.md)
+- [`apps/mobile/README.md`](./apps/mobile/README.md)
+- [`apps/web/README.md`](./apps/web/README.md)
+- [`packages/engine/README.md`](./packages/engine/README.md)
 
 ## CI/CD Pipeline
 
 | Pipeline       | CI  | CD  | Description                                                                           |
 | -------------- | --- | --- | ------------------------------------------------------------------------------------- |
-| Lint and tests | Y   | N   | PRs must pass `ESLint` and `Jest` before review.                                      |
+| Lint and tests | Y   | N   | PRs must pass `ESLint` and `Jest`/`Vitest` before review.                             |
 | Build Mobile   | Y   | N   | Build the APK on main; artifact named `commit-android-{version}.apk`                  |
-| Compile Docs   | Y   | N   | Compile the `PDF` for the `Software Requirements Specification`                       |
-| Deploy web     | N   | Y   | Deploy the landing page to `CloudFlare`                                               |
+| Compile Docs   | Y   | N   | Compile the `PDF` for the `SRS` as well as the schemas from their `PlantUML` format   |
+| Deploy API     | N   | Y   | Deploy the backend API to `CloudFlare Workers`                                        |
+| Deploy web     | N   | Y   | Deploy the landing page to `CloudFlare Workers`                                       |
 | Release mobile | N   | Y   | Manual: validate versions, tag `mobile-v{version}`, attach last Build Mobile artifact |
 
 > [!NOTE]
-> To catch issues early (Lint and tests), use the following commands:
+> To catch issues early (Lint and tests), use the following commands locally:
 >
 > ```bash
+> # Format everything
+> pnpm format
+>
 > # Lint everything
 > pnpm lint
 >
-> # Run mobile tests
+> # Run tests
 > pnpm test
 > ```
 
@@ -258,7 +292,9 @@ Contributions are what make the open source community such an amazing place to l
 8. Commit your Changes, see [conventional naming](https://www.conventionalcommits.org/en/v1.0.0/) (`git commit -m "feat: add some AmazingFeature"`)
 9. Push the branch to your fork (`git push origin feature/AmazingFeature`)
 10. Open a Pull Request from your fork to the main repository
-11. Wait for a reviewer to assess your changes
+11. Ensure that all lint checks and tests pass.
+    - If they fail, make the necessary changes and push additional commits until the checks pass.
+12. Wait for a reviewer to assess your changes
 
 ## License
 
