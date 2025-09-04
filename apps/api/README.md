@@ -73,6 +73,11 @@ cp .dev.vars.example .dev.vars
 
 Required variables in `.dev.vars`:
 
+> [!TIP]
+> You can leave the values at default if you do not plan to test authentication or payments locally. If you do, be sure to uncomment this line in apps/mobile/.env.local :
+>
+> \# EXPO_PUBLIC_DEV_DEFAULT_PAGE=/(tabs)/home
+
 ```sh
 AUTH_GOOGLE_CLIENT_ID=your_google_client_id
 AUTH_GOOGLE_CLIENT_SECRET=your_google_client_secret
