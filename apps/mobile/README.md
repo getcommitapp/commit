@@ -30,6 +30,11 @@ Key highlights:
 - Reviewer interface for goal verification
 - Supports both solo and group goals
 
+## Quick Links
+
+- **User Guide**: [docs/user-guide.md](../../docs/user-guide.md) - Complete guide for using the mobile app
+- **API Backend**: [apps/api/README.md](../../apps/api/README.md)
+
 ## Prerequisites
 
 - `Node.js 22+`
@@ -54,6 +59,9 @@ pnpm start
 
 > [!TIP]
 > Use `--clear` to reset the cache and reload the app if needed. See [Scripts](#scripts) for all commands.
+
+> [!TIP]
+> Need help using the app? Check out our [User Guide](../../docs/user-guide.md) for detailed instructions on all features and workflows.
 
 ## Development Setup
 

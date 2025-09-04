@@ -62,6 +62,7 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 - API Backend: [apps/api/README.md](./apps/api/README.md)
 - Mobile Application: [apps/mobile/README.md](./apps/mobile/README.md)
 - Web Landing Page: [apps/web/README.md](./apps/web/README.md)
+- Application User Guide: [docs/user-guide.md](./docs/user-guide.md)
 
 ## Monorepo layout
 
