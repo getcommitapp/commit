@@ -21,11 +21,28 @@ Now you are in the home screen.
 
 6. **Press on "New Goal"**
 7. **Choose a goal template or a custom goal**
-8. **If you chose a custom goal**, select the validation method you want to use
-9. **Fill in the goal details** (some are optional) and press "Create Goal"
+
+### Goal Templates
+
+There are two pre-configured goal templates available:
+
+- **Wake Up Goal**: Uses check-in verification to prove you wake up at a specific time. You'll tap a button to confirm you're awake during your verification window.
+- **No-Phone Goal**: Uses movement verification to ensure you don't use your phone for a set duration. The app monitors motion sensors to detect if you're inappropriately moving the device when you should be avoiding it.
 
 <img src="screenshots/shared image (1).jpg" width="300">
+
+### Custom Goal Verification Methods
+
+8. **If you chose a custom goal**, select one of these three verification methods:
+
+- **Photo Validation**: Take a selfie or scene photo as proof at the due time. Photos are reviewed by trained reviewers for validation.
+- **Check-In**: Confirm completion by tapping a button at the right time. Simple time-based verification.
+- **Phone Movement**: Use motion sensors to verify activity (e.g., walk or run). The phone detects movement patterns to confirm you're being active during the specified period.
+
 <img src="screenshots/shared image (7).jpg" width="300">
+
+9. **Fill in the goal details** (some are optional) and press "Create Goal"
+
 <img src="screenshots/shared image (16).jpg" width="300">
 
 ## Creating a Group
@@ -60,6 +77,31 @@ Now you are in the home screen.
 ## Verifying a Goal
 
 18. **On the Home or Goals page**, press on the goal to verify it. You can only verify it if it is in its verification window.
+
+**Goal Status**: Your goals will show their current status such as "Scheduled", "Window open", "Ongoing", "Awaiting verification", "Passed", "Failed", or "Missed".
+
+### Verification Methods Explained
+
+The verification process depends on your goal's method:
+
+#### Check-In Verification
+
+- **When no end time is set**: A popup modal appears during your grace period (default 60 seconds after due time). Simply tap "Check-in" to confirm completion.
+- **When an end time is set**: A "Check-in" button is available throughout your verification window. Tap it anytime within the window to verify.
+
+#### Photo Verification
+
+- **When no end time is set**: A "Submit Photo" button appears during your grace period for quick photo upload.
+- **When an end time is set**: A "Submit Photo" button is available throughout your verification window. Photos are reviewed by trained staff for approval.
+
+#### Movement Verification
+
+This method works differently depending on whether your goal has an end time:
+
+- **When no end time is set**: The app automatically monitors motion sensors during your goal's duration period (e.g., for a "No-Phone Goal"). No buttons are shown - monitoring begins automatically when your goal becomes active.
+- **When an end time is set**: A "Start timer" button appears, allowing you to manually begin the monitoring period within your verification window.
+- While a movement timer is active, the goal will display a countdown timer showing the remaining time (e.g., "Timer: 2:35").
+- The app detects motion violations and automatically fails your goal if inappropriate movement is detected during the monitoring period.
 
 ## Deleting a Goal
 
