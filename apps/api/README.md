@@ -73,6 +73,15 @@ cp .dev.vars.example .dev.vars
 
 Required variables in `.dev.vars`:
 
+> [!TIP]
+> You can leave the values at default if you do not plan to test authentication
+> or payments locally. If you do so, update following variables in `apps/mobile/.env.local` to:
+>
+> `EXPO_PUBLIC_DEV_DEFAULT_PAGE=/(tabs)/home`
+> `EXPO_PUBLIC_DEV_AUTO_AUTH_AS_TEST_USER=user@commit.local`
+>
+> This only works when the API is running locally or in the preview environment.
+
 ```sh
 AUTH_GOOGLE_CLIENT_ID=your_google_client_id
 AUTH_GOOGLE_CLIENT_SECRET=your_google_client_secret

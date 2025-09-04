@@ -216,6 +216,12 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 #### Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/getcommitapp/commit.git
+
+# Get into the root directory
+cd commit
+
 # Install dependencies (run from project root)
 pnpm install
 
