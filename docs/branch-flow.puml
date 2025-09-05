@@ -46,7 +46,7 @@ alt Web changes included
   GHA ->> "Cloudflare": Deploy via Wrangler
 end
 
-alt Web changes included
+alt API changes included
   Main ->> GHA: Trigger "Deploy API" (push on main, apps/api/**)
   GHA ->> "Cloudflare": Deploy via Wrangler
 end
