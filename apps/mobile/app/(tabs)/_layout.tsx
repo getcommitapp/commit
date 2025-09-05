@@ -25,7 +25,10 @@ export default function TabLayout() {
         sceneStyle: {
           backgroundColor: Colors[colorScheme ?? "light"].background,
         },
-        tabBarItemStyle: { paddingVertical: spacing.xs },
+        tabBarItemStyle: {
+          paddingVertical: spacing.xs,
+          marginTop: -spacing.xs,
+        },
         headerShown: false,
       }}
     >
