@@ -13,7 +13,7 @@ Now you are in the home screen.
 ## Register Payment Method
 
 4. **Press on the `Profile` tab**
-5. **Under "Payment", press on "Method"** and enter the card number `4242 4242 4242 4242`, a valid expiration date and a random CVC.
+5. **Under `Payment`, press on `Method`** and enter the card number `4242 4242 4242 4242`, a valid expiration date and a random CVC.
 
 <img src="screenshots/shared image (4).jpg" width="300">
 
@@ -98,17 +98,17 @@ The verification process depends on your goal's method:
 
 This method works differently depending on whether your goal has an end time:
 
-- **When no end time is set**: The app automatically monitors motion sensors during your goal's duration period (e.g., for a "No-Phone Goal"). No buttons are shown - monitoring begins automatically when your goal becomes active.
+- **When no end time is set**: The app automatically monitors motion sensors during your goal's duration period (e.g., for a `No-Phone Goal`). No buttons are shown - monitoring begins automatically when your goal becomes active.
 - **When an end time is set**: A `Start timer` button appears, allowing you to manually begin the monitoring period within your verification window.
 - While a movement timer is active, the goal will display a countdown timer showing the remaining time (e.g., `Timer: 2:35`).
 - The app detects motion violations and automatically fails your goal if inappropriate movement is detected during the monitoring period.
 
 ## Deleting a Goal
 
-19. **On the Goals page**, press on the goal to delete it. You can only delete it if it is in a finished state: **Failed**, **Missed**, or **Completed**. You cannot delete a goal linked to a group.
+19. **On the Goals page**, press on the goal to delete it. You can only delete it if it is in a finished state: **Failed**, **Missed**, or **Passed**. You cannot delete a goal linked to a group.
 
 ## Deleting a Group
 
-20. **On the Groups page**, press on the group to delete it. You can only delete it if the goal linked to it is in a finished state: **Failed**, **Missed**, or **Completed**.
+20. **On the Groups page**, press on the group to delete it. You can only delete it if the goal linked to it is in a finished state: **Failed**, **Missed**, or **Passed**.
 
 <img src="screenshots/shared image (15).jpg" width="300">
