@@ -51,6 +51,18 @@ alt Web changes (apps/web/**)
   CF -->> Dev: Website updated
 end
 
+alt API changes (apps/api/**)
+  Main ->> GHA: Trigger "Deploy API" (on: push to main)
+  note over GHA
+    - Install API deps
+    - Lint and test API
+    - Deploy via Wrangler
+    - Apply DB migrations
+  end note
+  GHA ->> CF: Deploy API + DB (Cloudflare Workers/D1)
+  CF -->> Dev: API + DB updated on Cloudflare dashboard
+end
+
 == Docs Workflow ==
 alt Docs changes in PR (docs/**)
   PR ->> GHA: Trigger "Compile Docs" (on: pull_request)
