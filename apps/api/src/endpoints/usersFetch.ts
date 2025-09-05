@@ -18,6 +18,7 @@ export class UsersFetch extends OpenAPIRoute {
           },
         },
       },
+      "404": { description: "User not found" },
     },
   };
 

@@ -13,6 +13,17 @@ export class GoalsActionPhoto extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Submit photo for today's occurrence (pending review)",
+    parameters: [
+      {
+        name: "id",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "Goal ID",
+      },
+    ],
     request: { body: contentJson(GoalPhotoRequestSchema) },
     responses: {
       "200": {

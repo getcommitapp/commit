@@ -5,9 +5,20 @@ export class FilesServe extends OpenAPIRoute {
   schema = {
     tags: ["Files"],
     summary: "Serve a file stored in R2",
-    request: {},
+    parameters: [
+      {
+        name: "key",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "File key",
+      },
+    ],
     responses: {
       "200": { description: "The file contents" },
+      "403": { description: "Forbidden - reviewer access required" },
       "404": { description: "Not found" },
     },
   };

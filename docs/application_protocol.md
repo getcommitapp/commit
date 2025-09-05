@@ -2,7 +2,7 @@
 
 ## Section 1 - Overview
 
-The Commit mobile app API allows clients (mobile apps) to manage accounts, goals, and groups. It is a RESTful API, where resources (users, goals, groups) are accessed via URLs, and actions are performed using HTTP methods (GET, POST, PUT, DELETE).
+The Commit mobile app API allows clients (mobile apps) to manage accounts, goals, and groups. It is a RESTful API, where resources (users, goals, groups...) are accessed via URLs, and actions are performed using HTTP methods (GET, POST, PUT, DELETE).
 
 Clients must authenticate using a Bearer token (except `/api/auth/*`) for all requests. Responses are JSON-formatted, and standard HTTP status codes are used to indicate success or failure.
 
@@ -23,10 +23,13 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
 > - `201 Created` - resource created
 > - `400 Bad Request` - invalid request
 > - `401 Unauthorized` - authentication failed
+> - `403 Forbidden` - access denied
 > - `404 Not Found` - resource does not exist
+> - `409 Conflict` - resource conflict (e.g., already exists, cannot delete due to state)
+> - `422 Unprocessable Entity` - validation error
 > - `500 Internal Server Error` - server error
 
-## Endpoint Index (summary)
+## Section 3 - Endpoints summary
 
 - Auth (Better-Auth/Hono)
   - /api/auth/\*
@@ -44,7 +47,7 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
   - POST /api/goals/:id/checkin
   - POST /api/goals/:id/photo
   - POST /api/goals/:id/movement/start
-  - POST /api/goals/:id/movement/stop
+  - POST /api/goals/:id/movement/violate
   - GET /api/goals/review (reviewer)
   - PUT /api/goals/review (reviewer)
 
@@ -55,7 +58,7 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
   - DELETE /api/groups/:id
   - POST /api/groups/:id/leave
   - GET /api/groups/:id/invite (owner)
-  - GET /api/groups/:id/invite/verify?code=...
+  - GET /api/groups/:id/invite/verify
   - POST /api/groups/join
 
 - Payments
@@ -66,7 +69,7 @@ The API uses HTTPS as the transport protocol to ensure reliability and security.
   - POST /api/files/upload
   - GET /api/files/:key
 
-## Section 3 - Messages / Requests
+## Section 4 - Messages / Requests
 
 > [!NOTE]
 > Auth endpoints are provided by Better-Auth/Hono at `/api/auth/*`.
@@ -219,7 +222,7 @@ Response:
     "id": "<goal_id>",
     "name": "...",
     "groupId": "<group_id|null>",
-    "state": "<idle|due|completed|late>",
+    "state": "<scheduled|ongoing|window_open|awaiting_verification|passed|missed|failed|expired|>",
     "occurrence": { ... } | null,
     "actions": ["checkin"|"photo"|"movement:start"|"movement:stop", ...],
     "nextTransitionAt": "<iso|null>"
@@ -244,7 +247,7 @@ Response:
 {
   "id": "<goal_id>",
   "name": "...",
-  "state": "<idle|due|completed|late>",
+  "state": "<scheduled|ongoing|window_open|awaiting_verification|passed|missed|failed|expired|>",
   "occurrence": { ... } | null,
   "actions": [ ... ],
   "nextTransitionAt": "<iso|null>"
@@ -274,7 +277,7 @@ Response:
 
 #### Goal Actions
 
-- Check-in (auto-approve)
+##### Check-in (auto-approve)
 
 Request:
 
@@ -288,9 +291,20 @@ Content-Type: application/json
 }
 ```
 
-Response: state summary (state, occurrence, actions, nextTransitionAt).
+Response:
 
-- Submit Photo (pending review)
+```txt
+{
+  "state": "<scheduled|ongoing|window_open|awaiting_verification|passed|missed|failed|expired|>",
+  "occurrence": { ... } | null,
+  "actions": [ ... ],
+  "nextTransitionAt": "<iso|null>"
+}
+```
+
+---
+
+##### Submit Photo (pending review)
 
 Request:
 
@@ -305,12 +319,51 @@ Content-Type: application/json
 }
 ```
 
-Response: state summary.
+Response:
 
-- Movement Start / Stop
+```txt
+{
+  "state": "<scheduled|ongoing|window_open|awaiting_verification|passed|missed|failed|expired|>",
+  "occurrence": { ... } | null,
+  "actions": [ ... ],
+  "nextTransitionAt": "<iso|null>"
+}
+```
+
+---
+
+##### Movement Start
+
+Request:
 
 ```txt
 POST /api/goals/<id>/movement/start
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "occurrenceDate": "<YYYY-MM-DD|null>"
+}
+```
+
+Response:
+
+```txt
+{
+  "state": "<scheduled|ongoing|window_open|awaiting_verification|passed|missed|failed|expired|>",
+  "occurrence": { ... } | null,
+  "actions": [ ... ],
+  "nextTransitionAt": "<iso|null>"
+}
+```
+
+---
+
+##### Movement Stop
+
+Request:
+
+```txt
 POST /api/goals/<id>/movement/stop
 Authorization: Bearer <token>
 Content-Type: application/json
@@ -320,22 +373,49 @@ Content-Type: application/json
 }
 ```
 
-Response: state summary.
+Response:
+
+```txt
+{
+  "state": "<scheduled|ongoing|window_open|awaiting_verification|passed|missed|failed|expired|>",
+  "occurrence": { ... } | null,
+  "actions": [ ... ],
+  "nextTransitionAt": "<iso|null>"
+}
+```
 
 ---
 
 #### Review (reviewer only)
 
-- List pending photo validations
+##### List Pending Photo Validations
+
+Request:
 
 ```txt
 GET /api/goals/review
 Authorization: Bearer <token>
 ```
 
-Returns logs to review with absolute photoUrl.
+Response:
 
-- Update validation decision
+```txt
+[
+  {
+    "goalId": "<uuid>",
+    "userId": "<uuid>",
+    "occurrenceDate": "<YYYY-MM-DD>",
+    "photoUrl": "<absolute_url>",
+    "createdAt": "<iso>"
+  }
+]
+```
+
+---
+
+##### Update Validation Decision
+
+Request:
 
 ```txt
 PUT /api/goals/review
@@ -350,6 +430,14 @@ Content-Type: application/json
 }
 ```
 
+Response:
+
+```txt
+{
+  "message": "Review updated successfully."
+}
+```
+
 ### Groups
 
 #### List Groups
@@ -361,7 +449,21 @@ GET /api/groups
 Authorization: Bearer <token>
 ```
 
-Response: list of groups the user owns or joined, including computed goal state.
+Response:
+
+```txt
+[
+  {
+    "id": "<group_id>",
+    "name": "<group_name>",
+    "description": "<string|null>",
+    "ownerId": "<user_id>",
+    "goalState": "<computed_goal_state>",
+    "createdAt": "<iso>",
+    "updatedAt": "<iso>"
+  }
+]
+```
 
 ---
 
@@ -374,7 +476,18 @@ GET /api/groups/<id>
 Authorization: Bearer <token>
 ```
 
-Response: base group fields.
+Response:
+
+```txt
+{
+  "id": "<group_id>",
+  "name": "<group_name>",
+  "description": "<string|null>",
+  "ownerId": "<user_id>",
+  "createdAt": "<iso>",
+  "updatedAt": "<iso>"
+}
+```
 
 ---
 
@@ -390,7 +503,27 @@ Content-Type: application/json
 {
   "name": "<group_name>",
   "description": "<string|null>",
-  "goal": { /* same shape as Create Goal */ }
+  "goal": {
+    "name": "<goal_name>",
+    "description": "<string|null>",
+    "startDate": "<iso>",
+    "endDate": "<iso|null>",
+    "dueStartTime": "<iso|null>",
+    "dueEndTime": "<iso|null>",
+    "localDueStart": "<HH:MM|null>",
+    "localDueEnd": "<HH:MM|null>",
+    "recDaysMask": "<number|null>",
+    "stakeCents": <number>,
+    "destinationType": "none|user|charity",
+    "destinationUserId": "<uuid|null>",
+    "destinationCharityId": "<uuid|null>",
+    "method": "checkin|photo|movement",
+    "graceTimeSeconds": <number|null>,
+    "durationSeconds": <number|null>,
+    "geoLat": <number|null>,
+    "geoLng": <number|null>,
+    "geoRadiusM": <number|null>
+  }
 }
 ```
 
@@ -456,10 +589,23 @@ POST /api/groups/join
 Authorization: Bearer <token>
 Content-Type: application/json
 
-{ "code": "<invite_code>" }
+{
+  "code": "<invite_code>"
+}
 ```
 
-Response: base group fields.
+Response:
+
+```txt
+{
+  "id": "<group_id>",
+  "name": "<group_name>",
+  "description": "<string|null>",
+  "ownerId": "<user_id>",
+  "createdAt": "<iso>",
+  "updatedAt": "<iso>"
+}
+```
 
 ---
 
@@ -499,7 +645,92 @@ Response:
 }
 ```
 
-## Section 4 - Examples
+### Payments
+
+#### Create Setup Intent
+
+Request:
+
+```txt
+POST /api/payments/setup-intent
+Authorization: Bearer <token>
+```
+
+Response:
+
+```txt
+{
+  "clientSecret": "seti_..._secret_..."
+}
+```
+
+---
+
+#### Get Payment Method
+
+Request:
+
+```txt
+GET /api/payments/method
+Authorization: Bearer <token>
+```
+
+Response:
+
+```txt
+{
+  "paymentMethod": {
+    "id": "<payment_method_id>",
+    "type": "card",
+    "card": {
+      "brand": "visa",
+      "last4": "4242"
+    }
+  }
+}
+```
+
+### Files
+
+#### Upload File
+
+Request:
+
+```txt
+POST /api/files/upload
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+
+file=<binary_data>
+```
+
+Response:
+
+```txt
+{
+  "url": "/api/files/users/.../file.jpg",
+  "key": "users/.../file.jpg"
+}
+```
+
+---
+
+#### Get File
+
+Request:
+
+```txt
+GET /api/files/<key>
+Authorization: Bearer <token>
+```
+
+Response:
+
+```txt
+<binary_file_data>
+```
+
+## Section 5 - Examples
 
 ### 1. Fetch User
 
@@ -570,11 +801,11 @@ Content-Type: application/json
 }
 ```
 
-Response (200 OK):
+Response:
 
 ```txt
 {
-  "state": "pending",
+  "state": "awaiting_verification",
   "occurrence": { ... },
   "actions": [ ... ]
 }
@@ -617,10 +848,23 @@ POST /api/groups/join
 Authorization: Bearer eyJhbGciOiJIUzI1...
 Content-Type: application/json
 
-{ "code": "ABC123" }
+{
+  "code": "ABC123"
+}
 ```
 
-Response (200 OK): base group fields.
+Response (200 OK):
+
+```txt
+{
+  "id": "group_456",
+  "name": "Morning Runners",
+  "description": "Accountability group for daily 5km runs.",
+  "ownerId": "user_67890",
+  "createdAt": "2025-09-01T10:00:00Z",
+  "updatedAt": "2025-09-01T10:00:00Z"
+}
+```
 
 ### 4. Leave a Group
 
@@ -641,7 +885,7 @@ Response (200 OK):
 
 ### 5. Payments and Files
 
-- Create setup intent
+Request:
 
 ```txt
 POST /api/payments/setup-intent
@@ -651,10 +895,12 @@ Authorization: Bearer <token>
 Response:
 
 ```txt
-{ "clientSecret": "seti_..._secret_..." }
+{
+  "clientSecret": "seti_..._secret_..."
+}
 ```
 
-- Upload a file
+Request:
 
 ```txt
 POST /api/files/upload
@@ -667,7 +913,10 @@ file=<binary>
 Response:
 
 ```txt
-{ "url": "/api/files/users/.../file.jpg", "key": "users/.../file.jpg" }
+{
+  "url": "/api/files/users/.../file.jpg",
+  "key": "users/.../file.jpg"
+}
 ```
 
 ### 6. Invalid Group Invite Code (example)
@@ -682,5 +931,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1...
 Response (200 OK):
 
 ```txt
-{ "valid": false }
+{
+  "valid": false
+}
 ```

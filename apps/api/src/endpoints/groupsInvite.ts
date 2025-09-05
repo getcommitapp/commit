@@ -9,6 +9,17 @@ export class GroupsInvite extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Create an invite link for a group",
+    parameters: [
+      {
+        name: "id",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "Group ID",
+      },
+    ],
     responses: {
       "200": {
         description: "Invite link created successfully",
@@ -18,6 +29,9 @@ export class GroupsInvite extends OpenAPIRoute {
           },
         },
       },
+      "400": { description: "Bad Request" },
+      "403": { description: "Forbidden" },
+      "404": { description: "Not Found" },
     },
   };
 

@@ -9,6 +9,17 @@ export class GroupsFetch extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Fetch a specific group by ID",
+    parameters: [
+      {
+        name: "id",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "Group ID",
+      },
+    ],
     responses: {
       "200": {
         description: "Returns the group",
@@ -18,6 +29,7 @@ export class GroupsFetch extends OpenAPIRoute {
           },
         },
       },
+      "400": { description: "Bad Request" },
       "404": { description: "Group not found" },
     },
   };

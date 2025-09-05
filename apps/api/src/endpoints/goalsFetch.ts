@@ -10,6 +10,17 @@ export class GoalsFetch extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Fetch a specific goal by ID",
+    parameters: [
+      {
+        name: "id",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "Goal ID",
+      },
+    ],
     responses: {
       "200": {
         description: "Returns the goal",
@@ -19,6 +30,7 @@ export class GoalsFetch extends OpenAPIRoute {
           },
         },
       },
+      "400": { description: "Bad Request" },
       "404": { description: "Goal not found" },
     },
   };
