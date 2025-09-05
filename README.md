@@ -312,7 +312,7 @@ Distributed under the MIT License. See `LICENSE` tab for more information.
 
 ## Team
 
-- [David Schildböck](https://github.com/shadowkudo)
+- [David Schildböck](https://github.com/nyxhawk)
 - [Leonard Cseres](https://github.com/leonardcser)
 - [Tristan Gerber](https://github.com/TriGerber)
 - [Aladin Iseni](https://github.com/aladin-heig)
