@@ -13,6 +13,7 @@ participant Rel as "Release Tag"
 Dev ->> Iss: Create issue #123 (mobile)
 Dev ->> Iss: Create issue #124 (web)
 Dev ->> Iss: Create issue #125 (docs)
+Dev ->> Iss: Create issue #126 (api)
 
 == Create Branches from Issues ==
 Iss ->> Repo: Create branch feature/123-mobile
@@ -21,6 +22,8 @@ Iss ->> Repo: Create branch feature/124-web
 Dev ->> Repo: Push commits (web)
 Iss ->> Repo: Create branch feature/125-docs
 Dev ->> Repo: Push commits (docs)
+Iss ->> Repo: Create branch feature/126-api
+Dev ->> Repo: Push commits (api)
 
 == PR Validation ==
 Repo ->> PR: Open PRs from feature branches
@@ -40,6 +43,11 @@ end
 
 alt Web changes included
   Main ->> GHA: Trigger "Deploy Web" (push on main, apps/web/**)
+  GHA ->> "Cloudflare": Deploy via Wrangler
+end
+
+alt Web changes included
+  Main ->> GHA: Trigger "Deploy API" (push on main, apps/api/**)
   GHA ->> "Cloudflare": Deploy via Wrangler
 end
 
