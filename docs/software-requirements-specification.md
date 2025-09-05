@@ -258,8 +258,7 @@ toc: true
 
 - **Team roles:** Roles (Product Owner, Scrum Master, Developers) are rotating
   among team members throughout the project.
-- **Sprint length:** Each sprint lasts 3 days, reflecting the short 3-week
-  project timeline.
+- **Sprint length:** Each sprint lasts 1 week, reflecting the short 3-week project timeline.
 - **Ceremonies:** The team holds a daily standup and a sprint review at the end
   of each sprint. Other SCRUM ceremonies (planning, retrospective) are adapted
   or combined as needed.
@@ -311,7 +310,7 @@ toc: true
 
 - CI on PRs: lint and tests
 - CI on `main`: build Expo APK and compile docs
-- CD on `main`: deploy static website
+- CD on `main`: deploy static website and the api
 - CD `manually`: release mobile (from build APK)
 
 # Constraints & Assumptions
