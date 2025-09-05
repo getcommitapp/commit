@@ -22,13 +22,18 @@ export default function HomeScreen() {
   const hasGoals = goals && goals.length > 0;
 
   const totalDisplay = useMemo(() => {
-    const totalsByCurrency = (goals ?? []).reduce<Record<string, number>>(
-      (acc, g) => {
+    const activeStates = [
+      "scheduled",
+      "window_open",
+      "ongoing",
+      "awaiting_verification",
+    ];
+    const totalsByCurrency = (goals ?? [])
+      .filter((g) => !g.state || activeStates.includes(g.state))
+      .reduce<Record<string, number>>((acc, g) => {
         acc[g.currency] = (acc[g.currency] ?? 0) + g.stakeCents;
         return acc;
-      },
-      {}
-    );
+      }, {});
     return Object.entries(totalsByCurrency)
       .map(([cur, cents]) => `${cur} ${(cents / 100).toFixed(2)}`)
       .join("  ");
