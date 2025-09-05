@@ -63,6 +63,10 @@ Have you ever set goals like going to the gym or waking up early, only to fail d
 - Mobile Application: [apps/mobile/README.md](./apps/mobile/README.md)
 - Web Landing Page: [apps/web/README.md](./apps/web/README.md)
 - Application User Guide: [docs/user-guide.md](./docs/user-guide.md)
+- Presentation Slides: [here](https://docs.google.com/presentation/d/1c2SoPZuKLyqJWIowHItneEBkSC7FwytpCdqpHTNUyzo/edit?usp=sharing)
+- Project Video [here](https://youtu.be/TfO6FQ2Wr1g)
+- Demo Video 1: [docs/demo_1.mp4](./docs/demo_1.mp4)
+- Demo Video 2: [docs/demo_2.mp4](./docs/demo_2.mp4)
 
 ## Monorepo layout
 
