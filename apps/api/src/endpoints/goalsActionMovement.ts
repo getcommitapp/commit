@@ -14,6 +14,17 @@ export class GoalsActionMovementStart extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Start movement timer for today's occurrence",
+    parameters: [
+      {
+        name: "id",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "Goal ID",
+      },
+    ],
     request: { body: contentJson(GoalMovementStartRequestSchema) },
     responses: {
       "200": {

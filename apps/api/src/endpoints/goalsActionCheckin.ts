@@ -13,6 +13,17 @@ export class GoalsActionCheckin extends OpenAPIRoute {
   schema = {
     tags: ["Goals"],
     summary: "Check-in for today's occurrence (auto-approve)",
+    parameters: [
+      {
+        name: "id",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "Goal ID",
+      },
+    ],
     request: { body: contentJson(GoalCheckinRequestSchema) },
     responses: {
       "200": {

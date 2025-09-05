@@ -30,6 +30,12 @@ export class GoalsDelete extends OpenAPIRoute {
           },
         },
       },
+      "403": { description: "Forbidden" },
+      "404": { description: "Not Found" },
+      "409": {
+        description:
+          "Conflict - cannot delete goal in active state or linked to group",
+      },
     },
   };
 

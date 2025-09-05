@@ -10,6 +10,17 @@ export class GroupsLeave extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Leave a group",
+    parameters: [
+      {
+        name: "id",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "Group ID",
+      },
+    ],
     responses: {
       "200": {
         description: "Left group successfully",
@@ -18,6 +29,12 @@ export class GroupsLeave extends OpenAPIRoute {
             schema: GroupLeaveResponseSchema,
           },
         },
+      },
+      "400": { description: "Bad Request - creator cannot leave own group" },
+      "404": { description: "Not Found" },
+      "409": {
+        description:
+          "Conflict - cannot leave group while goal is in active state",
       },
     },
   };

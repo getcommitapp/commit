@@ -10,6 +10,17 @@ export class GroupsDelete extends OpenAPIRoute {
   schema = {
     tags: ["Groups"],
     summary: "Delete a group and its associated goal (owner only)",
+    parameters: [
+      {
+        name: "id",
+        in: "path" as const,
+        required: true,
+        schema: {
+          type: "string" as const,
+        },
+        description: "Group ID",
+      },
+    ],
     responses: {
       "200": {
         description: "Group and goal deleted",
@@ -19,8 +30,13 @@ export class GroupsDelete extends OpenAPIRoute {
           },
         },
       },
+      "400": { description: "Bad Request" },
       "403": { description: "Forbidden" },
       "404": { description: "Not Found" },
+      "409": {
+        description:
+          "Conflict - cannot delete group while goal is in active state",
+      },
     },
   };
 

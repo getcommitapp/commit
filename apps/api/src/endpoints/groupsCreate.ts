@@ -9,7 +9,6 @@ import * as schema from "../db/schema";
 import { v7 as uuid } from "uuid";
 
 export class GroupsCreate extends OpenAPIRoute {
-  // schema with minimal info per request: tags, summary, and 200 response description
   schema = {
     tags: ["Groups"],
     summary: "Create a new group",
@@ -25,6 +24,7 @@ export class GroupsCreate extends OpenAPIRoute {
           },
         },
       },
+      "500": { description: "Internal Server Error - failed to create goal" },
     },
   };
 

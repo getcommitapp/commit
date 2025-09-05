@@ -17,6 +17,8 @@ export class FilesUpload extends OpenAPIRoute {
         },
       },
       "400": { description: "Invalid request" },
+      "401": { description: "Unauthorized" },
+      "500": { description: "Internal server error - failed to store file" },
     },
   };
 
